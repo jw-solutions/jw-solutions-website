@@ -2552,3 +2552,192 @@ html[lang="en"] [data-lang="es"] {
 .bar-h-70 { height: 70%; }
 .bar-h-85 { height: 85%; }
 .bar-h-95 { height: 95%; }
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   v2.0 — SISTEMA VISUAL DARK GOLD (JW Solutions)
+   Paleta única, tarjetas glassmorphism y rediseño de Metodología / Herramientas.
+   Contraste verificado: --jw-text 15:1, --jw-muted 9:1, --jw-gold 9:1 sobre --jw-surface.
+   --jw-gold-dark solo para bordes/decorado (no para texto sobre fondo oscuro).
+   ────────────────────────────────────────────────────────────────────────────── */
+:root {
+  --jw-bg: #0B0E12;
+  --jw-surface: #171B22;
+  --jw-surface-hover: #202630;
+  --jw-gold: #FBB200;
+  --jw-gold-dark: #8A6100;
+  --jw-text: #E8EDF3;
+  --jw-muted: #B7C0CC;
+  --jw-border: rgba(102, 86, 47, 0.4);
+  --jw-radius: 18px;
+}
+
+/* Fondo global: sin negros planos */
+html, body,
+.section--light,
+.section--dark,
+.footer {
+  background-color: var(--jw-bg);
+  background-image: none;
+}
+body { color: var(--jw-text); }
+.section--light { color: var(--jw-text); }
+.section--light + .section--light { border-top: 1px solid var(--jw-border); }
+
+/* Texto en secciones antes claras */
+.section--light .section-title,
+.section--light h2,
+.section--light h3,
+.section--light h4,
+.section--dark .section-title { color: var(--jw-text); }
+.section--light .section-desc,
+.section--dark .section-desc,
+.section--light p,
+.section--light li { color: var(--jw-muted); }
+.section--light .section-tag,
+.section--light .tool-link,
+.section--light .service-link,
+.section--light .contact-link,
+.section--light .portfolio-link,
+.section--light .tag,
+.section--light .faq-icon,
+.faq-answer a { color: var(--jw-gold); }
+.section--light .service-link:hover,
+.section--light .contact-link:hover,
+.section--light .tool-link:hover,
+.section--light .portfolio-link:hover,
+.faq-question:hover { color: #FFD35A; }
+.portfolio-result { color: #4ADE80; }
+
+/* Glassmorphism: tarjetas de Servicios, Portfolio, Metodología, Herramientas, Contacto (+FAQ/pilares) */
+.service-card,
+.portfolio-card,
+.method-step,
+.tool-card,
+.contact-card,
+.contact-form-wrapper,
+.faq-item,
+.pillar-card {
+  background: var(--jw-surface);
+  border: 1px solid var(--jw-border);
+  border-radius: var(--jw-radius);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--jw-text);
+}
+.service-card:hover,
+.portfolio-card:hover,
+.method-step:hover,
+.tool-card:hover,
+.contact-card:hover,
+.faq-item:hover,
+.pillar-card:hover {
+  background: var(--jw-surface-hover);
+  border-color: var(--jw-gold);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+.service-card h3, .portfolio-card h3, .tool-name, .contact-card h3,
+.faq-question, .pillar-card h3, .method-title { color: var(--jw-text); }
+.service-card p, .portfolio-card p, .tool-desc, .contact-card p,
+.faq-answer p, .pillar-card p, .method-desc { color: var(--jw-muted); }
+.faq-item[open] .faq-icon { color: var(--jw-gold); }
+
+/* Formulario */
+.form-label { color: var(--jw-text); }
+.form-input, .form-select, .form-textarea {
+  background: var(--jw-bg);
+  color: var(--jw-text);
+  border: 2px solid var(--jw-border);
+  border-radius: 12px;
+}
+.form-input::placeholder, .form-textarea::placeholder { color: var(--jw-muted); }
+.form-input:focus-visible, .form-select:focus-visible, .form-textarea:focus-visible {
+  outline: 3px solid var(--jw-gold);
+  border-color: var(--jw-gold);
+}
+.contact-form .form-message.success { color: #4ADE80; }
+.contact-form .form-message.error, .field-error { color: #FCA5A5; }
+.form-input[aria-invalid="true"], .form-select[aria-invalid="true"],
+.form-textarea[aria-invalid="true"] { border-color: #F87171; }
+
+/* Foco dorado en todo el sitio oscuro */
+:focus-visible { outline-color: var(--jw-gold); }
+
+/* ── Metodología: lista semántica 2x2 con números gigantes ── */
+.method-grid {
+  list-style: none;
+  padding: 0;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  max-width: 1000px;
+}
+.method-step {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-8);
+}
+.method-head { margin-bottom: var(--space-4); }
+.method-number {
+  font-size: clamp(3.5rem, 9vw, 6rem);
+  letter-spacing: -0.04em;
+  color: var(--jw-gold);
+  user-select: none;
+}
+.method-icon { background: rgba(251, 178, 0, 0.12); color: var(--jw-gold); }
+@media (min-width: 640px) {
+  .method-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Herramientas: 4 tarjetas de producto ── */
+.tools-grid {
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+@media (min-width: 640px) { .tools-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1100px) { .tools-grid { grid-template-columns: repeat(4, 1fr); } }
+.tool-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: var(--space-10, 2.5rem);
+}
+.tool-card .tool-desc { flex: 1 1 auto; }
+.tool-logo { color: var(--jw-gold); background: rgba(251, 178, 0, 0.12); }
+.tool-badge {
+  top: var(--space-3);
+  right: var(--space-3);
+  color: var(--jw-gold);
+  background: rgba(251, 178, 0, 0.12);
+  border: 1px solid var(--jw-border);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+.tool-link--btn {
+  background: transparent;
+  border: 1px solid var(--jw-gold);
+  border-radius: 999px;
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  font: inherit;
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+}
+.tool-link--btn:hover { background: rgba(251, 178, 0, 0.12); }
+
+/* ── Modales (herramientas + legales) en tema oscuro ── */
+.modal-dialog {
+  background: var(--jw-surface);
+  color: var(--jw-text);
+  border: 1px solid var(--jw-border);
+  border-radius: var(--jw-radius);
+}
+.modal-dialog h2, .modal-dialog h3, .modal-title { color: var(--jw-text); }
+.modal-dialog p, .modal-dialog li { color: var(--jw-muted); }
+.modal-dialog a:not(.btn) { color: var(--jw-gold); }
+.modal-updated { color: var(--jw-muted); }
+.modal-x { color: var(--jw-text); }
+.modal-x:hover { background: var(--jw-surface-hover); }
+.modal-status { background: var(--jw-bg); border-left-color: var(--jw-gold); color: var(--jw-text); }
+.modal-actions .btn--secondary { color: var(--jw-text); border-color: var(--jw-border); }
+.modal-actions .btn--secondary:hover { color: var(--jw-gold); border-color: var(--jw-gold); }
+.modal-actions a.btn { text-decoration: none; }
