@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Seguridad: CSP vía meta (GitHub Pages no permite cabeceras HTTP). Limitaciones en README_DEPLOY.md -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-z2fS2cLOR9t6d0Xez4SOVBdI1uewf3tkgIoxx1mUEXU=' https://*.googletagmanager.com; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://formspree.io https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src https://*.streamlit.app; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; manifest-src 'self'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>JW Solutions | Transforma tus datos en decisiones estratégicas</title>
+    <meta name="description" content="JW Solutions: Automatización de procesos, análisis de datos, dashboards Power BI, SEO local y consultoría estratégica para empresas globales.">
+    <meta name="keywords" content="automatización, Power BI, dashboards, SEO local, consultoría estratégica, análisis de datos, JW Solutions">
+    <meta name="author" content="JW Solutions">
+    <meta name="robots" content="index, follow">
+
+    <!-- Canonical & Hreflang -->
+    <link rel="canonical" href="https://jw-solutions.com/">
+    <link rel="alternate" hreflang="es" href="https://jw-solutions.com/">
+    <link rel="alternate" hreflang="en" href="https://jw-solutions.com/?lang=en">
+    <link rel="alternate" hreflang="x-default" href="https://jw-solutions.com/">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="JW Solutions | Transforma tus datos en decisiones estratégicas">
+    <meta property="og:description" content="Automatización, análisis de datos, dashboards y SEO local para empresas que buscan resultados medibles.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jw-solutions.com/">
+    <meta property="og:image" content="https://jw-solutions.com/assets/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:locale:alternate" content="en_US">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="JW Solutions | Transforma tus datos en decisiones estratégicas">
+    <meta name="twitter:description" content="Automatización, análisis de datos, dashboards y SEO local para empresas que buscan resultados medibles.">
+    <meta name="twitter:image" content="https://jw-solutions.com/assets/og-image.jpg">
+
+    <!-- Idioma inicial antes del primer render (evita saltos de layout); la lógica completa vive en script.js -->
+    <script>
+    (function () {
+      // Anti-clickjacking de respaldo (las cabeceras X-Frame-Options/frame-ancestors no se pueden fijar en GitHub Pages)
+      if (window.top !== window.self) {
+        try { window.top.location = window.self.location; }
+        catch (e) { document.documentElement.style.display = 'none'; }
+      }
+
+      // Idioma inicial antes del primer render (evita saltos de layout)
+      try {
+        var l = localStorage.getItem('jw_lang');
+        if (l !== 'es' && l !== 'en') {
+          var z = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+          l = /^(America\/(New_York|Chicago|Denver|Los_Angeles)|Europe\/(London|Dublin)|Australia\/Sydney|Pacific\/Auckland)/.test(z) ? 'en' : 'es';
+        }
+        document.documentElement.lang = l;
+      } catch (e) { /* almacenamiento bloqueado: script.js resuelve el idioma */ }
+
+      // Hojas de estilo no bloqueantes: pasan de media=print a all al cargar
+      var links = document.querySelectorAll('link[data-async-style]');
+      for (var i = 0; i < links.length; i++) {
+        if (links[i].sheet) { links[i].media = 'all'; }
+        else { links[i].addEventListener('load', function () { this.media = 'all'; }); }
+      }
+    })();
+    </script>
+
+    <!-- Icons / fuentes: carga no bloqueante (media=print -> all) para no retrasar el LCP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&amp;family=Roboto:wght@400;500&amp;display=swap" rel="stylesheet" media="print" data-async-style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" media="print" data-async-style>
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&amp;family=Roboto:wght@400;500&amp;display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    </noscript>
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="assets/logo-jw.png">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://jw-solutions.com/#organization",
+          "name": "JW Solutions",
+          "url": "https://jw-solutions.com",
+          "logo": "https://jw-solutions.com/assets/logo-jw.png",
+          "email": "contact@jw-solutions.com",
+          "sameAs": [
+            "https://twitter.com/JWSolutionsIA",
+            "https://linkedin.com/company/jw-solutions",
+            "https://tiktok.com/@JWSolutionsIA"
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "contact@jw-solutions.com",
+            "contactType": "customer service",
+            "availableLanguage": ["Spanish", "English"]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://jw-solutions.com/#website",
+          "url": "https://jw-solutions.com",
+          "name": "JW Solutions",
+          "publisher": {"@id": "https://jw-solutions.com/#organization"},
+          "inLanguage": ["es", "en"]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "¿Qué es JW Solutions?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "JW Solutions es una consultora especializada en automatización de procesos, análisis de datos, dashboards estratégicos y presencia digital para empresas que buscan decisiones basadas en datos reales."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Trabajan con empresas de cualquier tamaño?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sí. Desde startups hasta corporaciones. Adaptamos nuestras soluciones según el tamaño, presupuesto y objetivos de cada cliente."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Cuánto tiempo toma ver resultados?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Depende del servicio. SEO local suele mostrar mejoras en 4-8 semanas. Dashboards y automatizaciones generan impacto inmediato desde el día 1."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Ofrecen soporte continuo?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Sí. Ofrecemos planes de mantenimiento mensual que incluyen actualización de dashboards, revisión de automatizaciones y consultoría estratégica."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Cómo empiezo?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Agenda un diagnóstico gratuito de 30 minutos. Analizamos tu situación actual y te entregamos un plan de acción personalizado sin compromiso."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <!-- GA4: se carga desde script.js únicamente tras aceptar cookies analíticas -->
+</head>
+<body>
+
+    <a class="skip-link" href="#main" data-lang="es">Saltar al contenido</a>
+    <a class="skip-link" href="#main" data-lang="en">Skip to content</a>
+
+    <!-- Cookie consent -->
+    <div id="cookie-banner" class="cookie-banner" role="region" aria-label="Consentimiento de cookies" hidden>
+        <div class="container cookie-banner-inner">
+            <div class="cookie-banner-text">
+                <p class="cookie-banner-title" data-lang="es">Tu privacidad importa</p>
+                <p class="cookie-banner-title" data-lang="en">Your privacy matters</p>
+                <p class="cookie-banner-desc" data-lang="es">Usamos almacenamiento técnico esencial y, solo con tu permiso, cookies analíticas (Google Analytics) para mejorar el sitio. Puedes cambiar tu decisión en cualquier momento.</p>
+                <p class="cookie-banner-desc" data-lang="en">We use essential technical storage and, only with your permission, analytics cookies (Google Analytics) to improve the site. You can change your choice at any time.</p>
+            </div>
+            <div class="cookie-banner-actions">
+                <button type="button" class="btn btn--primary" data-consent="accept" data-lang="es">Aceptar</button>
+                <button type="button" class="btn btn--primary" data-consent="accept" data-lang="en">Accept</button>
+                <button type="button" class="btn btn--secondary" data-consent="reject" data-lang="es">Rechazar</button>
+                <button type="button" class="btn btn--secondary" data-consent="reject" data-lang="en">Reject</button>
+                <button type="button" class="cookie-link" data-legal="cookies" data-lang="es">Más información</button>
+                <button type="button" class="cookie-link" data-legal="cookies" data-lang="en">Learn more</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Language Toggle -->
+    <button id="lang-toggle" class="lang-toggle" aria-label="ES · Cambiar idioma a inglés">
+        <span class="lang-flag" id="current-flag" aria-hidden="true">🇪🇸</span>
+        <span class="lang-label" id="current-lang">ES</span>
+    </button>
+
+    <!-- Header / Navigation -->
+    <header class="header" id="header">
+        <div class="container header-container">
+            <a href="#inicio" class="logo" aria-label="JW Solutions Home">
+                <div class="logo-mark">JW</div>
+                <div class="logo-text">SOLUTIONS</div>
+            </a>
+
+            <nav class="nav" id="nav" aria-label="Navegación principal">
+                <ul class="nav-list">
+                    <li><a href="#servicios" class="nav-link" data-lang="es">Servicios</a><a href="#servicios" class="nav-link" data-lang="en">Services</a></li>
+                    <li><a href="#diferencial" class="nav-link" data-lang="es">Nosotros</a><a href="#diferencial" class="nav-link" data-lang="en">About</a></li>
+                    <li><a href="#portfolio" class="nav-link" data-lang="es">Portfolio</a><a href="#portfolio" class="nav-link" data-lang="en">Portfolio</a></li>
+                    <li><a href="#faq" class="nav-link" data-lang="es">FAQ</a><a href="#faq" class="nav-link" data-lang="en">FAQ</a></li>
+                    <li><a href="#contacto" class="nav-link nav-link--cta" data-lang="es">Contacto</a><a href="#contacto" class="nav-link nav-link--cta" data-lang="en">Contact</a></li>
+                </ul>
+            </nav>
+
+            <button class="mobile-toggle" id="mobile-toggle" aria-label="Menú móvil" aria-expanded="false" aria-controls="nav">
+                <span class="hamburger"></span>
+            </button>
+        </div>
+    </header>
+
+    <main id="main">
+        <!-- ============================================ -->
+        <!-- HERO SECTION                                 -->
+        <!-- ============================================ -->
+        <section class="hero" id="inicio" aria-label="Hero">
+            <div class="hero-particles" id="particles"></div>
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <div class="hero-badge" data-lang="es">🚀 Consultoría Data-Driven</div>
+                    <div class="hero-badge" data-lang="en">🚀 Data-Driven Consulting</div>
+
+                    <h1 class="hero-title">
+                        <span data-lang="es">Transforma tus datos en</span>
+                        <span data-lang="en">Turn your data into</span>
+                        <span class="hero-title--accent" data-lang="es">decisiones estratégicas</span>
+                        <span class="hero-title--accent" data-lang="en">strategic decisions</span>
+                    </h1>
+
+                    <p class="hero-subtitle" data-lang="es">
+                        Automatización · Análisis · Dashboards · SEO Local
+                    </p>
+                    <p class="hero-subtitle" data-lang="en">
+                        Automation · Analytics · Dashboards · Local SEO
+                    </p>
+
+                    <div class="hero-cta">
+                        <a href="#contacto" class="btn btn--primary" data-lang="es">
+                            <span>Solicita diagnóstico gratuito</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="#contacto" class="btn btn--primary" data-lang="en">
+                            <span>Request free diagnosis</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+
+                        <a href="#servicios" class="btn btn--secondary" data-lang="es">
+                            <span>Ver servicios</span>
+                        </a>
+                        <a href="#servicios" class="btn btn--secondary" data-lang="en">
+                            <span>See services</span>
+                        </a>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">3</span>
+                            <span class="stat-label" data-lang="es">Apps analíticas en vivo</span>
+                            <span class="stat-label" data-lang="en">Live analytics apps</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">4</span>
+                            <span class="stat-label" data-lang="es">Pasos de metodología</span>
+                            <span class="stat-label" data-lang="en">Methodology steps</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">ES·EN</span>
+                            <span class="stat-label" data-lang="es">Atención bilingüe</span>
+                            <span class="stat-label" data-lang="en">Bilingual support</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <div class="dashboard-mockup">
+                        <div class="mockup-header">
+                            <div class="mockup-dot red"></div>
+                            <div class="mockup-dot yellow"></div>
+                            <div class="mockup-dot green"></div>
+                            <span class="mockup-title">JW Analytics Dashboard</span>
+                        </div>
+                        <div class="mockup-body">
+                            <div class="mockup-chart">
+                                <div class="chart-bar bar-h-40"></div>
+                                <div class="chart-bar bar-h-65"></div>
+                                <div class="chart-bar bar-h-50"></div>
+                                <div class="chart-bar bar-h-85"></div>
+                                <div class="chart-bar bar-h-70"></div>
+                                <div class="chart-bar active bar-h-95"></div>
+                            </div>
+                            <div class="mockup-kpis">
+                                <div class="kpi-card">
+                                    <span class="kpi-label">Revenue</span>
+                                    <span class="kpi-value">+$124K</span>
+                                    <span class="kpi-trend up"><i class="fas fa-arrow-up"></i> 23%</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-label">Efficiency</span>
+                                    <span class="kpi-value">94.2%</span>
+                                    <span class="kpi-trend up"><i class="fas fa-arrow-up"></i> 12%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-scroll">
+                <a href="#servicios" aria-label="Scroll down">
+                    <div class="scroll-indicator">
+                        <span></span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SERVICIOS SECTION                            -->
+        <!-- ============================================ -->
+        <section class="section section--light" id="servicios" aria-labelledby="servicios-title">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag" data-lang="es">Nuestros Servicios</span>
+                    <span class="section-tag" data-lang="en">Our Services</span>
+                    <h2 id="servicios-title" class="section-title" data-lang="es">Soluciones diseñadas para escalar tu negocio</h2>
+                    <h2 class="section-title" data-lang="en">Solutions designed to scale your business</h2>
+                    <p class="section-desc" data-lang="es">Combinamos tecnología, estrategia y ejecución para transformar cómo tu empresa opera y compite.</p>
+                    <p class="section-desc" data-lang="en">We combine technology, strategy, and execution to transform how your company operates and competes.</p>
+                </div>
+
+                <div class="services-grid">
+                    <!-- Service 1 -->
+                    <article class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3 class="service-title" data-lang="es">Automatización de Procesos</h3>
+                        <h3 class="service-title" data-lang="en">Process Automation</h3>
+                        <p class="service-desc" data-lang="es">Elimina tareas repetitivas con flujos automatizados usando n8n, Zapier y scripts personalizados. Reduce errores y libera a tu equipo.</p>
+                        <p class="service-desc" data-lang="en">Eliminate repetitive tasks with automated workflows using n8n, Zapier, and custom scripts. Reduce errors and free up your team.</p>
+                        <a href="#contacto" class="service-link" data-lang="es">Saber más <i class="fas fa-arrow-right"></i></a>
+                        <a href="#contacto" class="service-link" data-lang="en">Learn more <i class="fas fa-arrow-right"></i></a>
+                    </article>
+
+                    <!-- Service 2 -->
+                    <article class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="service-title" data-lang="es">Análisis de Datos & Dashboards</h3>
+                        <h3 class="service-title" data-lang="en">Data Analytics & Dashboards</h3>
+                        <p class="service-desc" data-lang="es">Visualiza lo que importa. Dashboards interactivos en Power BI y Python que conectan tus fuentes de datos en tiempo real.</p>
+                        <p class="service-desc" data-lang="en">Visualize what matters. Interactive Power BI and Python dashboards connecting your data sources in real time.</p>
+                        <a href="#contacto" class="service-link" data-lang="es">Saber más <i class="fas fa-arrow-right"></i></a>
+                        <a href="#contacto" class="service-link" data-lang="en">Learn more <i class="fas fa-arrow-right"></i></a>
+                    </article>
+
+                    <!-- Service 3 -->
+                    <article class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-magnifying-glass-chart"></i>
+                        </div>
+                        <h3 class="service-title" data-lang="es">Estudios de Mercado</h3>
+                        <h3 class="service-title" data-lang="en">Market Research</h3>
+                        <p class="service-desc" data-lang="es">Entiende a tu competencia, tu audiencia y tus oportunidades. Informes accionables basados en datos reales, no suposiciones.</p>
+                        <p class="service-desc" data-lang="en">Understand your competition, audience, and opportunities. Actionable reports based on real data, not assumptions.</p>
+                        <a href="#contacto" class="service-link" data-lang="es">Saber más <i class="fas fa-arrow-right"></i></a>
+                        <a href="#contacto" class="service-link" data-lang="en">Learn more <i class="fas fa-arrow-right"></i></a>
+                    </article>
+
+                    <!-- Service 4 -->
+                    <article class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-map-location-dot"></i>
+                        </div>
+                        <h3 class="service-title" data-lang="es">Presencia Digital & SEO Local</h3>
+                        <h3 class="service-title" data-lang="en">Digital Presence & Local SEO</h3>
+                        <p class="service-desc" data-lang="es">Domina Google Maps y la búsqueda local. Optimización de fichas, reseñas y contenido geolocalizado que atrae clientes cercanos.</p>
+                        <p class="service-desc" data-lang="en">Dominate Google Maps and local search. Optimize listings, reviews, and geo-targeted content that attracts nearby customers.</p>
+                        <a href="#contacto" class="service-link" data-lang="es">Saber más <i class="fas fa-arrow-right"></i></a>
+                        <a href="#contacto" class="service-link" data-lang="en">Learn more <i class="fas fa-arrow-right"></i></a>
+                    </article>
+
+                    <!-- Service 5 -->
+                    <article class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3 class="service-title" data-lang="es">Content Strategy & Automatización</h3>
+                        <h3 class="service-title" data-lang="en">Content Strategy & Automation</h3>
+                        <p class="service-desc" data-lang="es">Calendarios editoriales, generación asistida por IA y distribución automatizada en redes sociales. Habla donde está tu audiencia.</p>
+                        <p class="service-desc" data-lang="en">Editorial calendars, AI-assisted generation, and automated social media distribution. Speak where your audience is.</p>
+                        <a href="#contacto" class="service-link" data-lang="es">Saber más <i class="fas fa-arrow-right"></i></a>
+                        <a href="#contacto" class="service-link" data-lang="en">Learn more <i class="fas fa-arrow-right"></i></a>
+                    </article>
+
+                    <!-- Service 6 -->
+                    <article class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <h3 class="service-title" data-lang="es">Auditoría & Consultoría Estratégica</h3>
+                        <h3 class="service-title" data-lang="en">Audit & Strategic Consulting</h3>
+                        <p class="service-desc" data-lang="es">Diagnóstico completo de tus operaciones, tecnología y marketing. Roadmap prioritario con quick wins y objetivos a 12 meses.</p>
+                        <p class="service-desc" data-lang="en">Complete diagnosis of your operations, technology, and marketing. Priority roadmap with quick wins and 12-month objectives.</p>
+                        <a href="#contacto" class="service-link" data-lang="es">Saber más <i class="fas fa-arrow-right"></i></a>
+                        <a href="#contacto" class="service-link" data-lang="en">Learn more <i class="fas fa-arrow-right"></i></a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- DIFERENCIAL JW SECTION                       -->
+        <!-- ============================================ -->
+        <section class="section section--dark" id="diferencial" aria-labelledby="diferencial-title">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag section-tag--accent" data-lang="es">El Diferencial JW</span>
+                    <span class="section-tag section-tag--accent" data-lang="en">The JW Difference</span>
+                    <h2 id="diferencial-title" class="section-title" data-lang="es">El Sabio + El Estratega</h2>
+                    <h2 class="section-title" data-lang="en">The Sage + The Strategist</h2>
+                    <p class="section-desc" data-lang="es">No vendemos herramientas. Diseñamos ventajas competitivas sostenibles.</p>
+                    <p class="section-desc" data-lang="en">We don't sell tools. We design sustainable competitive advantages.</p>
+                </div>
+
+                <div class="pillars-grid">
+                    <div class="pillar-card">
+                        <div class="pillar-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3 class="pillar-title" data-lang="es">Data-Driven</h3>
+                        <h3 class="pillar-title" data-lang="en">Data-Driven</h3>
+                        <p class="pillar-desc" data-lang="es">Decisiones basadas en datos reales, no en intuición. Cada recomendación está respaldada por métricas claras y verificables.</p>
+                        <p class="pillar-desc" data-lang="en">Decisions based on real data, not intuition. Every recommendation is backed by clear, verifiable metrics.</p>
+                    </div>
+
+                    <div class="pillar-card">
+                        <div class="pillar-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h3 class="pillar-title" data-lang="es">Resultados Medibles</h3>
+                        <h3 class="pillar-title" data-lang="en">Measurable Results</h3>
+                        <p class="pillar-desc" data-lang="es">KPIs claros desde el día 1. Sabrás exactamente qué estás obteniendo por cada dólar invertido en nuestra consultoría.</p>
+                        <p class="pillar-desc" data-lang="en">Clear KPIs from day 1. You'll know exactly what you're getting for every dollar invested in our consulting.</p>
+                    </div>
+
+                    <div class="pillar-card">
+                        <div class="pillar-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3 class="pillar-title" data-lang="es">Adaptabilidad Global</h3>
+                        <h3 class="pillar-title" data-lang="en">Global Adaptability</h3>
+                        <p class="pillar-desc" data-lang="es">Soluciones diseñadas bajo estándares globales de accesibilidad, seguridad y arquitectura bilingüe para integrarse con equipos internacionales. El mismo estándar, cualquier zona horaria.</p>
+                        <p class="pillar-desc" data-lang="en">Solutions designed under global standards of accessibility, security, and bilingual architecture to integrate with international teams. Same standard, any timezone.</p>
+                    </div>
+                </div>
+
+                <div class="diferencial-quote">
+                    <blockquote>
+                        <p data-lang="es">"La tecnología sin estrategia es solo ruido. La estrategia sin datos es solo opinión. Nosotros unimos ambas."</p>
+                        <p data-lang="en">"Technology without strategy is just noise. Strategy without data is just opinion. We unite both."</p>
+                    </blockquote>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- PORTFOLIO SECTION                            -->
+        <!-- ============================================ -->
+        <section class="section section--light" id="portfolio" aria-labelledby="portfolio-title">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag" data-lang="es">Portafolio de IA y Automatización</span>
+                    <span class="section-tag" data-lang="en">AI & Automation Portfolio</span>
+                    <h2 id="portfolio-title" class="section-title" data-lang="es">Proyectos que puedes probar hoy</h2>
+                    <h2 class="section-title" data-lang="en">Projects you can try today</h2>
+                    <p class="section-desc" data-lang="es">Aplicaciones analíticas en vivo, desarrolladas con Python y orquestación de IA. Interactúa con ellas directamente.</p>
+                    <p class="section-desc" data-lang="en">Live analytics applications built with Python and AI orchestration. Interact with them directly.</p>
+                </div>
+
+                <div class="portfolio-grid">
+                    <article class="portfolio-card">
+                        <div class="portfolio-image portfolio-image--icon">
+                            <div class="portfolio-visual" aria-hidden="true"><i class="fas fa-chart-pie"></i></div>
+                            <div class="portfolio-overlay">
+                                <span class="portfolio-tag">Streamlit + Plotly</span>
+                            </div>
+                        </div>
+                        <div class="portfolio-content">
+                            <h3 class="portfolio-title" data-lang="es">Executive Insurance Intelligence Dashboard</h3>
+                            <h3 class="portfolio-title" data-lang="en">Executive Insurance Intelligence Dashboard</h3>
+                            <p class="portfolio-desc" data-lang="es">Cuadro de mando ejecutivo para carteras de pólizas y siniestros: prima emitida vs. cobrada, Loss Ratio, efectividad de cobranza y exportación a CSV.</p>
+                            <p class="portfolio-desc" data-lang="en">Executive dashboard for policy and claims portfolios: written vs. collected premium, Loss Ratio, collection effectiveness and CSV export.</p>
+                            <div class="portfolio-tags">
+                                <span class="tag">Python</span>
+                                <span class="tag">Streamlit</span>
+                                <span class="tag">Plotly</span>
+                            </div>
+                            <div class="portfolio-result">
+                                <i class="fas fa-arrow-trend-up" aria-hidden="true"></i>
+                                <span data-lang="es">Alertas de siniestralidad &gt; 65%</span>
+                                <span data-lang="en">Loss-ratio alerts &gt; 65%</span>
+                            </div>
+                            <a href="https://executive-insurance-intelligence-dashboard-na4efqwiqn7kqhtrkxw.streamlit.app/" target="_blank" rel="noopener noreferrer" class="portfolio-link">
+                                <span data-lang="es">Abrir app en vivo</span>
+                                <span data-lang="en">Open live app</span>
+                                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                                <span class="sr-only" data-lang="es">(se abre en una pestaña nueva)</span>
+                                <span class="sr-only" data-lang="en">(opens in a new tab)</span>
+                            </a>
+                        </div>
+                    </article>
+                    <article class="portfolio-card">
+                        <div class="portfolio-image portfolio-image--icon">
+                            <div class="portfolio-visual" aria-hidden="true"><i class="fas fa-shield-halved"></i></div>
+                            <div class="portfolio-overlay">
+                                <span class="portfolio-tag">Streamlit + Pandas</span>
+                            </div>
+                        </div>
+                        <div class="portfolio-content">
+                            <h3 class="portfolio-title" data-lang="es">Validador y Limpiador de Datasets Financieros</h3>
+                            <h3 class="portfolio-title" data-lang="en">Financial Dataset Validator &amp; Cleaner</h3>
+                            <p class="portfolio-desc" data-lang="es">Auditoría automática de calidad de datos: reglas de negocio aseguradoras, detección de atípicos (IQR), Score de Calidad y descarga CSV/Excel.</p>
+                            <p class="portfolio-desc" data-lang="en">Automated data-quality audit: insurance business rules, outlier detection (IQR), Quality Score and CSV/Excel download.</p>
+                            <div class="portfolio-tags">
+                                <span class="tag">Python</span>
+                                <span class="tag">Pandas</span>
+                                <span class="tag">NumPy</span>
+                            </div>
+                            <div class="portfolio-result">
+                                <i class="fas fa-arrow-trend-up" aria-hidden="true"></i>
+                                <span data-lang="es">Score de calidad por fila</span>
+                                <span data-lang="en">Row-level quality score</span>
+                            </div>
+                            <a href="https://validador-datos-financieros-rdha4bcp2p5uyks5yx3kdi.streamlit.app/" target="_blank" rel="noopener noreferrer" class="portfolio-link">
+                                <span data-lang="es">Abrir app en vivo</span>
+                                <span data-lang="en">Open live app</span>
+                                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                                <span class="sr-only" data-lang="es">(se abre en una pestaña nueva)</span>
+                                <span class="sr-only" data-lang="en">(opens in a new tab)</span>
+                            </a>
+                        </div>
+                    </article>
+                    <article class="portfolio-card">
+                        <div class="portfolio-image portfolio-image--icon">
+                            <div class="portfolio-visual" aria-hidden="true"><i class="fas fa-calculator"></i></div>
+                            <div class="portfolio-overlay">
+                                <span class="portfolio-tag">Streamlit + NumPy</span>
+                            </div>
+                        </div>
+                        <div class="portfolio-content">
+                            <h3 class="portfolio-title" data-lang="es">Simulador Financiero y Calculador de Siniestralidad</h3>
+                            <h3 class="portfolio-title" data-lang="en">Financial Simulator &amp; Loss Calculator</h3>
+                            <p class="portfolio-desc" data-lang="es">Modela el impacto de deducibles, coaseguros y topes en Gastos Médicos, Auto y Patrimoniales, con análisis de sensibilidad por escenario.</p>
+                            <p class="portfolio-desc" data-lang="en">Models the impact of deductibles, coinsurance and caps on medical, auto and property lines, with scenario sensitivity analysis.</p>
+                            <div class="portfolio-tags">
+                                <span class="tag">Python</span>
+                                <span class="tag">Dataclasses</span>
+                                <span class="tag">Plotly</span>
+                            </div>
+                            <div class="portfolio-result">
+                                <i class="fas fa-arrow-trend-up" aria-hidden="true"></i>
+                                <span data-lang="es">Cálculo determinista en tiempo real</span>
+                                <span data-lang="en">Deterministic real-time calculation</span>
+                            </div>
+                            <a href="https://portafolio-dcl5w8jm7z3xkzdppklnab.streamlit.app/" target="_blank" rel="noopener noreferrer" class="portfolio-link">
+                                <span data-lang="es">Abrir app en vivo</span>
+                                <span data-lang="en">Open live app</span>
+                                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                                <span class="sr-only" data-lang="es">(se abre en una pestaña nueva)</span>
+                                <span class="sr-only" data-lang="en">(opens in a new tab)</span>
+                            </a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- METODOLOGÍA SECTION                           -->
+        <!-- ============================================ -->
+        <section class="section section--dark" id="metodologia" aria-labelledby="metodologia-title">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag section-tag--accent" data-lang="es">Metodología</span>
+                    <span class="section-tag section-tag--accent" data-lang="en">Methodology</span>
+                    <h2 id="metodologia-title" class="section-title" data-lang="es">Cómo trabajamos: 4 pasos, del dato a producción</h2>
+                    <h2 class="section-title" data-lang="en">How we work: 4 steps, from data to production</h2>
+                    <p class="section-desc" data-lang="es">Un proceso estructurado y repetible que reduce riesgos y entrega valor medible en cada etapa.</p>
+                    <p class="section-desc" data-lang="en">A structured, repeatable process that reduces risk and delivers measurable value at every stage.</p>
+                </div>
+
+                <ol class="method-grid">
+                    <li class="method-step">
+                        <div class="method-head">
+                            <span class="method-number" aria-hidden="true">01</span>
+                            <div class="method-icon" aria-hidden="true"><i class="fas fa-compass-drafting"></i></div>
+                        </div>
+                        <h3 class="method-title">
+                            <span class="sr-only" data-lang="es">Paso 01: </span>
+                            <span class="sr-only" data-lang="en">Step 01: </span>
+                            <span data-lang="es">Diagnóstico &amp; Arquitectura</span>
+                            <span data-lang="en">Diagnosis &amp; Architecture</span>
+                        </h3>
+                        <p class="method-desc" data-lang="es">Evaluamos la calidad de datos, infraestructura actual y flujos operativos para diseñar un roadmap analítico a medida.</p>
+                        <p class="method-desc" data-lang="en">We assess data quality, current infrastructure, and operational workflows to design a tailored analytical roadmap.</p>
+                    </li>
+                    <li class="method-step">
+                        <div class="method-head">
+                            <span class="method-number" aria-hidden="true">02</span>
+                            <div class="method-icon" aria-hidden="true"><i class="fas fa-database"></i></div>
+                        </div>
+                        <h3 class="method-title">
+                            <span class="sr-only" data-lang="es">Paso 02: </span>
+                            <span class="sr-only" data-lang="en">Step 02: </span>
+                            <span data-lang="es">Ingesta &amp; Modelado</span>
+                            <span data-lang="en">Ingestion &amp; Modeling</span>
+                        </h3>
+                        <p class="method-desc" data-lang="es">Normalizamos, limpiamos y estructuramos datos heterogéneos garantizando integridad y consistencia semántica.</p>
+                        <p class="method-desc" data-lang="en">We normalize, clean, and structure heterogeneous data ensuring integrity and semantic consistency.</p>
+                    </li>
+                    <li class="method-step">
+                        <div class="method-head">
+                            <span class="method-number" aria-hidden="true">03</span>
+                            <div class="method-icon" aria-hidden="true"><i class="fas fa-gears"></i></div>
+                        </div>
+                        <h3 class="method-title">
+                            <span class="sr-only" data-lang="es">Paso 03: </span>
+                            <span class="sr-only" data-lang="en">Step 03: </span>
+                            <span data-lang="es">Desarrollo &amp; Automatización</span>
+                            <span data-lang="en">Development &amp; Automation</span>
+                        </h3>
+                        <p class="method-desc" data-lang="es">Construimos dashboards ejecutivos, simuladores financieros y flujos automatizados con Python y modelos de IA.</p>
+                        <p class="method-desc" data-lang="en">We build executive dashboards, financial simulators, and automated workflows using Python and AI models.</p>
+                    </li>
+                    <li class="method-step">
+                        <div class="method-head">
+                            <span class="method-number" aria-hidden="true">04</span>
+                            <div class="method-icon" aria-hidden="true"><i class="fas fa-shield-halved"></i></div>
+                        </div>
+                        <h3 class="method-title">
+                            <span class="sr-only" data-lang="es">Paso 04: </span>
+                            <span class="sr-only" data-lang="en">Step 04: </span>
+                            <span data-lang="es">Gobernanza &amp; Despliegue</span>
+                            <span data-lang="en">Governance &amp; Deployment</span>
+                        </h3>
+                        <p class="method-desc" data-lang="es">Implementamos soluciones en producción bajo estándares de seguridad, accesibilidad y monitoreo continuo.</p>
+                        <p class="method-desc" data-lang="en">We deploy production-ready solutions under strict security, accessibility, and continuous monitoring standards.</p>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- HERRAMIENTAS / RECURSOS SECTION              -->
+        <!-- ============================================ -->
+        <section class="section section--light" id="herramientas" aria-labelledby="herramientas-title">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag" data-lang="es">Herramientas & Recursos</span>
+                    <span class="section-tag" data-lang="en">Tools & Resources</span>
+                    <h2 id="herramientas-title" class="section-title" data-lang="es">Tecnología que usamos y recomendamos</h2>
+                    <h2 class="section-title" data-lang="en">Technology we use and recommend</h2>
+                    <p class="section-desc" data-lang="es">Herramientas probadas en campo que potencian nuestros proyectos. Algunos enlaces incluyen referidos que nos apoyan sin costo extra para ti.</p>
+                    <p class="section-desc" data-lang="en">Battle-tested tools that power our projects. Some links include referrals that support us at no extra cost to you.</p>
+                </div>
+
+                <div class="tools-grid">
+                    <!-- Binance -->
+                    <div class="tool-card">
+                        <div class="tool-logo">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <h3 class="tool-name">Binance</h3>
+                        <p class="tool-desc" data-lang="es">Construye tu reserva financiera. La plataforma líder para trading y ahorro en cripto con las comisiones más bajas del mercado.</p>
+                        <p class="tool-desc" data-lang="en">Build your financial reserve. The leading platform for crypto trading and savings with the lowest market fees.</p>
+                        <a href="https://www.binance.com/es/activity/referral/offers?ref=GRO_28502_GWP8K" target="_blank" rel="noopener noreferrer sponsored" class="tool-link">
+                            <span data-lang="es">Descubre más</span>
+                            <span data-lang="en">Learn more</span>
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <span class="tool-badge">Referido</span>
+                    </div>
+
+                    <!-- Vercel -->
+                    <div class="tool-card">
+                        <div class="tool-logo">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h3 class="tool-name">Vercel</h3>
+                        <p class="tool-desc" data-lang="es">Hosting ultra-rápido para aplicaciones modernas. Despliegue instantáneo con CDN global y HTTPS automático.</p>
+                        <p class="tool-desc" data-lang="en">Ultra-fast hosting for modern applications. Instant deployment with global CDN and automatic HTTPS.</p>
+                        <span class="tool-link tool-link--placeholder">
+                            <span data-lang="es">Próximamente</span>
+                            <span data-lang="en">Coming soon</span>
+                        </span>
+                    </div>
+
+                    <!-- Brevo -->
+                    <div class="tool-card">
+                        <div class="tool-logo">
+                            <i class="fas fa-envelope-open-text"></i>
+                        </div>
+                        <h3 class="tool-name">Brevo</h3>
+                        <p class="tool-desc" data-lang="es">Email marketing gratuito hasta 300 emails/día. Automatizaciones, plantillas y CRM integrado perfecto para pymes.</p>
+                        <p class="tool-desc" data-lang="en">Free email marketing up to 300 emails/day. Automations, templates, and integrated CRM perfect for SMEs.</p>
+                        <span class="tool-link tool-link--placeholder">
+                            <span data-lang="es">Próximamente</span>
+                            <span data-lang="en">Coming soon</span>
+                        </span>
+                    </div>
+
+                    <!-- Notion -->
+                    <div class="tool-card">
+                        <div class="tool-logo">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3 class="tool-name">Notion</h3>
+                        <p class="tool-desc" data-lang="es">Gestión de proyectos, documentación y bases de datos todo-en-uno. El cerebro digital de JW Solutions.</p>
+                        <p class="tool-desc" data-lang="en">Project management, documentation, and databases all-in-one. The digital brain of JW Solutions.</p>
+                        <span class="tool-link tool-link--placeholder">
+                            <span data-lang="es">Próximamente</span>
+                            <span data-lang="en">Coming soon</span>
+                        </span>
+                    </div>
+
+                    <!-- Kimi AI -->
+                    <div class="tool-card">
+                        <div class="tool-logo">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="tool-name">Kimi AI</h3>
+                        <p class="tool-desc" data-lang="es">Productividad con IA. Generación de contenido, análisis de documentos y asistencia estratégica 24/7.</p>
+                        <p class="tool-desc" data-lang="en">AI-powered productivity. Content generation, document analysis, and strategic assistance 24/7.</p>
+                        <span class="tool-link tool-link--placeholder">
+                            <span data-lang="es">Próximamente</span>
+                            <span data-lang="en">Coming soon</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- FAQ SECTION                                  -->
+        <!-- ============================================ -->
+        <section class="section section--light" id="faq" aria-labelledby="faq-title">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag" data-lang="es">Preguntas Frecuentes</span>
+                    <span class="section-tag" data-lang="en">Frequently Asked Questions</span>
+                    <h2 id="faq-title" class="section-title" data-lang="es">Resolvemos tus dudas</h2>
+                    <h2 class="section-title" data-lang="en">We answer your questions</h2>
+                </div>
+
+                <div class="faq-container">
+                    <!-- FAQ 1 -->
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span class="faq-icon"><i class="fas fa-plus"></i></span>
+                            <span data-lang="es">¿Qué es JW Solutions?</span>
+                            <span data-lang="en">What is JW Solutions?</span>
+                        </summary>
+                        <div class="faq-answer">
+                            <p data-lang="es">JW Solutions es una consultora especializada en automatización de procesos, análisis de datos, dashboards estratégicos y presencia digital para empresas que buscan decisiones basadas en datos reales. Diseñamos bajo estándares globales de accesibilidad, seguridad y arquitectura bilingüe para integrarnos con equipos internacionales.</p>
+                            <p data-lang="en">JW Solutions is a consulting firm specialized in process automation, data analytics, strategic dashboards, and digital presence for companies seeking decisions based on real data. We design under global standards of accessibility, security, and bilingual architecture to integrate with international teams.</p>
+                        </div>
+                    </details>
+
+                    <!-- FAQ 2 -->
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span class="faq-icon"><i class="fas fa-plus"></i></span>
+                            <span data-lang="es">¿Trabajan con empresas de cualquier tamaño?</span>
+                            <span data-lang="en">Do you work with companies of any size?</span>
+                        </summary>
+                        <div class="faq-answer">
+                            <p data-lang="es">Sí. Desde startups hasta corporaciones. Adaptamos nuestras soluciones según el tamaño, presupuesto y objetivos de cada cliente. Tenemos paquetes modulares que permiten empezar con una automatización simple y escalar progresivamente.</p>
+                            <p data-lang="en">Yes. From startups to corporations. We adapt our solutions according to each client's size, budget, and objectives. We have modular packages that allow you to start with a simple automation and scale progressively.</p>
+                        </div>
+                    </details>
+
+                    <!-- FAQ 3 -->
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span class="faq-icon"><i class="fas fa-plus"></i></span>
+                            <span data-lang="es">¿Cuánto tiempo toma ver resultados?</span>
+                            <span data-lang="en">How long does it take to see results?</span>
+                        </summary>
+                        <div class="faq-answer">
+                            <p data-lang="es">Depende del servicio. SEO local suele mostrar mejoras en 4-8 semanas. Dashboards y automatizaciones generan impacto inmediato desde el día 1. Los estudios de mercado se entregan en 2-3 semanas. En el diagnóstico inicial te daremos una estimación realista para tu caso específico.</p>
+                            <p data-lang="en">It depends on the service. Local SEO usually shows improvements in 4-8 weeks. Dashboards and automations generate immediate impact from day 1. Market research is delivered in 2-3 weeks. During the initial diagnosis, we'll give you a realistic estimate for your specific case.</p>
+                        </div>
+                    </details>
+
+                    <!-- FAQ 4 -->
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span class="faq-icon"><i class="fas fa-plus"></i></span>
+                            <span data-lang="es">¿Ofrecen soporte continuo?</span>
+                            <span data-lang="en">Do you offer ongoing support?</span>
+                        </summary>
+                        <div class="faq-answer">
+                            <p data-lang="es">Sí. Ofrecemos planes de mantenimiento mensual que incluyen actualización de dashboards, revisión de automatizaciones, consultoría estratégica y soporte técnico prioritario. También puedes contratar horas sueltas según necesidad.</p>
+                            <p data-lang="en">Yes. We offer monthly maintenance plans that include dashboard updates, automation reviews, strategic consulting, and priority technical support. You can also purchase hourly support as needed.</p>
+                        </div>
+                    </details>
+
+                    <!-- FAQ 5 -->
+                    <details class="faq-item">
+                        <summary class="faq-question">
+                            <span class="faq-icon"><i class="fas fa-plus"></i></span>
+                            <span data-lang="es">¿Cómo empiezo?</span>
+                            <span data-lang="en">How do I get started?</span>
+                        </summary>
+                        <div class="faq-answer">
+                            <p data-lang="es">Agenda un diagnóstico gratuito de 30 minutos. Analizamos tu situación actual, identificamos oportunidades de mejora y te entregamos un plan de acción personalizado sin compromiso. Puedes agendar directamente desde el formulario de contacto o escribirnos a <a href="mailto:contact@jw-solutions.com">contact@jw-solutions.com</a>.</p>
+                            <p data-lang="en">Schedule a free 30-minute diagnosis. We analyze your current situation, identify improvement opportunities, and deliver a personalized action plan with no commitment. You can schedule directly from the contact form or write us at <a href="mailto:contact@jw-solutions.com">contact@jw-solutions.com</a>.</p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- NEWSLETTER / BLOG SECTION                    -->
+        <!-- ============================================ -->
+        <section class="section section--dark" id="newsletter" aria-labelledby="newsletter-title">
+            <div class="container">
+                <div class="newsletter-wrapper">
+                    <div class="newsletter-content">
+                        <span class="section-tag section-tag--accent" data-lang="es">Newsletter</span>
+                        <span class="section-tag section-tag--accent" data-lang="en">Newsletter</span>
+                        <h2 id="newsletter-title" class="section-title" data-lang="es">Recibe estrategias data-driven semanales</h2>
+                        <h2 class="section-title" data-lang="en">Receive weekly data-driven strategies</h2>
+                        <p class="section-desc" data-lang="es">Un email por semana con tips prácticos, casos de estudio y herramientas nuevas. Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
+                        <p class="section-desc" data-lang="en">One email per week with practical tips, case studies, and new tools. No spam, no noise. Unsubscribe anytime.</p>
+
+                        <form class="newsletter-form" id="newsletter-form" action="https://formspree.io/f/xojbvnzp" method="POST" aria-label="Formulario de suscripción">
+                            <input type="hidden" name="form_type" value="newsletter">
+                            <input type="text" name="_gotcha" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+                            <div class="form-group form-group--inline">
+                                <input type="email" name="email" id="newsletter-email" class="form-input" placeholder="tu@email.com" required aria-required="true" aria-label="Correo electrónico" autocomplete="email" maxlength="254">
+                                <button type="submit" class="btn btn--primary" data-lang="es">Suscribirme</button>
+                                <button type="submit" class="btn btn--primary" data-lang="en">Subscribe</button>
+                            </div>
+                            <p class="form-note" data-lang="es">🔒 Respetamos tu privacidad. No compartimos tu email con terceros.</p>
+                            <p class="form-note" data-lang="en">🔒 We respect your privacy. We don't share your email with third parties.</p>
+                            <div class="form-message" id="newsletter-message" role="status" aria-live="polite"></div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="blog-grid">
+                    <span class="blog-section-tag" data-lang="es">Últimos artículos</span>
+                    <span class="blog-section-tag" data-lang="en">Latest articles</span>
+
+                    <!-- Article 1 -->
+                    <article class="blog-card">
+                        <div class="blog-meta">
+                            <span class="blog-date">12 May 2026</span>
+                            <span class="blog-tag">Power BI</span>
+                        </div>
+                        <h3 class="blog-title" data-lang="es">5 errores que destruyen la credibilidad de tu dashboard</h3>
+                        <h3 class="blog-title" data-lang="en">5 mistakes that destroy your dashboard credibility</h3>
+                        <p class="blog-excerpt" data-lang="es">Desde colores inconsistentes hasta métricas de vanidad. Aprende a construir dashboards que realmente influyen en decisiones ejecutivas.</p>
+                        <p class="blog-excerpt" data-lang="en">From inconsistent colors to vanity metrics. Learn to build dashboards that truly influence executive decisions.</p>
+                        <span class="blog-link blog-link--soon" data-lang="es">Próximamente</span>
+                        <span class="blog-link blog-link--soon" data-lang="en">Coming soon</span>
+                    </article>
+
+                    <!-- Article 2 -->
+                    <article class="blog-card">
+                        <div class="blog-meta">
+                            <span class="blog-date">05 May 2026</span>
+                            <span class="blog-tag">Automatización</span>
+                        </div>
+                        <h3 class="blog-title" data-lang="es">n8n vs Zapier: ¿Cuál elegir en 2026?</h3>
+                        <h3 class="blog-title" data-lang="en">n8n vs Zapier: Which to choose in 2026?</h3>
+                        <p class="blog-excerpt" data-lang="es">Comparativa técnica y económica de los dos gigantes de la automatización. Incluye casos de uso reales y costos ocultos.</p>
+                        <p class="blog-excerpt" data-lang="en">Technical and economic comparison of the two automation giants. Includes real use cases and hidden costs.</p>
+                        <span class="blog-link blog-link--soon" data-lang="es">Próximamente</span>
+                        <span class="blog-link blog-link--soon" data-lang="en">Coming soon</span>
+                    </article>
+
+                    <!-- Article 3 -->
+                    <article class="blog-card">
+                        <div class="blog-meta">
+                            <span class="blog-date">28 Abr 2026</span>
+                            <span class="blog-tag">SEO Local</span>
+                        </div>
+                        <h3 class="blog-title" data-lang="es">Cómo duplicar las llamadas desde Google Maps en 30 días</h3>
+                        <h3 class="blog-title" data-lang="en">How to double calls from Google Maps in 30 days</h3>
+                        <p class="blog-excerpt" data-lang="es">Guía paso a paso basada en 15 optimizaciones reales. Desde la descripción hasta las reseñas y las fotos geolocalizadas.</p>
+                        <p class="blog-excerpt" data-lang="en">Step-by-step guide based on 15 real optimizations. From description to reviews and geotagged photos.</p>
+                        <span class="blog-link blog-link--soon" data-lang="es">Próximamente</span>
+                        <span class="blog-link blog-link--soon" data-lang="en">Coming soon</span>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- CONTACTO SECTION                             -->
+        <!-- ============================================ -->
+        <section class="section section--light" id="contacto" aria-labelledby="contacto-title">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag" data-lang="es">Contacto</span>
+                    <span class="section-tag" data-lang="en">Contact</span>
+                    <h2 id="contacto-title" class="section-title" data-lang="es">Hablemos de tu proyecto</h2>
+                    <h2 class="section-title" data-lang="en">Let's talk about your project</h2>
+                    <p class="section-desc" data-lang="es">Completa el formulario y te responderemos en menos de 24 horas. O escríbenos directamente.</p>
+                    <p class="section-desc" data-lang="en">Fill out the form and we'll respond within 24 hours. Or write us directly.</p>
+                </div>
+
+                <div class="contact-wrapper">
+                    <div class="contact-info">
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <h3 data-lang="es">Email</h3>
+                            <h3 data-lang="en">Email</h3>
+                            <a href="mailto:contact@jw-solutions.com" class="contact-link">contact@jw-solutions.com</a>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h3 data-lang="es">Horario</h3>
+                            <h3 data-lang="en">Hours</h3>
+                            <p data-lang="es">Lun - Vie: 9:00 - 18:00 (GMT-3)</p>
+                            <p data-lang="en">Mon - Fri: 9:00 AM - 6:00 PM (GMT-3)</p>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <h3 data-lang="es">Cobertura</h3>
+                            <h3 data-lang="en">Coverage</h3>
+                            <p data-lang="es">Global · Remoto · Bilingüe</p>
+                            <p data-lang="en">Global · Remote · Bilingual</p>
+                        </div>
+
+                        <div class="contact-social">
+                            <h3 data-lang="es">Síguenos</h3>
+                            <h3 data-lang="en">Follow us</h3>
+                            <div class="social-links">
+                                <a href="https://twitter.com/JWSolutionsIA" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter" class="social-link">
+                                    <i class="fab fa-x-twitter"></i>
+                                </a>
+                                <a href="https://linkedin.com/company/jw-solutions" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="social-link">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                <a href="https://tiktok.com/@JWSolutionsIA" target="_blank" rel="noopener noreferrer" aria-label="TikTok" class="social-link">
+                                    <i class="fab fa-tiktok"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-form-wrapper">
+                        <form class="contact-form" id="contact-form" action="https://formspree.io/f/xojbvnzp" method="POST" aria-label="Formulario de contacto">
+                            <input type="hidden" name="form_type" value="contact">
+                            <input type="text" name="_gotcha" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contact-name" class="form-label" data-lang="es">Nombre *</label>
+                                    <label for="contact-name" class="form-label" data-lang="en">Name *</label>
+                                    <input type="text" name="name" id="contact-name" class="form-input" autocomplete="name" maxlength="100" required aria-required="true">
+                                </div>
+                                <div class="form-group">
+                                    <label for="contact-email" class="form-label" data-lang="es">Email *</label>
+                                    <label for="contact-email" class="form-label" data-lang="en">Email *</label>
+                                    <input type="email" name="email" id="contact-email" class="form-input" autocomplete="email" maxlength="254" required aria-required="true">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contact-company" class="form-label" data-lang="es">Empresa</label>
+                                    <label for="contact-company" class="form-label" data-lang="en">Company</label>
+                                    <input type="text" name="company" id="contact-company" class="form-input" autocomplete="organization" maxlength="100">
+                                </div>
+                                <div class="form-group">
+                                    <label for="contact-service" class="form-label" data-lang="es">Servicio de interés</label>
+                                    <label for="contact-service" class="form-label" data-lang="en">Service of interest</label>
+                                    <select name="service" id="contact-service" class="form-select">
+                                        <option value="" data-lang="es">Selecciona...</option>
+                                        <option value="" data-lang="en">Select...</option>
+                                        <option value="automatizacion" data-lang="es">Automatización de Procesos</option>
+                                        <option value="automatizacion" data-lang="en">Process Automation</option>
+                                        <option value="dashboards" data-lang="es">Análisis de Datos & Dashboards</option>
+                                        <option value="dashboards" data-lang="en">Data Analytics & Dashboards</option>
+                                        <option value="mercado" data-lang="es">Estudios de Mercado</option>
+                                        <option value="mercado" data-lang="en">Market Research</option>
+                                        <option value="seo" data-lang="es">Presencia Digital & SEO Local</option>
+                                        <option value="seo" data-lang="en">Digital Presence & Local SEO</option>
+                                        <option value="content" data-lang="es">Content Strategy</option>
+                                        <option value="content" data-lang="en">Content Strategy</option>
+                                        <option value="auditoria" data-lang="es">Auditoría & Consultoría</option>
+                                        <option value="auditoria" data-lang="en">Audit & Consulting</option>
+                                        <option value="otro" data-lang="es">Otro / No estoy seguro</option>
+                                        <option value="otro" data-lang="en">Other / Not sure</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contact-message" class="form-label" data-lang="es">Mensaje *</label>
+                                <label for="contact-message" class="form-label" data-lang="en">Message *</label>
+                                <textarea name="message" id="contact-message" class="form-textarea" rows="5" maxlength="2000" required aria-required="true" placeholder="Cuéntanos sobre tu proyecto, objetivos y timeline..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn--primary btn--full" data-lang="es">
+                                <span>Enviar mensaje</span>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                            <button type="submit" class="btn btn--primary btn--full" data-lang="en">
+                                <span>Send message</span>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+
+                            <div class="form-message" id="contact-message-status" role="status" aria-live="polite"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============================================ -->
+    <!-- FOOTER                                       -->
+    <!-- ============================================ -->
+    <footer class="footer" id="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <div class="logo-mark">JW</div>
+                        <div class="logo-text">SOLUTIONS</div>
+                    </div>
+                    <p class="footer-desc" data-lang="es">Transformamos datos en decisiones estratégicas. Consultoría global para empresas que buscan ventajas competitivas sostenibles.</p>
+                    <p class="footer-desc" data-lang="en">We transform data into strategic decisions. Global consulting for companies seeking sustainable competitive advantages.</p>
+                </div>
+
+                <div class="footer-links">
+                    <h3 data-lang="es">Links rápidos</h3>
+                    <h3 data-lang="en">Quick links</h3>
+                    <ul>
+                        <li><a href="#servicios" data-lang="es">Servicios</a><a href="#servicios" data-lang="en">Services</a></li>
+                        <li><a href="#portfolio" data-lang="es">Portfolio</a><a href="#portfolio" data-lang="en">Portfolio</a></li>
+                        <li><a href="#faq" data-lang="es">FAQ</a><a href="#faq" data-lang="en">FAQ</a></li>
+                        <li><a href="#contacto" data-lang="es">Contacto</a><a href="#contacto" data-lang="en">Contact</a></li>
+                        <li><a href="#herramientas" data-lang="es">Herramientas</a><a href="#herramientas" data-lang="en">Tools</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h3 data-lang="es">Servicios</h3>
+                    <h3 data-lang="en">Services</h3>
+                    <ul>
+                        <li><a href="#servicios" data-lang="es">Automatización</a><a href="#servicios" data-lang="en">Automation</a></li>
+                        <li><a href="#servicios" data-lang="es">Power BI & Dashboards</a><a href="#servicios" data-lang="en">Power BI & Dashboards</a></li>
+                        <li><a href="#servicios" data-lang="es">SEO Local</a><a href="#servicios" data-lang="en">Local SEO</a></li>
+                        <li><a href="#servicios" data-lang="es">Consultoría</a><a href="#servicios" data-lang="en">Consulting</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h3 data-lang="es">Legal</h3>
+                    <h3 data-lang="en">Legal</h3>
+                    <ul>
+                        <li><button type="button" data-legal="privacy" data-lang="es">Política de privacidad</button><button type="button" data-legal="privacy" data-lang="en">Privacy Policy</button></li>
+                        <li><button type="button" data-legal="terms" data-lang="es">Términos de servicio</button><button type="button" data-legal="terms" data-lang="en">Terms of Service</button></li>
+                        <li><button type="button" data-legal="cookies" data-lang="es">Cookies</button><button type="button" data-legal="cookies" data-lang="en">Cookies</button></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2026 JW Solutions. <span data-lang="es">Todos los derechos reservados.</span><span data-lang="en">All rights reserved.</span></p>
+                <div class="footer-social">
+                    <a href="https://twitter.com/JWSolutionsIA" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://linkedin.com/company/jw-solutions" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://tiktok.com/@JWSolutionsIA" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <div class="modal" id="modal-privacy" hidden>
+        <div class="modal-dialog" id="dialog-privacy" role="dialog" aria-modal="true" aria-labelledby="dialog-privacy-title" tabindex="-1">
+            <button type="button" class="modal-x" data-modal-close aria-label="Cerrar"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+            <div class="modal-content">
+                    <h2 class="modal-title" id="dialog-privacy-title" data-lang="es">Política de Privacidad</h2>
+                    <h2 class="modal-title" data-lang="en">Privacy Policy</h2>
+                    <p class="modal-updated" data-lang="es">Resumen informativo · Última actualización: octubre de 2026</p>
+                    <p class="modal-updated" data-lang="en">Informational summary · Last updated: October 2026</p>
+                    <h3 data-lang="es">Compromiso de confidencialidad</h3>
+                    <h3 data-lang="en">Commitment to confidentiality</h3>
+                    <p data-lang="es">En JW Solutions tratamos con estricta confidencialidad la información que nos compartes y la protegemos mediante medidas técnicas y organizativas razonables.</p>
+                    <p data-lang="en">At JW Solutions we treat the information you share with us as strictly confidential and protect it through reasonable technical and organizational measures.</p>
+                    <h3 data-lang="es">No venta de datos</h3>
+                    <h3 data-lang="en">No sale of data</h3>
+                    <p data-lang="es">No vendemos, alquilamos ni cedemos tus datos personales a terceros con fines comerciales o publicitarios.</p>
+                    <p data-lang="en">We do not sell, rent, or transfer your personal data to third parties for commercial or advertising purposes.</p>
+                    <h3 data-lang="es">Uso exclusivo de los formularios</h3>
+                    <h3 data-lang="en">Forms used only for business contact</h3>
+                    <p data-lang="es">Los datos enviados mediante los formularios de contacto y suscripción (nombre, email, empresa y mensaje) se utilizan únicamente para responder tu consulta comercial y, en el caso del boletín, para enviarte las comunicaciones que solicitaste. Los envíos se reciben a través del proveedor Formspree.</p>
+                    <p data-lang="en">Data submitted through the contact and subscription forms (name, email, company, and message) is used solely to answer your business inquiry and, for the newsletter, to send the communications you requested. Submissions are received through the provider Formspree.</p>
+                    <h3 data-lang="es">Tus derechos</h3>
+                    <h3 data-lang="en">Your rights</h3>
+                    <p data-lang="es">Puedes solicitar el acceso, la rectificación o la eliminación de tus datos escribiendo a <a href="mailto:contact@jw-solutions.com">contact@jw-solutions.com</a>.</p>
+                    <p data-lang="en">You may request access to, correction of, or deletion of your data by writing to <a href="mailto:contact@jw-solutions.com">contact@jw-solutions.com</a>.</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn--primary" data-modal-close data-lang="es">Cerrar</button>
+                <button type="button" class="btn btn--primary" data-modal-close data-lang="en">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal-terms" hidden>
+        <div class="modal-dialog" id="dialog-terms" role="dialog" aria-modal="true" aria-labelledby="dialog-terms-title" tabindex="-1">
+            <button type="button" class="modal-x" data-modal-close aria-label="Cerrar"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+            <div class="modal-content">
+                    <h2 class="modal-title" id="dialog-terms-title" data-lang="es">Términos de Servicio</h2>
+                    <h2 class="modal-title" data-lang="en">Terms of Service</h2>
+                    <p class="modal-updated" data-lang="es">Resumen informativo · Última actualización: octubre de 2026</p>
+                    <p class="modal-updated" data-lang="en">Informational summary · Last updated: October 2026</p>
+                    <h3 data-lang="es">Propiedad intelectual</h3>
+                    <h3 data-lang="en">Intellectual property</h3>
+                    <p data-lang="es">Los textos, diseños, marcas, logotipos, código y demás contenidos de este sitio pertenecen a JW Solutions o se emplean con autorización, y están protegidos por la normativa de propiedad intelectual. Queda prohibida su reproducción o distribución sin autorización escrita.</p>
+                    <p data-lang="en">The texts, designs, trademarks, logos, code, and other content of this site belong to JW Solutions or are used with permission, and are protected by intellectual property law. Reproduction or distribution without written authorization is prohibited.</p>
+                    <h3 data-lang="es">Condiciones de uso</h3>
+                    <h3 data-lang="en">Terms of use</h3>
+                    <p data-lang="es">El sitio se ofrece con fines informativos y comerciales. Te comprometes a usarlo de forma lícita, sin intentar vulnerar su seguridad ni interferir con su funcionamiento.</p>
+                    <p data-lang="en">This site is provided for informational and commercial purposes. You agree to use it lawfully and not to attempt to breach its security or interfere with its operation.</p>
+                    <h3 data-lang="es">Aplicaciones de demostración y enlaces externos</h3>
+                    <h3 data-lang="en">Demo applications and external links</h3>
+                    <p data-lang="es">Las aplicaciones enlazadas en el portafolio se ofrecen con fines de demostración, tal cual están, y no constituyen asesoría financiera, actuarial ni legal. No somos responsables del contenido de sitios de terceros.</p>
+                    <p data-lang="en">The applications linked in the portfolio are provided for demonstration purposes, as is, and do not constitute financial, actuarial, or legal advice. We are not responsible for the content of third-party sites.</p>
+                    <h3 data-lang="es">Modificaciones y contacto</h3>
+                    <h3 data-lang="en">Changes and contact</h3>
+                    <p data-lang="es">Podemos actualizar estos términos; el uso continuado del sitio implica su aceptación. Consultas: <a href="mailto:contact@jw-solutions.com">contact@jw-solutions.com</a>.</p>
+                    <p data-lang="en">We may update these terms; continued use of the site implies acceptance. Questions: <a href="mailto:contact@jw-solutions.com">contact@jw-solutions.com</a>.</p>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn--primary" data-modal-close data-lang="es">Cerrar</button>
+                <button type="button" class="btn btn--primary" data-modal-close data-lang="en">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal-cookies" hidden>
+        <div class="modal-dialog" id="dialog-cookies" role="dialog" aria-modal="true" aria-labelledby="dialog-cookies-title" tabindex="-1">
+            <button type="button" class="modal-x" data-modal-close aria-label="Cerrar"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+            <div class="modal-content">
+                    <h2 class="modal-title" id="dialog-cookies-title" data-lang="es">Política de Cookies</h2>
+                    <h2 class="modal-title" data-lang="en">Cookie Policy</h2>
+                    <p class="modal-updated" data-lang="es">Resumen informativo · Última actualización: octubre de 2026</p>
+                    <p class="modal-updated" data-lang="en">Informational summary · Last updated: October 2026</p>
+                    <h3 data-lang="es">Cookies técnicas esenciales</h3>
+                    <h3 data-lang="en">Essential technical cookies</h3>
+                    <p data-lang="es">Guardamos localmente tu preferencia de idioma (<code>jw_lang</code>) y tu decisión sobre cookies (<code>jw_cookie_consent</code>). Son necesarias para el funcionamiento del sitio y no requieren consentimiento.</p>
+                    <p data-lang="en">We locally store your language preference (<code>jw_lang</code>) and your cookie choice (<code>jw_cookie_consent</code>). They are necessary for the site to work and do not require consent.</p>
+                    <h3 data-lang="es">Cookies analíticas opcionales</h3>
+                    <h3 data-lang="en">Optional analytics cookies</h3>
+                    <p data-lang="es">Google Analytics 4 (Google LLC) mide el uso del sitio de forma agregada mediante cookies como <code>_ga</code> y <code>_ga_*</code>. Solo se cargan si pulsas «Aceptar»; si rechazas, no se carga ningún script de Google.</p>
+                    <p data-lang="en">Google Analytics 4 (Google LLC) measures site usage in aggregate through cookies such as <code>_ga</code> and <code>_ga_*</code>. They load only if you click “Accept”; if you reject, no Google script is loaded.</p>
+                    <h3 data-lang="es">Gestiona tu elección</h3>
+                    <h3 data-lang="en">Manage your choice</h3>
+                    <p data-lang="es">Puedes aceptar o rechazar en cualquier momento. Al rechazar o revocar, se detiene la medición y se eliminan las cookies analíticas del sitio.</p>
+                    <p data-lang="en">You can accept or reject at any time. When you reject or revoke, measurement stops and the site’s analytics cookies are deleted.</p>
+                    <p class="modal-status" data-consent-status role="status"></p>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn--primary" data-consent="accept" data-lang="es">Aceptar analíticas</button>
+                    <button type="button" class="btn btn--primary" data-consent="accept" data-lang="en">Accept analytics</button>
+                    <button type="button" class="btn btn--secondary" data-consent="reject" data-lang="es">Rechazar / revocar</button>
+                    <button type="button" class="btn btn--secondary" data-consent="reject" data-lang="en">Reject / revoke</button>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn--primary" data-modal-close data-lang="es">Cerrar</button>
+                <button type="button" class="btn btn--primary" data-modal-close data-lang="en">Close</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Barra inferior móvil (Thumb Zone) -->
+    <div class="mobile-cta-bar" id="mobile-cta-bar" role="group" aria-label="Acciones rápidas">
+        <a href="#servicios" class="btn btn--secondary" data-lang="es">Servicios</a>
+        <a href="#servicios" class="btn btn--secondary" data-lang="en">Services</a>
+        <a href="#contacto" class="btn btn--primary" data-lang="es">Diagnóstico gratuito</a>
+        <a href="#contacto" class="btn btn--primary" data-lang="en">Free diagnosis</a>
+    </div>
+
+    <!-- Back to Top -->
+    <button class="back-to-top" id="back-to-top" aria-label="Volver arriba">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="script.js" defer></script>
+</body>
+</html>

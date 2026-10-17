@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, follow">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-zcvYGoFR8VnJrd4A/0RY8XvgC+ZPuMQvU5Np4M4DM+k='; img-src 'self'; base-uri 'none'; form-action 'none'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>404 | JW Solutions</title>
+    <meta name="description" content="La página que buscas no existe. / The page you are looking for does not exist.">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <style>
+        :root {
+            --gold: #fbb200;
+            --black: #000;
+            --white: #fff;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background: var(--black);
+            color: var(--white);
+            font-family: 'Poppins', 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            text-align: center;
+        }
+        main { max-width: 560px; }
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1.5rem;
+            border: 2px solid var(--gold);
+            border-radius: 4px;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+        .code {
+            margin: 0;
+            font-size: clamp(4rem, 18vw, 7rem);
+            font-weight: 800;
+            line-height: 1;
+            color: var(--gold);
+        }
+        h1 { margin: 0.5rem 0 1rem; font-size: 1.5rem; }
+        p { margin: 0 0 0.5rem; color: #e0e0e0; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            min-width: 48px;
+            margin-top: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            background: var(--gold);
+            color: var(--black);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .btn:hover { background: #e0a000; }
+        .btn:focus-visible { outline: 3px solid var(--white); outline-offset: 3px; }
+        @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="logo" aria-hidden="true">JW</div>
+        <p class="code" aria-hidden="true">404</p>
+        <h1>Página no encontrada / Page not found</h1>
+        <p>La página que buscas no existe o fue movida.</p>
+        <p>The page you are looking for does not exist or has been moved.</p>
+        <a class="btn" href="/">Volver al inicio / Back to home</a>
+    </main>
+</body>
+</html>
