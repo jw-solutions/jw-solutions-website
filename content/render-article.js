@@ -44,6 +44,7 @@ function render(slug, template) {
     TAG: esc(a.tag),
     TITLE_ES: esc(a.es.title),
     TITLE_EN: esc(a.en.title),
+    TITLE_ES_URL: encodeURIComponent(a.es.title),
     DESC_ES: esc(a.es.description),
     DESC_EN: esc(a.en.description),
     BODY_ES: renderBody(a.es.body),

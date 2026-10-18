@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; form-action 'none'; base-uri 'self'; object-src 'none'; manifest-src 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self'; form-action 'none'; base-uri 'self'; object-src 'none'; manifest-src 'self'">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>5 errores que destruyen la credibilidad de tu dashboard | JW Solutions</title>
     <meta name="description" content="Los 5 errores más comunes en dashboards de Power BI, desde colores sin criterio hasta cifras que no cuadran, y cómo evitarlos.">
@@ -29,6 +29,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&amp;family=Roboto:wght@400;500&amp;display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="/blog/blog.css">
@@ -132,6 +134,30 @@
                     <input type="radio" name="rating" id="star-1" value="1"><label for="star-1"><span class="blog-sr"><span data-lang="es">1 estrella</span><span data-lang="en">1 star</span></span><span aria-hidden="true">★</span></label>
                 </fieldset>
                 <p class="rating-status" id="rating-status" role="status" aria-live="polite"></p>
+            </section>
+
+            <!-- Compartir: enlaces con esquemas oficiales (respaldo sin JS); blog.js los actualiza según idioma y habilita Web Share / copiar -->
+            <section class="share" id="share" aria-labelledby="share-title-es share-title-en">
+                <h2 class="share-title" id="share-title-es" data-lang="es">Compartir artículo</h2>
+                <h2 class="share-title" id="share-title-en" data-lang="en">Share article</h2>
+                <div class="share-actions">
+                    <button type="button" class="share-btn share-btn--primary" id="share-native" hidden>
+                        <i class="fas fa-share-nodes" aria-hidden="true"></i><span data-lang="es">Compartir</span><span data-lang="en">Share</span>
+                    </button>
+                    <a class="share-btn" id="share-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fjw-solutions.com%2Fblog%2F5-errores-dashboard-power-bi%2F" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-linkedin-in" aria-hidden="true"></i><span>LinkedIn</span><span class="blog-sr"><span data-lang="es"> (se abre en una pestaña nueva)</span><span data-lang="en"> (opens in a new tab)</span></span>
+                    </a>
+                    <a class="share-btn" id="share-whatsapp" href="https://api.whatsapp.com/send?text=5%20errores%20que%20destruyen%20la%20credibilidad%20de%20tu%20dashboard%20https%3A%2F%2Fjw-solutions.com%2Fblog%2F5-errores-dashboard-power-bi%2F" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-whatsapp" aria-hidden="true"></i><span>WhatsApp</span><span class="blog-sr"><span data-lang="es"> (se abre en una pestaña nueva)</span><span data-lang="en"> (opens in a new tab)</span></span>
+                    </a>
+                    <a class="share-btn" id="share-x" href="https://twitter.com/intent/tweet?text=5%20errores%20que%20destruyen%20la%20credibilidad%20de%20tu%20dashboard&amp;url=https%3A%2F%2Fjw-solutions.com%2Fblog%2F5-errores-dashboard-power-bi%2F" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-x-twitter" aria-hidden="true"></i><span>X</span><span class="blog-sr"><span data-lang="es"> (se abre en una pestaña nueva)</span><span data-lang="en"> (opens in a new tab)</span></span>
+                    </a>
+                    <button type="button" class="share-btn" id="share-copy">
+                        <i class="fas fa-link" aria-hidden="true"></i><span data-lang="es">Copiar enlace</span><span data-lang="en">Copy link</span>
+                    </button>
+                </div>
+                <p class="share-status" id="share-status" role="status" aria-live="polite"></p>
             </section>
         </article>
     </main>

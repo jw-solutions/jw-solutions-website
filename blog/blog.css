@@ -156,6 +156,83 @@
   font-size: var(--text-base);
 }
 
+/* Compartir artículo */
+.share {
+  text-align: center;
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--jw-border);
+}
+
+.share-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  color: var(--jw-text);
+  margin-bottom: var(--space-4);
+}
+
+.share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--jw-text);
+  background: var(--jw-surface);
+  border: 1px solid var(--jw-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.share-btn:hover {
+  color: var(--jw-gold);
+  border-color: var(--jw-gold);
+  background: var(--jw-surface-hover);
+}
+
+.share-btn:focus-visible {
+  outline: 3px solid var(--jw-gold);
+  outline-offset: 2px;
+}
+
+.share-btn[hidden] { display: none; }
+
+.share-btn--primary {
+  background: var(--jw-gold);
+  border-color: var(--jw-gold);
+  color: #000;
+}
+
+.share-btn--primary:hover {
+  background: #FFD35A;
+  border-color: #FFD35A;
+  color: #000;
+}
+
+.share-status {
+  min-height: 1.5em;
+  margin-top: var(--space-3);
+  color: var(--jw-gold);
+  font-size: var(--text-base);
+}
+
+@media (max-width: 480px) {
+  .share-btn { flex: 1 1 calc(50% - var(--space-3)); }
+  .share-btn--primary { flex-basis: 100%; }
+}
+
 .blog-footer {
   border-top: 1px solid var(--jw-border);
   padding: var(--space-6) var(--container-padding);
@@ -165,5 +242,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rating-stars label { transition: none; }
+  .rating-stars label,
+  .share-btn { transition: none; }
 }

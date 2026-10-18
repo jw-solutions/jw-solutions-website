@@ -38,6 +38,8 @@
       es: function (n) { return 'Gracias por tu calificación: ' + n + ' de 5.'; },
       en: function (n) { return 'Thanks for your rating: ' + n + ' out of 5.'; }
     },
+    copied: { es: '¡Enlace copiado!', en: 'Link copied!' },
+    copyFail: { es: 'No se pudo copiar. Copia la URL desde la barra de direcciones.', en: 'Could not copy. Copy the URL from the address bar.' },
     toggle: { es: 'ES · Cambiar idioma a inglés', en: 'EN · Switch language to Spanish' },
     nav: { es: 'Navegación del blog', en: 'Blog navigation' }
   };
@@ -65,10 +67,86 @@
 
     if (persist) store('set', LANG_KEY, lang);
 
+    updateShareLinks();
+
     var status = document.getElementById('rating-status');
     var rating = document.getElementById('rating');
     if (status && rating) {
       renderRatingStatus(status, parseInt(store('get', RATING_PREFIX + rating.getAttribute('data-slug')), 10) || 0);
+    }
+  }
+
+  function shareData() {
+    var canon = document.querySelector('link[rel="canonical"]');
+    var h1 = document.querySelector('h1[data-lang="' + lang + '"]');
+    return {
+      url: canon ? canon.getAttribute('href') : window.location.origin + window.location.pathname,
+      title: h1 ? h1.textContent : document.title
+    };
+  }
+
+  function updateShareLinks() {
+    var d = shareData();
+    var u = encodeURIComponent(d.url);
+    var t = encodeURIComponent(d.title);
+    var set = function (id, href) {
+      var a = document.getElementById(id);
+      if (a) a.setAttribute('href', href);
+    };
+    set('share-linkedin', 'https://www.linkedin.com/sharing/share-offsite/?url=' + u);
+    set('share-whatsapp', 'https://api.whatsapp.com/send?text=' + t + '%20' + u);
+    set('share-x', 'https://twitter.com/intent/tweet?text=' + t + '&url=' + u);
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text).catch(function () { return legacyCopy(text); });
+    }
+    return legacyCopy(text);
+  }
+
+  function legacyCopy(text) {
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.className = 'blog-sr';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { /* sin soporte */ }
+      document.body.removeChild(ta);
+      if (ok) resolve(); else reject(new Error('copy'));
+    });
+  }
+
+  function initShare() {
+    var status = document.getElementById('share-status');
+    var nativeBtn = document.getElementById('share-native');
+    var copyBtn = document.getElementById('share-copy');
+    var timer;
+    var say = function (msg) {
+      if (!status) return;
+      status.textContent = msg;
+      clearTimeout(timer);
+      timer = setTimeout(function () { status.textContent = ''; }, 3000);
+    };
+
+    if (nativeBtn && navigator.share) {
+      nativeBtn.hidden = false;
+      nativeBtn.addEventListener('click', function () {
+        var d = shareData();
+        navigator.share({ title: d.title, url: d.url }).catch(function () { /* cancelado por el usuario */ });
+      });
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        copyText(shareData().url).then(
+          function () { say(TEXT.copied[lang]); },
+          function () { say(TEXT.copyFail[lang]); }
+        );
+      });
     }
   }
 
@@ -110,5 +188,6 @@
     if (year) year.textContent = String(new Date().getFullYear());
 
     initRating();
+    initShare();
   });
 })();
