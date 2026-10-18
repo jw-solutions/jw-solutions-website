@@ -2741,3 +2741,6 @@ body { color: var(--jw-text); }
 .modal-actions .btn--secondary { color: var(--jw-text); border-color: var(--jw-border); }
 .modal-actions .btn--secondary:hover { color: var(--jw-gold); border-color: var(--jw-gold); }
 .modal-actions a.btn { text-decoration: none; }
+
+/* Selector de idioma: en Windows el emoji de bandera se dibuja como letras ("ES ES"); se muestra solo el código */
+.lang-toggle .lang-flag { display: none; }
