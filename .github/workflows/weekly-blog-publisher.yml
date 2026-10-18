@@ -1,0 +1,85 @@
+name: Weekly Blog Publisher
+
+# Publica cada semana el siguiente borrador con "status": "ready" de content/drafts/.
+# Blue-Green: la verificación (--check) corre ANTES y DESPUÉS de publicar; solo se hace commit/push si pasa.
+# Sin borradores listos el workflow termina en verde sin tocar nada.
+on:
+  schedule:
+    - cron: '0 14 * * 1'   # lunes 14:00 UTC
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Destino del push (preview = rama preview/blog-AAAA-MM-DD para revisar antes de producción)'
+        type: choice
+        options: [main, preview]
+        default: main
+      dry_run:
+        description: 'Solo validar y mostrar qué se publicaría (no escribe ni sube nada)'
+        type: boolean
+        default: false
+      ping:
+        description: 'Notificar el sitemap a Google (endpoint retirado por Google; informativo)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weekly-blog-publisher
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verificar repositorio (antes)
+        run: node content/publish.js --check
+
+      - name: Dry-run
+        if: ${{ inputs.dry_run }}
+        run: node content/publish.js --dry-run
+
+      - name: Publicar borrador listo
+        id: publish
+        if: ${{ !inputs.dry_run }}
+        run: node content/publish.js ${{ inputs.ping && '--ping' || '' }}
+
+      - name: Verificar repositorio (después)
+        if: ${{ !inputs.dry_run && steps.publish.outputs.count != '0' }}
+        run: node content/publish.js --check
+
+      - name: Commit y push
+        if: ${{ !inputs.dry_run && steps.publish.outputs.count != '0' }}
+        env:
+          TARGET: ${{ inputs.target || 'main' }}
+          PUBLISHED: ${{ steps.publish.outputs.published }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ "$TARGET" = "preview" ]; then
+            BRANCH="preview/blog-$(date -u +%F)"
+            git switch -c "$BRANCH"
+          else
+            BRANCH="main"
+          fi
+          git add blog content sitemap.xml
+          git commit -m "chore(blog): publicar $PUBLISHED (automático)"
+          if [ "$BRANCH" = "main" ]; then
+            git pull --rebase origin main
+          fi
+          git push origin "$BRANCH"
+          echo "Publicado en $BRANCH: $PUBLISHED" >> "$GITHUB_STEP_SUMMARY"

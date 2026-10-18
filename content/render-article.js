@@ -2,7 +2,7 @@
 /* Renderiza blog/<slug>/index.html desde content/articles/<slug>.json y la plantilla compartida.
    Uso:  node content/render-article.js <slug> [<slug> ...]
          node content/render-article.js --all
-   También valida el límite de destacados definido en content/config.json. */
+   También se usa como módulo desde content/publish.js. */
 'use strict';
 
 const fs = require('fs');
@@ -34,8 +34,7 @@ function renderBody(sections) {
   }).join('\n');
 }
 
-function render(slug, template) {
-  const a = JSON.parse(read(`content/articles/${slug}.json`));
+function renderHtml(slug, a, template) {
   const map = {
     SLUG: slug,
     DATE: a.date,
@@ -50,10 +49,15 @@ function render(slug, template) {
     BODY_ES: renderBody(a.es.body),
     BODY_EN: renderBody(a.en.body)
   };
-  const html = template.replace(/\{\{([A-Z_]+)\}\}/g, (_, k) => {
+  return template.replace(/\{\{([A-Z_]+)\}\}/g, (_, k) => {
     if (!(k in map)) throw new Error(`Marcador desconocido: ${k}`);
     return map[k];
   });
+}
+
+function render(slug, template) {
+  const a = JSON.parse(read(`content/articles/${slug}.json`));
+  const html = renderHtml(slug, a, template);
   const outDir = path.join(ROOT, 'blog', slug);
   fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(path.join(outDir, 'index.html'), html, 'utf8');
@@ -70,14 +74,18 @@ function checkFeaturedLimit() {
   }
 }
 
-const args = process.argv.slice(2);
-if (!args.length) {
-  console.error('Uso: node content/render-article.js <slug> [...] | --all');
-  process.exit(2);
+module.exports = { ROOT, renderHtml, render, formatDate };
+
+if (require.main === module) {
+  const args = process.argv.slice(2);
+  if (!args.length) {
+    console.error('Uso: node content/render-article.js <slug> [...] | --all');
+    process.exit(2);
+  }
+  const template = read('content/templates/article.template.html');
+  const slugs = args[0] === '--all'
+    ? fs.readdirSync(path.join(ROOT, 'content', 'articles')).filter((f) => f.endsWith('.json')).map((f) => f.slice(0, -5))
+    : args;
+  slugs.forEach((s) => render(s, template));
+  checkFeaturedLimit();
 }
-const template = read('content/templates/article.template.html');
-const slugs = args[0] === '--all'
-  ? fs.readdirSync(path.join(ROOT, 'content', 'articles')).filter((f) => f.endsWith('.json')).map((f) => f.slice(0, -5))
-  : args;
-slugs.forEach((s) => render(s, template));
-checkFeaturedLimit();
