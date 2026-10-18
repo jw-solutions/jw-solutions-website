@@ -1083,46 +1083,82 @@
         <div class="modal-dialog modal-dialog--fx" id="dialog-tool-fx" role="dialog" aria-modal="true" aria-labelledby="dialog-tool-fx-title" tabindex="-1">
             <button type="button" class="modal-x" data-modal-close aria-label="Cerrar"><i class="fas fa-xmark" aria-hidden="true"></i></button>
             <div class="modal-content" id="fx-calc" data-api-url="https://ve.dolarapi.com/v1">
-                <h2 class="modal-title" id="dialog-tool-fx-title" data-lang="es">Calculadora de Cambio Monetario</h2>
-                <h2 class="modal-title" data-lang="en">Currency Exchange Calculator</h2>
-                <p class="fx-subtitle" data-lang="es">Convierte entre VES, USD y EUR con tasas de referencia.</p>
-                <p class="fx-subtitle" data-lang="en">Convert between VES, USD and EUR using reference rates.</p>
+                <header class="fx-header">
+                    <div>
+                        <h2 class="modal-title" id="dialog-tool-fx-title" data-lang="es">Monitor de tasas</h2>
+                        <h2 class="modal-title" data-lang="en">Rates monitor</h2>
+                        <p class="fx-subtitle" data-lang="es">Calculadora de cambio · Venezuela</p>
+                        <p class="fx-subtitle" data-lang="en">Currency calculator · Venezuela</p>
+                    </div>
+                    <div class="fx-status" id="fx-status" data-state="loading" role="status" aria-live="polite">
+                        <span class="fx-status-dot" aria-hidden="true"></span>
+                        <span id="fx-status-text">…</span>
+                    </div>
+                </header>
 
-                <div class="fx-status" id="fx-status" data-state="loading" role="status" aria-live="polite">
-                    <span class="fx-status-dot" aria-hidden="true"></span>
-                    <span id="fx-status-text">…</span>
+                <section class="fx-panel" aria-labelledby="fx-quick-title">
+                    <div class="fx-section-head">
+                        <p class="fx-eyebrow" id="fx-quick-title"><span data-lang="es">Calculadora rápida</span><span data-lang="en">Quick calculator</span></p>
+                        <span class="fx-live-note"><span data-lang="es">Conversión por referencia</span><span data-lang="en">Reference conversion</span></span>
+                    </div>
+                    <div class="fx-input-row">
+                        <div class="fx-field">
+                            <label class="fx-label" for="fx-amount" data-lang="es">Monto</label>
+                            <label class="fx-label" for="fx-amount" data-lang="en">Amount</label>
+                            <input id="fx-amount" class="fx-input" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1" placeholder="0,00">
+                        </div>
+                        <div class="fx-field">
+                            <label class="fx-label" for="fx-mode" data-lang="es">Conversión</label>
+                            <label class="fx-label" for="fx-mode" data-lang="en">Conversion</label>
+                            <select id="fx-mode" class="fx-input">
+                                <option value="USD">USD → VES</option>
+                                <option value="VES">VES → USD</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="fx-rates-head">
+                    <div>
+                        <p class="fx-eyebrow"><span data-lang="es">Referencias disponibles</span><span data-lang="en">Available references</span></p>
+                        <h3 class="fx-rates-title"><span data-lang="es">Tasas de cambio</span><span data-lang="en">Exchange rates</span></h3>
+                    </div>
+                    <div class="fx-updated" id="fx-updated"></div>
                 </div>
 
-                <div class="fx-input-row">
-                    <div class="fx-field">
-                        <label class="fx-label" for="fx-amount" data-lang="es">Monto</label>
-                        <label class="fx-label" for="fx-amount" data-lang="en">Amount</label>
-                        <input id="fx-amount" class="fx-input" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1" placeholder="0,00">
-                    </div>
-                    <div class="fx-field">
-                        <label class="fx-label" for="fx-mode" data-lang="es">Conversión</label>
-                        <label class="fx-label" for="fx-mode" data-lang="en">Conversion</label>
-                        <select id="fx-mode" class="fx-input">
-                            <option value="USD">USD → VES</option>
-                            <option value="EUR">EUR → VES</option>
-                            <option value="VES-USD">VES → USD</option>
-                            <option value="VES-EUR">VES → EUR</option>
-                        </select>
-                    </div>
-                </div>
-
+                <p class="fx-amount-line" id="fx-amount-line" aria-live="polite"></p>
                 <div class="fx-grid" id="fx-grid" aria-live="polite"></div>
 
-                <p class="fx-disclaimer" data-lang="es">Tasas referenciales (BCV y mercado paralelo) obtenidas de una fuente pública; pueden variar. Verifica el valor antes de operar.</p>
-                <p class="fx-disclaimer" data-lang="en">Reference rates (BCV and parallel market) from a public source; they may vary. Verify the value before transacting.</p>
+                <div class="fx-actions">
+                    <p class="fx-disclaimer" data-lang="es">Las tasas son referencias informativas y pueden variar según la fuente, la hora y las condiciones de operación. Verifica el valor con el proveedor correspondiente antes de realizar una transacción.</p>
+                    <p class="fx-disclaimer" data-lang="en">Rates are informational references and may vary by source, time and operating conditions. Verify the value with the relevant provider before transacting.</p>
+                    <button type="button" class="btn btn--primary" id="fx-share-open">
+                        <i class="fas fa-share-nodes" aria-hidden="true"></i>
+                        <span data-lang="es">Compartir tasas</span><span data-lang="en">Share rates</span>
+                    </button>
+                </div>
+                <p class="fx-footer"><span data-lang="es">Información de referencia</span><span data-lang="en">Reference information</span> · <strong>JW-SOLUTIONS</strong></p>
             </div>
-            <div class="modal-actions">
-                <button type="button" class="btn btn--primary" id="fx-copy">
-                    <span data-lang="es">Copiar resumen</span>
-                    <span data-lang="en">Copy summary</span>
-                </button>
-                <button type="button" class="btn btn--secondary" data-modal-close data-lang="es">Cerrar</button>
-                <button type="button" class="btn btn--secondary" data-modal-close data-lang="en">Close</button>
+
+            <div class="fx-share" id="fx-share-modal" role="group" aria-label="Vista previa para compartir" hidden>
+                <div class="fx-share-dialog">
+                    <div class="fx-share-head">
+                        <h3 class="fx-share-title"><span data-lang="es">Vista previa para compartir</span><span data-lang="en">Share preview</span></h3>
+                        <button type="button" class="fx-share-close" id="fx-share-close" aria-label="Cerrar vista previa"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+                    </div>
+                    <fieldset class="fx-picker" id="fx-picker">
+                        <legend><span data-lang="es">Selecciona las tasas a incluir en la tarjeta:</span><span data-lang="en">Select the rates to include in the card:</span></legend>
+                        <div class="fx-picker-list" id="fx-picker-list"></div>
+                    </fieldset>
+                    <p class="fx-warn" id="fx-warn" role="alert" hidden></p>
+                    <div class="fx-preview-wrap"><img id="fx-preview" class="fx-preview" alt="Tarjeta gráfica con el resumen de las tasas de cambio"></div>
+                    <div class="fx-share-actions">
+                        <button type="button" class="btn btn--primary" id="fx-share-native"><span data-lang="es">Compartir imagen</span><span data-lang="en">Share image</span></button>
+                        <button type="button" class="btn btn--secondary" id="fx-download"><span data-lang="es">Descargar PNG</span><span data-lang="en">Download PNG</span></button>
+                        <button type="button" class="btn btn--secondary fx-wide" id="fx-copy"><span data-lang="es">Copiar resumen de tasas</span><span data-lang="en">Copy rates summary</span></button>
+                    </div>
+                    <p class="fx-note" id="fx-note" aria-live="polite"></p>
+                </div>
             </div>
         </div>
     </div>
