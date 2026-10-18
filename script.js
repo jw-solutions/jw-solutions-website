@@ -73,6 +73,13 @@
     }
 
     function getInitialLang() {
+      // Prioridad 1: parámetro ?lang=xx de la URL (coincide con hreflang del <head>)
+      try {
+        const urlLang = (new URLSearchParams(window.location.search).get('lang') || '').toLowerCase();
+        if (CONFIG.lang.supported.includes(urlLang)) return urlLang;
+      } catch (e) {
+        // URLSearchParams no disponible: se ignora el parámetro
+      }
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved && CONFIG.lang.supported.includes(saved)) return saved;
