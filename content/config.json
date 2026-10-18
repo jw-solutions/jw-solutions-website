@@ -1,0 +1,20 @@
+{
+  "version": "1.2.0",
+  "featured": {
+    "max": 12,
+    "order": "date_desc",
+    "overflow": "archive_oldest"
+  },
+  "lifecycle": {
+    "states": ["draft", "published", "archived"],
+    "draftsDir": "content/drafts",
+    "sourcesDir": "content/articles",
+    "manifest": "content/articles.json",
+    "rules": [
+      "Un borrador (draft) vive en content/drafts/ y nunca se publica ni entra al sitemap.",
+      "Un artículo published con featured=true aparece en la portada, del más nuevo al más antiguo, hasta featured.max.",
+      "Al superar featured.max, el más antiguo pasa a archived: sale de la portada pero conserva su URL y su entrada en el sitemap.",
+      "Un artículo archived no se borra; solo se elimina por decisión expresa de J."
+    ]
+  }
+}

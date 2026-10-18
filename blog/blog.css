@@ -1,0 +1,169 @@
+/* JW SOLUTIONS — BLOG.CSS v1.2.0
+   Estilos de las páginas /blog/*. Reutiliza variables y tokens de styles.css. */
+
+.blog-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.blog-header {
+  border-bottom: 1px solid var(--jw-border);
+  background: var(--jw-bg);
+}
+
+.blog-header-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-4) var(--container-padding);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.blog-nav a {
+  color: var(--jw-gold);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.blog-nav a:hover { color: #FFD35A; }
+
+.article-main {
+  padding: var(--space-12) var(--container-padding) var(--space-16);
+}
+
+.article {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.article-head { margin-bottom: var(--space-8); }
+
+.article-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 1.25;
+  color: var(--jw-text);
+  margin-top: var(--space-4);
+}
+
+.article-body h2 {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  color: var(--jw-text);
+  margin: var(--space-8) 0 var(--space-3);
+}
+
+.article-body p,
+.article-body li {
+  color: var(--jw-muted);
+  font-size: var(--text-lg);
+  line-height: 1.8;
+}
+
+.article-body p { margin-bottom: var(--space-4); }
+
+.article-body ul,
+.article-body ol {
+  margin: 0 0 var(--space-4) var(--space-6);
+}
+
+.article-body ul { list-style: disc; }
+.article-body ol { list-style: decimal; }
+.article-body li { margin-bottom: var(--space-2); }
+.article-body a { color: var(--jw-gold); text-decoration: underline; }
+
+.article-cta {
+  margin: var(--space-12) 0 var(--space-8);
+  padding: var(--space-6);
+  background: var(--jw-surface);
+  border: 1px solid var(--jw-border);
+  border-radius: var(--jw-radius);
+  text-align: center;
+}
+
+.article-cta p {
+  color: var(--jw-text);
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-4);
+}
+
+/* Calificación por estrellas: radios en orden inverso para colorear con el selector ~ */
+.rating {
+  text-align: center;
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--jw-border);
+}
+
+.rating-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  color: var(--jw-text);
+  margin-bottom: var(--space-3);
+}
+
+.rating-stars {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  gap: var(--space-1);
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.rating-stars input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.rating-stars label {
+  font-size: 2.25rem;
+  line-height: 1;
+  padding: var(--space-1);
+  color: #7D8896;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.rating-stars label:hover,
+.rating-stars label:hover ~ label,
+.rating-stars input:checked ~ label {
+  color: var(--jw-gold);
+}
+
+.rating-stars input:focus-visible + label {
+  outline: 3px solid var(--jw-gold);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.rating-status {
+  min-height: 1.5em;
+  margin-top: var(--space-3);
+  color: var(--jw-muted);
+  font-size: var(--text-base);
+}
+
+.blog-footer {
+  border-top: 1px solid var(--jw-border);
+  padding: var(--space-6) var(--container-padding);
+  text-align: center;
+  color: var(--jw-muted);
+  font-size: var(--text-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rating-stars label { transition: none; }
+}

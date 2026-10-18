@@ -1024,6 +1024,80 @@
     }
   }
 
+  /* ─────────────────────────────────────────────────────────────────────────────
+     ARTÍCULOS DESTACADOS (portada)
+     Regenera #featured-articles desde content/articles.json respetando featured.max
+     de content/config.json. Si el fetch falla se conserva el HTML estático.
+     ───────────────────────────────────────────────────────────────────────────── */
+  const Featured = (() => {
+    const DEFAULT_MAX = 12;
+
+    function el(tag, className, text, attrs) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text) node.textContent = text;
+      if (attrs) Object.keys(attrs).forEach(k => node.setAttribute(k, attrs[k]));
+      return node;
+    }
+
+    function formatDate(iso, lang) {
+      const [y, m, d] = iso.split('-').map(Number);
+      const months = {
+        es: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      };
+      return `${String(d).padStart(2, '0')} ${months[lang][m - 1]} ${y}`;
+    }
+
+    function buildCard(article) {
+      const card = el('article', 'blog-card');
+      const meta = el('div', 'blog-meta');
+      const time = el('time', 'blog-date', formatDate(article.date, 'es'), { datetime: article.date });
+      meta.append(time, el('span', 'blog-tag', article.tag));
+      card.append(meta);
+
+      const href = `blog/${encodeURIComponent(article.slug)}/`;
+      ['es', 'en'].forEach(lang => {
+        card.append(el('h3', 'blog-title', article[lang].title, { 'data-lang': lang }));
+      });
+      ['es', 'en'].forEach(lang => {
+        card.append(el('p', 'blog-excerpt', article[lang].excerpt, { 'data-lang': lang }));
+      });
+      [['es', 'Leer artículo →', 'Leer artículo: '], ['en', 'Read article →', 'Read article: ']].forEach(([lang, linkText, labelPrefix]) => {
+        card.append(el('a', 'blog-link', linkText, {
+          href,
+          'data-lang': lang,
+          'aria-label': labelPrefix + article[lang].title
+        }));
+      });
+      return card;
+    }
+
+    function init() {
+      const grid = $('#featured-articles');
+      if (!grid || !window.fetch) return;
+
+      Promise.all([
+        fetch(grid.dataset.config, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : {})).catch(() => ({})),
+        fetch(grid.dataset.manifest, { cache: 'no-cache' }).then(r => (r.ok ? r.json() : null))
+      ]).then(([config, manifest]) => {
+        if (!manifest || !Array.isArray(manifest.articles)) return;
+        const max = Number(config && config.featured && config.featured.max) || DEFAULT_MAX;
+        const items = manifest.articles
+          .filter(a => a.status === 'published' && a.featured)
+          .sort((a, b) => b.date.localeCompare(a.date))
+          .slice(0, max);
+        if (items.length === 0) return;
+
+        $$('.blog-card', grid).forEach(card => card.remove());
+        items.forEach(a => grid.append(buildCard(a)));
+        LangSwitcher.apply(LangSwitcher.getCurrent());
+      }).catch(() => { /* se conserva el contenido estático */ });
+    }
+
+    return { init };
+  })();
+
   function hideDecorativeIcons() {
     $$('i.fas, i.fab').forEach(icon => icon.setAttribute('aria-hidden', 'true'));
   }
@@ -1035,7 +1109,7 @@
     const modules = [
       LangSwitcher, MobileMenu, HeaderScroll, Particles,
       FAQAccordion, ScrollReveal, BackToTop, Forms, SmoothScroll, LazyImages,
-      CurrentYear, Analytics, Consent, LegalModals, MobileCTABar, PWA
+      CurrentYear, Analytics, Consent, LegalModals, MobileCTABar, PWA, Featured
     ];
 
     // Cada módulo se aísla: un fallo no impide inicializar los demás
