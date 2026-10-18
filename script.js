@@ -986,6 +986,160 @@
   })();
 
   /* ─────────────────────────────────────────────────────────────────────────────
+     16b. CALCULADORA DE CAMBIO MONETARIO (VES / USD / EUR)
+     ───────────────────────────────────────────────────────────────────────────── */
+  const FxCalculator = (() => {
+    const DEMO = [
+      { cur: 'USD', id: 'bcv', value: 880.12 }, { cur: 'USD', id: 'par', value: 997.95 },
+      { cur: 'EUR', id: 'bcv', value: 985.73 }, { cur: 'EUR', id: 'par', value: 1119.96 }
+    ];
+    const NAMES = {
+      bcv: { es: 'BCV · Oficial', en: 'BCV · Official' },
+      par: { es: 'Paralelo', en: 'Parallel' }
+    };
+    const TXT = {
+      es: { live: 'Tasas en vivo', demo: 'Datos DEMO (sin conexión)', loading: 'Consultando tasas…', enter: 'Ingresa un monto', per: 'VES por 1', upd: 'Actualizado', copied: 'Resumen copiado', copyFail: 'No se pudo copiar' },
+      en: { live: 'Live rates', demo: 'DEMO data (offline)', loading: 'Fetching rates…', enter: 'Enter an amount', per: 'VES per 1', upd: 'Updated', copied: 'Summary copied', copyFail: 'Could not copy' }
+    };
+    const fmt = new Intl.NumberFormat('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    let root, amount, mode, grid, statusEl, statusText, copyBtn;
+    let rates = DEMO.map(r => ({ ...r, updated: null }));
+    let state = 'loading';
+    let started = false;
+
+    const lang = () => (document.documentElement.lang === 'en' ? 'en' : 'es');
+
+    // Acepta coma decimal (es-VE) y punto; si hay ambos, el punto es separador de miles.
+    function parseAmount(raw) {
+      let v = String(raw ?? '').trim().replace(/\s+/g, '').replace(/[^0-9,.]/g, '');
+      if (!v) return null;
+      const comma = v.includes(','), dot = v.includes('.');
+      if (comma && dot) v = v.replace(/\./g, '').replace(',', '.');
+      else if (comma) v = v.replace(',', '.');
+      const n = Number(v);
+      return Number.isFinite(n) && n >= 0 ? n : null;
+    }
+
+    function fmtDate(value) {
+      const d = value ? new Date(value) : null;
+      if (!d || Number.isNaN(d.getTime())) return '';
+      return d.toLocaleDateString(lang() === 'en' ? 'en-US' : 'es-VE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function current() {
+      const m = mode.value;
+      return { toVes: !m.startsWith('VES'), cur: m.startsWith('VES') ? m.split('-')[1] : m };
+    }
+
+    const compute = (value, amt, toVes) => (toVes ? amt * value : amt / value);
+
+    function render() {
+      const L = TXT[lang()];
+      const amt = parseAmount(amount.value);
+      const { toVes, cur } = current();
+      statusEl.dataset.state = state;
+      statusText.textContent = L[state];
+      grid.textContent = '';
+      rates.filter(r => r.cur === cur).forEach((r, i) => {
+        const card = document.createElement('article');
+        card.className = 'fx-card' + (i ? ' fx-card--alt' : '');
+        const name = document.createElement('h3');
+        name.className = 'fx-card-name';
+        name.textContent = NAMES[r.id][lang()];
+        const rate = document.createElement('p');
+        rate.className = 'fx-card-rate';
+        rate.textContent = `${L.per} ${cur}: ${fmt.format(r.value)}`;
+        const res = document.createElement('p');
+        res.className = 'fx-card-result';
+        res.textContent = amt === null ? L.enter : `${fmt.format(compute(r.value, amt, toVes))} ${toVes ? 'VES' : cur}`;
+        card.append(name, rate, res);
+        const d = fmtDate(r.updated);
+        if (d) {
+          const date = document.createElement('p');
+          date.className = 'fx-card-date';
+          date.textContent = `${L.upd}: ${d}`;
+          card.append(date);
+        }
+        grid.append(card);
+      });
+    }
+
+    async function load() {
+      state = 'loading';
+      render();
+      const base = (root.dataset.apiUrl || '').replace(/\/$/, '');
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 9000);
+      try {
+        const get = (p) => fetch(`${base}/${p}`, { headers: { Accept: 'application/json' }, cache: 'no-store', signal: ctrl.signal })
+          .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+        const [usd, eur] = await Promise.all([get('dolares'), get('euros')]);
+        const out = [];
+        [['USD', usd], ['EUR', eur]].forEach(([cur, data]) => {
+          (Array.isArray(data) ? data : []).forEach(it => {
+            const id = it.fuente === 'oficial' ? 'bcv' : it.fuente === 'paralelo' ? 'par' : null;
+            const value = Number(it.promedio);
+            if (id && Number.isFinite(value) && value > 0) out.push({ cur, id, value, updated: it.fechaActualizacion || null });
+          });
+        });
+        if (out.length < 4) throw new Error('incomplete');
+        rates = out;
+        state = 'live';
+      } catch (e) {
+        rates = DEMO.map(r => ({ ...r, updated: null }));
+        state = 'demo';
+      } finally {
+        clearTimeout(timer);
+      }
+      render();
+    }
+
+    function summary() {
+      const amt = parseAmount(amount.value);
+      const { toVes, cur } = current();
+      const lines = ['JW Solutions · ' + (lang() === 'en' ? 'Exchange rates' : 'Tasas de cambio')];
+      rates.filter(r => r.cur === cur).forEach(r => {
+        let line = `${NAMES[r.id][lang()]}: ${fmt.format(r.value)} VES/${cur}`;
+        if (amt !== null) line += ` → ${fmt.format(amt)} ${toVes ? cur : 'VES'} = ${fmt.format(compute(r.value, amt, toVes))} ${toVes ? 'VES' : cur}`;
+        lines.push(line);
+      });
+      if (state === 'demo') lines.push(TXT[lang()].demo);
+      return lines.join('\n');
+    }
+
+    async function copy() {
+      const L = TXT[lang()];
+      let ok = false;
+      try {
+        await navigator.clipboard.writeText(summary());
+        ok = true;
+      } catch (e) { /* sin permiso de portapapeles */ }
+      statusText.textContent = ok ? L.copied : L.copyFail;
+      setTimeout(render, 1800);
+    }
+
+    function init() {
+      root = $('#fx-calc');
+      if (!root) return;
+      amount = $('#fx-amount'); mode = $('#fx-mode'); grid = $('#fx-grid');
+      statusEl = $('#fx-status'); statusText = $('#fx-status-text'); copyBtn = $('#fx-copy');
+      render();
+      // Las tasas se consultan al abrir la modal por primera vez
+      on(document, 'click', (e) => {
+        if (!started && e.target.closest('[data-legal="tool-fx"]')) { started = true; load(); }
+        if (e.target.closest('#lang-toggle')) setTimeout(render, 0);
+      });
+      on(amount, 'input', render);
+      on(amount, 'blur', () => { const v = parseAmount(amount.value); if (v !== null) amount.value = fmt.format(v); });
+      on(amount, 'focus', () => { const v = parseAmount(amount.value); if (v !== null) amount.value = String(v).replace('.', ','); amount.select(); });
+      on(mode, 'change', render);
+      on(copyBtn, 'click', copy);
+    }
+
+    return { init };
+  })();
+
+  /* ─────────────────────────────────────────────────────────────────────────────
      17. BARRA INFERIOR MÓVIL (Thumb Zone)
      ───────────────────────────────────────────────────────────────────────────── */
   const MobileCTABar = (() => {
@@ -1109,7 +1263,7 @@
     const modules = [
       LangSwitcher, MobileMenu, HeaderScroll, Particles,
       FAQAccordion, ScrollReveal, BackToTop, Forms, SmoothScroll, LazyImages,
-      CurrentYear, Analytics, Consent, LegalModals, MobileCTABar, PWA, Featured
+      CurrentYear, Analytics, Consent, LegalModals, FxCalculator, MobileCTABar, PWA, Featured
     ];
 
     // Cada módulo se aísla: un fallo no impide inicializar los demás

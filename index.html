@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Seguridad: CSP vía meta (GitHub Pages no permite cabeceras HTTP). Limitaciones en README_DEPLOY.md -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-z2fS2cLOR9t6d0Xez4SOVBdI1uewf3tkgIoxx1mUEXU=' https://*.googletagmanager.com; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://formspree.io https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src https://*.streamlit.app; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; manifest-src 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-z2fS2cLOR9t6d0Xez4SOVBdI1uewf3tkgIoxx1mUEXU=' https://*.googletagmanager.com; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://ve.dolarapi.com https://formspree.io https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src https://*.streamlit.app; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; manifest-src 'self'">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>JW Solutions | Transforma tus datos en decisiones estratégicas</title>
     <meta name="description" content="JW Solutions: Automatización de procesos, análisis de datos, dashboards Power BI, SEO local y consultoría estratégica para empresas globales.">
@@ -689,12 +689,12 @@
                         <p class="tool-desc" data-lang="es">Monitor de cotización VES / USD / EUR para convertir y comparar tasas en un solo lugar.</p>
                         <p class="tool-desc" data-lang="en">VES / USD / EUR rate monitor to convert and compare exchange rates in one place.</p>
                         <button type="button" class="tool-link tool-link--btn" data-legal="tool-fx" aria-haspopup="dialog">
-                            <span data-lang="es">Ver detalles</span>
-                            <span data-lang="en">View details</span>
-                            <i class="fas fa-circle-info" aria-hidden="true"></i>
+                            <span data-lang="es">Usar calculadora</span>
+                            <span data-lang="en">Use calculator</span>
+                            <i class="fas fa-calculator" aria-hidden="true"></i>
                         </button>
-                        <span class="tool-badge" data-lang="es">Próximamente</span>
-                        <span class="tool-badge" data-lang="en">Soon</span>
+                        <span class="tool-badge" data-lang="es">Gratuito</span>
+                        <span class="tool-badge" data-lang="en">Free</span>
                     </article>
                     <article class="tool-card">
                         <div class="tool-logo" aria-hidden="true"><i class="fas fa-code"></i></div>
@@ -1080,25 +1080,47 @@
 
 
     <div class="modal" id="modal-tool-fx" hidden>
-        <div class="modal-dialog" id="dialog-tool-fx" role="dialog" aria-modal="true" aria-labelledby="dialog-tool-fx-title" tabindex="-1">
+        <div class="modal-dialog modal-dialog--fx" id="dialog-tool-fx" role="dialog" aria-modal="true" aria-labelledby="dialog-tool-fx-title" tabindex="-1">
             <button type="button" class="modal-x" data-modal-close aria-label="Cerrar"><i class="fas fa-xmark" aria-hidden="true"></i></button>
-            <div class="modal-content">
-                    <h2 class="modal-title" id="dialog-tool-fx-title" data-lang="es">Calculadora de Cambio Monetario</h2>
-                    <h2 class="modal-title" data-lang="en">Currency Exchange Calculator</h2>
-                    <p class="modal-updated" data-lang="es">Estado: en desarrollo · Beta privada por invitación</p>
-                    <p class="modal-updated" data-lang="en">Status: in development · Private beta by invitation</p>
-                    <p data-lang="es">Monitor de cotización VES / USD / EUR pensado para quienes operan entre monedas y necesitan referencias claras y rápidas.</p>
-                    <p data-lang="en">VES / USD / EUR rate monitor built for people who operate across currencies and need clear, fast references.</p>
-                    <h3 data-lang="es">Qué incluirá</h3>
-                    <h3 data-lang="en">What it will include</h3>
-                    <p data-lang="es">Conversión bidireccional, comparación de tasas y consulta histórica reciente. Solicita acceso para probarla antes del lanzamiento público.</p>
-                    <p data-lang="en">Two-way conversion, rate comparison, and recent history lookup. Request access to try it before the public launch.</p>
+            <div class="modal-content" id="fx-calc" data-api-url="https://ve.dolarapi.com/v1">
+                <h2 class="modal-title" id="dialog-tool-fx-title" data-lang="es">Calculadora de Cambio Monetario</h2>
+                <h2 class="modal-title" data-lang="en">Currency Exchange Calculator</h2>
+                <p class="fx-subtitle" data-lang="es">Convierte entre VES, USD y EUR con tasas de referencia.</p>
+                <p class="fx-subtitle" data-lang="en">Convert between VES, USD and EUR using reference rates.</p>
+
+                <div class="fx-status" id="fx-status" data-state="loading" role="status" aria-live="polite">
+                    <span class="fx-status-dot" aria-hidden="true"></span>
+                    <span id="fx-status-text">…</span>
+                </div>
+
+                <div class="fx-input-row">
+                    <div class="fx-field">
+                        <label class="fx-label" for="fx-amount" data-lang="es">Monto</label>
+                        <label class="fx-label" for="fx-amount" data-lang="en">Amount</label>
+                        <input id="fx-amount" class="fx-input" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="1" placeholder="0,00">
+                    </div>
+                    <div class="fx-field">
+                        <label class="fx-label" for="fx-mode" data-lang="es">Conversión</label>
+                        <label class="fx-label" for="fx-mode" data-lang="en">Conversion</label>
+                        <select id="fx-mode" class="fx-input">
+                            <option value="USD">USD → VES</option>
+                            <option value="EUR">EUR → VES</option>
+                            <option value="VES-USD">VES → USD</option>
+                            <option value="VES-EUR">VES → EUR</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="fx-grid" id="fx-grid" aria-live="polite"></div>
+
+                <p class="fx-disclaimer" data-lang="es">Tasas referenciales (BCV y mercado paralelo) obtenidas de una fuente pública; pueden variar. Verifica el valor antes de operar.</p>
+                <p class="fx-disclaimer" data-lang="en">Reference rates (BCV and parallel market) from a public source; they may vary. Verify the value before transacting.</p>
             </div>
             <div class="modal-actions">
-                <a href="#contacto" class="btn btn--primary" data-modal-close>
-                    <span data-lang="es">Solicitar acceso a la Beta</span>
-                    <span data-lang="en">Request Beta access</span>
-                </a>
+                <button type="button" class="btn btn--primary" id="fx-copy">
+                    <span data-lang="es">Copiar resumen</span>
+                    <span data-lang="en">Copy summary</span>
+                </button>
                 <button type="button" class="btn btn--secondary" data-modal-close data-lang="es">Cerrar</button>
                 <button type="button" class="btn btn--secondary" data-modal-close data-lang="en">Close</button>
             </div>
