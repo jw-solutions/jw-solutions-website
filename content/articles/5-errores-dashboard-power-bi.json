@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-12",
+  "tag": "Power BI",
+  "es": {
+    "title": "5 errores que destruyen la credibilidad de tu dashboard",
+    "description": "Los 5 errores más comunes en dashboards de Power BI, desde colores sin criterio hasta cifras que no cuadran, y cómo evitarlos.",
+    "body": [
+      { "p": [
+        "Un dashboard solo influye en decisiones si quien lo mira confía en él. Estos cinco errores son los que más rápido erosionan esa confianza, y todos se pueden corregir antes de publicar."
+      ] },
+      { "h": "1. Colores sin significado",
+        "p": ["Usar una paleta distinta en cada visual obliga al lector a reaprender el código de colores en cada página. Define pocos colores, asigna a cada uno un significado fijo y no dependas solo del rojo y el verde: muchas personas no los distinguen."] },
+      { "h": "2. Métricas de vanidad",
+        "p": ["Los totales que solo crecen, como visitas o seguidores, lucen bien pero no llevan a ninguna acción. Cada indicador debería tener una meta, una comparación con el periodo anterior y una decisión asociada."] },
+      { "h": "3. Sobrecarga de visuales",
+        "p": ["Veinte gráficos en una página compiten entre sí y ninguno se lee. Diseña cada página para responder una pregunta concreta, coloca primero lo más importante y mueve el detalle a páginas de profundización."] },
+      { "h": "4. Datos sin contexto",
+        "p": ["Una cifra sin fecha de actualización, sin definición ni comparativo genera dudas. Muestra cuándo se refrescaron los datos, define cada indicador en un texto de apoyo y compáralo contra una meta o un periodo previo."] },
+      { "h": "5. Un modelo que no se ha validado",
+        "p": ["Nada destruye más rápido la credibilidad que un total que no coincide con el reporte de finanzas. Concilia las cifras clave con la fuente original, revisa las relaciones del modelo y prueba las medidas DAX con casos conocidos antes de compartir."] },
+      { "h": "Lista de verificación antes de publicar",
+        "ul": [
+          "¿Cada color tiene un significado fijo y es legible para personas daltónicas?",
+          "¿Cada indicador tiene meta, comparación y una decisión asociada?",
+          "¿Cada página responde una sola pregunta?",
+          "¿Se ve la fecha de actualización y la definición de cada métrica?",
+          "¿Las cifras clave coinciden con la fuente original?"
+        ] }
+    ]
+  },
+  "en": {
+    "title": "5 mistakes that destroy your dashboard credibility",
+    "description": "The 5 most common Power BI dashboard mistakes, from arbitrary colors to numbers that do not add up, and how to avoid them.",
+    "body": [
+      { "p": [
+        "A dashboard only influences decisions if the person looking at it trusts it. These five mistakes erode that trust fastest, and all of them can be fixed before publishing."
+      ] },
+      { "h": "1. Colors without meaning",
+        "p": ["Using a different palette in every visual forces the reader to relearn the color code on each page. Define a few colors, give each a fixed meaning and do not rely only on red and green: many people cannot tell them apart."] },
+      { "h": "2. Vanity metrics",
+        "p": ["Totals that only grow, like visits or followers, look good but lead to no action. Every indicator should have a target, a comparison with the previous period and an associated decision."] },
+      { "h": "3. Visual overload",
+        "p": ["Twenty charts on one page compete with each other and none gets read. Design each page to answer one specific question, put the most important item first and move detail to drill-down pages."] },
+      { "h": "4. Data without context",
+        "p": ["A number with no refresh date, no definition and no comparison raises doubts. Show when the data was refreshed, define each indicator in supporting text and compare it against a target or a previous period."] },
+      { "h": "5. A model that has not been validated",
+        "p": ["Nothing destroys credibility faster than a total that does not match the finance report. Reconcile key figures with the original source, review the model relationships and test DAX measures with known cases before sharing."] },
+      { "h": "Pre-publish checklist",
+        "ul": [
+          "Does every color have a fixed meaning and is it readable for color-blind people?",
+          "Does every indicator have a target, a comparison and an associated decision?",
+          "Does each page answer a single question?",
+          "Are the refresh date and each metric's definition visible?",
+          "Do the key figures match the original source?"
+        ] }
+    ]
+  }
+}

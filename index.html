@@ -836,50 +836,51 @@
                     </div>
                 </div>
 
-                <div class="blog-grid">
-                    <span class="blog-section-tag" data-lang="es">Últimos artículos</span>
-                    <span class="blog-section-tag" data-lang="en">Latest articles</span>
+                <!-- Artículos destacados: el contenido estático es el respaldo SEO/sin JS; script.js (módulo Featured) lo regenera desde content/articles.json respetando featured.max de content/config.json -->
+                <div class="blog-grid" id="featured-articles" data-manifest="content/articles.json" data-config="content/config.json">
+                    <span class="blog-section-tag" data-lang="es">Artículos destacados</span>
+                    <span class="blog-section-tag" data-lang="en">Featured articles</span>
 
                     <!-- Article 1 -->
                     <article class="blog-card">
                         <div class="blog-meta">
-                            <span class="blog-date">12 May 2026</span>
+                            <time class="blog-date" datetime="2026-10-12">12 Oct 2026</time>
                             <span class="blog-tag">Power BI</span>
                         </div>
                         <h3 class="blog-title" data-lang="es">5 errores que destruyen la credibilidad de tu dashboard</h3>
                         <h3 class="blog-title" data-lang="en">5 mistakes that destroy your dashboard credibility</h3>
                         <p class="blog-excerpt" data-lang="es">Desde colores inconsistentes hasta métricas de vanidad. Aprende a construir dashboards que realmente influyen en decisiones ejecutivas.</p>
                         <p class="blog-excerpt" data-lang="en">From inconsistent colors to vanity metrics. Learn to build dashboards that truly influence executive decisions.</p>
-                        <span class="blog-link blog-link--soon" data-lang="es">Próximamente</span>
-                        <span class="blog-link blog-link--soon" data-lang="en">Coming soon</span>
+                        <a class="blog-link" href="blog/5-errores-dashboard-power-bi/" data-lang="es" aria-label="Leer artículo: 5 errores que destruyen la credibilidad de tu dashboard">Leer artículo →</a>
+                        <a class="blog-link" href="blog/5-errores-dashboard-power-bi/" data-lang="en" aria-label="Read article: 5 mistakes that destroy your dashboard credibility">Read article →</a>
                     </article>
 
                     <!-- Article 2 -->
                     <article class="blog-card">
                         <div class="blog-meta">
-                            <span class="blog-date">05 May 2026</span>
+                            <time class="blog-date" datetime="2026-10-05">05 Oct 2026</time>
                             <span class="blog-tag">Automatización</span>
                         </div>
                         <h3 class="blog-title" data-lang="es">n8n vs Zapier: ¿Cuál elegir en 2026?</h3>
                         <h3 class="blog-title" data-lang="en">n8n vs Zapier: Which to choose in 2026?</h3>
-                        <p class="blog-excerpt" data-lang="es">Comparativa técnica y económica de los dos gigantes de la automatización. Incluye casos de uso reales y costos ocultos.</p>
-                        <p class="blog-excerpt" data-lang="en">Technical and economic comparison of the two automation giants. Includes real use cases and hidden costs.</p>
-                        <span class="blog-link blog-link--soon" data-lang="es">Próximamente</span>
-                        <span class="blog-link blog-link--soon" data-lang="en">Coming soon</span>
+                        <p class="blog-excerpt" data-lang="es">Comparativa técnica y económica de los dos gigantes de la automatización. Incluye casos de uso y costos ocultos.</p>
+                        <p class="blog-excerpt" data-lang="en">Technical and economic comparison of the two automation giants. Includes use cases and hidden costs.</p>
+                        <a class="blog-link" href="blog/n8n-vs-zapier-2026/" data-lang="es" aria-label="Leer artículo: n8n vs Zapier: ¿Cuál elegir en 2026?">Leer artículo →</a>
+                        <a class="blog-link" href="blog/n8n-vs-zapier-2026/" data-lang="en" aria-label="Read article: n8n vs Zapier: Which to choose in 2026?">Read article →</a>
                     </article>
 
                     <!-- Article 3 -->
                     <article class="blog-card">
                         <div class="blog-meta">
-                            <span class="blog-date">28 Abr 2026</span>
+                            <time class="blog-date" datetime="2026-09-28">28 Sep 2026</time>
                             <span class="blog-tag">SEO Local</span>
                         </div>
                         <h3 class="blog-title" data-lang="es">Cómo duplicar las llamadas desde Google Maps en 30 días</h3>
                         <h3 class="blog-title" data-lang="en">How to double calls from Google Maps in 30 days</h3>
-                        <p class="blog-excerpt" data-lang="es">Guía paso a paso basada en 15 optimizaciones reales. Desde la descripción hasta las reseñas y las fotos geolocalizadas.</p>
-                        <p class="blog-excerpt" data-lang="en">Step-by-step guide based on 15 real optimizations. From description to reviews and geotagged photos.</p>
-                        <span class="blog-link blog-link--soon" data-lang="es">Próximamente</span>
-                        <span class="blog-link blog-link--soon" data-lang="en">Coming soon</span>
+                        <p class="blog-excerpt" data-lang="es">Plan paso a paso con 15 acciones. Desde la descripción hasta las reseñas y las fotos reales del negocio.</p>
+                        <p class="blog-excerpt" data-lang="en">Step-by-step plan with 15 actions. From the description to reviews and real photos of the business.</p>
+                        <a class="blog-link" href="blog/llamadas-google-maps-30-dias/" data-lang="es" aria-label="Leer artículo: Cómo duplicar las llamadas desde Google Maps en 30 días">Leer artículo →</a>
+                        <a class="blog-link" href="blog/llamadas-google-maps-30-dias/" data-lang="en" aria-label="Read article: How to double calls from Google Maps in 30 days">Read article →</a>
                     </article>
                 </div>
             </div>

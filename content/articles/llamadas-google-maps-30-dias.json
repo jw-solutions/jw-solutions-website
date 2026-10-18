@@ -1,0 +1,84 @@
+{
+  "date": "2026-09-28",
+  "tag": "SEO Local",
+  "es": {
+    "title": "Cómo duplicar las llamadas desde Google Maps en 30 días",
+    "description": "Plan de 30 días con 15 acciones para optimizar tu ficha de Google Business Profile y conseguir más llamadas: categorías, fotos, reseñas y publicaciones.",
+    "body": [
+      { "p": [
+        "Para un negocio local, la ficha de Google Maps suele ser el primer contacto con el cliente. Este plan reúne 15 acciones ordenadas por semana. El resultado depende de tu sector, tu zona y tu competencia, así que no prometemos la misma cifra para todos; medir antes y después te dirá qué funciona."
+      ] },
+      { "h": "Antes de empezar: mide tu punto de partida",
+        "p": ["Durante una semana anota las llamadas, solicitudes de ruta y visitas al sitio web que muestra el panel de rendimiento de tu ficha. Esa será tu línea base."] },
+      { "h": "Semana 1: fundamentos de la ficha",
+        "ul": [
+          "Verifica que nombre, dirección y teléfono sean idénticos en tu web y en los directorios donde apareces.",
+          "Elige la categoría principal más específica y añade solo categorías secundarias relevantes.",
+          "Escribe una descripción clara, sin relleno de palabras clave, que explique qué haces, para quién y dónde.",
+          "Completa horarios, horarios especiales, atributos y el botón de llamada, WhatsApp o web."
+        ] },
+      { "h": "Semana 2: contenido visual",
+        "ul": [
+          "Sube fotos reales de fachada, interior, equipo y trabajos terminados, con buena luz.",
+          "Añade un logotipo y una imagen de portada que identifiquen tu marca de un vistazo.",
+          "Sube un vídeo corto del local o del servicio si te es posible.",
+          "Retira las fotos borrosas o antiguas y nombra los archivos de forma descriptiva."
+        ] },
+      { "h": "Semana 3: reseñas y reputación",
+        "ul": [
+          "Pide reseñas a clientes reales justo después del servicio, con un enlace directo a tu ficha.",
+          "Responde todas las reseñas en menos de 48 horas con un tono profesional.",
+          "Ante una reseña negativa, responde con calma y ofrece resolverlo por un canal privado.",
+          "No compres reseñas ni ofrezcas incentivos a cambio: va contra las políticas de Google."
+        ] },
+      { "h": "Semana 4: actividad y medición",
+        "ul": [
+          "Publica una novedad u oferta por semana en la ficha.",
+          "Completa la sección de preguntas y respuestas con las dudas más frecuentes de tus clientes.",
+          "Compara el rendimiento con tu línea base y repite lo que funcionó."
+        ] },
+      { "h": "Siguiente paso",
+        "p": ["Si prefieres que lo implementemos por ti, podemos auditar tu ficha y priorizar las acciones de mayor impacto para tu negocio."] }
+    ]
+  },
+  "en": {
+    "title": "How to double calls from Google Maps in 30 days",
+    "description": "A 30-day plan with 15 actions to optimize your Google Business Profile and get more calls: categories, photos, reviews and posts.",
+    "body": [
+      { "p": [
+        "For a local business, the Google Maps listing is often the first contact with the customer. This plan gathers 15 actions organized by week. Results depend on your industry, your area and your competition, so we do not promise the same figure for everyone; measuring before and after will show what works."
+      ] },
+      { "h": "Before you start: measure your baseline",
+        "p": ["For one week, record the calls, direction requests and website visits shown in your listing's performance panel. That is your baseline."] },
+      { "h": "Week 1: listing fundamentals",
+        "ul": [
+          "Make sure name, address and phone number are identical on your website and in the directories where you appear.",
+          "Choose the most specific primary category and add only relevant secondary categories.",
+          "Write a clear description, without keyword stuffing, explaining what you do, for whom and where.",
+          "Complete opening hours, special hours, attributes and the call, WhatsApp or website button."
+        ] },
+      { "h": "Week 2: visual content",
+        "ul": [
+          "Upload real photos of the storefront, interior, team and finished work, with good lighting.",
+          "Add a logo and a cover image that identify your brand at a glance.",
+          "Upload a short video of the premises or the service if you can.",
+          "Remove blurry or outdated photos and give files descriptive names."
+        ] },
+      { "h": "Week 3: reviews and reputation",
+        "ul": [
+          "Ask real customers for reviews right after the service, with a direct link to your listing.",
+          "Reply to every review within 48 hours in a professional tone.",
+          "For a negative review, reply calmly and offer to resolve it through a private channel.",
+          "Never buy reviews or offer incentives in exchange: it goes against Google's policies."
+        ] },
+      { "h": "Week 4: activity and measurement",
+        "ul": [
+          "Publish one update or offer per week on your listing.",
+          "Fill in the Q&A section with your customers' most frequent questions.",
+          "Compare performance against your baseline and repeat what worked."
+        ] },
+      { "h": "Next step",
+        "p": ["If you prefer us to implement it for you, we can audit your listing and prioritize the highest-impact actions for your business."] }
+    ]
+  }
+}

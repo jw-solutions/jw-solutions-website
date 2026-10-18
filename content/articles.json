@@ -1,0 +1,49 @@
+{
+  "articles": [
+    {
+      "slug": "5-errores-dashboard-power-bi",
+      "date": "2026-10-12",
+      "tag": "Power BI",
+      "status": "published",
+      "featured": true,
+      "es": {
+        "title": "5 errores que destruyen la credibilidad de tu dashboard",
+        "excerpt": "Desde colores inconsistentes hasta métricas de vanidad. Aprende a construir dashboards que realmente influyen en decisiones ejecutivas."
+      },
+      "en": {
+        "title": "5 mistakes that destroy your dashboard credibility",
+        "excerpt": "From inconsistent colors to vanity metrics. Learn to build dashboards that truly influence executive decisions."
+      }
+    },
+    {
+      "slug": "n8n-vs-zapier-2026",
+      "date": "2026-10-05",
+      "tag": "Automatización",
+      "status": "published",
+      "featured": true,
+      "es": {
+        "title": "n8n vs Zapier: ¿Cuál elegir en 2026?",
+        "excerpt": "Comparativa técnica y económica de los dos gigantes de la automatización. Incluye casos de uso y costos ocultos."
+      },
+      "en": {
+        "title": "n8n vs Zapier: Which to choose in 2026?",
+        "excerpt": "Technical and economic comparison of the two automation giants. Includes use cases and hidden costs."
+      }
+    },
+    {
+      "slug": "llamadas-google-maps-30-dias",
+      "date": "2026-09-28",
+      "tag": "SEO Local",
+      "status": "published",
+      "featured": true,
+      "es": {
+        "title": "Cómo duplicar las llamadas desde Google Maps en 30 días",
+        "excerpt": "Plan paso a paso con 15 acciones. Desde la descripción hasta las reseñas y las fotos reales del negocio."
+      },
+      "en": {
+        "title": "How to double calls from Google Maps in 30 days",
+        "excerpt": "Step-by-step plan with 15 actions. From the description to reviews and real photos of the business."
+      }
+    }
+  ]
+}
