@@ -156,50 +156,56 @@
   font-size: var(--text-base);
 }
 
-/* Compartir artículo */
+/* Compartir artículo: tarjeta centrada con botones tipo pill */
 .share {
+  max-width: 560px;
+  margin: var(--space-8) auto 0;
+  padding: var(--space-6);
   text-align: center;
-  margin-top: var(--space-8);
-  padding-top: var(--space-6);
-  border-top: 1px solid var(--jw-border);
+  background: var(--jw-surface);
+  border: 1px solid var(--jw-border);
+  border-radius: var(--jw-radius);
 }
 
-.share-title {
+.article .share-title {
   font-family: var(--font-heading);
   font-size: var(--text-lg);
-  color: var(--jw-text);
-  margin-bottom: var(--space-4);
+  color: #FFFFFF;
+  margin: 0 0 var(--space-4);
 }
 
 .share-actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--space-3);
+  align-items: center;
+  gap: 12px;
 }
 
 .share-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
+  gap: 8px;
   min-height: 44px;
-  padding: var(--space-2) var(--space-4);
+  padding: 10px 16px;
   font-family: var(--font-heading);
   font-size: var(--text-sm);
   font-weight: var(--fw-semibold);
-  color: var(--jw-text);
-  background: var(--jw-surface);
-  border: 1px solid var(--jw-border);
+  line-height: 1;
+  color: #E8EDF3;
+  text-decoration: none;
+  background: #0B0E12;
+  border: 1px solid rgba(251, 178, 0, 0.35);
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
 }
 
 .share-btn:hover {
-  color: var(--jw-gold);
+  color: #0B0E12;
+  background: var(--jw-gold);
   border-color: var(--jw-gold);
-  background: var(--jw-surface-hover);
 }
 
 .share-btn:focus-visible {
@@ -210,15 +216,14 @@
 .share-btn[hidden] { display: none; }
 
 .share-btn--primary {
+  color: #0B0E12;
   background: var(--jw-gold);
   border-color: var(--jw-gold);
-  color: #000;
 }
 
 .share-btn--primary:hover {
   background: #FFD35A;
   border-color: #FFD35A;
-  color: #000;
 }
 
 .share-status {
@@ -229,9 +234,13 @@
 }
 
 @media (max-width: 480px) {
-  .share-btn { flex: 1 1 calc(50% - var(--space-3)); }
+  .share { padding: var(--space-4); }
+  .share-btn { flex: 1 1 calc(50% - 12px); }
   .share-btn--primary { flex-basis: 100%; }
 }
+
+/* Selector de idioma: en Windows el emoji de bandera se dibuja como letras ("ES ES"); se muestra solo el código */
+.blog-body .lang-flag { display: none; }
 
 .blog-footer {
   border-top: 1px solid var(--jw-border);
