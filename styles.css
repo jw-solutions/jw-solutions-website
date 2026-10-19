@@ -2787,7 +2787,7 @@ select.fx-input { font-size: var(--text-sm); cursor: pointer; }
 .modal-dialog--fx .fx-rates-title { margin: 0; font-size: var(--text-lg); }
 .fx-updated { color: var(--jw-muted); font-size: var(--text-xs); text-align: right; }
 .modal-dialog--fx .fx-amount-line { margin: 0 0 var(--space-3); color: var(--jw-gold); font-family: var(--font-heading); font-size: var(--text-lg); font-weight: var(--fw-bold); }
-.fx-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
+.fx-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
 .fx-card { padding: var(--space-4); background: #1E293B; border: 1px solid #334155; border-left: 3px solid var(--fx-accent, var(--jw-gold)); border-radius: 16px; min-width: 0; }
 .fx-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .modal-dialog--fx .fx-card-name { margin: 0; color: #fff; font-family: var(--font-heading); font-size: var(--text-base); font-weight: var(--fw-bold); }

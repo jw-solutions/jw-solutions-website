@@ -990,26 +990,30 @@
      ───────────────────────────────────────────────────────────────────────────── */
   const FxCalculator = (() => {
     const SITE = 'https://jw-solutions.com';
+    // Orden estricto de tarjetas. `cur` = divisa cotizada en VES. 'avg' se calcula (no viene de la API).
     const DEFS = [
-      { id: 'bcv', accent: '#FFB800', demo: 880.12, name: { es: 'BCV', en: 'BCV' },
-        label: { es: 'Banco Central de Venezuela', en: 'Central Bank of Venezuela' }, tagL: { es: 'OFICIAL', en: 'OFFICIAL' },
+      { id: 'bcv', cur: 'USD', accent: '#FFB800', demo: 880.12, name: { es: 'Oficial BCV', en: 'Official BCV' },
+        label: { es: 'Dólar · Banco Central de Venezuela', en: 'US Dollar · Central Bank of Venezuela' }, tagL: { es: 'OFICIAL', en: 'OFFICIAL' },
         source: { es: 'Fuente: DolarApi · oficial', en: 'Source: DolarApi · official' } },
-      { id: 'par', accent: '#38BDF8', demo: 997.95, name: { es: 'Paralelo', en: 'Parallel' },
-        label: { es: 'Promedio referencial del mercado', en: 'Market reference average' }, tagL: { es: 'PROMEDIO', en: 'AVERAGE' },
-        source: { es: 'Fuente: DolarApi · paralelo', en: 'Source: DolarApi · parallel' } },
-      { id: 'usdt', accent: '#A78BFA', demo: 990.0, name: { es: 'USDT', en: 'USDT' },
+      { id: 'eur', cur: 'EUR', accent: '#34D399', demo: 991.16, name: { es: 'Euro BCV', en: 'Euro BCV' },
+        label: { es: 'Euro · Banco Central de Venezuela', en: 'Euro · Central Bank of Venezuela' }, tagL: { es: 'OFICIAL', en: 'OFFICIAL' },
+        source: { es: 'Fuente: DolarApi · euro oficial', en: 'Source: DolarApi · official euro' } },
+      { id: 'p2p', cur: 'USD', accent: '#A78BFA', demo: 997.95, name: { es: 'Binance P2P', en: 'Binance P2P' },
         label: { es: 'Referencia cripto / P2P', en: 'Crypto / P2P reference' }, tagL: { es: 'CRIPTO', en: 'CRYPTO' },
-        source: { es: 'Referencia ilustrativa', en: 'Illustrative reference' } }
+        source: { es: 'Fuente: DolarApi · paralelo (P2P)', en: 'Source: DolarApi · parallel (P2P)' } },
+      { id: 'avg', cur: 'USD', accent: '#38BDF8', demo: 0, name: { es: 'Promedio', en: 'Average' },
+        label: { es: 'Media de BCV, Euro BCV y P2P', en: 'Mean of BCV, Euro BCV and P2P' }, tagL: { es: 'PROMEDIO', en: 'AVERAGE' },
+        source: { es: 'Calculado: (BCV + Euro + P2P) ÷ 3', en: 'Calculated: (BCV + Euro + P2P) ÷ 3' } }
     ];
     const TXT = {
-      es: { live: 'En Vivo', demo: 'Datos DEMO', loading: 'Consultando…', enter: 'Ingresa un monto', per: 'VES por 1 USD', eq: 'Equivalente calculado', amt: 'Monto a convertir',
+      es: { live: 'En Vivo', demo: 'Datos DEMO', loading: 'Consultando…', enter: 'Ingresa un monto', eq: 'Equivalente calculado', amt: 'Monto a convertir',
         upd: 'Actualizado', copied: 'Resumen copiado', copyFail: 'No se pudo copiar', none: 'Selecciona al menos una tasa',
         shared: 'Solicitud de compartir enviada.', cancelled: 'Compartir cancelado.', dl: 'Imagen PNG descargada.',
         noShare: 'El navegador no admite compartir archivos: se descargó el PNG y se copió el resumen.',
         shareFail: 'No se pudo compartir. Usa Descargar PNG o Copiar resumen.', imgFail: 'No se pudo generar la imagen.',
         sub: 'Referencias de cambio Venezuela', title: 'Monitor de Tasas', tool: 'Herramienta Gratuita: Calculadora de Cambio Monetario',
         warn: 'Tasas de referencia informativa. Verifica antes de realizar una operación.', gen: 'Generado por JW-SOLUTIONS' },
-      en: { live: 'Live', demo: 'DEMO data', loading: 'Fetching…', enter: 'Enter an amount', per: 'VES per 1 USD', eq: 'Calculated equivalent', amt: 'Amount to convert',
+      en: { live: 'Live', demo: 'DEMO data', loading: 'Fetching…', enter: 'Enter an amount', eq: 'Calculated equivalent', amt: 'Amount to convert',
         upd: 'Updated', copied: 'Summary copied', copyFail: 'Could not copy', none: 'Select at least one rate',
         shared: 'Share request sent.', cancelled: 'Share cancelled.', dl: 'PNG image downloaded.',
         noShare: 'This browser cannot share files: the PNG was downloaded and the summary copied.',
@@ -1028,11 +1032,20 @@
 
     const lang = () => (document.documentElement.lang === 'en' ? 'en' : 'es');
     const nowIso = () => new Date().toISOString();
-    const demoRates = () => DEFS.map(d => ({ id: d.id, value: d.demo, updated: nowIso(), live: false }));
+    const withAverage = (list) => {
+      const avg = list.find(r => r.id === 'avg');
+      const parts = ['bcv', 'eur', 'p2p'].map(id => list.find(r => r.id === id).value);
+      avg.value = parts.reduce((a, b) => a + b, 0) / 3; // Promedio = (Oficial BCV + Euro BCV + Binance P2P) / 3
+      return list;
+    };
+    const demoRates = () => withAverage(DEFS.map(d => ({ id: d.id, value: d.demo, updated: nowIso(), live: false })));
     const def = (id) => DEFS.find(d => d.id === id);
     const toVes = () => mode.value === 'USD';
-    const resultText = (amt, value) => (toVes() ? `${fmt.format(amt * value)} VES` : `${fmt.format(amt / value)} USD`);
-    const amountText = (amt) => `${TXT[lang()].amt}: ${fmt.format(amt)} ${toVes() ? 'USD' : 'VES'}`;
+    // USD/EUR → VES: monto × tasa · VES → USD/EUR: monto ÷ tasa (la divisa la define cada tarjeta)
+    const resultText = (amt, r) => (toVes() ? `${fmt.format(amt * r.value)} VES` : `${fmt.format(amt / r.value)} ${def(r.id).cur}`);
+    const perText = (d) => `VES ${lang() === 'en' ? 'per 1' : 'por 1'} ${d.cur}`;
+    const eqLabel = (amt, r) => (amt === null ? TXT[lang()].eq : `${fmt.format(amt)} ${toVes() ? def(r.id).cur : 'VES'} =`);
+    const amountText = (amt) => `${TXT[lang()].amt}: ${fmt.format(amt)} ${toVes() ? 'USD / EUR' : 'VES'}`;
     const chosen = () => rates.filter(r => selected.has(r.id));
 
     // Acepta coma decimal (es-VE) y punto; si hay ambos, el punto es separador de miles.
@@ -1075,9 +1088,9 @@
         head.append(el('h4', 'fx-card-name', d.name[lang()]), el('p', 'fx-card-label', d.label[lang()]));
         top.append(head, el('span', 'fx-tag', d.tagL[lang()]));
         const foot = el('div', 'fx-card-foot');
-        foot.append(el('span', 'fx-card-source', r.live || r.id === 'usdt' ? d.source[lang()] : `Demo · ${d.name[lang()]}`), el('span', '', fmtDateTime(r.updated)));
-        card.append(top, el('p', 'fx-card-rate', `${fmt.format(r.value)} VES`), el('div', 'fx-card-unit', L.per), el('div', 'fx-card-sep'),
-          el('div', 'fx-card-eqlabel', L.eq), el('p', 'fx-card-result', amt === null ? L.enter : resultText(amt, r.value)), foot);
+        foot.append(el('span', 'fx-card-source', r.live ? d.source[lang()] : `Demo · ${d.name[lang()]}`), el('span', '', fmtDateTime(r.updated)));
+        card.append(top, el('p', 'fx-card-rate', `${fmt.format(r.value)} VES`), el('div', 'fx-card-unit', perText(d)), el('div', 'fx-card-sep'),
+          el('div', 'fx-card-eqlabel', eqLabel(amt, r)), el('p', 'fx-card-result', amt === null ? L.enter : resultText(amt, r)), foot);
         grid.append(card);
       });
       const newest = rates.reduce((m, r) => (r.updated && r.updated > m ? r.updated : m), '');
@@ -1092,18 +1105,28 @@
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 9000);
       try {
-        const res = await fetch(`${base}/dolares`, { headers: { Accept: 'application/json' }, cache: 'no-store', signal: ctrl.signal });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
+        const get = async (path) => {
+          const res = await fetch(`${base}/${path}`, { headers: { Accept: 'application/json' }, cache: 'no-store', signal: ctrl.signal });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const data = await res.json();
+          return Array.isArray(data) ? data : [];
+        };
+        const [usd, eur] = await Promise.all([get('dolares'), get('euros')]);
         const next = demoRates();
         let hits = 0;
-        (Array.isArray(data) ? data : []).forEach(it => {
-          const id = it.fuente === 'oficial' ? 'bcv' : it.fuente === 'paralelo' ? 'par' : null;
-          const value = Number(it.promedio);
+        const apply = (id, list, fuente) => {
+          const it = list.find(x => x.fuente === fuente);
+          const value = it ? Number(it.promedio) : NaN;
           const slot = next.find(r => r.id === id);
           if (slot && Number.isFinite(value) && value > 0) { slot.value = value; slot.updated = it.fechaActualizacion || slot.updated; slot.live = true; hits++; }
-        });
-        if (hits < 2) throw new Error('incomplete');
+        };
+        apply('bcv', usd, 'oficial');      // Oficial BCV
+        apply('eur', eur, 'oficial');      // Euro BCV
+        apply('p2p', usd, 'paralelo');     // Binance P2P (DolarApi no expone Binance directo; el paralelo es la referencia P2P)
+        if (hits < 3) throw new Error('incomplete'); // las 3 tasas base deben ser reales para publicar el promedio en vivo
+        const avg = withAverage(next).find(r => r.id === 'avg');
+        avg.live = true;
+        avg.updated = next.filter(r => r.id !== 'avg').reduce((m, r) => (r.updated > m ? r.updated : m), '');
         rates = next;
         state = 'live';
       } catch (e) {
@@ -1122,7 +1145,7 @@
       const lines = [`📊 ${en ? 'Rates Monitor' : 'Monitor de Tasas'} · JW-SOLUTIONS`, `📅 ${fmtDateTime(null)}`, ''];
       if (amt !== null) lines.push(amountText(amt));
       chosen().forEach(r => {
-        lines.push(`▪️ ${def(r.id).name[lang()]}: ${amt !== null ? resultText(amt, r.value) : `1 USD = ${fmt.format(r.value)} VES`}`);
+        lines.push(`▪️ ${def(r.id).name[lang()]}: ${amt !== null ? resultText(amt, r) : `1 ${def(r.id).cur} = ${fmt.format(r.value)} VES`}`);
       });
       lines.push('', `👉 ${en ? 'Calculate your exchange live here' : 'Calcula tu cambio en vivo aquí'}: ${SITE}`);
       return lines.join('\n');
@@ -1139,15 +1162,16 @@
       const F = 'font-family="Arial, sans-serif"';
       const rows = list.map((r, i) => {
         const d = def(r.id), y = rowStart + i * rowGap;
-        const eq = amt === null ? '—' : resultText(amt, r.value);
+        const eq = amt === null ? '—' : resultText(amt, r);
         return `
           <rect x="72" y="${y}" width="936" height="${rowGap - 20}" rx="28" fill="#1E293B" stroke="#334155" stroke-width="2"/>
           <rect x="72" y="${y}" width="10" height="${rowGap - 20}" rx="5" fill="${esc(d.accent)}"/>
           <text x="116" y="${y + 58}" ${F} font-size="36" font-weight="700" fill="#FFFFFF">${esc(d.name[lang()])}</text>
           <text x="116" y="${y + 95}" ${F} font-size="21" fill="#94A3B8">${esc(d.label[lang()])}</text>
           <text x="965" y="${y + 58}" text-anchor="end" ${F} font-size="38" font-weight="700" fill="#FFFFFF">${esc(fmt.format(r.value))}</text>
-          <text x="965" y="${y + 95}" text-anchor="end" ${F} font-size="18" fill="#94A3B8">${esc(L.per)}</text>
+          <text x="965" y="${y + 95}" text-anchor="end" ${F} font-size="18" fill="#94A3B8">${esc(perText(d))}</text>
           <path d="M116 ${y + 120}H964" stroke="#334155" stroke-width="2"/>
+          <text x="116" y="${y + 160}" ${F} font-size="22" fill="#94A3B8">${esc(eqLabel(amt, r))}</text>
           <text x="965" y="${y + 163}" text-anchor="end" ${F} font-size="42" font-weight="700" fill="#FFB800">${esc(eq)}</text>`;
       }).join('');
       const fy = rowStart + list.length * rowGap + 22;
