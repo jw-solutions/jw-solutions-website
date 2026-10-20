@@ -2850,3 +2850,8 @@ select.fx-input { font-size: var(--text-sm); cursor: pointer; }
   .modal-dialog--fx .fx-header { flex-direction: column; padding-right: 48px; }
 }
 @media (prefers-reduced-motion: reduce) { .fx-status-dot { animation: none !important; } }
+
+/* Calculadora a pantalla completa (PWA standalone / enlace #calculadora) */
+body.standalone-calc-active > *:not(#modal-tool-fx):not(script) { display: none !important; }
+body.standalone-calc-active #modal-tool-fx { position: fixed; inset: 0; z-index: 999999; padding: 0; background: #0B0E12; }
+body.standalone-calc-active #dialog-tool-fx { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; max-width: 100%; max-height: none; margin: 0; border-radius: 0; background: #0B0E12; overflow-y: auto; }

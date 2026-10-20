@@ -1,25 +1,13 @@
 {
-  "name": "JW Solutions",
-  "short_name": "JW Solutions",
-  "description": "Automatización, datos y herramientas para empresas. Incluye la calculadora de tasas VES/USD/EUR.",
-  "start_url": "/",
+  "name": "Calculadora de Cambio",
+  "short_name": "Calculadora",
+  "start_url": "/#calculadora",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
-  "lang": "es",
+  "background_color": "#0B0E12",
+  "theme_color": "#0B0E12",
   "icons": [
-    { "src": "/assets/logo-jw.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/assets/logo-jw.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-    { "src": "/favicon.ico", "sizes": "16x16 32x32", "type": "image/x-icon" }
-  ],
-  "shortcuts": [
-    {
-      "name": "Calculadora de Tasas",
-      "short_name": "Calculadora",
-      "description": "Abre la calculadora de cambio VES/USD/EUR",
-      "url": "/#calculadora",
-      "icons": [{ "src": "/assets/logo-jw.png", "sizes": "512x512", "type": "image/png" }]
-    }
+    { "src": "/favicon.ico", "sizes": "64x64 32x32 24x24 16x16", "type": "image/x-icon" },
+    { "src": "/assets/logo-jw.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
   ]
 }

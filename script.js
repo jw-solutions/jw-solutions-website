@@ -771,8 +771,7 @@
   const PWA = (() => {
     function init() {
       if ('serviceWorker' in navigator) {
-        // Uncomment when ready to deploy PWA
-        // navigator.serviceWorker.register('/sw.js').catch(() => {});
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
       }
     }
     return { init };
@@ -1351,10 +1350,26 @@
 
     function lang() { return document.documentElement.lang === 'en' ? 'en' : 'es'; }
 
+    function isStandalone() {
+      return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+    }
+
+    // Modo calculadora a pantalla completa: oculta el sitio y deja solo la modal
     function openFromHash() {
-      if (!HASHES.includes(window.location.hash.toLowerCase())) return;
+      if (!HASHES.includes(window.location.hash.toLowerCase()) && !isStandalone()) return;
+      const modal = $('#modal-tool-fx');
       const trigger = $('[data-legal="tool-fx"]');
-      if (trigger) trigger.click();
+      if (!modal || !trigger) return;
+      document.body.classList.add('standalone-calc-active');
+      if (modal.hidden) trigger.click();
+      document.body.style.overflow = 'hidden';
+      if (!modal.dataset.standaloneWatch) {
+        modal.dataset.standaloneWatch = '1';
+        // Al cerrar la modal se restaura el sitio normal
+        new MutationObserver(() => {
+          if (modal.hidden) document.body.classList.remove('standalone-calc-active');
+        }).observe(modal, { attributes: true, attributeFilter: ['hidden'] });
+      }
     }
 
     function hint(text) {
