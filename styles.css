@@ -2807,6 +2807,7 @@ select.fx-input { font-size: var(--text-sm); cursor: pointer; }
 .modal-dialog--fx .btn--primary:disabled, .modal-dialog--fx .btn--secondary:disabled { opacity: .45; cursor: not-allowed; }
 .modal-dialog--fx .btn--secondary { background: #1E293B; color: #fff; border: 1px solid #334155; }
 .modal-dialog--fx .btn--secondary:hover:not(:disabled) { color: var(--jw-gold); border-color: var(--jw-gold); }
+.fx-actions { flex-wrap: wrap; }
 .fx-actions .btn { flex: 0 0 auto; gap: 8px; }
 .modal-dialog--fx .fx-footer { margin: var(--space-4) 0 0; padding-top: var(--space-3); border-top: 1px solid #1E293B; text-align: center; font-size: var(--text-xs); color: var(--jw-muted); }
 .modal-dialog--fx .fx-footer strong { color: var(--jw-gold); }

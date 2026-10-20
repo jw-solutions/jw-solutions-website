@@ -77,6 +77,7 @@
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="assets/logo-jw.png">
+    <link rel="manifest" href="site.webmanifest">
 
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
@@ -1136,7 +1137,12 @@
                         <i class="fas fa-share-nodes" aria-hidden="true"></i>
                         <span data-lang="es">Compartir tasas</span><span data-lang="en">Share rates</span>
                     </button>
+                    <button type="button" class="btn btn--secondary" id="fx-pin">
+                        <span aria-hidden="true">📌</span>
+                        <span data-lang="es">Anclar / Acceso Rápido</span><span data-lang="en">Pin / Quick access</span>
+                    </button>
                 </div>
+                <p class="fx-note" id="fx-pin-hint" aria-live="polite" hidden></p>
                 <p class="fx-footer"><span data-lang="es">Información de referencia</span><span data-lang="en">Reference information</span> · <strong>JW-SOLUTIONS</strong></p>
             </div>
 

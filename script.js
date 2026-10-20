@@ -1331,6 +1331,67 @@
   })();
 
   /* ─────────────────────────────────────────────────────────────────────────────
+     16c. ACCESO RÁPIDO A LA CALCULADORA (deep link #calculadora + anclar/instalar)
+     ───────────────────────────────────────────────────────────────────────────── */
+  const FxQuickAccess = (() => {
+    const HASHES = ['#calculadora', '#fx-calc'];
+    const HINTS = {
+      es: {
+        ios: 'En Safari: pulsa Compartir ⎘ y luego «Añadir a la pantalla de inicio» ➕.',
+        other: 'Abre el menú del navegador y elige «Instalar app» o «Añadir a la pantalla de inicio». Para volver rápido, guarda esta página en favoritos: jw-solutions.com/#calculadora',
+        done: 'Acceso rápido instalado.'
+      },
+      en: {
+        ios: 'In Safari: tap Share ⎘ and then “Add to Home Screen” ➕.',
+        other: 'Open the browser menu and choose “Install app” or “Add to Home Screen”. To return quickly, bookmark: jw-solutions.com/#calculadora',
+        done: 'Quick access installed.'
+      }
+    };
+    let deferred = null;
+
+    function lang() { return document.documentElement.lang === 'en' ? 'en' : 'es'; }
+
+    function openFromHash() {
+      if (!HASHES.includes(window.location.hash.toLowerCase())) return;
+      const trigger = $('[data-legal="tool-fx"]');
+      if (trigger) trigger.click();
+    }
+
+    function hint(text) {
+      const el = $('#fx-pin-hint');
+      if (!el) return;
+      el.textContent = text;
+      el.hidden = false;
+    }
+
+    async function pin() {
+      if (deferred) {
+        const evt = deferred;
+        deferred = null;
+        evt.prompt();
+        try {
+          const choice = await evt.userChoice;
+          if (choice && choice.outcome === 'accepted') hint(HINTS[lang()].done);
+        } catch (e) { /* prompt cancelado */ }
+        return;
+      }
+      const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      hint(HINTS[lang()][ios ? 'ios' : 'other']);
+    }
+
+    function init() {
+      window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferred = e; });
+      window.addEventListener('appinstalled', () => { deferred = null; hint(HINTS[lang()].done); });
+      on($('#fx-pin'), 'click', pin);
+      on(window, 'hashchange', openFromHash);
+      openFromHash();
+    }
+
+    return { init };
+  })();
+
+  /* ─────────────────────────────────────────────────────────────────────────────
      17. BARRA INFERIOR MÓVIL (Thumb Zone)
      ───────────────────────────────────────────────────────────────────────────── */
   const MobileCTABar = (() => {
@@ -1454,7 +1515,7 @@
     const modules = [
       LangSwitcher, MobileMenu, HeaderScroll, Particles,
       FAQAccordion, ScrollReveal, BackToTop, Forms, SmoothScroll, LazyImages,
-      CurrentYear, Analytics, Consent, LegalModals, FxCalculator, MobileCTABar, PWA, Featured
+      CurrentYear, Analytics, Consent, LegalModals, FxCalculator, FxQuickAccess, MobileCTABar, PWA, Featured
     ];
 
     // Cada módulo se aísla: un fallo no impide inicializar los demás
