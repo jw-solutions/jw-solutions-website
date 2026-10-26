@@ -3,3 +3,6 @@ proyectos_portafolio.md
 README_DEPLOY.md
 
 .claude/
+
+# Artefactos del build público (Code Formatter)
+dist-public/

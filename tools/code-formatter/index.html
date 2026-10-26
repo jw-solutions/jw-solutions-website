@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Code Formatter &amp; Auto-Doc AI | JW Solutions</title>
+  <meta name="description" content="Formatea y documenta tu código en Python, JavaScript, TypeScript, SQL, DAX, Java, C#, PHP, JSON y YAML. Herramienta de JW Solutions.">
+  <meta name="theme-color" content="#0b0f17">
+  <link rel="icon" href="../../favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../assets/css/tools/code-formatter.css">
+
+  <!-- CodeMirror 6 vía ESM/CDN, versiones fijadas. Los paquetes comparten una sola
+       instancia de state/view/language/lezer (external + import map). -->
+  <script type="importmap">
+  {
+    "imports": {
+      "@codemirror/state": "https://esm.sh/@codemirror/state@6.4.1",
+      "@codemirror/view": "https://esm.sh/@codemirror/view@6.26.3?external=@codemirror/state",
+      "@codemirror/commands": "https://esm.sh/@codemirror/commands@6.5.0?external=@codemirror/state,@codemirror/view,@codemirror/language,@lezer/common",
+      "@codemirror/language": "https://esm.sh/@codemirror/language@6.10.1?external=@codemirror/state,@codemirror/view,@lezer/common,@lezer/highlight,@lezer/lr",
+      "@codemirror/autocomplete": "https://esm.sh/@codemirror/autocomplete@6.15.0?external=@codemirror/state,@codemirror/view,@codemirror/language,@lezer/common",
+      "@codemirror/lint": "https://esm.sh/@codemirror/lint@6.5.0?external=@codemirror/state,@codemirror/view",
+      "@codemirror/merge": "https://esm.sh/@codemirror/merge@6.6.1?external=@codemirror/state,@codemirror/view,@codemirror/language,@lezer/common,@lezer/highlight",
+      "@codemirror/theme-one-dark": "https://esm.sh/@codemirror/theme-one-dark@6.1.2?external=@codemirror/state,@codemirror/view,@codemirror/language,@lezer/highlight",
+      "@codemirror/lang-javascript": "https://esm.sh/@codemirror/lang-javascript@6.2.2?external=@codemirror/state,@codemirror/view,@codemirror/language,@codemirror/autocomplete,@codemirror/lint,@lezer/common,@lezer/highlight,@lezer/lr",
+      "@codemirror/lang-python": "https://esm.sh/@codemirror/lang-python@6.1.6?external=@codemirror/state,@codemirror/view,@codemirror/language,@lezer/common,@lezer/highlight,@lezer/lr",
+      "@codemirror/lang-sql": "https://esm.sh/@codemirror/lang-sql@6.6.4?external=@codemirror/state,@codemirror/view,@codemirror/language,@codemirror/autocomplete,@lezer/common,@lezer/highlight,@lezer/lr",
+      "@codemirror/lang-json": "https://esm.sh/@codemirror/lang-json@6.0.1?external=@codemirror/language,@lezer/common,@lezer/highlight,@lezer/lr",
+      "@codemirror/lang-java": "https://esm.sh/@codemirror/lang-java@6.0.1?external=@codemirror/language,@lezer/common,@lezer/highlight,@lezer/lr",
+      "@codemirror/lang-php": "https://esm.sh/@codemirror/lang-php@6.0.1?external=@codemirror/state,@codemirror/language,@lezer/common,@lezer/highlight,@lezer/lr",
+      "@codemirror/lang-yaml": "https://esm.sh/@codemirror/lang-yaml@6.1.1?external=@codemirror/state,@codemirror/view,@codemirror/language,@lezer/common,@lezer/highlight,@lezer/lr",
+      "@lezer/common": "https://esm.sh/@lezer/common@1.2.1",
+      "@lezer/highlight": "https://esm.sh/@lezer/highlight@1.2.0?external=@lezer/common",
+      "@lezer/lr": "https://esm.sh/@lezer/lr@1.4.0?external=@lezer/common"
+    }
+  }
+  </script>
+</head>
+<body class="cf-body">
+  <a class="cf-skip" href="#cf-main" data-i18n="skip">Saltar al contenido</a>
+
+  <header class="cf-header">
+    <div class="cf-container cf-header__inner">
+      <a href="../../index.html" data-site-link class="cf-logo" aria-label="JW Solutions">
+        <span class="cf-logo__mark">JW</span>
+        <span class="cf-logo__text">SOLUTIONS</span>
+      </a>
+      <nav class="cf-nav" aria-label="JW Solutions">
+        <a class="cf-nav__link" data-site-link data-i18n="navServices" href="../../index.html#servicios">Servicios</a>
+        <a class="cf-nav__link" data-site-link data-i18n="navPortfolio" href="../../index.html#portfolio">Portfolio</a>
+        <a class="cf-nav__link" data-cf-commercial data-site-link data-i18n="navPlans" href="../../index.html#contacto">Planes Pro</a>
+        <a class="cf-nav__link cf-nav__link--cta" data-site-link data-i18n="navContact" href="../../index.html#contacto">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="cf-main" class="cf-main">
+    <section class="cf-container cf-hero">
+      <span class="cf-tag" data-i18n="tag">Herramienta</span>
+      <h1 class="cf-title">Code Formatter <span class="cf-gold">&amp; Auto-Doc AI</span></h1>
+      <p class="cf-lead" data-i18n="lead">Pega tu código, elige el lenguaje y obtén una versión formateada y documentada.</p>
+    </section>
+
+    <section class="cf-container cf-workspace" aria-label="Editor">
+      <div class="cf-card cf-toolbar" role="group">
+        <label class="cf-field">
+          <span class="cf-field__label" data-i18n="language">Lenguaje</span>
+          <select id="cf-language" class="cf-select">
+            <option value="auto" data-i18n="auto">Auto-detectar</option>
+            <option value="python">Python</option>
+            <option value="javascript">JavaScript</option>
+            <option value="typescript">TypeScript</option>
+            <option value="sql">SQL</option>
+            <option value="dax">DAX</option>
+            <option value="java">Java</option>
+            <option value="csharp">C#</option>
+            <option value="php">PHP</option>
+            <option value="json">JSON</option>
+            <option value="yaml">YAML</option>
+          </select>
+        </label>
+        <span id="cf-detected" class="cf-badge" hidden></span>
+        <label class="cf-switch">
+          <input type="checkbox" id="cf-comments">
+          <span data-i18n="comments">Comentarios</span>
+        </label>
+        <label class="cf-field">
+          <span class="cf-field__label" data-i18n="docLang">Idioma de documentación</span>
+          <select id="cf-doc-lang" class="cf-select"></select>
+        </label>
+        <label class="cf-field" data-cf-auth-required>
+          <span class="cf-field__label" data-i18n="detail">Detalle</span>
+          <select id="cf-detail" class="cf-select"></select>
+        </label>
+        <div class="cf-toolbar__spacer"></div>
+        <button type="button" id="cf-format" class="cf-btn cf-btn--primary" data-i18n="format">Formatear</button>
+      </div>
+
+      <div class="cf-card cf-editor-card">
+        <div class="cf-editor-card__head">
+          <span class="cf-editor-card__title" data-i18n="code">Código</span>
+          <span id="cf-stats" class="cf-muted">1 línea</span>
+        </div>
+        <div id="cf-editor" class="cf-editor" aria-label="Code"></div>
+        <noscript><p class="cf-muted" data-i18n="needJs">Se requiere JavaScript para usar el editor.</p></noscript>
+        <div class="cf-actions" role="group">
+          <button type="button" id="cf-copy" class="cf-btn" data-i18n="copy">Copiar</button>
+          <button type="button" id="cf-download" class="cf-btn" data-i18n="download">Descargar</button>
+          <button type="button" id="cf-copy-md" class="cf-btn" data-i18n="copyMd">Copiar como Markdown</button>
+          <button type="button" id="cf-diff" class="cf-btn" data-cf-feature="diff_view" data-i18n="diff" disabled>Ver diferencias</button>
+        </div>
+      </div>
+
+      <section id="cf-diff-panel" class="cf-card cf-diff" data-cf-feature="diff_view" hidden aria-labelledby="cf-diff-title">
+        <div class="cf-editor-card__head">
+          <span id="cf-diff-title" class="cf-editor-card__title" data-i18n="diffTitle">Diferencias: antes / después</span>
+          <span class="cf-diff__legend"><span class="cf-diff__sw cf-diff__sw--del" data-i18n="before">Antes (original)</span><span class="cf-diff__sw cf-diff__sw--add" data-i18n="after">Después (resultado)</span></span>
+        </div>
+        <div id="cf-diff-body" class="cf-diff__body"></div>
+        <div class="cf-actions" role="group">
+          <button type="button" id="cf-diff-restore" class="cf-btn" data-i18n="restore">Restaurar original</button>
+          <button type="button" id="cf-diff-apply" class="cf-btn cf-btn--primary" data-i18n="apply">Aplicar resultado</button>
+          <button type="button" id="cf-diff-copy" class="cf-btn" data-i18n="copyResult">Copiar resultado</button>
+          <button type="button" id="cf-diff-close" class="cf-btn" data-i18n="closeDiff">Cerrar</button>
+        </div>
+      </section>
+
+      <aside class="cf-card cf-cta" data-cf-commercial>
+        <span class="cf-badge">PRO</span>
+        <p><span data-i18n="ctaText">Documentación ampliada con IA y sesión protegida.</span> <a href="../../index.html#contacto" data-site-link data-i18n="ctaLink">Conoce los planes</a></p>
+      </aside>
+
+      <div class="cf-card cf-history">
+        <div class="cf-editor-card__head">
+          <span class="cf-editor-card__title" data-i18n="historyTitle">Historial (últimos 5)</span>
+          <button type="button" id="cf-history-clear" class="cf-btn cf-btn--small" data-i18n="clear">Limpiar</button>
+        </div>
+        <ul id="cf-history-list" class="cf-history__list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cf-footer">
+    <div class="cf-container">
+      <p>&copy; JW Solutions · <a href="../../index.html" data-site-link data-i18n="back">Volver al sitio</a></p>
+    </div>
+  </footer>
+
+  <div id="cf-toast" class="cf-toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="../../assets/js/tools/code-formatter/app.js"></script>
+</body>
+</html>

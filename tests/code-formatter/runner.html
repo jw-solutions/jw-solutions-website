@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Code Formatter — suite de pruebas</title>
+  <style>body{font:14px/1.5 Consolas,monospace;background:#0b0f17;color:#e5e7eb;padding:20px}.ok{color:#86efac}.fail{color:#fca5a5}</style>
+</head>
+<body>
+  <h1>Code Formatter — suite de pruebas</h1>
+  <p>Ejecutar desde un servidor estático en la raíz del proyecto: <code>/tests/code-formatter/runner.html</code>. Resultado en <code>window.__results</code>.</p>
+  <pre id="out">Ejecutando…</pre>
+  <script type="module">
+    import { FIXTURES, INVALID } from './fixtures.js';
+    import { formatCode } from '../../assets/js/tools/code-formatter/formatters.js';
+    import { detectLanguage } from '../../assets/js/tools/code-formatter/detect.js';
+    import { addDocs, DOC_SUPPORTED } from '../../assets/js/tools/code-formatter/doc-generator.js';
+    import { toMarkdown } from '../../assets/js/tools/code-formatter/actions.js';
+    import { DOC_LANGUAGES } from '../../config/documentation-languages.js';
+
+    const results = [];
+    const out = document.getElementById('out');
+    const check = async (name, fn) => {
+      try { const detail = await fn(); results.push({ name, ok: true, detail }); }
+      catch (e) { results.push({ name, ok: false, detail: String(e.message || e) }); }
+    };
+    const eq = (a, b, msg) => { if (a !== b) throw new Error(`${msg}\n--- esperado\n${b}\n--- obtenido\n${a}`); };
+
+    for (const f of FIXTURES) {
+      await check(`[${f.lang}] formato idempotente (f(f(x)) == f(x))`, async () => {
+        const r1 = await formatCode(f.src, f.lang);
+        const r2 = await formatCode(r1.code, f.lang);
+        eq(r2.code, r1.code, 'la segunda pasada alteró el resultado');
+        return r1.engine;
+      });
+      await check(`[${f.lang}] el formateo produce cambios y no vacía el código`, async () => {
+        const r = await formatCode(f.src, f.lang);
+        if (!r.code.trim()) throw new Error('resultado vacío');
+        if (r.code === f.src) throw new Error('el fixture ya estaba formateado (fixture inválido)');
+      });
+      await check(`[${f.lang}] sintaxis válida tras formatear (${f.syntax})`, async () => {
+        const r = await formatCode(f.src, f.lang);
+        if (f.syntax === 'json') JSON.parse(r.code);
+        else if (f.syntax === 'normalize') { if (/[ \t]+$/m.test(r.code) || /\t/.test(r.code) || !r.code.endsWith('\n')) throw new Error('quedaron tabs/espacios finales/sin salto final'); }
+        else await formatCode(r.code, f.lang); // Prettier / sql-formatter aceptan su propia salida
+      });
+      await check(`[${f.lang}] auto-detección`, async () => {
+        const d = detectLanguage(f.src);
+        // C# y Java comparten sintaxis; dax puede confundirse con sql: se informa pero solo falla en el resto
+        if (d !== f.lang && !['csharp', 'java', 'dax', 'php'].includes(f.lang)) throw new Error(`detectó ${d}`);
+        return `detectó ${d}`;
+      });
+    }
+
+    for (const f of INVALID) {
+      await check(`[${f.lang}] sintaxis inválida es rechazada`, async () => {
+        try { await formatCode(f.src, f.lang); } catch { return 'error lanzado'; }
+        throw new Error('no lanzó error');
+      });
+    }
+
+    for (const lang of ['python', 'javascript', 'typescript']) {
+      const f = FIXTURES.find((x) => x.lang === lang);
+      for (const docLang of Object.keys(DOC_LANGUAGES)) {
+        for (const level of ['basic', 'extended']) {
+          await check(`[${lang}] docs ${docLang}/${level} idempotentes tras formatear`, async () => {
+            const base = (await formatCode(f.src, lang)).code;
+            const d1 = addDocs(base, lang, docLang, level);
+            if (d1.count < 1) throw new Error('no generó documentación');
+            const d2 = addDocs(d1.code, lang, docLang, level);
+            eq(d2.code, d1.code, 'segunda pasada duplicó documentación');
+            if (d2.count !== 0) throw new Error(`segunda pasada añadió ${d2.count}`);
+            const again = (await formatCode(d1.code, lang)).code;
+            eq(again, d1.code, 'formatear de nuevo alteró el código documentado');
+          });
+        }
+      }
+    }
+    await check('docs: lenguajes no soportados no se modifican', async () => {
+      for (const l of ['sql', 'json', 'java']) { if (DOC_SUPPORTED.has(l)) throw new Error(l); eq(addDocs('x', l).code, 'x', l); }
+    });
+    await check('Markdown: valla más larga que cualquier ``` interno', async () => {
+      eq(toMarkdown('a\n```\nb\n', 'python'), '````python\na\n```\nb\n````\n', 'valla incorrecta');
+    });
+
+    const failed = results.filter((r) => !r.ok);
+    window.__results = { total: results.length, passed: results.length - failed.length, failed: failed.length, failures: failed, all: results };
+    out.innerHTML = results.map((r) => `<div class="${r.ok ? 'ok' : 'fail'}">${r.ok ? '✔' : '✘'} ${r.name}${r.ok ? '' : '\n   ' + r.detail}</div>`).join('') +
+      `<h2 class="${failed.length ? 'fail' : 'ok'}">${results.length - failed.length}/${results.length} OK</h2>`;
+    window.__done = true;
+  </script>
+</body>
+</html>

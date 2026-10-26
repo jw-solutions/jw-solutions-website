@@ -1,0 +1,14 @@
+{
+  "name": "cf-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Backend de sesión única para Code Formatter & Auto-Doc AI",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node src/main.js"
+  },
+  "dependencies": {
+    "pg": "8.12.0"
+  }
+}

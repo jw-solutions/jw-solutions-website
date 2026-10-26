@@ -1,0 +1,50 @@
+{
+  "generated": "2026-10-26T20:41:26+00:00",
+  "features": [
+    {
+      "id": "editor",
+      "tier": "free",
+      "active": true
+    },
+    {
+      "id": "language_detect",
+      "tier": "free",
+      "active": true
+    },
+    {
+      "id": "format_engines",
+      "tier": "free",
+      "active": true
+    },
+    {
+      "id": "doc_templates",
+      "tier": "free",
+      "active": true
+    },
+    {
+      "id": "quick_actions",
+      "tier": "free",
+      "active": true
+    },
+    {
+      "id": "local_history",
+      "tier": "free",
+      "active": true
+    },
+    {
+      "id": "diff_view",
+      "tier": "free",
+      "active": true
+    },
+    {
+      "id": "extended_detail",
+      "tier": "pay",
+      "active": true
+    },
+    {
+      "id": "single_session",
+      "tier": "pay",
+      "active": true
+    }
+  ]
+}

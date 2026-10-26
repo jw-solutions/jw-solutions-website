@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "tool": "code-formatter",
+  "description": "Inventario maestro Free/Pay. Fuente de verdad para build_public.py y ui-controller.js.",
+  "shared_files": [
+    "favicon.ico",
+    "tools/code-formatter/index.html",
+    "assets/css/tools/code-formatter.css",
+    "assets/js/tools/code-formatter/app.js",
+    "assets/js/tools/code-formatter/ui-controller.js",
+    "assets/js/tools/code-formatter/i18n.js",
+    "config/documentation-languages.js"
+  ],
+  "features": [
+    {
+      "id": "editor",
+      "name": "Editor de código (CodeMirror 6)",
+      "tier": "free",
+      "status": "ready",
+      "files": ["assets/js/tools/code-formatter/editor.js"]
+    },
+    {
+      "id": "language_detect",
+      "name": "Selector y auto-detección de lenguaje",
+      "tier": "free",
+      "status": "ready",
+      "files": ["assets/js/tools/code-formatter/detect.js"]
+    },
+    {
+      "id": "format_engines",
+      "name": "Formateo determinista (Prettier, sql-formatter)",
+      "tier": "free",
+      "status": "ready",
+      "files": ["assets/js/tools/code-formatter/formatters.js"]
+    },
+    {
+      "id": "doc_templates",
+      "name": "Comentarios/docstrings básicos en 7 idiomas",
+      "tier": "free",
+      "status": "ready",
+      "files": ["assets/js/tools/code-formatter/doc-generator.js"]
+    },
+    {
+      "id": "quick_actions",
+      "name": "Copiar, descargar y copiar como Markdown",
+      "tier": "free",
+      "status": "ready",
+      "files": ["assets/js/tools/code-formatter/actions.js"]
+    },
+    {
+      "id": "local_history",
+      "name": "Historial local (últimos 5)",
+      "tier": "free",
+      "status": "ready",
+      "files": ["assets/js/tools/code-formatter/history.js"]
+    },
+    {
+      "id": "diff_view",
+      "name": "Vista comparativa Antes/Después",
+      "tier": "free",
+      "status": "ready",
+      "files": ["assets/js/tools/code-formatter/diff-view.js"]
+    },
+    {
+      "id": "extended_detail",
+      "name": "Documentación de nivel Ampliado",
+      "tier": "pay",
+      "status": "ready",
+      "files": []
+    },
+    {
+      "id": "ai_autodoc",
+      "name": "Auto-Doc con IA (backend)",
+      "tier": "pay",
+      "status": "planned",
+      "files": ["assets/js/tools/code-formatter/ai-autodoc.js"]
+    },
+    {
+      "id": "single_session",
+      "name": "Control de sesión única y kick-out",
+      "tier": "pay",
+      "status": "ready",
+      "files": ["assets/js/tools/code-formatter/services/session-monitor.js"]
+    }
+  ]
+}
