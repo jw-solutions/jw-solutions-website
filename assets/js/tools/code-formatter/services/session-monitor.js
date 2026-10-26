@@ -1,5 +1,6 @@
 // Monitor de sesión única: escucha SSE y expulsa la sesión local si la cuenta inicia sesión en otro equipo.
 import { t } from '../i18n.js';
+import { apiUrl } from './api.js';
 
 export const SESSION_HINT_KEY = 'cf.session_hint'; // marca no sensible que pone el flujo de login; evita conectar sin sesión
 
@@ -31,7 +32,7 @@ function showRevokedAlert() {
 }
 
 /** Inicia el monitor. Devuelve { stop }. Si el servidor responde 401/404 la conexión se cierra sin reintentos. */
-export function startSessionMonitor({ url = '/api/session/events' } = {}) {
+export function startSessionMonitor({ url = apiUrl('/api/session/events') } = {}) {
   const es = new EventSource(url, { withCredentials: true });
 
   es.addEventListener('session_revoked', (ev) => {

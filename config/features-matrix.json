@@ -9,7 +9,14 @@
     "assets/js/tools/code-formatter/app.js",
     "assets/js/tools/code-formatter/ui-controller.js",
     "assets/js/tools/code-formatter/i18n.js",
-    "config/documentation-languages.js"
+    "config/documentation-languages.js",
+    "assets/js/tools/code-formatter/locales/es.js",
+    "assets/js/tools/code-formatter/locales/en.js",
+    "assets/js/tools/code-formatter/locales/pt-BR.js",
+    "assets/js/tools/code-formatter/locales/pt-PT.js",
+    "assets/js/tools/code-formatter/locales/fr.js",
+    "assets/js/tools/code-formatter/locales/de.js",
+    "assets/js/tools/code-formatter/locales/it.js"
   ],
   "features": [
     {
@@ -17,49 +24,63 @@
       "name": "Editor de código (CodeMirror 6)",
       "tier": "free",
       "status": "ready",
-      "files": ["assets/js/tools/code-formatter/editor.js"]
+      "files": [
+        "assets/js/tools/code-formatter/editor.js"
+      ]
     },
     {
       "id": "language_detect",
       "name": "Selector y auto-detección de lenguaje",
       "tier": "free",
       "status": "ready",
-      "files": ["assets/js/tools/code-formatter/detect.js"]
+      "files": [
+        "assets/js/tools/code-formatter/detect.js"
+      ]
     },
     {
       "id": "format_engines",
       "name": "Formateo determinista (Prettier, sql-formatter)",
       "tier": "free",
       "status": "ready",
-      "files": ["assets/js/tools/code-formatter/formatters.js"]
+      "files": [
+        "assets/js/tools/code-formatter/formatters.js"
+      ]
     },
     {
       "id": "doc_templates",
       "name": "Comentarios/docstrings básicos en 7 idiomas",
       "tier": "free",
       "status": "ready",
-      "files": ["assets/js/tools/code-formatter/doc-generator.js"]
+      "files": [
+        "assets/js/tools/code-formatter/doc-generator.js"
+      ]
     },
     {
       "id": "quick_actions",
       "name": "Copiar, descargar y copiar como Markdown",
       "tier": "free",
       "status": "ready",
-      "files": ["assets/js/tools/code-formatter/actions.js"]
+      "files": [
+        "assets/js/tools/code-formatter/actions.js"
+      ]
     },
     {
       "id": "local_history",
       "name": "Historial local (últimos 5)",
       "tier": "free",
       "status": "ready",
-      "files": ["assets/js/tools/code-formatter/history.js"]
+      "files": [
+        "assets/js/tools/code-formatter/history.js"
+      ]
     },
     {
       "id": "diff_view",
       "name": "Vista comparativa Antes/Después",
       "tier": "free",
       "status": "ready",
-      "files": ["assets/js/tools/code-formatter/diff-view.js"]
+      "files": [
+        "assets/js/tools/code-formatter/diff-view.js"
+      ]
     },
     {
       "id": "extended_detail",
@@ -73,14 +94,55 @@
       "name": "Auto-Doc con IA (backend)",
       "tier": "pay",
       "status": "planned",
-      "files": ["assets/js/tools/code-formatter/ai-autodoc.js"]
+      "files": [
+        "assets/js/tools/code-formatter/ai-autodoc.js"
+      ]
     },
     {
       "id": "single_session",
       "name": "Control de sesión única y kick-out",
       "tier": "pay",
       "status": "ready",
-      "files": ["assets/js/tools/code-formatter/services/session-monitor.js"]
+      "files": [
+        "assets/js/tools/code-formatter/services/session-monitor.js"
+      ]
+    },
+    {
+      "id": "json_docs",
+      "name": "Documentación estructurada para JSON (RFC 8259)",
+      "tier": "free",
+      "status": "ready",
+      "files": [
+        "assets/js/tools/code-formatter/json-documentation-adapter.js",
+        "assets/js/tools/code-formatter/structured-doc-ui.js"
+      ]
+    },
+    {
+      "id": "pro_billing",
+      "name": "Modal PRO, Binance Pay y reporte de pago",
+      "tier": "pay",
+      "status": "ready",
+      "files": [
+        "assets/js/tools/code-formatter/pro-modal.js",
+        "assets/js/tools/code-formatter/pro-messages.js",
+        "assets/js/tools/code-formatter/services/api.js",
+        "assets/js/tools/code-formatter/locales-pro/es.js",
+        "assets/js/tools/code-formatter/locales-pro/en.js",
+        "assets/js/tools/code-formatter/locales-pro/pt-BR.js",
+        "assets/js/tools/code-formatter/locales-pro/pt-PT.js",
+        "assets/js/tools/code-formatter/locales-pro/fr.js",
+        "assets/js/tools/code-formatter/locales-pro/de.js",
+        "assets/js/tools/code-formatter/locales-pro/it.js"
+      ]
+    },
+    {
+      "id": "accounts_auth",
+      "name": "Cuentas: registro e inicio de sesión (Argon2id)",
+      "tier": "pay",
+      "status": "ready",
+      "files": [
+        "assets/js/tools/code-formatter/auth-modal.js"
+      ]
     }
   ]
 }

@@ -49,6 +49,7 @@
         <span class="cf-logo__text">SOLUTIONS</span>
       </a>
       <nav class="cf-nav" aria-label="JW Solutions">
+        <select id="cf-ui-lang" class="cf-select cf-select--compact" data-i18n-aria="uiLang" aria-label="Idioma de la interfaz"></select>
         <a class="cf-nav__link" data-site-link data-i18n="navServices" href="../../index.html#servicios">Servicios</a>
         <a class="cf-nav__link" data-site-link data-i18n="navPortfolio" href="../../index.html#portfolio">Portfolio</a>
         <a class="cf-nav__link" data-cf-commercial data-site-link data-i18n="navPlans" href="../../index.html#contacto">Planes Pro</a>
@@ -128,9 +129,22 @@
         </div>
       </section>
 
+      <section id="cf-structured-doc" class="cf-card cf-structured-documentation" data-cf-feature="json_docs" hidden aria-labelledby="cf-sd-title">
+        <div class="cf-editor-card__head">
+          <span id="cf-sd-title" class="cf-editor-card__title" data-i18n="jsonDocTitle">Documentación estructurada (JSON)</span>
+        </div>
+        <p class="cf-muted cf-sd__note" data-i18n="jsonDocNote">JSON (RFC 8259) no admite comentarios: la documentación se genera aparte.</p>
+        <div id="cf-sd-body" class="cf-sd__body"></div>
+        <div class="cf-actions" role="group">
+          <button type="button" id="cf-sd-md" class="cf-btn" data-i18n="exportMd">Exportar Markdown</button>
+          <button type="button" id="cf-sd-json" class="cf-btn" data-i18n="exportJson">Exportar JSON</button>
+        </div>
+      </section>
+
       <aside class="cf-card cf-cta" data-cf-commercial>
         <span class="cf-badge">PRO</span>
         <p><span data-i18n="ctaText">Documentación ampliada con IA y sesión protegida.</span> <a href="../../index.html#contacto" data-site-link data-i18n="ctaLink">Conoce los planes</a></p>
+        <button type="button" class="cf-btn cf-btn--small" data-cf-open-auth data-i18n-pro="authNeeded">Cuenta</button>
       </aside>
 
       <div class="cf-card cf-history">
@@ -148,6 +162,55 @@
       <p>&copy; JW Solutions · <a href="../../index.html" data-site-link data-i18n="back">Volver al sitio</a></p>
     </div>
   </footer>
+
+  <!-- Modales comerciales: el build público los elimina -->
+  <dialog id="cf-pro-modal" class="cf-dialog" data-cf-commercial aria-labelledby="cf-pro-title">
+    <div class="cf-dialog__head">
+      <h2 id="cf-pro-title" class="cf-dialog__title" data-i18n-pro="proTitle">Hazte PRO</h2>
+      <button type="button" class="cf-btn cf-btn--small" data-cf-close data-i18n-pro="proClose">Cerrar</button>
+    </div>
+    <p data-i18n-pro="proIntro"></p>
+    <ul class="cf-dialog__list">
+      <li data-i18n-pro="proB1"></li>
+      <li data-i18n-pro="proB2"></li>
+      <li data-i18n-pro="proB3"></li>
+    </ul>
+    <h3 class="cf-dialog__sub" data-i18n-pro="payTitle"></h3>
+    <p class="cf-muted" data-i18n-pro="payHow"></p>
+    <div class="cf-payid">
+      <span class="cf-field__label" data-i18n-pro="payIdLabel"></span>
+      <code id="cf-pay-id" class="cf-payid__value"></code>
+      <button type="button" id="cf-pay-copy" class="cf-btn cf-btn--small" data-i18n-pro="payCopy"></button>
+    </div>
+    <h3 class="cf-dialog__sub" data-i18n-pro="rpTitle"></h3>
+    <form id="cf-report-form" class="cf-form" novalidate>
+      <label class="cf-field"><span class="cf-field__label" data-i18n-pro="rpTx"></span><input class="cf-input" name="txid" required maxlength="128" autocomplete="off"></label>
+      <label class="cf-field"><span class="cf-field__label" data-i18n-pro="rpAsset"></span><select class="cf-select" id="cf-rp-asset" name="asset"></select></label>
+      <label class="cf-field"><span class="cf-field__label" data-i18n-pro="rpAmount"></span><input class="cf-input" name="amount" required inputmode="decimal" maxlength="19" autocomplete="off"></label>
+      <label class="cf-field"><span class="cf-field__label" data-i18n-pro="rpDate"></span><input class="cf-input" id="cf-rp-date" name="paid_at" type="date" required></label>
+      <button type="submit" id="cf-rp-submit" class="cf-btn cf-btn--primary" data-i18n-pro="rpSubmit"></button>
+      <p id="cf-rp-status" class="cf-form__status" role="status" aria-live="polite"></p>
+      <p class="cf-muted" data-i18n-pro="rpNote"></p>
+    </form>
+  </dialog>
+
+  <dialog id="cf-auth-modal" class="cf-dialog" data-cf-commercial aria-labelledby="cf-auth-title">
+    <div class="cf-dialog__head">
+      <h2 id="cf-auth-title" class="cf-dialog__title" data-i18n-pro="authTitle"></h2>
+      <button type="button" class="cf-btn cf-btn--small" data-cf-close data-i18n-pro="authClose"></button>
+    </div>
+    <div class="cf-tabs" role="tablist">
+      <button type="button" role="tab" class="cf-tab" data-cf-auth-tab="register" data-i18n-pro="authNew"></button>
+      <button type="button" role="tab" class="cf-tab" data-cf-auth-tab="login" data-i18n-pro="authExisting"></button>
+    </div>
+    <form id="cf-auth-form" class="cf-form" novalidate>
+      <label class="cf-field"><span class="cf-field__label" data-i18n-pro="authEmail"></span><input class="cf-input" name="email" type="email" required autocomplete="email" maxlength="254"></label>
+      <label class="cf-field"><span class="cf-field__label" data-i18n-pro="authPass"></span><input class="cf-input" name="password" type="password" required minlength="10" maxlength="128" autocomplete="new-password"></label>
+      <p id="cf-auth-hint" class="cf-muted" data-i18n-pro="authPassHint"></p>
+      <button type="submit" id="cf-auth-submit" class="cf-btn cf-btn--primary"></button>
+      <p id="cf-auth-status" class="cf-form__status" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
 
   <div id="cf-toast" class="cf-toast" role="status" aria-live="polite"></div>
 

@@ -18,7 +18,8 @@ export async function writeClipboard(text) {
   } catch {
     const ta = Object.assign(document.createElement('textarea'), { value: text });
     ta.style.cssText = 'position:fixed;opacity:0';
-    document.body.appendChild(ta);
+    // Con un <dialog> modal abierto, el resto del documento es inerte: el campo temporal debe vivir dentro del diálogo.
+    (document.querySelector('dialog[open]') || document.body).appendChild(ta);
     ta.select();
     const ok = document.execCommand('copy');
     ta.remove();
@@ -31,15 +32,19 @@ export async function copyCode(code) {
   try { await writeClipboard(code); toast(t('copied')); } catch { toast(t('copyFail')); }
 }
 
-export function downloadCode(code, lang) {
-  if (!code.trim()) return toast(t('noCodeDl'));
-  const name = `codigo.${LANG_EXT[lang] || 'txt'}`;
-  const url = URL.createObjectURL(new Blob([code], { type: 'text/plain;charset=utf-8' }));
+export function downloadText(text, name, type = 'text/plain') {
+  const url = URL.createObjectURL(new Blob([text], { type: `${type};charset=utf-8` }));
   const a = Object.assign(document.createElement('a'), { href: url, download: name });
   document.body.appendChild(a);
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+export function downloadCode(code, lang) {
+  if (!code.trim()) return toast(t('noCodeDl'));
+  const name = `codigo.${LANG_EXT[lang] || 'txt'}`;
+  downloadText(code, name);
   toast(t('downloaded', { name }));
 }
 

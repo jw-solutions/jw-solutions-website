@@ -3,14 +3,26 @@ import { view, setLanguage } from './editor.js';
 import { detectLanguage, LANG_LABELS } from './detect.js';
 import { formatCode } from './formatters.js';
 import { addDocs, DOC_SUPPORTED } from './doc-generator.js';
-import { copyCode, downloadCode, copyMarkdown, toast, writeClipboard } from './actions.js';
-import { loadHistory, pushHistory, clearHistory } from './history.js';
+import { copyCode, downloadCode, copyMarkdown, toast, writeClipboard, downloadText } from './actions.js';
+import { loadHistory, pushHistory, clearHistory, removeHistoryItem } from './history.js';
 import { DOC_LANGUAGES, DEFAULT_DOC_LANGUAGE } from '../../../../config/documentation-languages.js';
 import { featuresReady, isFeatureOn } from './ui-controller.js';
-import { t, applyI18n } from './i18n.js';
+import { t, applyI18n, setupLangSelector, intlLocale } from './i18n.js';
 
 applyI18n();
+await setupLangSelector(document.getElementById('cf-ui-lang'));
 await featuresReady; // el inventario free/pay decide qué controles existen
+
+// Módulos de funciones opcionales: se importan solo si la función está activa (en dist-public pueden no existir).
+const jsonDocs = isFeatureOn('json_docs')
+  ? { ...(await import('./json-documentation-adapter.js')), ...(await import('./structured-doc-ui.js')) }
+  : null;
+if (isFeatureOn('pro_billing')) {
+  try { (await import('./pro-modal.js')).initProModal(); } catch (err) { console.warn('[code-formatter] modal PRO no iniciado:', err.message); }
+}
+if (isFeatureOn('accounts_auth')) {
+  try { (await import('./auth-modal.js')).initAuthModal(); } catch (err) { console.warn('[code-formatter] autenticación no iniciada:', err.message); }
+}
 
 // Sesión única (solo funciones pay): el módulo no existe en dist-public, por eso se importa bajo demanda.
 if (isFeatureOn('single_session')) {
@@ -69,6 +81,22 @@ view.dom.addEventListener('paste', () => {
   detectTimer = setTimeout(() => resolveLanguage(getCode()), 50);
 });
 
+// Documentación estructurada (función free "json_docs")
+const structuredPanel = $('cf-structured-doc');
+let structuredDoc = null; // { doc, docLang }
+if (structuredPanel && jsonDocs) {
+  $('cf-sd-md').addEventListener('click', () => {
+    if (!structuredDoc) return;
+    downloadText(jsonDocs.toMarkdownDoc(structuredDoc.doc, structuredDoc.docLang), 'documentation.md', 'text/markdown');
+    toast(t('exported', { name: 'documentation.md' }));
+  });
+  $('cf-sd-json').addEventListener('click', () => {
+    if (!structuredDoc) return;
+    downloadText(`${JSON.stringify(structuredDoc.doc, null, 2)}\n`, 'documentation.json', 'application/json');
+    toast(t('exported', { name: 'documentation.json' }));
+  });
+}
+
 // Vista de diferencias (función free "diff_view"; los nodos no existen si está desactivada)
 const diffBtn = $('cf-diff');
 const diffPanel = $('cf-diff-panel');
@@ -109,17 +137,28 @@ formatBtn.addEventListener('click', async () => {
     const res = await formatCode(code, lang);
     let out = res.code;
     let note = res.engine;
+    let result = 'formatted_success';
+    if (structuredPanel) structuredPanel.hidden = true;
     if (commentsToggle.checked) {
-      if (DOC_SUPPORTED.has(lang)) {
+      if (lang === 'json' && jsonDocs) {
+        // JSON no admite comentarios: documentación externa estructurada (idioma de documentación aparte)
+        const analysis = jsonDocs.analyzeJson(out);
+        if (!analysis.valid) throw new Error(t('jsonInvalid', { msg: analysis.error }));
+        structuredDoc = { doc: jsonDocs.buildDocumentation(analysis, docLangSel.value, detailSel.value), docLang: docLangSel.value };
+        jsonDocs.renderStructuredDoc(structuredPanel, analysis, structuredDoc.doc);
+        note += ` · ${t('jsonDocTitle')}`;
+        result = 'validated_documented';
+      } else if (DOC_SUPPORTED.has(lang)) {
         const docs = addDocs(out, lang, docLangSel.value, detailSel.value);
         out = docs.code;
         note += ` · ${t('docsBlocks', { n: docs.count })}`;
+        if (docs.count > 0) result = 'formatted_documented';
       } else {
         note += ` · ${t('docsUnavailable')}`;
       }
     }
     setCode(out);
-    renderHistory(pushHistory(code, lang));
+    renderHistory(pushHistory(code, lang, result));
     if (diffBtn) {
       diffState = { original: code, result: out, lang };
       diffBtn.disabled = false;
@@ -141,32 +180,55 @@ $('cf-copy-md').addEventListener('click', () => copyMarkdown(getCode(), currentL
 
 // Historial
 const histList = $('cf-history-list');
+const dateFmt = new Intl.DateTimeFormat(intlLocale, { dateStyle: 'medium', timeStyle: 'short' });
+const sizeFmt = (n) => (n < 1024 ? `${n} B` : `${new Intl.NumberFormat(intlLocale, { maximumFractionDigits: 1 }).format(n / 1024)} KB`);
+const node = (tag, className, text) => {
+  const n = document.createElement(tag);
+  if (className) n.className = className;
+  if (text !== undefined) n.textContent = text;
+  return n;
+};
+const actionBtn = (label, onClick) => {
+  const b = node('button', 'cf-btn cf-btn--small', label);
+  b.type = 'button';
+  b.addEventListener('click', onClick);
+  return b;
+};
+
+/** Renderizado exclusivamente con nodos DOM y textContent (el código guardado nunca se interpreta como HTML). */
 function renderHistory(items) {
   histList.replaceChildren();
   if (!items.length) {
-    const li = document.createElement('li');
-    li.className = 'cf-muted';
-    li.textContent = t('emptyHistory');
-    histList.append(li);
+    histList.append(node('li', 'cf-muted', t('emptyHistory')));
     return;
   }
   items.forEach((item) => {
-    const li = document.createElement('li');
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'cf-history__item';
     const first = item.code.split('\n').find((l) => l.trim()) || '';
-    btn.textContent = `${LANG_LABELS[item.lang] || item.lang} · ${first.trim().slice(0, 48)}`;
-    btn.title = new Date(item.ts).toLocaleString();
-    btn.addEventListener('click', () => {
-      langSel.value = item.lang;
-      detected.hidden = true;
-      setLanguage(item.lang);
-      setCode(item.code);
-    });
-    li.append(btn);
+    const main = node('div', 'cf-history__main');
+    const title = node('div', 'cf-history__title');
+    title.append(
+      node('span', 'cf-history__lang', LANG_LABELS[item.lang] || item.lang),
+      node('span', '', t(`res_${item.result}`)),
+      node('span', 'cf-history__meta', dateFmt.format(item.ts)),
+    );
+    const lines = item.lines === 1 ? t('lineOne') : t('lines', { n: item.lines });
+    main.append(title, node('div', 'cf-history__meta', `${sizeFmt(item.bytes)} · ${lines}`), node('p', 'cf-history__preview', first.trim().slice(0, 80)));
+
+    const btns = node('div', 'cf-history__btns');
+    btns.append(
+      actionBtn(t('historyRestore'), () => {
+        langSel.value = item.lang;
+        detected.hidden = true;
+        setLanguage(item.lang);
+        setCode(item.code);
+        toast(t('historyRestored'));
+      }),
+      actionBtn(t('historyDelete'), () => { renderHistory(removeHistoryItem(item.id)); toast(t('historyDeleted')); }),
+    );
+    const li = node('li', 'cf-history__row');
+    li.append(main, btns);
     histList.append(li);
   });
 }
-$('cf-history-clear').addEventListener('click', () => { clearHistory(); renderHistory([]); });
+$('cf-history-clear').addEventListener('click', () => { renderHistory(clearHistory()); toast(t('historyCleared')); });
 renderHistory(loadHistory());

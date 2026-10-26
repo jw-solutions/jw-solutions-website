@@ -82,6 +82,78 @@
       eq(toMarkdown('a\n```\nb\n', 'python'), '````python\na\n```\nb\n````\n', 'valla incorrecta');
     });
 
+    // --- i18n: paridad de claves entre los 7 idiomas (interfaz y textos PRO) y separación de idiomas
+    const UI = ['es', 'en', 'pt-BR', 'pt-PT', 'fr', 'de', 'it'];
+    const keysOf = (o) => Object.keys(o).sort();
+    const vars = (s) => (s.match(/\{\w+\}/g) || []).sort().join();
+    for (const dir of ['locales', 'locales-pro']) {
+      const base = (await import(`../../assets/js/tools/code-formatter/${dir}/es.js`)).default;
+      for (const l of UI.filter((x) => x !== 'es')) {
+        await check(`i18n ${dir}/${l}: mismas claves y variables que es`, async () => {
+          const m = (await import(`../../assets/js/tools/code-formatter/${dir}/${l}.js`)).default;
+          eq(keysOf(m).join(), keysOf(base).join(), 'claves distintas');
+          for (const k of Object.keys(base)) {
+            if (!String(m[k]).trim()) throw new Error(`vacío: ${k}`);
+            eq(vars(m[k]), vars(base[k]), `variables distintas en ${k}`);
+          }
+        });
+      }
+    }
+    await check('i18n: configuración de idiomas de DOCUMENTACIÓN cubre los 7 y comparte claves', async () => {
+      const keys = keysOf(DOC_LANGUAGES.es).join();
+      for (const l of UI) { if (!DOC_LANGUAGES[l]) throw new Error(`falta ${l}`); eq(keysOf(DOC_LANGUAGES[l]).join(), keys, `claves de ${l}`); }
+    });
+
+    // --- Adaptador JSON
+    const { analyzeJson, buildDocumentation, toMarkdownDoc, utf8Bytes } = await import('../../assets/js/tools/code-formatter/json-documentation-adapter.js');
+    const SAMPLE = '{"id":1,"name":"Ñandú €","tags":["a","b"],"owner":{"name":"x","active":true,"score":null},"items":[{"sku":"A","qty":2},{"sku":"B","qty":"3"}]}';
+    await check('JSON: rechaza sintaxis inválida (RFC 8259: sin comas finales ni comentarios)', async () => {
+      for (const bad of ['{"a":1,}', '{"a":1} // c', "{'a':1}", '']) if (analyzeJson(bad).valid) throw new Error(`aceptó ${bad}`);
+    });
+    await check('JSON: conteo de objetos, arrays, propiedades, profundidad y tipos', async () => {
+      const a = analyzeJson(SAMPLE);
+      eq(a.valid, true, 'inválido'); eq(a.root, 'object', 'raíz');
+      eq(a.stats.objects, 4, 'objetos'); eq(a.stats.arrays, 2, 'arrays'); eq(a.stats.properties, 12, 'propiedades'); eq(a.stats.maxDepth, 3, 'profundidad');
+      const p = Object.fromEntries(a.properties.map((x) => [x.path, x]));
+      eq(p['items[].qty'].types.join(), 'number,string', 'tipos mixtos'); eq(p['items[].qty'].count, 2, 'apariciones'); eq(p['owner.score'].types.join(), 'null', 'null');
+    });
+    await check('JSON: tamaño en bytes UTF-8 reales (no caracteres)', async () => {
+      eq(analyzeJson(SAMPLE).stats.bytes, utf8Bytes(SAMPLE), 'bytes'); if (utf8Bytes('Ñ€') !== 5) throw new Error('utf8Bytes');
+    });
+    await check('JSON: documentación en el idioma de documentación; el texto original no se modifica', async () => {
+      const a = analyzeJson(SAMPLE);
+      const de = buildDocumentation(a, 'de', 'extended'), es = buildDocumentation(a, 'es', 'basic');
+      eq(de.title, DOC_LANGUAGES.de.docTitle, 'título de'); eq(es.properties[0].description, `${DOC_LANGUAGES.es.property}.`, 'descripción es');
+      if (!de.properties.some((x) => 'example' in x)) throw new Error('extended sin ejemplos'); if (es.properties.some((x) => 'example' in x)) throw new Error('basic con ejemplos');
+      const md = toMarkdownDoc(de, 'de'); if (!md.includes(`## ${DOC_LANGUAGES.de.docProperties}`) || !md.includes('`items[].sku`')) throw new Error('markdown incompleto');
+      eq(JSON.parse(SAMPLE).id, 1, 'entrada intacta');
+    });
+    await check('JSON: Markdown escapa | y saltos de línea en celdas', async () => {
+      const md = toMarkdownDoc(buildDocumentation(analyzeJson('{"a|b":"x\\ny"}'), 'en', 'extended'), 'en');
+      if (!md.includes('`a\\|b`')) throw new Error(md);
+    });
+
+    // --- Historial enriquecido
+    const H = await import('../../assets/js/tools/code-formatter/history.js');
+    await check('historial: bytes UTF-8, líneas, resultado, id y tope de 5', async () => {
+      H.clearHistory();
+      for (let i = 0; i < 7; i++) H.pushHistory(`línea ${i}€\nsegunda`, 'python', 'formatted_documented');
+      const list = H.loadHistory();
+      eq(list.length, 5, 'tope'); eq(list[0].lines, 2, 'líneas'); eq(list[0].bytes, new TextEncoder().encode('línea 6€\nsegunda').length, 'bytes'); eq(list[0].result, 'formatted_documented', 'resultado');
+      if (!list[0].id || new Set(list.map((x) => x.id)).size !== 5) throw new Error('ids');
+    });
+    await check('historial: eliminación individual y global', async () => {
+      const [a, b] = H.loadHistory();
+      const after = H.removeHistoryItem(a.id);
+      eq(after.length, 4, 'quitar uno'); if (after.some((x) => x.id === a.id) || !after.some((x) => x.id === b.id)) throw new Error('quitó otro');
+      eq(H.clearHistory().length, 0, 'vaciar'); eq(H.loadHistory().length, 0, 'persistencia');
+    });
+    await check('historial: migra registros antiguos y descarta basura', async () => {
+      localStorage.setItem('cf.history', JSON.stringify([{ ts: 1, lang: 'sql', code: 'select 1' }, { nope: true }, null, 'x']));
+      const list = H.loadHistory(); eq(list.length, 1, 'solo el válido'); eq(list[0].bytes, 8, 'bytes'); eq(list[0].result, 'formatted_success', 'resultado por defecto'); H.clearHistory();
+    });
+    await check('historial: JSON corrupto no rompe', async () => { localStorage.setItem('cf.history', '{{{'); eq(H.loadHistory().length, 0, 'vacío'); H.clearHistory(); });
+
     const failed = results.filter((r) => !r.ok);
     window.__results = { total: results.length, passed: results.length - failed.length, failed: failed.length, failures: failed, all: results };
     out.innerHTML = results.map((r) => `<div class="${r.ok ? 'ok' : 'fail'}">${r.ok ? '✔' : '✘'} ${r.name}${r.ok ? '' : '\n   ' + r.detail}</div>`).join('') +

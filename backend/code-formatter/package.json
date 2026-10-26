@@ -1,14 +1,15 @@
 {
   "name": "cf-backend",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Backend de sesión única para Code Formatter & Auto-Doc AI",
+  "description": "Backend de cuentas, sesión única, pagos y outbox para Code Formatter & Auto-Doc AI",
   "engines": { "node": ">=20" },
   "scripts": {
     "start": "node src/main.js"
   },
   "dependencies": {
+    "nodemailer": "6.9.14",
     "pg": "8.12.0"
   }
 }
