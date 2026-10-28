@@ -1,0 +1,32 @@
+[Unit]
+Description=JW Solutions - IMAP reconciliation worker (Binance Pay)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=jwsolutions
+Group=jwsolutions
+WorkingDirectory=/opt/jw-solutions/backend
+EnvironmentFile=/opt/jw-solutions/backend/.env
+ExecStart=/opt/jw-solutions/backend/.venv/bin/python -m app.workers.imap_reconciliation
+# El worker ya hace backoff interno; esto cubre caidas del proceso. Si otro worker tiene el advisory lock sale con 1.
+Restart=on-failure
+RestartSec=30
+StartLimitIntervalSec=600
+StartLimitBurst=5
+TimeoutStopSec=60
+
+# Endurecimiento
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

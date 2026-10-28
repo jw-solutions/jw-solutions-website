@@ -1,0 +1,12 @@
+[Unit]
+Description=JW Solutions - ejecucion diaria de vencimientos y recordatorios
+
+[Timer]
+# Diario a las 09:00 UTC; Persistent recupera la ejecucion si el servidor estuvo apagado.
+OnCalendar=*-*-* 09:00:00 UTC
+Persistent=true
+RandomizedDelaySec=120
+Unit=jw-expiration-worker.service
+
+[Install]
+WantedBy=timers.target

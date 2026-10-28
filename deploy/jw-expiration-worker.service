@@ -1,0 +1,24 @@
+[Unit]
+Description=JW Solutions - vencimientos y recordatorios de suscripciones (oneshot, lo dispara jw-expiration-worker.timer)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=jwsolutions
+Group=jwsolutions
+WorkingDirectory=/opt/jw-solutions/backend
+EnvironmentFile=/opt/jw-solutions/backend/.env
+ExecStart=/opt/jw-solutions/backend/.venv/bin/python -m app.workers.expiration_worker
+TimeoutStartSec=300
+
+# Endurecimiento
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+LockPersonality=true
