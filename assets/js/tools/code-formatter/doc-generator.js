@@ -49,7 +49,8 @@ export function addDocs(code, lang, docLang = DEFAULT_DOC_LANGUAGE, level = 'bas
     const re = /^(\s*)(?:export\s+)?(?:default\s+)?(?:async\s+)?(?:function\s*\*?\s*(\w+)\s*\(([^)]*)\)|(?:const|let)\s+(\w+)\s*=\s*(?:async\s+)?\(([^)]*)\)\s*(?::[^=]+)?=>)/;
     for (let n = 0; n < lines.length; n++) {
       const m = lines[n].match(re);
-      if (m && !/\*\/\s*$/.test(out[out.length - 1] || '')) {
+      const prev = [...out].reverse().find((l) => l.trim()) || ''; // última línea no vacía: ya hay JSDoc aunque haya líneas en blanco
+      if (m && !/\*\/\s*$/.test(prev)) {
         out.push(...jsDoc(m[1], cleanParams(m[3] ?? m[5] ?? ''), t, level));
         count++;
       }

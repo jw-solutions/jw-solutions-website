@@ -12,7 +12,7 @@ import { diagnose, autoFix } from './diagnostics.js';
 import { buildShareUrl, decodeSnippet } from './share.js';
 
 applyI18n();
-await setupLangSelector(document.getElementById('cf-ui-lang'));
+await setupLangSelector(document.getElementById('cf-ui-lang'), { reactive: true }); // cambio de idioma sin recargar (evento cf:lang)
 try { (await import('./embed.js')).initEmbedModal(); } catch (err) { console.warn('[code-formatter] embebido no iniciado:', err.message); }
 try { (await import('./newsletter.js')).initNewsletter(); } catch (err) { console.warn('[code-formatter] newsletter no iniciado:', err.message); }
 await featuresReady; // el inventario free/pay decide qué controles existen
@@ -54,9 +54,14 @@ const formatBtn = $('cf-format');
 // Selectores poblados desde la configuración
 docLangSel.innerHTML = Object.entries(DOC_LANGUAGES).map(([k, v]) => `<option value="${k}">${v.label}</option>`).join('');
 docLangSel.value = DEFAULT_DOC_LANGUAGE;
-detailSel.innerHTML = ['basic', 'extended']
-  .filter((k) => k !== 'extended' || isFeatureOn('extended_detail'))
-  .map((k) => `<option value="${k}">${t(k)}</option>`).join('');
+const fillDetail = () => {
+  const keep = detailSel.value;
+  detailSel.innerHTML = ['basic', 'extended']
+    .filter((k) => k !== 'extended' || isFeatureOn('extended_detail'))
+    .map((k) => `<option value="${k}">${t(k)}</option>`).join('');
+  if (keep) detailSel.value = keep;
+};
+fillDetail();
 
 const syncCommentControls = () => {
   const on = commentsToggle.checked;
@@ -72,6 +77,7 @@ function resolveLanguage(code) {
   const lang = detectLanguage(code);
   if (lang) {
     detected.textContent = t('detected', { lang: LANG_LABELS[lang] });
+    detected.dataset.lang = lang; // para re-traducir la etiqueta al cambiar de idioma
     detected.hidden = false;
     setLanguage(lang);
   } else {
@@ -137,6 +143,7 @@ formatBtn.addEventListener('click', async () => {
   if (new TextEncoder().encode(code).length > MAX_CODE_BYTES) return tooBig();
   const lang = resolveLanguage(code);
   if (!lang) return toast(t('noDetect'));
+  const auto = langSel.value === 'auto';
 
   formatBtn.disabled = true;
   formatBtn.textContent = t('formatting');
@@ -165,7 +172,7 @@ formatBtn.addEventListener('click', async () => {
       }
     }
     setCode(out);
-    renderHistory(pushHistory(code, lang, result));
+    renderHistory(pushHistory(code, lang, result, auto));
     if (diffBtn) {
       diffState = { original: code, result: out, lang };
       diffBtn.disabled = false;
@@ -173,6 +180,7 @@ formatBtn.addEventListener('click', async () => {
     }
     toast(note);
   } catch (err) {
+    renderHistory(pushHistory(code, lang, 'format_error', auto)); // el intento fallido también queda para restaurarlo
     toast(t('syntaxError', { msg: String(err.message || err).split('\n')[0].slice(0, 90) }));
   } finally {
     formatBtn.disabled = false;
@@ -230,7 +238,7 @@ $('cf-copy-md').addEventListener('click', () => copyMarkdown(getCode(), currentL
 
 // Historial
 const histList = $('cf-history-list');
-const dateFmt = new Intl.DateTimeFormat(intlLocale, { dateStyle: 'medium', timeStyle: 'short' });
+const dateFmt = { format: (ts) => new Intl.DateTimeFormat(intlLocale, { dateStyle: 'medium', timeStyle: 'short' }).format(ts) }; // intlLocale es un binding vivo
 const sizeFmt = (n) => (n < 1024 ? `${n} B` : `${new Intl.NumberFormat(intlLocale, { maximumFractionDigits: 1 }).format(n / 1024)} KB`);
 const node = (tag, className, text) => {
   const n = document.createElement(tag);
@@ -257,8 +265,8 @@ function renderHistory(items) {
     const main = node('div', 'cf-history__main');
     const title = node('div', 'cf-history__title');
     title.append(
-      node('span', 'cf-history__lang', LANG_LABELS[item.lang] || item.lang),
-      node('span', '', t(`res_${item.result}`)),
+      node('span', 'cf-history__lang', `${LANG_LABELS[item.lang] || item.lang}${item.auto ? ' ·auto' : ''}`),
+      node('span', item.result === 'format_error' ? 'cf-history__err' : '', t(`res_${item.result}`)),
       node('span', 'cf-history__meta', dateFmt.format(item.ts)),
     );
     const lines = item.lines === 1 ? t('lineOne') : t('lines', { n: item.lines });
@@ -282,6 +290,16 @@ function renderHistory(items) {
 }
 $('cf-history-clear').addEventListener('click', () => { renderHistory(clearHistory()); toast(t('historyCleared')); });
 renderHistory(loadHistory());
+
+// Cambio de idioma en vivo: se re-traducen los textos generados por código (el HTML con data-i18n ya lo hizo setLang)
+document.addEventListener('cf:lang', () => {
+  fillDetail();
+  if (!detected.hidden && detected.dataset.lang) detected.textContent = t('detected', { lang: LANG_LABELS[detected.dataset.lang] });
+  renderHistory(loadHistory());
+  runDiagnostics();
+  const sel = $('cf-ui-lang');
+  if (sel.value !== uiLang) sel.value = uiLang;
+});
 
 // Fragmento de ejemplo enviado desde un tip (CTA "Probar en el formateador"). Solo se inserta como texto en el editor.
 try {

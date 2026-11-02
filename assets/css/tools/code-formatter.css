@@ -241,3 +241,5 @@
 .cf-fix__list a:hover { color: var(--cf-gold); }
 .cf-fix__chip { display: inline-block; margin-bottom: 4px; color: var(--cf-gold); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
 @media (max-width: 640px) { .cf-fix__pair { grid-template-columns: 1fr; } .cf-diag .cf-btn { width: 100%; } }
+
+.cf-history__err { color: #fca5a5; }

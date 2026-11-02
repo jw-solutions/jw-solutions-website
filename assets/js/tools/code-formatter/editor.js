@@ -71,6 +71,8 @@ const view = new EditorView({
 /** Extensión de CodeMirror para un lenguaje (reutilizada por la vista de diferencias). */
 updateStats(view.state);
 
+document.addEventListener('cf:lang', () => updateStats(view.state)); // el contador de líneas cambia de idioma sin recargar
+
 export const languageExtension = (key) => (LANG_EXT[key] ? LANG_EXT[key]() : []);
 
 export const setLanguage = (key) => {

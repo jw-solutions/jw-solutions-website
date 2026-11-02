@@ -1,8 +1,8 @@
-// Historial local enriquecido: últimos 5 fragmentos en localStorage.
-// Registro: { id, ts, lang, code, bytes (UTF-8), lines, result } con result = código localizable (res_<result> en los locales).
+// Historial local enriquecido: últimos 20 fragmentos en localStorage.
+// Registro: { id, ts, lang, auto (lenguaje auto-detectado), code, bytes (UTF-8), lines, result } con result = código localizable (res_<result> en los locales).
 const KEY = 'cf.history';
-const MAX = 5;
-export const RESULT_CODES = ['formatted_success', 'formatted_documented', 'validated_documented'];
+const MAX = 20;
+export const RESULT_CODES = ['formatted_success', 'formatted_documented', 'validated_documented', 'format_error'];
 
 export const utf8Length = (text) => new TextEncoder().encode(text).length;
 export const countLines = (text) => (text === '' ? 0 : text.replace(/\r\n?/g, '\n').replace(/\n$/, '').split('\n').length);
@@ -16,6 +16,7 @@ function normalize(entry) {
     id: typeof entry.id === 'string' ? entry.id : newId(),
     ts: Number.isFinite(entry.ts) ? entry.ts : Date.now(),
     lang: entry.lang,
+    auto: entry.auto === true,
     code: entry.code,
     bytes: utf8Length(entry.code),
     lines: countLines(entry.code),
@@ -32,10 +33,10 @@ export function loadHistory() {
   } catch { return []; }
 }
 
-export function pushHistory(code, lang, result = 'formatted_success') {
+export function pushHistory(code, lang, result = 'formatted_success', auto = false) {
   if (!code.trim()) return loadHistory();
   const list = loadHistory().filter((e) => e.code !== code);
-  list.unshift(normalize({ id: newId(), ts: Date.now(), lang, code, result }));
+  list.unshift(normalize({ id: newId(), ts: Date.now(), lang, auto, code, result }));
   return save(list.slice(0, MAX));
 }
 

@@ -20,14 +20,16 @@ function resolveLang() {
   return normalize(navigator.language) || 'es';
 }
 
-export const lang = resolveLang();
+export let lang = resolveLang(); // binding vivo: cambia con setLang() sin recargar
 
 const es = (await import('./locales/es.js')).default;
 const current = lang === 'es' ? es : (await import(`./locales/${lang}.js`)).default;
 const messages = { ...es, ...current };
+const extensions = []; // paquetes opcionales (PRO) que deben reaplicarse al cambiar de idioma
 
 /** Registra mensajes de módulos opcionales (p. ej. los de PRO). Cada módulo aporta es + el idioma activo. */
 export function extendMessages(byLang) {
+  extensions.push(byLang);
   Object.assign(messages, byLang.es, byLang[lang]);
 }
 
@@ -35,7 +37,29 @@ export const t = (key, vars = {}) =>
   String(messages[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
 
 /** Etiqueta BCP 47 para Intl (fechas, números). */
-export const intlLocale = lang;
+export let intlLocale = lang;
+
+/** Cambia el idioma de la interfaz sin recargar: carga el locale, actualiza URL/almacenamiento y emite `cf:lang`. */
+export async function setLang(next) {
+  const l = normalize(next);
+  if (!l || l === lang) return false;
+  const bundle = l === 'es' ? es : (await import(`./locales/${l}.js`)).default;
+  Object.keys(messages).forEach((k) => delete messages[k]);
+  Object.assign(messages, es, bundle);
+  extensions.forEach((b) => Object.assign(messages, b.es, b[l]));
+  lang = l;
+  intlLocale = l;
+  try { localStorage.setItem(UI_KEY, l); } catch { /* ignorar */ }
+  try {
+    const url = new URL(location.href);
+    url.searchParams.set('lang', l);
+    history.replaceState(history.state, '', url);
+  } catch { /* entornos sin History API */ }
+  applyI18n();
+  if (extensions.length) applyProI18n();
+  document.dispatchEvent(new CustomEvent('cf:lang', { detail: { lang: l } }));
+  return true;
+}
 
 /** Traduce [data-i18n], [data-i18n-aria] y propaga ?lang= a los enlaces [data-site-link]. */
 export function applyI18n(root = document) {
@@ -59,10 +83,11 @@ export function applyProI18n(root = document) {
 }
 
 /** Rellena el selector de idioma de interfaz; al cambiar recarga con ?lang= y recuerda la elección. */
-export async function setupLangSelector(select) {
+export async function setupLangSelector(select, { reactive = false } = {}) {
   const names = await Promise.all(SUPPORTED_LANGS.map(async (l) => [l, l === lang ? messages.langName : (await import(`./locales/${l}.js`)).default.langName]));
   select.replaceChildren(...names.map(([l, name]) => Object.assign(document.createElement('option'), { value: l, textContent: name, selected: l === lang })));
   select.addEventListener('change', () => {
+    if (reactive) { setLang(select.value).catch(() => { location.href = `?lang=${select.value}`; }); return; }
     try { localStorage.setItem(UI_KEY, select.value); } catch { /* ignorar */ }
     const url = new URL(location.href);
     url.searchParams.set('lang', select.value);
