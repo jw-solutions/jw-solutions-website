@@ -463,6 +463,35 @@
   })();
 
   /* ─────────────────────────────────────────────────────────────────────────────
+     7c. SPOTLIGHT (luz dinámica de cursor en tarjetas)
+     ───────────────────────────────────────────────────────────────────────────── */
+  const Spotlight = (() => {
+    function init() {
+      if (window.matchMedia('(hover: none), (prefers-reduced-motion: reduce)').matches) return;
+
+      let frame = 0;
+      let last = null;
+
+      // Un único listener delegado: solo escribe 2 variables CSS por frame (sin layout ni repaint de contenido)
+      document.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        const card = e.target.closest && e.target.closest('.spotlight-card');
+        if (!card) return;
+        last = { card, x: e.clientX, y: e.clientY };
+        if (frame) return;
+        frame = requestAnimationFrame(() => {
+          frame = 0;
+          const rect = last.card.getBoundingClientRect();
+          last.card.style.setProperty('--mouse-x', `${last.x - rect.left}px`);
+          last.card.style.setProperty('--mouse-y', `${last.y - rect.top}px`);
+        });
+      }, { passive: true });
+    }
+
+    return { init };
+  })();
+
+  /* ─────────────────────────────────────────────────────────────────────────────
      8. BACK TO TOP BUTTON
      ───────────────────────────────────────────────────────────────────────────── */
   const BackToTop = (() => {
@@ -1566,7 +1595,7 @@
     hideDecorativeIcons();
     const modules = [
       LangSwitcher, MobileMenu, HeaderScroll, Particles,
-      FAQAccordion, ScrollReveal, ScrollMotion, BackToTop, Forms, SmoothScroll, LazyImages,
+      FAQAccordion, ScrollReveal, ScrollMotion, Spotlight, BackToTop, Forms, SmoothScroll, LazyImages,
       CurrentYear, Analytics, Consent, LegalModals, FxCalculator, FxQuickAccess, MobileCTABar, PWA, Featured
     ];
 
