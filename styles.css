@@ -2583,6 +2583,34 @@ body { color: var(--jw-text); }
 .section--light { color: var(--jw-text); }
 .section--light + .section--light { border-top: 1px solid var(--jw-border); }
 
+/* Secciones claras: redefine los tokens --jw-* localmente (tarjetas, formularios y textos se adaptan solos).
+   Contraste: --jw-text 15:1 y --jw-muted 7:1 sobre --jw-bg; --jw-gold (#8A6100) 5:1 sobre --jw-surface. */
+.section--light {
+  --jw-bg: #F4F1EA;
+  --jw-surface: #FFFFFF;
+  --jw-surface-hover: #FBF6E8;
+  --jw-gold: #8A6100;
+  --jw-text: #14181F;
+  --jw-muted: #444E5B;
+  --jw-border: rgba(138, 97, 0, 0.28);
+}
+.section--light .service-link:hover,
+.section--light .contact-link:hover,
+.section--light .tool-link:hover,
+.section--light .portfolio-link:hover,
+.section--light .faq-question:hover { color: #5C4000; }
+.section--light .portfolio-result,
+.section--light .contact-form .form-message.success { color: #15803D; }
+.section--light .contact-form .form-message.error,
+.section--light .field-error { color: #B91C1C; }
+.section--light .service-card:hover,
+.section--light .portfolio-card:hover,
+.section--light .method-step:hover,
+.section--light .tool-card:hover,
+.section--light .contact-card:hover,
+.section--light .faq-item:hover,
+.section--light .pillar-card:hover { box-shadow: 0 12px 32px rgba(20, 24, 31, 0.12); }
+
 /* Texto en secciones antes claras */
 .section--light .section-title,
 .section--light h2,
