@@ -45,16 +45,14 @@
 
   <header class="cf-header">
     <div class="cf-container cf-header__inner">
-      <a href="../../index.html" data-site-link class="cf-logo" aria-label="JW Solutions">
+      <div class="cf-logo" role="img" aria-label="JW Solutions">
         <span class="cf-logo__mark">JW</span>
         <span class="cf-logo__text">SOLUTIONS</span>
-      </a>
-      <nav class="cf-nav" aria-label="JW Solutions">
+      </div>
+      <nav class="cf-nav" aria-label="Code Formatter">
         <select id="cf-ui-lang" class="cf-select cf-select--compact" data-i18n-aria="uiLang" aria-label="Idioma de la interfaz"></select>
-        <a class="cf-nav__link" data-site-link data-i18n="navServices" href="../../index.html#servicios">Servicios</a>
-        <a class="cf-nav__link" data-site-link data-i18n="navPortfolio" href="../../index.html#portfolio">Portfolio</a>
         <a class="cf-nav__link" data-cf-commercial data-site-link data-i18n="navPlans" href="../../index.html#contacto">Planes Pro</a>
-        <a class="cf-nav__link cf-nav__link--cta" data-site-link data-i18n="navContact" href="../../index.html#contacto">Contacto</a>
+        <a class="cf-nav__link cf-nav__link--cta" data-site-link data-i18n="back" href="../../index.html">Volver al sitio</a>
       </nav>
     </div>
   </header>
@@ -66,7 +64,7 @@
       <p class="cf-lead" data-i18n="lead">Pega tu código, elige el lenguaje y obtén una versión formateada y documentada.</p>
     </section>
 
-    <section class="cf-container cf-workspace" aria-label="Editor">
+    <section class="cf-container cf-workspace" data-i18n-aria="editorRegion" aria-label="Editor">
       <div class="cf-card cf-toolbar" role="group">
         <label class="cf-field">
           <span class="cf-field__label" data-i18n="language">Lenguaje</span>
@@ -106,7 +104,7 @@
           <span class="cf-editor-card__title" data-i18n="code">Código</span>
           <span id="cf-stats" class="cf-muted">1 línea</span>
         </div>
-        <div id="cf-editor" class="cf-editor" aria-label="Code"></div>
+        <div id="cf-editor" class="cf-editor" data-i18n-aria="code" aria-label="Code"></div>
         <noscript><p class="cf-muted" data-i18n="needJs">Se requiere JavaScript para usar el editor.</p></noscript>
         <div class="cf-actions" role="group">
           <button type="button" id="cf-copy" class="cf-btn" data-i18n="copy">Copiar</button>

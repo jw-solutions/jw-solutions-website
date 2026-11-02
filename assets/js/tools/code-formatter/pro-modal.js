@@ -15,7 +15,7 @@ export async function initProModal() {
   await loadProMessages();
   const dialog = document.getElementById('cf-pro-modal');
   if (!dialog) return;
-  applyProI18n(dialog);
+  applyProI18n(document); // incluye el botón "Cuenta" del CTA, que está fuera del diálogo
 
   dialog.querySelector('#cf-pay-id').textContent = BINANCE_PAY_ID;
   const asset = dialog.querySelector('#cf-rp-asset');

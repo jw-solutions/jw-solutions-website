@@ -23,7 +23,7 @@ function normalize(code, { tabs = '    ' } = {}) {
 export async function formatCode(code, lang) {
   if (lang === 'json') {
     // Validación estricta (el parser json de Prettier tolera comas finales y comentarios)
-    return { code: `${JSON.stringify(JSON.parse(code), null, 2)}\n`, engine: 'JSON (estricto)' };
+    return { code: `${JSON.stringify(JSON.parse(code), null, 2)}\n`, engine: 'JSON (estricto)', engineKey: 'engineJson' };
   }
   if (PARSERS[lang]) {
     const { format, plugins } = await loadPrettier();
@@ -34,5 +34,5 @@ export async function formatCode(code, lang) {
     const { format } = await import(SQL_FORMATTER);
     return { code: format(code, { language: 'sql', keywordCase: 'upper', tabWidth: 2 }) + '\n', engine: 'sql-formatter' };
   }
-  return { code: normalize(code), engine: 'Normalización básica' };
+  return { code: normalize(code), engine: 'Normalización básica', engineKey: 'engineBasic' };
 }

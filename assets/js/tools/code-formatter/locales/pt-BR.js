@@ -26,4 +26,5 @@ export default {
   statObjects: 'Objetos', statArrays: 'Arrays', statProps: 'Propriedades', statDepth: 'Profundidade', statBytes: 'Tamanho', statTypes: 'Tipos detectados',
   colPath: 'Caminho', colTypes: 'Tipos', colCount: 'Ocorrências', colDesc: 'Descrição',
   exportMd: 'Exportar Markdown', exportJson: 'Exportar JSON', exported: '{name} exportado', jsonInvalid: 'JSON inválido: {msg}', jsonTruncated: 'Mostrando as primeiras {n} propriedades.',
+  engineBasic: 'Normalização básica', engineJson: 'JSON (estrito)', editorRegion: 'Editor',
 };

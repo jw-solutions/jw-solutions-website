@@ -11,7 +11,7 @@ export async function initAuthModal() {
   await loadProMessages();
   const dialog = document.getElementById('cf-auth-modal');
   if (!dialog) return;
-  applyProI18n(dialog);
+  applyProI18n(document); // incluye el botón "Cuenta" del CTA, que está fuera del diálogo
 
   const form = dialog.querySelector('#cf-auth-form');
   const status = dialog.querySelector('#cf-auth-status');

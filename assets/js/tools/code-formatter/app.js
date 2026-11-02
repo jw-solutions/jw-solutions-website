@@ -136,7 +136,7 @@ formatBtn.addEventListener('click', async () => {
   try {
     const res = await formatCode(code, lang);
     let out = res.code;
-    let note = res.engine;
+    let note = res.engineKey ? t(res.engineKey) : res.engine;
     let result = 'formatted_success';
     if (structuredPanel) structuredPanel.hidden = true;
     if (commentsToggle.checked) {
