@@ -1,11 +1,12 @@
 ---
-title: "SQL y DAX: tres hábitos para consultas rápidas y legibles"
-slug: "sql-dax-optimization-basics"
-date: "2026-11-20"
-language: "sql"
-author: "JW Solutions Code Team"
-category: "Buenas prácticas"
-status: "ready"
+title: 'SQL y DAX: tres hábitos para consultas rápidas y legibles'
+slug: sql-dax-optimization-basics
+date: '2026-11-20'
+language: sql
+author: JW Solutions Code Team
+category: Buenas prácticas
+status: published
+published_at: '2026-11-02'
 ---
 
 ## Tip de la semana

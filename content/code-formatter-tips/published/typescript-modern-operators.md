@@ -1,11 +1,12 @@
 ---
-title: "TypeScript moderno: ?., ?? y satisfies sin errores de formato"
-slug: "typescript-modern-operators"
-date: "2026-11-13"
-language: "javascript"
-author: "JW Solutions Code Team"
-category: "Tips de Sintaxis"
-status: "ready"
+title: 'TypeScript moderno: ?., ?? y satisfies sin errores de formato'
+slug: typescript-modern-operators
+date: '2026-11-13'
+language: javascript
+author: JW Solutions Code Team
+category: Tips de Sintaxis
+status: published
+published_at: '2026-11-02'
 ---
 
 ## Tip de la semana

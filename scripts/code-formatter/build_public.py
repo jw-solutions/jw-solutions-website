@@ -94,6 +94,10 @@ def build_public(matrix: dict) -> int:
     free = [f for f in matrix["features"] if f["tier"] == "free" and f["status"] == "ready"]
     pay_files = {p for f in matrix["features"] if f["tier"] == "pay" for p in f["files"]}
     to_copy = list(matrix["shared_files"]) + [p for f in free for p in f["files"]]
+    # Contenido de tips (manifiesto + publicados): lo lee tips-page.js en tiempo de ejecución
+    tips_dir = ROOT / "content" / "code-formatter-tips"
+    to_copy.append("content/code-formatter-tips/code-formatter-manifest.json")
+    to_copy += [f"content/code-formatter-tips/published/{m.name}" for m in sorted((tips_dir / "published").glob("*.md"))]
 
     missing = [p for p in to_copy if not (ROOT / p).is_file()]
     if missing:

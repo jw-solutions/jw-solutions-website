@@ -73,7 +73,11 @@ export async function setupLangSelector(select) {
 /** Canónica, hreflang y metadatos OpenGraph coherentes con el idioma activo (español = URL base sin ?lang=). */
 export function applySeo() {
   const dir = location.pathname.replace(/index\.html$/, '');
-  const urlFor = (l) => `${SITE}${dir}${l === 'es' ? '' : `?lang=${l}`}`;
+  const tip = new URLSearchParams(location.search).get('tip');
+  const urlFor = (l) => {
+    const q = [l === 'es' ? '' : `lang=${l}`, tip ? `tip=${encodeURIComponent(tip)}` : ''].filter(Boolean).join('&');
+    return `${SITE}${dir}${q ? `?${q}` : ''}`;
+  };
   const head = document.head;
   const upsert = (selector, tag, attrs) => {
     let n = head.querySelector(selector);

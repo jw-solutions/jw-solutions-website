@@ -1,4 +1,35 @@
 {
   "version": 1,
-  "tips": []
+  "tips": [
+    {
+      "slug": "python-312-pep8-tips",
+      "title": "PEP 8 en Python 3.12: cómo escribir bloques match/case legibles",
+      "language": "python",
+      "category": "Tips de Sintaxis",
+      "date": "2026-11-06",
+      "published_at": "2026-11-02",
+      "file": "published/python-312-pep8-tips.md",
+      "sha256": "e9ffae87214c4860f3474ce192de4611ee63a95a16207c40802a9447d4c5c9eb"
+    },
+    {
+      "slug": "typescript-modern-operators",
+      "title": "TypeScript moderno: ?., ?? y satisfies sin errores de formato",
+      "language": "javascript",
+      "category": "Tips de Sintaxis",
+      "date": "2026-11-13",
+      "published_at": "2026-11-02",
+      "file": "published/typescript-modern-operators.md",
+      "sha256": "be85a7632234e4e735fb89f6eb04c7c01a04af88d4886923169812d2aa2d1554"
+    },
+    {
+      "slug": "sql-dax-optimization-basics",
+      "title": "SQL y DAX: tres hábitos para consultas rápidas y legibles",
+      "language": "sql",
+      "category": "Buenas prácticas",
+      "date": "2026-11-20",
+      "published_at": "2026-11-02",
+      "file": "published/sql-dax-optimization-basics.md",
+      "sha256": "22f7f4cd9461bc52c9248ee8b2317ee048c40670d8c61852c68f7e0377a1cb36"
+    }
+  ]
 }

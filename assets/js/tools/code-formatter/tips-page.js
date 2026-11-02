@@ -1,7 +1,7 @@
 // Páginas de tips por lenguaje (tools/code-formatter/tips/*). Lee el manifiesto de tips publicados
 // y muestra el listado de la categoría o, con ?tip=<slug>, el artículo. Sin innerHTML: todo se
 // construye con nodos de texto, así el contenido Markdown nunca se interpreta como HTML.
-import { t, applyI18n, setupLangSelector, intlLocale, MAX_CODE_BYTES } from './i18n.js';
+import { t, applyI18n, applySeo, setupLangSelector, intlLocale, MAX_CODE_BYTES } from './i18n.js';
 import { initNewsletter } from './newsletter.js';
 
 const CONTENT = '../../../../content/code-formatter-tips/';
@@ -92,6 +92,7 @@ async function main() {
   titleEl.textContent = t(page.dataset.tipsTitle);
   document.getElementById('cf-tips-lead').textContent = t(page.dataset.tipsLead);
   document.title = `${t(page.dataset.tipsTitle)} | Code Formatter & Auto-Doc AI`;
+  applySeo();
 
   const list = document.getElementById('cf-tips-list');
   const article = document.getElementById('cf-tip-article');
@@ -113,6 +114,7 @@ async function main() {
       article.hidden = false;
       list.hidden = true;
       document.title = `${current.title} | Code Formatter & Auto-Doc AI`;
+      applySeo();
       return;
     }
     if (!tips.length) { list.replaceChildren(el('p', { className: 'cf-muted', textContent: t('tipsEmpty') })); return; }

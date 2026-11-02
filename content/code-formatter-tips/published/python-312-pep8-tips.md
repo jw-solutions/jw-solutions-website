@@ -1,11 +1,12 @@
 ---
-title: "PEP 8 en Python 3.12: cómo escribir bloques match/case legibles"
-slug: "python-312-pep8-tips"
-date: "2026-11-06"
-language: "python"
-author: "JW Solutions Code Team"
-category: "Tips de Sintaxis"
-status: "ready"
+title: 'PEP 8 en Python 3.12: cómo escribir bloques match/case legibles'
+slug: python-312-pep8-tips
+date: '2026-11-06'
+language: python
+author: JW Solutions Code Team
+category: Tips de Sintaxis
+status: published
+published_at: '2026-11-02'
 ---
 
 ## Tip de la semana
