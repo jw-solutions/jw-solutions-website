@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
 Sitemap: https://jw-solutions.com/sitemap.xml
+Sitemap: https://jw-solutions.com/sitemap-code-formatter.xml

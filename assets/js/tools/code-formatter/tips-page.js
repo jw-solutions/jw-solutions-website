@@ -1,7 +1,7 @@
 // Páginas de tips por lenguaje (tools/code-formatter/tips/*). Lee el manifiesto de tips publicados
 // y muestra el listado de la categoría o, con ?tip=<slug>, el artículo. Sin innerHTML: todo se
 // construye con nodos de texto, así el contenido Markdown nunca se interpreta como HTML.
-import { t, applyI18n, applySeo, setupLangSelector, intlLocale, MAX_CODE_BYTES } from './i18n.js';
+import { t, lang, SUPPORTED_LANGS, applyI18n, applySeo, setupLangSelector, intlLocale, MAX_CODE_BYTES } from './i18n.js';
 import { initNewsletter } from './newsletter.js';
 
 const CONTENT = '../../../../content/code-formatter-tips/';
@@ -77,8 +77,53 @@ async function fetchJson(url) {
   return res.json();
 }
 
-function tipMeta(tip) {
-  return el('p', { className: 'cf-muted cf-tip__meta' }, `${t('tipsPublished', { date: fmtDate(tip.published_at) })} · ${tip.category}`);
+// Contenido localizado: <slug>.md = español (base); manifest.tips[].translations[locale] = { title, category, file }.
+const FALLBACK_CHAIN = { 'pt-PT': ['pt-BR'], 'pt-BR': ['pt-PT'] }; // el portugués vecino antes que el inglés
+const langName = (code) => { try { return new Intl.DisplayNames([lang], { type: 'language' }).of(code); } catch { return code; } };
+
+/** Idiomas con contenido real del tip (los únicos que llevan hreflang). */
+const availableLangs = (tip) => SUPPORTED_LANGS.filter((l) => l === 'es' || Boolean(tip.translations && tip.translations[l]));
+
+/** Variante a mostrar: idioma activo → portugués vecino → inglés → español (base), con indicador de fallback. */
+function variantFor(tip) {
+  const have = availableLangs(tip);
+  const locale = [lang, ...(FALLBACK_CHAIN[lang] || []), 'en', 'es'].find((l) => have.includes(l));
+  const tr = locale === 'es' ? null : tip.translations[locale];
+  return { locale, fallback: locale !== lang, title: tr ? tr.title : tip.title, category: tr ? tr.category : tip.category, file: tr ? tr.file : tip.file };
+}
+
+function tipMeta(tip, v) {
+  return el('p', { className: 'cf-muted cf-tip__meta' }, `${t('tipsPublished', { date: fmtDate(tip.published_at) })} · ${v.category}`);
+}
+
+/** Primer párrafo del Markdown (sin frontmatter, encabezados ni código) para la meta description. */
+function excerptOf(md) {
+  const body = md.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, '').replace(/```[\s\S]*?```/g, '');
+  const para = body.split(/\n\s*\n/).map((x) => x.trim()).find((x) => x && !x.startsWith('#') && !/^[-*]\s/.test(x)) || '';
+  return para.replace(/[`*]/g, '').replace(/\s+/g, ' ').slice(0, 300);
+}
+
+/** Datos estructurados Schema.org (TechArticle) del tip en el idioma mostrado. Es un bloque de datos, no código ejecutable. */
+function injectJsonLd(tip, v, description) {
+  const url = document.querySelector('link[rel="canonical"]')?.href || location.href;
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: v.title,
+    description,
+    inLanguage: v.locale,
+    articleSection: v.category,
+    keywords: [tip.language, 'code formatter', 'syntax', 'best practices'].join(', '),
+    datePublished: tip.published_at,
+    dateModified: tip.published_at,
+    url,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    author: { '@type': 'Organization', name: 'JW Solutions' },
+    publisher: { '@type': 'Organization', name: 'JW Solutions', url: 'https://jw-solutions.com' },
+    image: 'https://jw-solutions.com/tools/code-formatter/apple-touch-icon.png',
+  };
+  document.getElementById('cf-jsonld')?.remove();
+  document.head.append(el('script', { id: 'cf-jsonld', type: 'application/ld+json', textContent: JSON.stringify(data) }));
 }
 
 async function main() {
@@ -104,25 +149,31 @@ async function main() {
     const current = slug && tips.find((x) => x.slug === slug); // el slug solo vale si está en el manifiesto
 
     if (current) {
-      const md = await (await fetch(`${CONTENT}${current.file}`, { cache: 'no-cache' })).text();
+      const v = variantFor(current);
+      const md = await (await fetch(`${CONTENT}${v.file}`, { cache: 'no-cache' })).text();
+      article.lang = v.locale;
       article.replaceChildren(
-        el('h2', { className: 'cf-tip__title', textContent: current.title }),
-        tipMeta(current),
+        el('h2', { className: 'cf-tip__title', textContent: v.title }),
+        tipMeta(current, v),
+        ...(v.fallback ? [el('p', { className: 'cf-muted cf-tip__note', lang, textContent: t('tipsFallback', { lang: langName(lang), shown: langName(v.locale) }) })] : []),
         renderMarkdown(md),
-        el('p', {}, el('a', { href: `?lang=${document.documentElement.lang}`, textContent: `← ${t('tipsBackList')}` }))
+        el('p', {}, el('a', { href: `?lang=${lang}`, textContent: `← ${t('tipsBackList')}` }))
       );
       article.hidden = false;
       list.hidden = true;
-      document.title = `${current.title} | Code Formatter & Auto-Doc AI`;
-      applySeo();
+      document.title = `${v.title} | Code Formatter & Auto-Doc AI`;
+      const description = excerptOf(md);
+      applySeo({ langs: availableLangs(current), contentLang: v.locale, description });
+      injectJsonLd(current, v, description);
       return;
     }
     if (!tips.length) { list.replaceChildren(el('p', { className: 'cf-muted', textContent: t('tipsEmpty') })); return; }
     list.replaceChildren(...tips.map((tip) => {
-      const href = `?lang=${document.documentElement.lang}&tip=${encodeURIComponent(tip.slug)}`;
-      return el('article', { className: 'cf-card cf-tip-card' },
-        el('h2', { className: 'cf-tip__title' }, el('a', { href, textContent: tip.title })),
-        tipMeta(tip));
+      const v = variantFor(tip);
+      const href = `?lang=${lang}&tip=${encodeURIComponent(tip.slug)}`;
+      return el('article', { className: 'cf-card cf-tip-card', lang: v.locale },
+        el('h2', { className: 'cf-tip__title' }, el('a', { href, textContent: v.title })),
+        tipMeta(tip, v));
     }));
   } catch (err) {
     console.warn('[code-formatter] tips no cargados:', err.message);

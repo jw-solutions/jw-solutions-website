@@ -9,7 +9,45 @@
       "date": "2026-11-06",
       "published_at": "2026-11-02",
       "file": "published/python-312-pep8-tips.md",
-      "sha256": "e9ffae87214c4860f3474ce192de4611ee63a95a16207c40802a9447d4c5c9eb"
+      "sha256": "e9ffae87214c4860f3474ce192de4611ee63a95a16207c40802a9447d4c5c9eb",
+      "translations": {
+        "de": {
+          "title": "PEP 8 in Python 3.12: lesbare match/case-Blöcke schreiben",
+          "category": "Syntax-Tipps",
+          "file": "published/python-312-pep8-tips.de.md",
+          "sha256": "8c33beacf52e0d4ffbbf92e5c93fcfb311e590dc5b1fd4ab18ab24d382d0d423"
+        },
+        "en": {
+          "title": "PEP 8 in Python 3.12: writing readable match/case blocks",
+          "category": "Syntax Tips",
+          "file": "published/python-312-pep8-tips.en.md",
+          "sha256": "d4ee0068d644ae3716790ea847a07cde49f8a1f309338160d1ba107f7878c3df"
+        },
+        "fr": {
+          "title": "PEP 8 en Python 3.12 : écrire des blocs match/case lisibles",
+          "category": "Astuces de syntaxe",
+          "file": "published/python-312-pep8-tips.fr.md",
+          "sha256": "0d6137925e652e10bf59ff5e97d6667d80ea8684cd0f39fa5f2ec710b9820dae"
+        },
+        "it": {
+          "title": "PEP 8 in Python 3.12: scrivere blocchi match/case leggibili",
+          "category": "Consigli di sintassi",
+          "file": "published/python-312-pep8-tips.it.md",
+          "sha256": "02c83c481f4879cec290cc49a63de37f6e3630bd4d1eea6449eef04d03a784c5"
+        },
+        "pt-BR": {
+          "title": "PEP 8 no Python 3.12: como escrever blocos match/case legíveis",
+          "category": "Dicas de Sintaxe",
+          "file": "published/python-312-pep8-tips.pt-BR.md",
+          "sha256": "93deab4b574ec5e3f8911eaebe07401d5fc628f6c03d4aba9a7681c4a64652e9"
+        },
+        "pt-PT": {
+          "title": "PEP 8 em Python 3.12: como escrever blocos match/case legíveis",
+          "category": "Dicas de Sintaxe",
+          "file": "published/python-312-pep8-tips.pt-PT.md",
+          "sha256": "5d8184657784638a22ca8983b0505323a888bf1c09db4c7011cb618da535fac6"
+        }
+      }
     },
     {
       "slug": "typescript-modern-operators",
@@ -19,7 +57,45 @@
       "date": "2026-11-13",
       "published_at": "2026-11-02",
       "file": "published/typescript-modern-operators.md",
-      "sha256": "be85a7632234e4e735fb89f6eb04c7c01a04af88d4886923169812d2aa2d1554"
+      "sha256": "be85a7632234e4e735fb89f6eb04c7c01a04af88d4886923169812d2aa2d1554",
+      "translations": {
+        "de": {
+          "title": "Modernes TypeScript: ?., ?? und satisfies ohne Formatierungsfehler",
+          "category": "Syntax-Tipps",
+          "file": "published/typescript-modern-operators.de.md",
+          "sha256": "e0a99215f7baa6c977d7c3770afa8d11e40b4b71fd95ed0e73e8209a1f8dd90e"
+        },
+        "en": {
+          "title": "Modern TypeScript: ?., ?? and satisfies without formatting errors",
+          "category": "Syntax Tips",
+          "file": "published/typescript-modern-operators.en.md",
+          "sha256": "20f0b9fa3852581bc8fdbd12af7e8772f7af90353cbf2eb8ae7f62ff3b860300"
+        },
+        "fr": {
+          "title": "TypeScript moderne : ?., ?? et satisfies sans erreurs de formatage",
+          "category": "Astuces de syntaxe",
+          "file": "published/typescript-modern-operators.fr.md",
+          "sha256": "a9d93aba7803200be28e490471920399aac23d788bda95dd0b6dde9d52087a8e"
+        },
+        "it": {
+          "title": "TypeScript moderno: ?., ?? e satisfies senza errori di formattazione",
+          "category": "Consigli di sintassi",
+          "file": "published/typescript-modern-operators.it.md",
+          "sha256": "5cd610a605156cc41efc651ea2c2f6af4c78fe684ca1a7daedeb1b4ce8614c49"
+        },
+        "pt-BR": {
+          "title": "TypeScript moderno: ?., ?? e satisfies sem erros de formatação",
+          "category": "Dicas de Sintaxe",
+          "file": "published/typescript-modern-operators.pt-BR.md",
+          "sha256": "80997a8761e3ac76bb1d6516bc0492a258d32e0587ba862d7be1c7f0da8aff6f"
+        },
+        "pt-PT": {
+          "title": "TypeScript moderno: ?., ?? e satisfies sem erros de formatação",
+          "category": "Dicas de Sintaxe",
+          "file": "published/typescript-modern-operators.pt-PT.md",
+          "sha256": "74b03139a75a24f8147bb8851524b99d0cb011ecf170991465cee0cf808eb4a2"
+        }
+      }
     },
     {
       "slug": "sql-dax-optimization-basics",
@@ -29,7 +105,45 @@
       "date": "2026-11-20",
       "published_at": "2026-11-02",
       "file": "published/sql-dax-optimization-basics.md",
-      "sha256": "22f7f4cd9461bc52c9248ee8b2317ee048c40670d8c61852c68f7e0377a1cb36"
+      "sha256": "22f7f4cd9461bc52c9248ee8b2317ee048c40670d8c61852c68f7e0377a1cb36",
+      "translations": {
+        "de": {
+          "title": "SQL und DAX: drei Gewohnheiten für schnelle, lesbare Abfragen",
+          "category": "Best Practices",
+          "file": "published/sql-dax-optimization-basics.de.md",
+          "sha256": "245c104e3fc1c9f1d5e0083e70eda6c10882379436ed76a4547c5cc77f931b89"
+        },
+        "en": {
+          "title": "SQL and DAX: three habits for fast, readable queries",
+          "category": "Best Practices",
+          "file": "published/sql-dax-optimization-basics.en.md",
+          "sha256": "5336d8224f5237e79b636a2dc6c01e1ea1136dae03aba2192efb281873fea72d"
+        },
+        "fr": {
+          "title": "SQL et DAX : trois habitudes pour des requêtes rapides et lisibles",
+          "category": "Bonnes pratiques",
+          "file": "published/sql-dax-optimization-basics.fr.md",
+          "sha256": "5e72a00ef7e9ca46c7afcc80b5f088b5c91de3b354c254ebc3e5bfd62ee5c592"
+        },
+        "it": {
+          "title": "SQL e DAX: tre abitudini per query veloci e leggibili",
+          "category": "Buone pratiche",
+          "file": "published/sql-dax-optimization-basics.it.md",
+          "sha256": "874d7068e12dc258956902fcf699d846ca21d9e13f8436546eaf5365fb7a9f55"
+        },
+        "pt-BR": {
+          "title": "SQL e DAX: três hábitos para consultas rápidas e legíveis",
+          "category": "Boas práticas",
+          "file": "published/sql-dax-optimization-basics.pt-BR.md",
+          "sha256": "e7fdf81e22cafb5bc8f65e559e4cc1d5e14fcde8556d24c8659a758de6a16192"
+        },
+        "pt-PT": {
+          "title": "SQL e DAX: três hábitos para consultas rápidas e legíveis",
+          "category": "Boas práticas",
+          "file": "published/sql-dax-optimization-basics.pt-PT.md",
+          "sha256": "5228cf41cb6b3f33ed6e8080c9ccbd06bd70159b3bfd02f6f9e72a7e24ad5962"
+        }
+      }
     }
   ]
 }

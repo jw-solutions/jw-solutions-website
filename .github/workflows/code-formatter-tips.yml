@@ -2,6 +2,7 @@ name: Code Formatter Tips
 
 # Publicación semanal de tips de Code Formatter (content/code-formatter-tips/).
 # Independiente del blog principal: otro cron, otro manifiesto, otro grupo de concurrencia.
+# Publica también traducciones <slug>.<locale>.md de tips ya publicados (aunque no toque tip base esa semana).
 # Idempotencia: manifiesto content/code-formatter-tips/code-formatter-manifest.json + un tip por semana ISO.
 on:
   schedule:
@@ -53,19 +54,23 @@ jobs:
         if: ${{ !inputs.dry_run }}
         run: node scripts/validate-formatter-tips.js --publish
 
+      - name: Regenerar sitemap del Code Formatter
+        if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
+        run: python3 scripts/code-formatter/build_public.py --sitemap
+
       - name: Verificar repositorio (después)
-        if: ${{ !inputs.dry_run && steps.publish.outputs.count == '1' }}
+        if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
         run: node scripts/validate-formatter-tips.js
 
       - name: Commit y push
-        if: ${{ !inputs.dry_run && steps.publish.outputs.count == '1' }}
+        if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
         env:
-          PUBLISHED: ${{ steps.publish.outputs.published }}
+          PUBLISHED: ${{ steps.publish.outputs.summary }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A content/code-formatter-tips
+          git add -A content/code-formatter-tips sitemap-code-formatter.xml
           if git diff --cached --quiet; then
             echo "Sin cambios que confirmar para $PUBLISHED."
             exit 1
