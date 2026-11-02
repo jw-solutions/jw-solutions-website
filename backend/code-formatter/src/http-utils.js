@@ -1,11 +1,15 @@
 // Utilidades HTTP: lectura segura de JSON, limitador de tasa, IP del cliente y CORS con credenciales.
-export async function readJson(req, maxBytes = 16 * 1024) {
+export const MAX_PAYLOAD_BYTES = 16 * 1024; // tope físico por petición/fragmento de código
+export const FREE_HOURLY_LIMIT = 20; // formateos y llamadas a IA por IP y hora (plan gratuito)
+
+export async function readJson(req, maxBytes = MAX_PAYLOAD_BYTES) {
   if (!/^application\/json\b/i.test(req.headers['content-type'] || '')) return { error: 'content_type' };
+  if (Number(req.headers['content-length']) > maxBytes) return { error: 'too_large' }; // rechazo antes de leer el cuerpo
   const chunks = [];
   let size = 0;
   for await (const chunk of req) {
     size += chunk.length;
-    if (size > maxBytes) return { error: 'too_large' };
+    if (size > maxBytes) { req.destroy(); return { error: 'too_large' }; }
     chunks.push(chunk);
   }
   try { return { body: JSON.parse(Buffer.concat(chunks).toString('utf8')) }; } catch { return { error: 'bad_json' }; }

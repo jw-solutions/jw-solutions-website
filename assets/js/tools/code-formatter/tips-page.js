@@ -1,7 +1,7 @@
 // Páginas de tips por lenguaje (tools/code-formatter/tips/*). Lee el manifiesto de tips publicados
 // y muestra el listado de la categoría o, con ?tip=<slug>, el artículo. Sin innerHTML: todo se
 // construye con nodos de texto, así el contenido Markdown nunca se interpreta como HTML.
-import { t, applyI18n, setupLangSelector, intlLocale } from './i18n.js';
+import { t, applyI18n, setupLangSelector, intlLocale, MAX_CODE_BYTES } from './i18n.js';
 import { initNewsletter } from './newsletter.js';
 
 const CONTENT = '../../../../content/code-formatter-tips/';
@@ -25,6 +25,13 @@ function inline(text) {
   return frag;
 }
 
+/** CTA: lleva el fragmento al formateador (sessionStorage + ?sample=1; el editor lo inserta como texto). */
+function tryItButton(lang, code) {
+  const a = el('a', { className: 'cf-btn cf-btn--small cf-tip__cta', href: `../../?lang=${document.documentElement.lang}&sample=1`, textContent: t('tipTryIt') });
+  a.addEventListener('click', () => { try { sessionStorage.setItem('cf.sample', JSON.stringify({ lang, code })); } catch { /* sin almacenamiento: abre el formateador vacío */ } });
+  return el('p', {}, a);
+}
+
 /** Markdown → nodos DOM (encabezados, listas, bloques de código y párrafos). */
 export function renderMarkdown(md) {
   const root = document.createDocumentFragment();
@@ -40,7 +47,9 @@ export function renderMarkdown(md) {
       flushPara(); flushList();
       const code = [];
       while (++i < lines.length && !lines[i].startsWith('```')) code.push(lines[i]);
-      root.append(el('pre', { className: 'cf-tip__code' }, el('code', { textContent: code.join('\n') })));
+      const text = code.join('\n');
+      root.append(el('pre', { className: 'cf-tip__code' }, el('code', { textContent: text })));
+      if (fence[1] && text.length <= MAX_CODE_BYTES) root.append(tryItButton(fence[1].toLowerCase(), text));
       continue;
     }
     const h = line.match(/^(#{1,3})\s+(.*)/);

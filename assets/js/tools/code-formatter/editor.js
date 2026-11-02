@@ -11,7 +11,7 @@ import { json } from '@codemirror/lang-json';
 import { java } from '@codemirror/lang-java';
 import { php } from '@codemirror/lang-php';
 import { yaml } from '@codemirror/lang-yaml';
-import { t } from './i18n.js';
+import { t, MAX_CODE_BYTES } from './i18n.js';
 
 const LANG_EXT = {
   python: () => python(),
@@ -49,6 +49,13 @@ const view = new EditorView({
       indentOnInput(),
       bracketMatching(),
       EditorView.lineWrapping,
+      // Límite físico de entrada (16 KB UTF-8): se rechaza la edición/pegado que lo supere
+      EditorState.transactionFilter.of((tr) => {
+        if (!tr.docChanged) return tr;
+        if (new TextEncoder().encode(tr.newDoc.toString()).length <= MAX_CODE_BYTES) return tr;
+        document.dispatchEvent(new CustomEvent('cf:too-big'));
+        return [];
+      }),
       keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
       oneDark,
       langCompartment.of([]),

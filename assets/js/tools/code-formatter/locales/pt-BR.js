@@ -1,6 +1,7 @@
 export default {
   langName: 'Português (Brasil)',
   pageTitle: 'Code Formatter & Auto-Doc AI | JW Solutions',
+  metaDesc: "Formate e documente seu código em Python, JavaScript, TypeScript, SQL, DAX, Java, C#, PHP, JSON e YAML. Grátis, no navegador. Ferramenta da JW Solutions.", tooBig: "O código excede o limite de {kb} KB", tipTryIt: "Testar no formatador",
   skip: 'Ir para o conteúdo', navServices: 'Serviços', navPortfolio: 'Portfólio', navPlans: 'Planos Pro', navContact: 'Contato',
   tag: 'Ferramenta', lead: 'Cole seu código, escolha a linguagem e obtenha uma versão formatada e documentada.',
   uiLang: 'Idioma da interface', language: 'Linguagem', auto: 'Detectar automaticamente', comments: 'Comentários', docLang: 'Idioma da documentação', detail: 'Detalhe',

@@ -2,6 +2,8 @@
 // (config/documentation-languages.js). Prioridad: ?lang= > cf.ui_lang > jw_lang (sitio) > navegador.
 export const SUPPORTED_LANGS = ['es', 'en', 'pt-BR', 'pt-PT', 'fr', 'de', 'it'];
 const UI_KEY = 'cf.ui_lang';
+export const MAX_CODE_BYTES = 16 * 1024; // límite físico por fragmento (cliente; el servidor aplica el mismo tope)
+const SITE = 'https://jw-solutions.com';
 
 function normalize(raw) {
   const v = String(raw || '').trim().toLowerCase();
@@ -39,6 +41,7 @@ export const intlLocale = lang;
 export function applyI18n(root = document) {
   document.documentElement.lang = lang;
   document.title = t('pageTitle');
+  applySeo();
   root.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
   root.querySelectorAll('[data-i18n-aria]').forEach((el) => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
   root.querySelectorAll('[data-i18n-placeholder]').forEach((el) => { el.setAttribute('placeholder', t(el.dataset.i18nPlaceholder)); });
@@ -65,4 +68,29 @@ export async function setupLangSelector(select) {
     url.searchParams.set('lang', select.value);
     location.href = url.toString();
   });
+}
+
+/** Canónica, hreflang y metadatos OpenGraph coherentes con el idioma activo (español = URL base sin ?lang=). */
+export function applySeo() {
+  const dir = location.pathname.replace(/index\.html$/, '');
+  const urlFor = (l) => `${SITE}${dir}${l === 'es' ? '' : `?lang=${l}`}`;
+  const head = document.head;
+  const upsert = (selector, tag, attrs) => {
+    let n = head.querySelector(selector);
+    if (!n) { n = document.createElement(tag); head.append(n); }
+    Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v));
+  };
+  upsert('link[rel="canonical"]', 'link', { rel: 'canonical', href: urlFor(lang) });
+  SUPPORTED_LANGS.forEach((l) => upsert(`link[rel="alternate"][hreflang="${l}"]`, 'link', { rel: 'alternate', hreflang: l, href: urlFor(l) }));
+  upsert('link[rel="alternate"][hreflang="x-default"]', 'link', { rel: 'alternate', hreflang: 'x-default', href: urlFor('es') });
+  const desc = messages.metaDesc;
+  if (desc && document.title === t('pageTitle')) {
+    upsert('meta[name="description"]', 'meta', { name: 'description', content: desc });
+    upsert('meta[property="og:description"]', 'meta', { property: 'og:description', content: desc });
+    upsert('meta[name="twitter:description"]', 'meta', { name: 'twitter:description', content: desc });
+  }
+  upsert('meta[property="og:title"]', 'meta', { property: 'og:title', content: document.title });
+  upsert('meta[name="twitter:title"]', 'meta', { name: 'twitter:title', content: document.title });
+  upsert('meta[property="og:url"]', 'meta', { property: 'og:url', content: urlFor(lang) });
+  upsert('meta[property="og:locale"]', 'meta', { property: 'og:locale', content: lang.replace('-', '_').replace(/^(\w{2})$/, (m) => ({ es: 'es_ES', en: 'en_US', fr: 'fr_FR', de: 'de_DE', it: 'it_IT' })[m]) });
 }

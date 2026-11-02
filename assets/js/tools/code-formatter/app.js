@@ -7,7 +7,7 @@ import { copyCode, downloadCode, copyMarkdown, toast, writeClipboard, downloadTe
 import { loadHistory, pushHistory, clearHistory, removeHistoryItem } from './history.js';
 import { DOC_LANGUAGES, DEFAULT_DOC_LANGUAGE } from '../../../../config/documentation-languages.js';
 import { featuresReady, isFeatureOn } from './ui-controller.js';
-import { t, applyI18n, setupLangSelector, intlLocale } from './i18n.js';
+import { t, applyI18n, setupLangSelector, intlLocale, MAX_CODE_BYTES } from './i18n.js';
 
 applyI18n();
 await setupLangSelector(document.getElementById('cf-ui-lang'));
@@ -36,6 +36,8 @@ if (isFeatureOn('single_session')) {
 }
 
 const $ = (id) => document.getElementById(id);
+const tooBig = () => toast(t('tooBig', { kb: MAX_CODE_BYTES / 1024 }));
+document.addEventListener('cf:too-big', tooBig);
 const getCode = () => view.state.doc.toString();
 const setCode = (text) => view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: text } });
 
@@ -129,6 +131,7 @@ if (diffBtn && diffPanel) {
 formatBtn.addEventListener('click', async () => {
   const code = getCode();
   if (!code.trim()) return toast(t('pasteFirst'));
+  if (new TextEncoder().encode(code).length > MAX_CODE_BYTES) return tooBig();
   const lang = resolveLanguage(code);
   if (!lang) return toast(t('noDetect'));
 
@@ -233,3 +236,16 @@ function renderHistory(items) {
 }
 $('cf-history-clear').addEventListener('click', () => { renderHistory(clearHistory()); toast(t('historyCleared')); });
 renderHistory(loadHistory());
+
+// Fragmento de ejemplo enviado desde un tip (CTA "Probar en el formateador"). Solo se inserta como texto en el editor.
+try {
+  const raw = new URLSearchParams(location.search).get('sample') && sessionStorage.getItem('cf.sample');
+  sessionStorage.removeItem('cf.sample');
+  const sample = raw && JSON.parse(raw);
+  if (sample && typeof sample.code === 'string' && sample.code.length && new TextEncoder().encode(sample.code).length <= MAX_CODE_BYTES) {
+    if ([...langSel.options].some((o) => o.value === sample.lang)) { langSel.value = sample.lang; setLanguage(sample.lang); }
+    setCode(sample.code);
+    if (langSel.value === 'auto') resolveLanguage(sample.code);
+    $('cf-format').scrollIntoView({ block: 'center' });
+  }
+} catch { /* sesión de almacenamiento no disponible o JSON inválido: se ignora */ }

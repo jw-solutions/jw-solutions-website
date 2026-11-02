@@ -5,7 +5,7 @@ import { requireSession, sendJson } from './middleware.js';
 import { sessionEvents } from './events.js';
 import { createAuth, validateCredentials } from './auth.js';
 import { validateReport, createPaymentReport } from './payments.js';
-import { readJson, createRateLimiter, clientIp, applyCors } from './http-utils.js';
+import { readJson, createRateLimiter, clientIp, applyCors, FREE_HOURLY_LIMIT } from './http-utils.js';
 
 /**
  * Handler HTTP de la API (/api/auth/*, /api/session/*, /api/payments/*).
@@ -18,6 +18,10 @@ export function createApi({ pool, bus, passwords, allowedOrigin, limits = {} }) 
   const events = sessionEvents({ pool, bus });
   const auth = createAuth({ pool, passwords });
   const authLimiter = createRateLimiter({ windowMs: 60_000, max: limits.auth ?? 10 });
+  // Rutas de cómputo (formateo remoto e IA): 20 solicitudes/hora por IP en el plan gratuito. Aún sin handlers: la limitación
+  // ya está activa para que cualquier ruta futura bajo estos prefijos nazca protegida (readJson ya impone el tope de 16 KB).
+  const heavyLimiter = createRateLimiter({ windowMs: 3_600_000, max: limits.heavy ?? FREE_HOURLY_LIMIT });
+  const isHeavy = (p) => p === '/api/format' || p.startsWith('/api/format/') || p === '/api/ai' || p.startsWith('/api/ai/');
   const paymentLimiter = createRateLimiter({ windowMs: 3_600_000, max: limits.payments ?? 5 });
 
   async function startSession(req, res, accountId, status = 200) {
@@ -39,6 +43,7 @@ export function createApi({ pool, bus, passwords, allowedOrigin, limits = {} }) 
     if (applyCors(req, res, allowedOrigin)) return true;
 
     try {
+      if (isHeavy(pathname) && !heavyLimiter.hit(`heavy:${clientIp(req)}`)) return sendJson(res, 429, { error: 'rate_limited' }, { 'Retry-After': '3600' }) || true;
       if (req.method === 'POST' && req.headers.origin !== allowedOrigin) return sendJson(res, 403, { error: 'bad_origin' }) || true;
 
       if (req.method === 'POST' && (pathname === '/api/auth/register' || pathname === '/api/auth/login')) {
