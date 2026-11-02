@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cómo solucionar The syntax for &#x27;)&#x27; is incorrect en Power BI DAX | Code Formatter &amp; Auto-Doc AI</title>
+  <meta name="description" content="Power BI muestra un error de sintaxis cuando una medida DAX tiene más «(» abiertos que «)» cerrados, algo habitual en CALCULATE y FILTER anidados.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="canonical" href="https://jw-solutions.com/tools/code-formatter/fix/dax-unbalanced-parentheses/">
+  <link rel="alternate" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/fix/dax-unbalanced-parentheses/">
+  <link rel="alternate" hreflang="en" href="https://jw-solutions.com/tools/code-formatter/fix/dax-unbalanced-parentheses/?lang=en">
+  <link rel="alternate" hreflang="pt-BR" href="https://jw-solutions.com/tools/code-formatter/fix/dax-unbalanced-parentheses/?lang=pt-BR">
+  <link rel="alternate" hreflang="pt-PT" href="https://jw-solutions.com/tools/code-formatter/fix/dax-unbalanced-parentheses/?lang=pt-PT">
+  <link rel="alternate" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/fix/dax-unbalanced-parentheses/?lang=fr">
+  <link rel="alternate" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/fix/dax-unbalanced-parentheses/?lang=de">
+  <link rel="alternate" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/fix/dax-unbalanced-parentheses/?lang=it">
+  <link rel="alternate" hreflang="x-default" href="https://jw-solutions.com/tools/code-formatter/fix/dax-unbalanced-parentheses/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="JW Solutions">
+  <meta property="og:title" content="Cómo solucionar The syntax for &#x27;)&#x27; is incorrect en Power BI DAX | Code Formatter &amp; Auto-Doc AI">
+  <meta property="og:description" content="Power BI muestra un error de sintaxis cuando una medida DAX tiene más «(» abiertos que «)» cerrados, algo habitual en CALCULATE y FILTER anidados.">
+  <meta property="og:url" content="https://jw-solutions.com/tools/code-formatter/fix/dax-unbalanced-parentheses/">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:image" content="https://jw-solutions.com/assets/images/og/code-formatter-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cómo solucionar The syntax for &#x27;)&#x27; is incorrect en Power BI DAX | Code Formatter &amp; Auto-Doc AI">
+  <meta name="twitter:description" content="Power BI muestra un error de sintaxis cuando una medida DAX tiene más «(» abiertos que «)» cerrados, algo habitual en CALCULATE y FILTER anidados.">
+  <meta name="twitter:image" content="https://jw-solutions.com/assets/images/og/code-formatter-default.png">
+  <meta name="theme-color" content="#0b0f17">
+  <meta name="cf-newsletter-endpoint" content="https://formspree.io/f/mbggprea">
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+  <link rel="icon" type="image/x-icon" sizes="any" href="../../favicon.ico">
+  <link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../../../assets/css/tools/code-formatter.css">
+  <script type="application/ld+json" id="cf-jsonld">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Cómo solucionar The syntax for ')' is incorrect en Power BI DAX", "description": "Power BI muestra un error de sintaxis cuando una medida DAX tiene más «(» abiertos que «)» cerrados, algo habitual en CALCULATE y FILTER anidados.", "inLanguage": "es", "url": "https://jw-solutions.com/tools/code-formatter/fix/dax-unbalanced-parentheses/", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://jw-solutions.com/tools/code-formatter/fix/dax-unbalanced-parentheses/"}, "image": "https://jw-solutions.com/assets/images/og/code-formatter-default.png", "about": {"@type": "Thing", "name": "The syntax for ')' is incorrect"}, "datePublished": "2026-11-02", "dateModified": "2026-11-02", "author": {"@type": "Organization", "name": "JW Solutions"}, "publisher": {"@type": "Organization", "name": "JW Solutions", "url": "https://jw-solutions.com"}}, {"@type": "HowTo", "name": "Cómo solucionar The syntax for ')' is incorrect en Power BI DAX", "description": "Power BI muestra un error de sintaxis cuando una medida DAX tiene más «(» abiertos que «)» cerrados, algo habitual en CALCULATE y FILTER anidados.", "inLanguage": "es", "url": "https://jw-solutions.com/tools/code-formatter/fix/dax-unbalanced-parentheses/", "step": [{"@type": "HowToStep", "position": 1, "name": "Cuenta los paréntesis de apertura y cierre de la medida; deben coincidir uno a uno.", "text": "Cuenta los paréntesis de apertura y cierre de la medida; deben coincidir uno a uno."}, {"@type": "HowToStep", "position": 2, "name": "Formatea la fórmula con cada argumento en su línea: el paréntesis que falta se ve de inmediato.", "text": "Formatea la fórmula con cada argumento en su línea: el paréntesis que falta se ve de inmediato."}, {"@type": "HowToStep", "position": 3, "name": "Pega el código en el formateador: el diagnóstico marca la línea y puede corregirla.", "text": "Pega el código en el formateador: el diagnóstico marca la línea y puede corregirla."}]}]}</script>
+</head>
+<body class="cf-body">
+  <a class="cf-skip" href="#cf-main" data-i18n="skip">Saltar al contenido</a>
+
+  <header class="cf-header">
+    <div class="cf-container cf-header__inner">
+      <div class="cf-logo" role="img" aria-label="JW Solutions">
+        <span class="cf-logo__mark">JW</span>
+        <span class="cf-logo__text">SOLUTIONS</span>
+      </div>
+      <nav class="cf-nav" aria-label="Code Formatter">
+        <select id="cf-ui-lang" class="cf-select cf-select--compact" data-i18n-aria="uiLang" aria-label="Idioma de la interfaz"></select>
+        <a class="cf-nav__link" data-site-link data-i18n="tipsBackTool" href="../../">Volver al formateador</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="cf-main" class="cf-main" data-fix-data="../fix-data.json" data-fix-slug="dax-unbalanced-parentheses" data-fix-root="../../">
+    <section class="cf-container cf-hero">
+      <span class="cf-tag" data-i18n="fixTag">Solución rápida</span>
+      <h1 id="cf-fix-title" class="cf-title">Cómo solucionar The syntax for &#x27;)&#x27; is incorrect en Power BI DAX</h1>
+      <p id="cf-fix-lead" class="cf-lead cf-fix__lead">Power BI muestra un error de sintaxis cuando una medida DAX tiene más «(» abiertos que «)» cerrados, algo habitual en CALCULATE y FILTER anidados.</p>
+    </section>
+    <section class="cf-container cf-tips">
+      <div id="cf-fix-body" class="cf-card cf-tip">
+        <div class="cf-fix__pair"><div><p class="cf-fix__label cf-fix__label--bad">Antes (con error)</p><pre class="cf-tip__code"><code>Ventas Totales =
+CALCULATE (
+  SUM ( Ventas[Importe] ),
+  FILTER ( ALL ( Fechas ), Fechas[Anio] = 2024 )
+</code></pre></div><div><p class="cf-fix__label cf-fix__label--good">Después (corregido)</p><pre class="cf-tip__code"><code>Ventas Totales =
+CALCULATE (
+  SUM ( Ventas[Importe] ),
+  FILTER ( ALL ( Fechas ), Fechas[Anio] = 2024 )
+)
+</code></pre></div></div>
+        <h2 class="cf-tip__h">Cómo solucionarlo</h2>
+        <ol class="cf-fix__steps"><li>Cuenta los paréntesis de apertura y cierre de la medida; deben coincidir uno a uno.</li><li>Formatea la fórmula con cada argumento en su línea: el paréntesis que falta se ve de inmediato.</li><li>Pega el código en el formateador: el diagnóstico marca la línea y puede corregirla.</li></ol>
+        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="../../?sample=1">Corregir mi código ahora en el Formateador</a></p>
+        <h2 class="cf-tip__h">Otras soluciones</h2>
+        <ul class="cf-fix__list"><li class="cf-card"><a href="../python-indentation-error/">Cómo solucionar IndentationError en Python 3.12</a></li><li class="cf-card"><a href="../js-unexpected-token/">Cómo solucionar SyntaxError: Unexpected token en Node.js 22</a></li><li class="cf-card"><a href="../ts-unterminated-string-literal/">Cómo solucionar TS1002: Unterminated string literal en TypeScript 5.5</a></li><li class="cf-card"><a href="../sql-dax-formatting-rules/">Reglas de formato para SQL y DAX: guía rápida con ejemplos</a></li><li class="cf-card"><a href="../java-reached-end-of-file-while-parsing/">Cómo solucionar reached end of file while parsing en Java 21</a></li><li class="cf-card"><a href="../csharp-cs1026-closing-parenthesis-expected/">Cómo solucionar CS1026: ) expected en C# 12</a></li><li class="cf-card"><a href="../php-parse-error-unclosed-brace/">Cómo solucionar Parse error: Unclosed &#x27;{&#x27; en PHP 8.3</a></li><li class="cf-card"><a href="../json-trailing-comma-unexpected-token/">Cómo solucionar Unexpected token } en JSON.parse</a></li><li class="cf-card"><a href="../yaml-indentation-fix/">Cómo solucionar bad indentation of a mapping entry en YAML 1.2</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cf-footer">
+    <div class="cf-container cf-footer__grid">
+      <section class="cf-footer__col" aria-labelledby="cf-foot-id">
+        <div class="cf-logo" role="img" aria-label="JW Solutions">
+          <span class="cf-logo__mark">JW</span>
+          <span class="cf-logo__text">SOLUTIONS</span>
+        </div>
+        <h2 id="cf-foot-id" class="cf-footer__title">Code Formatter <span class="cf-gold">&amp; Auto-Doc AI</span></h2>
+        <p class="cf-footer__text" data-i18n="footDesc">Formatea y documenta tu código en Python, JavaScript, SQL, DAX y más. Herramienta independiente de JW Solutions.</p>
+        <ul class="cf-footer__list">
+          <li><a href="../../" data-site-link data-i18n="footEditor">Ir al editor</a></li>
+        </ul>
+      </section>
+
+      <nav class="cf-footer__col" aria-labelledby="cf-foot-tips">
+        <h2 id="cf-foot-tips" class="cf-footer__title" data-i18n="footTipsTitle">Tips semanales</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../tips/python/" data-site-link data-i18n="tipPython">Python Tips</a></li>
+          <li><a href="../../tips/javascript/" data-site-link data-i18n="tipJs">JavaScript Standards</a></li>
+          <li><a href="../../tips/sql-dax/" data-site-link data-i18n="tipSqlDax">SQL &amp; DAX Best Practices</a></li>
+        </ul>
+        <h2 id="cf-foot-fix" class="cf-footer__title cf-footer__title--sub" data-i18n="footFixTitle">Soluciones a errores</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../fix/" data-site-link data-i18n="fixHubTitle">Soluciones rápidas a errores de sintaxis</a></li>
+        </ul>
+      </nav>
+
+      <section class="cf-footer__col" aria-labelledby="cf-foot-nl">
+        <h2 id="cf-foot-nl" class="cf-footer__title" data-i18n="nlTitle">Tips Semanales de Código</h2>
+        <p class="cf-footer__text" data-i18n="nlPromise">Un email por semana con tips prácticos de sintaxis, casos de estudio y novedades de lenguajes (Python, JS, SQL, DAX). Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
+        <form id="cf-newsletter-form" class="cf-newsletter" novalidate>
+          <label class="cf-sr-only" for="cf-newsletter-email" data-i18n="nlEmailLabel">Correo electrónico</label>
+          <input id="cf-newsletter-email" class="cf-input" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="tu@email.com" data-i18n-placeholder="nlPlaceholder">
+          <input type="text" name="_gotcha" class="cf-sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button type="submit" class="cf-btn cf-btn--primary" data-i18n="nlSubmit">Suscribirme</button>
+          <p id="cf-newsletter-status" class="cf-form__status cf-newsletter__status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+    <div class="cf-container cf-footer__legal">
+      <p>&copy; JW Solutions · <span data-i18n="footRights">Todos los derechos reservados</span></p>
+    </div>
+  </footer>
+
+  <div id="cf-toast" class="cf-toast" role="status" aria-live="polite"></div>
+  <script type="module" src="../../../../assets/js/tools/code-formatter/fix-page.js"></script>
+</body>
+</html>

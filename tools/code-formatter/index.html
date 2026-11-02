@@ -22,8 +22,12 @@
   <meta property="og:description" content="Formatea y documenta tu código en Python, JavaScript, TypeScript, SQL, DAX, Java, C#, PHP, JSON y YAML. Herramienta de JW Solutions.">
   <meta property="og:url" content="https://jw-solutions.com/tools/code-formatter/">
   <meta property="og:locale" content="es_ES">
-  <meta property="og:image" content="https://jw-solutions.com/tools/code-formatter/apple-touch-icon.png">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://jw-solutions.com/assets/images/og/code-formatter-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Code Formatter &amp; Auto-Doc AI | JW Solutions">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://jw-solutions.com/assets/images/og/code-formatter-default.png">
   <meta name="twitter:title" content="Code Formatter &amp; Auto-Doc AI | JW Solutions">
   <meta name="twitter:description" content="Formatea y documenta tu código en Python, JavaScript, TypeScript, SQL, DAX, Java, C#, PHP, JSON y YAML. Herramienta de JW Solutions.">
   <meta name="theme-color" content="#0b0f17">
@@ -130,11 +134,18 @@
         </div>
         <div id="cf-editor" class="cf-editor" data-i18n-aria="code" aria-label="Code"></div>
         <noscript><p class="cf-muted" data-i18n="needJs">Se requiere JavaScript para usar el editor.</p></noscript>
+        <div id="cf-diag" class="cf-diag" role="status" aria-live="polite" hidden>
+          <span class="cf-diag__dot" aria-hidden="true"></span>
+          <span id="cf-diag-msg" class="cf-diag__msg"></span>
+          <button type="button" id="cf-diag-fix" class="cf-btn cf-btn--small" data-i18n="diagFix">Corregir sintaxis con IA</button>
+        </div>
         <div class="cf-actions" role="group">
           <button type="button" id="cf-copy" class="cf-btn" data-i18n="copy">Copiar</button>
           <button type="button" id="cf-download" class="cf-btn" data-i18n="download">Descargar</button>
           <button type="button" id="cf-copy-md" class="cf-btn" data-i18n="copyMd">Copiar como Markdown</button>
           <button type="button" id="cf-diff" class="cf-btn" data-cf-feature="diff_view" data-i18n="diff" disabled>Ver diferencias</button>
+          <button type="button" id="btn-share-snippet" class="cf-btn" data-i18n="shareBtn">Compartir fragmento</button>
+          <button type="button" id="cf-embed-open" class="cf-btn" data-i18n="embedBtn">Embeber</button>
         </div>
       </div>
 
@@ -201,6 +212,10 @@
           <li><a href="tips/javascript/" data-site-link data-i18n="tipJs">JavaScript Standards</a></li>
           <li><a href="tips/sql-dax/" data-site-link data-i18n="tipSqlDax">SQL &amp; DAX Best Practices</a></li>
         </ul>
+        <h2 id="cf-foot-fix" class="cf-footer__title cf-footer__title--sub" data-i18n="footFixTitle">Soluciones a errores</h2>
+        <ul class="cf-footer__list">
+          <li><a href="fix/" data-site-link data-i18n="fixHubTitle">Soluciones rápidas a errores de sintaxis</a></li>
+        </ul>
       </nav>
 
       <section class="cf-footer__col" aria-labelledby="cf-foot-nl">
@@ -219,6 +234,20 @@
       <p>&copy; JW Solutions · <span data-i18n="footRights">Todos los derechos reservados</span></p>
     </div>
   </footer>
+
+  <dialog id="cf-embed-modal" class="cf-dialog" aria-labelledby="cf-embed-title">
+    <div class="cf-dialog__head">
+      <h2 id="cf-embed-title" class="cf-dialog__title" data-i18n="embedTitle">Embeber en tu Web / GitHub</h2>
+      <button type="button" class="cf-btn cf-btn--small" data-cf-close data-i18n="embedClose">Cerrar</button>
+    </div>
+    <h3 class="cf-dialog__sub" data-i18n="embedBadge">Badge Markdown (README de GitHub)</h3>
+    <textarea id="cf-embed-badge" class="cf-input cf-embed__code" rows="3" readonly spellcheck="false"></textarea>
+    <button type="button" class="cf-btn cf-btn--small" data-cf-embed-copy="cf-embed-badge" data-i18n="embedCopy">Copiar código</button>
+    <h3 class="cf-dialog__sub" data-i18n="embedWidget">Widget HTML (iframe)</h3>
+    <textarea id="cf-embed-widget" class="cf-input cf-embed__code" rows="5" readonly spellcheck="false"></textarea>
+    <button type="button" class="cf-btn cf-btn--small" data-cf-embed-copy="cf-embed-widget" data-i18n="embedCopy">Copiar código</button>
+    <p class="cf-muted" data-i18n="embedNote">Ambas opciones incluyen un enlace a Clean Code Formatter AI. Gracias por mantenerlo.</p>
+  </dialog>
 
   <!-- Modales comerciales: el build público los elimina -->
   <dialog id="cf-pro-modal" class="cf-dialog" data-cf-commercial aria-labelledby="cf-pro-title">

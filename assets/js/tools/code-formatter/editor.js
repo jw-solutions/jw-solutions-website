@@ -59,7 +59,11 @@ const view = new EditorView({
       keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
       oneDark,
       langCompartment.of([]),
-      EditorView.updateListener.of((u) => { if (u.docChanged) updateStats(u.state); }),
+      EditorView.updateListener.of((u) => {
+        if (!u.docChanged) return;
+        updateStats(u.state);
+        document.dispatchEvent(new CustomEvent('cf:input')); // diagnóstico en vivo (app.js, con debounce)
+      }),
     ],
   }),
 });

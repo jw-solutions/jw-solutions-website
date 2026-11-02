@@ -7,10 +7,13 @@ import { copyCode, downloadCode, copyMarkdown, toast, writeClipboard, downloadTe
 import { loadHistory, pushHistory, clearHistory, removeHistoryItem } from './history.js';
 import { DOC_LANGUAGES, DEFAULT_DOC_LANGUAGE } from '../../../../config/documentation-languages.js';
 import { featuresReady, isFeatureOn } from './ui-controller.js';
-import { t, applyI18n, setupLangSelector, intlLocale, MAX_CODE_BYTES } from './i18n.js';
+import { t, lang as uiLang, applyI18n, setupLangSelector, intlLocale, MAX_CODE_BYTES } from './i18n.js';
+import { diagnose, autoFix } from './diagnostics.js';
+import { buildShareUrl, decodeSnippet } from './share.js';
 
 applyI18n();
 await setupLangSelector(document.getElementById('cf-ui-lang'));
+try { (await import('./embed.js')).initEmbedModal(); } catch (err) { console.warn('[code-formatter] embebido no iniciado:', err.message); }
 try { (await import('./newsletter.js')).initNewsletter(); } catch (err) { console.warn('[code-formatter] newsletter no iniciado:', err.message); }
 await featuresReady; // el inventario free/pay decide qué controles existen
 
@@ -178,6 +181,49 @@ formatBtn.addEventListener('click', async () => {
 });
 
 const currentLang = () => (langSel.value !== 'auto' ? langSel.value : detectLanguage(getCode()));
+
+// Diagnóstico sintáctico en vivo + autocorrección (reglas locales, sin red)
+const diagBox = $('cf-diag');
+const diagMsg = $('cf-diag-msg');
+const diagFixBtn = $('cf-diag-fix');
+let diagTimer;
+function runDiagnostics() {
+  const code = getCode();
+  const l = currentLang();
+  const d = l ? diagnose(code, l) : null;
+  diagBox.hidden = !d;
+  if (!d) return;
+  diagMsg.textContent = `${t('diagLine', { line: d.line })} · ${t(`diag_${d.type}`, { ch: d.ch || '' })}`;
+  diagFixBtn.hidden = !d.fixable;
+}
+document.addEventListener('cf:input', () => { clearTimeout(diagTimer); diagTimer = setTimeout(runDiagnostics, 400); });
+langSel.addEventListener('change', runDiagnostics);
+diagFixBtn.addEventListener('click', () => {
+  const code = getCode();
+  const l = currentLang();
+  const res = l && autoFix(code, l);
+  if (!res) return toast(t('diagFixFail'));
+  setCode(res.code);
+  if (diffBtn) { // vista Antes/Después del arreglo
+    diffState = { original: code, result: res.code, lang: l };
+    diffBtn.disabled = false;
+    openDiff().catch(() => {});
+  }
+  toast(res.clean ? t('diagFixed') : t('diagPartial'), 4000);
+  runDiagnostics();
+});
+
+// Compartir fragmento: enlace ?snippet= (copia al portapapeles; hoja nativa de compartir en móviles)
+$('btn-share-snippet').addEventListener('click', async () => {
+  const code = getCode();
+  if (!code.trim()) return toast(t('noCode'));
+  const href = await buildShareUrl(code, currentLang() || '', uiLang);
+  if (!href) return toast(t('shareTooLong'));
+  if (navigator.share && matchMedia('(pointer: coarse)').matches) {
+    try { await navigator.share({ title: document.title, url: href }); return; } catch (err) { if (err.name === 'AbortError') return; }
+  }
+  try { await writeClipboard(href); toast(t('shareCopied')); } catch { toast(t('shareFail')); }
+});
 $('cf-copy').addEventListener('click', () => copyCode(getCode()));
 $('cf-download').addEventListener('click', () => downloadCode(getCode(), currentLang()));
 $('cf-copy-md').addEventListener('click', () => copyMarkdown(getCode(), currentLang()));
@@ -249,3 +295,16 @@ try {
     $('cf-format').scrollIntoView({ block: 'center' });
   }
 } catch { /* sesión de almacenamiento no disponible o JSON inválido: se ignora */ }
+
+// Fragmento compartido por enlace (?snippet=): se descomprime con límite de tamaño y solo se inserta como texto.
+try {
+  const payload = new URLSearchParams(location.search).get('snippet');
+  const shared = payload && await decodeSnippet(payload);
+  if (shared) {
+    document.head.append(Object.assign(document.createElement('meta'), { name: 'robots', content: 'noindex' })); // contenido de usuario: no indexar
+    if ([...langSel.options].some((o) => o.value === shared.lang)) { langSel.value = shared.lang; setLanguage(shared.lang); }
+    setCode(shared.code);
+    if (langSel.value === 'auto') resolveLanguage(shared.code);
+    toast(t('sharedReceived'), 6000);
+  }
+} catch { /* enlace inválido: se ignora */ }

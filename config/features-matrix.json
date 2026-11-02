@@ -25,7 +25,13 @@
     "assets/js/tools/code-formatter/locales/pt-PT.js",
     "assets/js/tools/code-formatter/locales/fr.js",
     "assets/js/tools/code-formatter/locales/de.js",
-    "assets/js/tools/code-formatter/locales/it.js"
+    "assets/js/tools/code-formatter/locales/it.js",
+    "assets/js/tools/code-formatter/share.js",
+    "assets/js/tools/code-formatter/diagnostics.js",
+    "assets/js/tools/code-formatter/embed.js",
+    "assets/js/tools/code-formatter/fix-page.js",
+    "tools/code-formatter/embed/index.html",
+    "assets/images/badges/formatted-with-jw.svg"
   ],
   "features": [
     {

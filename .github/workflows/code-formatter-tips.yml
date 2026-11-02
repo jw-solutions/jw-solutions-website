@@ -38,8 +38,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Instalar gray-matter
-        run: npm install --no-save --no-package-lock gray-matter@4.0.3
+      - name: Instalar dependencias de build (gray-matter, resvg)
+        run: npm install --no-save --no-package-lock gray-matter@4.0.3 @resvg/resvg-js@2.6.2
 
       - name: Validar tips
         run: node scripts/validate-formatter-tips.js
@@ -58,6 +58,10 @@ jobs:
         if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
         run: python3 scripts/code-formatter/build_public.py --sitemap
 
+      - name: Generar imágenes OpenGraph (7 idiomas por tip)
+        if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
+        run: node scripts/code-formatter/generate-og-images.js
+
       - name: Verificar repositorio (después)
         if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
         run: node scripts/validate-formatter-tips.js
@@ -70,7 +74,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A content/code-formatter-tips sitemap-code-formatter.xml
+          git add -A content/code-formatter-tips sitemap-code-formatter.xml assets/images/og
           if git diff --cached --quiet; then
             echo "Sin cambios que confirmar para $PUBLISHED."
             exit 1

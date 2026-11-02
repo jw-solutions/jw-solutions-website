@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" data-cf-embed>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clean Code Formatter AI</title>
+  <meta name="description" content="Widget embebible de Clean Code Formatter AI.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://esm.sh; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://esm.sh; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="robots" content="noindex,follow">
+  <link rel="canonical" href="https://jw-solutions.com/tools/code-formatter/">
+  <meta name="theme-color" content="#0b0f17">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../../assets/css/tools/code-formatter.css">
+</head>
+<body class="cf-body cf-widget" data-cf-widget>
+  <main class="cf-widget__main">
+    <div class="cf-widget__bar">
+      <label class="cf-sr-only" for="w-lang" data-i18n="language">Lenguaje</label>
+      <select id="w-lang" class="cf-select cf-select--compact"></select>
+      <button type="button" id="w-format" class="cf-btn cf-btn--primary cf-btn--small" data-i18n="format">Formatear</button>
+      <button type="button" id="w-copy" class="cf-btn cf-btn--small" data-i18n="copy">Copiar</button>
+    </div>
+    <label class="cf-sr-only" for="w-code" data-i18n="code">Código</label>
+    <textarea id="w-code" class="cf-input cf-widget__code" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+    <p class="cf-widget__foot">
+      <a id="w-brand" class="cf-widget__brand" href="https://jw-solutions.com/tools/code-formatter/" target="_blank" rel="noopener">Clean Code Formatter AI</a>
+      <a id="w-open" class="cf-widget__open" href="https://jw-solutions.com/tools/code-formatter/" target="_blank" rel="noopener">Abrir el editor completo</a>
+    </p>
+  </main>
+  <div id="cf-toast" class="cf-toast" role="status" aria-live="polite"></div>
+  <script type="module" src="../../../assets/js/tools/code-formatter/embed.js"></script>
+</body>
+</html>

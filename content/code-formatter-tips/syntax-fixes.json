@@ -1,0 +1,737 @@
+{
+  "version": 1,
+  "published_at": "2026-11-02",
+  "description": "Matriz de errores sintácticos frecuentes → landings programáticas tools/code-formatter/fix/<slug>/ (build_public.py).",
+  "errors": [
+    {
+      "slug": "python-indentation-error",
+      "language": "python",
+      "error": "IndentationError",
+      "version": "Python 3.12",
+      "before": "def saludar(nombre):\nprint(\"Hola\", nombre)\n",
+      "after": "def saludar(nombre):\n    print(\"Hola\", nombre)\n",
+      "i18n": {
+        "es": {
+          "title": "Cómo solucionar IndentationError en Python 3.12",
+          "summary": "Python lanza IndentationError cuando la sangría de una línea no coincide con la estructura del bloque.",
+          "steps": [
+            "Localiza la línea que indica el traceback (después de «:» debe venir un bloque indentado).",
+            "Indenta el cuerpo con 4 espacios y no mezcles tabuladores con espacios.",
+            "Pega el código en el formateador: el diagnóstico marca la línea y puede corregirla."
+          ]
+        },
+        "en": {
+          "title": "How to fix IndentationError in Python 3.12",
+          "summary": "Python raises IndentationError when a line's indentation does not match the block structure.",
+          "steps": [
+            "Find the line in the traceback (after a \":\" an indented block must follow).",
+            "Indent the body with 4 spaces and never mix tabs and spaces.",
+            "Paste the code in the formatter: the diagnostic flags the line and can fix it."
+          ]
+        },
+        "pt-BR": {
+          "title": "Como corrigir IndentationError em Python 3.12",
+          "summary": "O Python lança IndentationError quando a indentação de uma linha não corresponde à estrutura do bloco.",
+          "steps": [
+            "Localize a linha indicada no traceback (depois de \":\" deve vir um bloco indentado).",
+            "Indente o corpo com 4 espaços e não misture tabs com espaços.",
+            "Cole o código no formatador: o diagnóstico marca a linha e pode corrigi-la."
+          ]
+        },
+        "pt-PT": {
+          "title": "Como corrigir IndentationError em Python 3.12",
+          "summary": "O Python lança IndentationError quando a indentação de uma linha não corresponde à estrutura do bloco.",
+          "steps": [
+            "Localize a linha indicada no traceback (depois de \":\" tem de vir um bloco indentado).",
+            "Indente o corpo com 4 espaços e não misture tabulações com espaços.",
+            "Cole o código no formatador: o diagnóstico assinala a linha e pode corrigi-la."
+          ]
+        },
+        "fr": {
+          "title": "Comment corriger IndentationError dans Python 3.12",
+          "summary": "Python lève IndentationError lorsque l'indentation d'une ligne ne correspond pas à la structure du bloc.",
+          "steps": [
+            "Repérez la ligne indiquée par la trace (après « : » un bloc indenté est obligatoire).",
+            "Indentez le corps avec 4 espaces et ne mélangez jamais tabulations et espaces.",
+            "Collez le code dans le formateur : le diagnostic signale la ligne et peut la corriger."
+          ]
+        },
+        "de": {
+          "title": "IndentationError in Python 3.12 beheben",
+          "summary": "Python wirft IndentationError, wenn die Einrückung einer Zeile nicht zur Blockstruktur passt.",
+          "steps": [
+            "Suche die im Traceback genannte Zeile (nach „:“ muss ein eingerückter Block folgen).",
+            "Rücke den Rumpf mit 4 Leerzeichen ein und mische nie Tabs und Leerzeichen.",
+            "Füge den Code in den Formatierer ein: Die Diagnose markiert die Zeile und kann sie korrigieren."
+          ]
+        },
+        "it": {
+          "title": "Come risolvere IndentationError in Python 3.12",
+          "summary": "Python genera IndentationError quando l'indentazione di una riga non corrisponde alla struttura del blocco.",
+          "steps": [
+            "Individua la riga indicata nel traceback (dopo «:» deve seguire un blocco indentato).",
+            "Indenta il corpo con 4 spazi e non mescolare tabulazioni e spazi.",
+            "Incolla il codice nel formattatore: la diagnosi segnala la riga e può correggerla."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "js-unexpected-token",
+      "language": "javascript",
+      "error": "SyntaxError: Unexpected token",
+      "version": "Node.js 22",
+      "before": "const user = {\n  name: \"Ana\",\n  roles: [\"admin\", \"dev\"\n};\n",
+      "after": "const user = {\n  name: \"Ana\",\n  roles: [\"admin\", \"dev\"],\n};\n",
+      "i18n": {
+        "es": {
+          "title": "Cómo solucionar SyntaxError: Unexpected token en Node.js 22",
+          "summary": "JavaScript lanza «Unexpected token» cuando encuentra un símbolo donde esperaba otro, casi siempre por un corchete sin cerrar o una coma de más.",
+          "steps": [
+            "Revisa la línea indicada y la anterior: busca un «]», «)» o «}» sin cerrar.",
+            "Comprueba que cada «[», «(» y «{» tenga su cierre del mismo tipo y que las comas solo separen elementos.",
+            "Pega el código en el formateador: el diagnóstico marca la línea y puede corregirla."
+          ]
+        },
+        "en": {
+          "title": "How to fix SyntaxError: Unexpected token in Node.js 22",
+          "summary": "JavaScript throws \"Unexpected token\" when it finds a symbol where it expected another, usually because of an unclosed bracket or a stray comma.",
+          "steps": [
+            "Check the reported line and the one before it for an unclosed \"]\", \")\" or \"}\".",
+            "Make sure every \"[\", \"(\" and \"{\" has a matching closer of the same type and that commas only separate items.",
+            "Paste the code in the formatter: the diagnostic flags the line and can fix it."
+          ]
+        },
+        "pt-BR": {
+          "title": "Como corrigir SyntaxError: Unexpected token em Node.js 22",
+          "summary": "O JavaScript lança \"Unexpected token\" ao encontrar um símbolo onde esperava outro, quase sempre por um colchete sem fechar ou uma vírgula a mais.",
+          "steps": [
+            "Revise a linha indicada e a anterior: procure um \"]\", \")\" ou \"}\" sem fechar.",
+            "Confirme que cada \"[\", \"(\" e \"{\" tenha seu fechamento do mesmo tipo e que as vírgulas apenas separem itens.",
+            "Cole o código no formatador: o diagnóstico marca a linha e pode corrigi-la."
+          ]
+        },
+        "pt-PT": {
+          "title": "Como corrigir SyntaxError: Unexpected token em Node.js 22",
+          "summary": "O JavaScript lança \"Unexpected token\" ao encontrar um símbolo onde esperava outro, quase sempre por um parêntese reto por fechar ou uma vírgula a mais.",
+          "steps": [
+            "Reveja a linha indicada e a anterior: procure um \"]\", \")\" ou \"}\" por fechar.",
+            "Confirme que cada \"[\", \"(\" e \"{\" tem o seu fecho do mesmo tipo e que as vírgulas apenas separam elementos.",
+            "Cole o código no formatador: o diagnóstico assinala a linha e pode corrigi-la."
+          ]
+        },
+        "fr": {
+          "title": "Comment corriger SyntaxError: Unexpected token dans Node.js 22",
+          "summary": "JavaScript lève « Unexpected token » lorsqu'il trouve un symbole à la place d'un autre, presque toujours à cause d'un crochet non fermé ou d'une virgule en trop.",
+          "steps": [
+            "Vérifiez la ligne signalée et la précédente : cherchez un « ] », « ) » ou « } » manquant.",
+            "Assurez-vous que chaque « [ », « ( » et « { » a sa fermeture du même type et que les virgules ne font que séparer les éléments.",
+            "Collez le code dans le formateur : le diagnostic signale la ligne et peut la corriger."
+          ]
+        },
+        "de": {
+          "title": "SyntaxError: Unexpected token in Node.js 22 beheben",
+          "summary": "JavaScript wirft „Unexpected token“, wenn ein anderes Symbol erwartet wurde – meist wegen einer offenen Klammer oder eines überzähligen Kommas.",
+          "steps": [
+            "Prüfe die gemeldete und die vorherige Zeile auf ein fehlendes „]“, „)“ oder „}“.",
+            "Stelle sicher, dass jedes „[“, „(“ und „{“ sein passendes Gegenstück hat und Kommas nur Elemente trennen.",
+            "Füge den Code in den Formatierer ein: Die Diagnose markiert die Zeile und kann sie korrigieren."
+          ]
+        },
+        "it": {
+          "title": "Come risolvere SyntaxError: Unexpected token in Node.js 22",
+          "summary": "JavaScript genera «Unexpected token» quando trova un simbolo al posto di un altro, quasi sempre per una parentesi quadra non chiusa o una virgola di troppo.",
+          "steps": [
+            "Controlla la riga indicata e quella precedente: cerca un «]», «)» o «}» mancante.",
+            "Verifica che ogni «[», «(» e «{» abbia la chiusura dello stesso tipo e che le virgole separino soltanto gli elementi.",
+            "Incolla il codice nel formattatore: la diagnosi segnala la riga e può correggerla."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "ts-unterminated-string-literal",
+      "language": "typescript",
+      "error": "TS1002: Unterminated string literal",
+      "version": "TypeScript 5.5",
+      "before": "const mensaje: string = \"Hola mundo;\nconsole.log(mensaje);\n",
+      "after": "const mensaje: string = \"Hola mundo\";\nconsole.log(mensaje);\n",
+      "i18n": {
+        "es": {
+          "title": "Cómo solucionar TS1002: Unterminated string literal en TypeScript 5.5",
+          "summary": "TypeScript devuelve TS1002 cuando una cadena empieza con comilla y no se cierra en la misma línea.",
+          "steps": [
+            "Busca la comilla de apertura de la línea indicada y añade la de cierre antes del «;».",
+            "Si el texto es largo o ocupa varias líneas, usa una plantilla de texto (backtick) en lugar de comillas simples o dobles.",
+            "Pega el código en el formateador: el diagnóstico marca la línea y puede corregirla."
+          ]
+        },
+        "en": {
+          "title": "How to fix TS1002: Unterminated string literal in TypeScript 5.5",
+          "summary": "TypeScript reports TS1002 when a string starts with a quote and is not closed on the same line.",
+          "steps": [
+            "Find the opening quote on the reported line and add the closing one before the \";\".",
+            "For long or multi-line text, use a template literal (backtick) instead of single or double quotes.",
+            "Paste the code in the formatter: the diagnostic flags the line and can fix it."
+          ]
+        },
+        "pt-BR": {
+          "title": "Como corrigir TS1002: Unterminated string literal em TypeScript 5.5",
+          "summary": "O TypeScript retorna TS1002 quando uma string começa com aspas e não é fechada na mesma linha.",
+          "steps": [
+            "Encontre as aspas de abertura na linha indicada e adicione as de fechamento antes do \";\".",
+            "Para textos longos ou de várias linhas, use um template literal (backtick) em vez de aspas simples ou duplas.",
+            "Cole o código no formatador: o diagnóstico marca a linha e pode corrigi-la."
+          ]
+        },
+        "pt-PT": {
+          "title": "Como corrigir TS1002: Unterminated string literal em TypeScript 5.5",
+          "summary": "O TypeScript devolve TS1002 quando uma string começa com aspas e não é fechada na mesma linha.",
+          "steps": [
+            "Encontre as aspas de abertura na linha indicada e acrescente as de fecho antes do \";\".",
+            "Para textos longos ou com várias linhas, use um template literal (backtick) em vez de aspas simples ou duplas.",
+            "Cole o código no formatador: o diagnóstico assinala a linha e pode corrigi-la."
+          ]
+        },
+        "fr": {
+          "title": "Comment corriger TS1002: Unterminated string literal dans TypeScript 5.5",
+          "summary": "TypeScript renvoie TS1002 lorsqu'une chaîne commence par un guillemet et n'est pas fermée sur la même ligne.",
+          "steps": [
+            "Repérez le guillemet ouvrant de la ligne signalée et ajoutez le guillemet fermant avant le « ; ».",
+            "Pour un texte long ou sur plusieurs lignes, utilisez un littéral de gabarit (backtick) plutôt que des guillemets simples ou doubles.",
+            "Collez le code dans le formateur : le diagnostic signale la ligne et peut la corriger."
+          ]
+        },
+        "de": {
+          "title": "TS1002: Unterminated string literal in TypeScript 5.5 beheben",
+          "summary": "TypeScript meldet TS1002, wenn ein String mit einem Anführungszeichen beginnt und nicht in derselben Zeile geschlossen wird.",
+          "steps": [
+            "Suche das öffnende Anführungszeichen in der gemeldeten Zeile und setze das schließende vor das „;“.",
+            "Für lange oder mehrzeilige Texte nutze ein Template-Literal (Backtick) statt einfacher oder doppelter Anführungszeichen.",
+            "Füge den Code in den Formatierer ein: Die Diagnose markiert die Zeile und kann sie korrigieren."
+          ]
+        },
+        "it": {
+          "title": "Come risolvere TS1002: Unterminated string literal in TypeScript 5.5",
+          "summary": "TypeScript restituisce TS1002 quando una stringa inizia con le virgolette e non viene chiusa sulla stessa riga.",
+          "steps": [
+            "Trova le virgolette di apertura nella riga indicata e aggiungi quelle di chiusura prima del «;».",
+            "Per testi lunghi o su più righe usa un template literal (backtick) invece delle virgolette semplici o doppie.",
+            "Incolla il codice nel formattatore: la diagnosi segnala la riga e può correggerla."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "sql-dax-formatting-rules",
+      "language": "sql",
+      "error": "SQL & DAX formatting",
+      "version": "SQL / DAX",
+      "before": "select id,name,sum(total) as t from orders o join clients c on c.id=o.client_id where o.total>100 group by id,name order by t desc",
+      "after": "SELECT\n  id,\n  name,\n  SUM(total) AS t\nFROM orders o\nJOIN clients c\n  ON c.id = o.client_id\nWHERE o.total > 100\nGROUP BY id, name\nORDER BY t DESC\n",
+      "i18n": {
+        "es": {
+          "title": "Reglas de formato para SQL y DAX: guía rápida con ejemplos",
+          "summary": "SQL y DAX son más fáciles de leer y depurar cuando cada cláusula va en su propia línea y las palabras clave siguen una convención.",
+          "steps": [
+            "Escribe las palabras clave en mayúsculas (SELECT, FROM, WHERE, CALCULATE) y pon cada cláusula en una línea nueva.",
+            "Indenta con 2 o 4 espacios las columnas, los JOIN y los argumentos anidados de las funciones DAX.",
+            "Pega el código en el formateador y pulsa «Formatear»: aplica estas reglas automáticamente."
+          ]
+        },
+        "en": {
+          "title": "SQL and DAX formatting rules: a quick guide with examples",
+          "summary": "SQL and DAX are easier to read and debug when each clause sits on its own line and keywords follow one convention.",
+          "steps": [
+            "Write keywords in uppercase (SELECT, FROM, WHERE, CALCULATE) and start each clause on a new line.",
+            "Indent columns, JOINs and nested DAX function arguments with 2 or 4 spaces.",
+            "Paste the code in the formatter and press \"Format\": it applies these rules automatically."
+          ]
+        },
+        "pt-BR": {
+          "title": "Regras de formatação para SQL e DAX: guia rápido com exemplos",
+          "summary": "SQL e DAX ficam mais fáceis de ler e depurar quando cada cláusula fica em sua própria linha e as palavras-chave seguem uma convenção.",
+          "steps": [
+            "Escreva as palavras-chave em maiúsculas (SELECT, FROM, WHERE, CALCULATE) e inicie cada cláusula em uma nova linha.",
+            "Indente com 2 ou 4 espaços as colunas, os JOINs e os argumentos aninhados das funções DAX.",
+            "Cole o código no formatador e clique em \"Formatar\": ele aplica estas regras automaticamente."
+          ]
+        },
+        "pt-PT": {
+          "title": "Regras de formatação para SQL e DAX: guia rápido com exemplos",
+          "summary": "SQL e DAX ficam mais fáceis de ler e depurar quando cada cláusula está na sua própria linha e as palavras-chave seguem uma convenção.",
+          "steps": [
+            "Escreva as palavras-chave em maiúsculas (SELECT, FROM, WHERE, CALCULATE) e inicie cada cláusula numa nova linha.",
+            "Indente com 2 ou 4 espaços as colunas, os JOINs e os argumentos aninhados das funções DAX.",
+            "Cole o código no formatador e clique em \"Formatar\": aplica estas regras automaticamente."
+          ]
+        },
+        "fr": {
+          "title": "Règles de mise en forme SQL et DAX : guide rapide avec exemples",
+          "summary": "SQL et DAX sont plus faciles à lire et à déboguer quand chaque clause tient sur sa propre ligne et que les mots-clés suivent une convention.",
+          "steps": [
+            "Écrivez les mots-clés en majuscules (SELECT, FROM, WHERE, CALCULATE) et commencez chaque clause sur une nouvelle ligne.",
+            "Indentez de 2 ou 4 espaces les colonnes, les JOIN et les arguments imbriqués des fonctions DAX.",
+            "Collez le code dans le formateur et cliquez sur « Formater » : il applique ces règles automatiquement."
+          ]
+        },
+        "de": {
+          "title": "Formatierungsregeln für SQL und DAX: Kurzanleitung mit Beispielen",
+          "summary": "SQL und DAX lassen sich leichter lesen und debuggen, wenn jede Klausel in einer eigenen Zeile steht und Schlüsselwörter einer Konvention folgen.",
+          "steps": [
+            "Schreibe Schlüsselwörter groß (SELECT, FROM, WHERE, CALCULATE) und beginne jede Klausel in einer neuen Zeile.",
+            "Rücke Spalten, JOINs und verschachtelte DAX-Funktionsargumente mit 2 oder 4 Leerzeichen ein.",
+            "Füge den Code in den Formatierer ein und klicke auf „Formatieren“: Er wendet diese Regeln automatisch an."
+          ]
+        },
+        "it": {
+          "title": "Regole di formattazione per SQL e DAX: guida rapida con esempi",
+          "summary": "SQL e DAX sono più facili da leggere e da debuggare quando ogni clausola sta su una riga propria e le parole chiave seguono una convenzione.",
+          "steps": [
+            "Scrivi le parole chiave in maiuscolo (SELECT, FROM, WHERE, CALCULATE) e inizia ogni clausola su una nuova riga.",
+            "Indenta con 2 o 4 spazi le colonne, i JOIN e gli argomenti annidati delle funzioni DAX.",
+            "Incolla il codice nel formattatore e premi «Formatta»: applica automaticamente queste regole."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "dax-unbalanced-parentheses",
+      "language": "dax",
+      "error": "The syntax for ')' is incorrect",
+      "version": "Power BI DAX",
+      "before": "Ventas Totales =\nCALCULATE (\n  SUM ( Ventas[Importe] ),\n  FILTER ( ALL ( Fechas ), Fechas[Anio] = 2024 )\n",
+      "after": "Ventas Totales =\nCALCULATE (\n  SUM ( Ventas[Importe] ),\n  FILTER ( ALL ( Fechas ), Fechas[Anio] = 2024 )\n)\n",
+      "i18n": {
+        "es": {
+          "title": "Cómo solucionar The syntax for ')' is incorrect en Power BI DAX",
+          "summary": "Power BI muestra un error de sintaxis cuando una medida DAX tiene más «(» abiertos que «)» cerrados, algo habitual en CALCULATE y FILTER anidados.",
+          "steps": [
+            "Cuenta los paréntesis de apertura y cierre de la medida; deben coincidir uno a uno.",
+            "Formatea la fórmula con cada argumento en su línea: el paréntesis que falta se ve de inmediato.",
+            "Pega el código en el formateador: el diagnóstico marca la línea y puede corregirla."
+          ]
+        },
+        "en": {
+          "title": "How to fix The syntax for ')' is incorrect in Power BI DAX",
+          "summary": "Power BI reports a syntax error when a DAX measure has more \"(\" than \")\", which is common in nested CALCULATE and FILTER calls.",
+          "steps": [
+            "Count the opening and closing parentheses of the measure; they must match one to one.",
+            "Format the formula with one argument per line: the missing parenthesis becomes obvious.",
+            "Paste the code in the formatter: the diagnostic flags the line and can fix it."
+          ]
+        },
+        "pt-BR": {
+          "title": "Como corrigir The syntax for ')' is incorrect em Power BI DAX",
+          "summary": "O Power BI mostra erro de sintaxe quando uma medida DAX tem mais \"(\" abertos do que \")\" fechados, algo comum em CALCULATE e FILTER aninhados.",
+          "steps": [
+            "Conte os parênteses de abertura e fechamento da medida; eles devem corresponder um a um.",
+            "Formate a fórmula com um argumento por linha: o parêntese que falta fica evidente.",
+            "Cole o código no formatador: o diagnóstico marca a linha e pode corrigi-la."
+          ]
+        },
+        "pt-PT": {
+          "title": "Como corrigir The syntax for ')' is incorrect em Power BI DAX",
+          "summary": "O Power BI mostra um erro de sintaxe quando uma medida DAX tem mais \"(\" abertos do que \")\" fechados, algo comum em CALCULATE e FILTER aninhados.",
+          "steps": [
+            "Conte os parênteses de abertura e fecho da medida; têm de corresponder um a um.",
+            "Formate a fórmula com um argumento por linha: o parêntese em falta torna-se evidente.",
+            "Cole o código no formatador: o diagnóstico assinala a linha e pode corrigi-la."
+          ]
+        },
+        "fr": {
+          "title": "Comment corriger The syntax for ')' is incorrect dans Power BI DAX",
+          "summary": "Power BI signale une erreur de syntaxe lorsqu'une mesure DAX a plus de « ( » que de « ) », fréquent avec des CALCULATE et FILTER imbriqués.",
+          "steps": [
+            "Comptez les parenthèses ouvrantes et fermantes de la mesure : elles doivent correspondre une à une.",
+            "Mettez la formule en forme avec un argument par ligne : la parenthèse manquante saute aux yeux.",
+            "Collez le code dans le formateur : le diagnostic signale la ligne et peut la corriger."
+          ]
+        },
+        "de": {
+          "title": "The syntax for ')' is incorrect in Power BI DAX beheben",
+          "summary": "Power BI meldet einen Syntaxfehler, wenn ein DAX-Measure mehr „(“ als „)“ enthält – typisch bei verschachteltem CALCULATE und FILTER.",
+          "steps": [
+            "Zähle die öffnenden und schließenden Klammern des Measures; sie müssen paarweise übereinstimmen.",
+            "Formatiere die Formel mit einem Argument pro Zeile: Die fehlende Klammer fällt sofort auf.",
+            "Füge den Code in den Formatierer ein: Die Diagnose markiert die Zeile und kann sie korrigieren."
+          ]
+        },
+        "it": {
+          "title": "Come risolvere The syntax for ')' is incorrect in Power BI DAX",
+          "summary": "Power BI segnala un errore di sintassi quando una misura DAX ha più «(» che «)», frequente con CALCULATE e FILTER annidati.",
+          "steps": [
+            "Conta le parentesi di apertura e di chiusura della misura: devono corrispondere una a una.",
+            "Formatta la formula con un argomento per riga: la parentesi mancante salta subito all'occhio.",
+            "Incolla il codice nel formattatore: la diagnosi segnala la riga e può correggerla."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "java-reached-end-of-file-while-parsing",
+      "language": "java",
+      "error": "reached end of file while parsing",
+      "version": "Java 21",
+      "before": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hola\");\n    }\n",
+      "after": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hola\");\n    }\n}\n",
+      "i18n": {
+        "es": {
+          "title": "Cómo solucionar reached end of file while parsing en Java 21",
+          "summary": "javac muestra este error cuando falta una llave de cierre y el compilador llega al final del archivo sin cerrar la clase o el método.",
+          "steps": [
+            "Cuenta las llaves «{» y «}»: la clase y cada método necesitan su pareja.",
+            "Indenta cada bloque; la llave que falta suele estar al final de un método o de la clase.",
+            "Pega el código en el formateador: el diagnóstico marca la línea y puede corregirla."
+          ]
+        },
+        "en": {
+          "title": "How to fix reached end of file while parsing in Java 21",
+          "summary": "javac shows this error when a closing brace is missing and the compiler reaches the end of the file without closing the class or method.",
+          "steps": [
+            "Count the \"{\" and \"}\" characters: the class and every method need their pair.",
+            "Indent every block; the missing brace is usually at the end of a method or of the class.",
+            "Paste the code in the formatter: the diagnostic flags the line and can fix it."
+          ]
+        },
+        "pt-BR": {
+          "title": "Como corrigir reached end of file while parsing em Java 21",
+          "summary": "O javac mostra este erro quando falta uma chave de fechamento e o compilador chega ao fim do arquivo sem fechar a classe ou o método.",
+          "steps": [
+            "Conte as chaves \"{\" e \"}\": a classe e cada método precisam do seu par.",
+            "Indente cada bloco; a chave que falta costuma estar no fim de um método ou da classe.",
+            "Cole o código no formatador: o diagnóstico marca a linha e pode corrigi-la."
+          ]
+        },
+        "pt-PT": {
+          "title": "Como corrigir reached end of file while parsing em Java 21",
+          "summary": "O javac mostra este erro quando falta uma chaveta de fecho e o compilador chega ao fim do ficheiro sem fechar a classe ou o método.",
+          "steps": [
+            "Conte as chavetas \"{\" e \"}\": a classe e cada método precisam do seu par.",
+            "Indente cada bloco; a chaveta em falta costuma estar no fim de um método ou da classe.",
+            "Cole o código no formatador: o diagnóstico assinala a linha e pode corrigi-la."
+          ]
+        },
+        "fr": {
+          "title": "Comment corriger reached end of file while parsing dans Java 21",
+          "summary": "javac affiche cette erreur lorsqu'une accolade fermante manque et que le compilateur atteint la fin du fichier sans avoir fermé la classe ou la méthode.",
+          "steps": [
+            "Comptez les accolades « { » et « } » : la classe et chaque méthode ont besoin de leur paire.",
+            "Indentez chaque bloc ; l'accolade manquante se trouve souvent à la fin d'une méthode ou de la classe.",
+            "Collez le code dans le formateur : le diagnostic signale la ligne et peut la corriger."
+          ]
+        },
+        "de": {
+          "title": "reached end of file while parsing in Java 21 beheben",
+          "summary": "javac zeigt diesen Fehler, wenn eine schließende geschweifte Klammer fehlt und der Compiler das Dateiende erreicht, ohne Klasse oder Methode zu schließen.",
+          "steps": [
+            "Zähle die Zeichen „{“ und „}“: Klasse und jede Methode brauchen ihr Gegenstück.",
+            "Rücke jeden Block ein; die fehlende Klammer steht meist am Ende einer Methode oder der Klasse.",
+            "Füge den Code in den Formatierer ein: Die Diagnose markiert die Zeile und kann sie korrigieren."
+          ]
+        },
+        "it": {
+          "title": "Come risolvere reached end of file while parsing in Java 21",
+          "summary": "javac mostra questo errore quando manca una graffa di chiusura e il compilatore arriva a fine file senza aver chiuso la classe o il metodo.",
+          "steps": [
+            "Conta le graffe «{» e «}»: la classe e ogni metodo hanno bisogno della loro coppia.",
+            "Indenta ogni blocco: la graffa mancante si trova di solito alla fine di un metodo o della classe.",
+            "Incolla il codice nel formattatore: la diagnosi segnala la riga e può correggerla."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "csharp-cs1026-closing-parenthesis-expected",
+      "language": "csharp",
+      "error": "CS1026: ) expected",
+      "version": "C# 12",
+      "before": "int a = 5;\nint b = 3;\nConsole.WriteLine(\"Total: \" + (a + b);\n",
+      "after": "int a = 5;\nint b = 3;\nConsole.WriteLine(\"Total: \" + (a + b));\n",
+      "i18n": {
+        "es": {
+          "title": "Cómo solucionar CS1026: ) expected en C# 12",
+          "summary": "El compilador de C# devuelve CS1026 cuando una llamada o expresión abre un paréntesis que nunca se cierra.",
+          "steps": [
+            "Mira la línea indicada: cada «(» de la expresión necesita su «)» antes del «;».",
+            "En expresiones largas, separa las operaciones en variables para ver mejor dónde falta el cierre.",
+            "Pega el código en el formateador: el diagnóstico marca la línea y puede corregirla."
+          ]
+        },
+        "en": {
+          "title": "How to fix CS1026: ) expected in C# 12",
+          "summary": "The C# compiler returns CS1026 when a call or expression opens a parenthesis that is never closed.",
+          "steps": [
+            "Look at the reported line: every \"(\" in the expression needs its \")\" before the \";\".",
+            "In long expressions, split the operations into variables to see where the closer is missing.",
+            "Paste the code in the formatter: the diagnostic flags the line and can fix it."
+          ]
+        },
+        "pt-BR": {
+          "title": "Como corrigir CS1026: ) expected em C# 12",
+          "summary": "O compilador C# retorna CS1026 quando uma chamada ou expressão abre um parêntese que nunca é fechado.",
+          "steps": [
+            "Veja a linha indicada: cada \"(\" da expressão precisa do seu \")\" antes do \";\".",
+            "Em expressões longas, separe as operações em variáveis para ver onde falta o fechamento.",
+            "Cole o código no formatador: o diagnóstico marca a linha e pode corrigi-la."
+          ]
+        },
+        "pt-PT": {
+          "title": "Como corrigir CS1026: ) expected em C# 12",
+          "summary": "O compilador C# devolve CS1026 quando uma chamada ou expressão abre um parêntese que nunca é fechado.",
+          "steps": [
+            "Veja a linha indicada: cada \"(\" da expressão precisa do seu \")\" antes do \";\".",
+            "Em expressões longas, separe as operações em variáveis para ver onde falta o fecho.",
+            "Cole o código no formatador: o diagnóstico assinala a linha e pode corrigi-la."
+          ]
+        },
+        "fr": {
+          "title": "Comment corriger CS1026: ) expected dans C# 12",
+          "summary": "Le compilateur C# renvoie CS1026 lorsqu'un appel ou une expression ouvre une parenthèse qui n'est jamais fermée.",
+          "steps": [
+            "Regardez la ligne signalée : chaque « ( » de l'expression nécessite son « ) » avant le « ; ».",
+            "Dans les expressions longues, séparez les opérations en variables pour voir où manque la fermeture.",
+            "Collez le code dans le formateur : le diagnostic signale la ligne et peut la corriger."
+          ]
+        },
+        "de": {
+          "title": "CS1026: ) expected in C# 12 beheben",
+          "summary": "Der C#-Compiler meldet CS1026, wenn ein Aufruf oder Ausdruck eine Klammer öffnet, die nie geschlossen wird.",
+          "steps": [
+            "Sieh dir die gemeldete Zeile an: Jede „(“ im Ausdruck braucht ihr „)“ vor dem „;“.",
+            "Zerlege lange Ausdrücke in Variablen, um zu sehen, wo die schließende Klammer fehlt.",
+            "Füge den Code in den Formatierer ein: Die Diagnose markiert die Zeile und kann sie korrigieren."
+          ]
+        },
+        "it": {
+          "title": "Come risolvere CS1026: ) expected in C# 12",
+          "summary": "Il compilatore C# restituisce CS1026 quando una chiamata o un'espressione apre una parentesi che non viene mai chiusa.",
+          "steps": [
+            "Guarda la riga indicata: ogni «(» dell'espressione richiede la sua «)» prima del «;».",
+            "Nelle espressioni lunghe, separa le operazioni in variabili per vedere dove manca la chiusura.",
+            "Incolla il codice nel formattatore: la diagnosi segnala la riga e può correggerla."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "php-parse-error-unclosed-brace",
+      "language": "php",
+      "error": "Parse error: Unclosed '{'",
+      "version": "PHP 8.3",
+      "before": "<?php\nfunction sumar($a, $b) {\n    return $a + $b;\n\necho sumar(2, 3);\n",
+      "after": "<?php\nfunction sumar($a, $b) {\n    return $a + $b;\n}\n\necho sumar(2, 3);\n",
+      "i18n": {
+        "es": {
+          "title": "Cómo solucionar Parse error: Unclosed '{' en PHP 8.3",
+          "summary": "PHP detiene la ejecución con un Parse error cuando una función, clase o estructura abre una llave «{» que nunca se cierra.",
+          "steps": [
+            "La línea del error apunta a la llave sin cerrar, no a donde falta el cierre.",
+            "Añade la «}» al final del bloque correcto e indenta el código para comprobar la estructura.",
+            "Pega el código en el formateador: el diagnóstico marca la línea y puede corregirla."
+          ]
+        },
+        "en": {
+          "title": "How to fix Parse error: Unclosed '{' in PHP 8.3",
+          "summary": "PHP stops with a Parse error when a function, class or control structure opens a \"{\" that is never closed.",
+          "steps": [
+            "The error line points to the unclosed brace, not to where the closer is missing.",
+            "Add the \"}\" at the end of the right block and indent the code to check the structure.",
+            "Paste the code in the formatter: the diagnostic flags the line and can fix it."
+          ]
+        },
+        "pt-BR": {
+          "title": "Como corrigir Parse error: Unclosed '{' em PHP 8.3",
+          "summary": "O PHP interrompe a execução com um Parse error quando uma função, classe ou estrutura abre uma chave \"{\" que nunca é fechada.",
+          "steps": [
+            "A linha do erro aponta para a chave aberta, não para onde falta o fechamento.",
+            "Adicione o \"}\" no fim do bloco correto e indente o código para conferir a estrutura.",
+            "Cole o código no formatador: o diagnóstico marca a linha e pode corrigi-la."
+          ]
+        },
+        "pt-PT": {
+          "title": "Como corrigir Parse error: Unclosed '{' em PHP 8.3",
+          "summary": "O PHP interrompe a execução com um Parse error quando uma função, classe ou estrutura abre uma chaveta \"{\" que nunca é fechada.",
+          "steps": [
+            "A linha do erro aponta para a chaveta aberta, não para onde falta o fecho.",
+            "Acrescente o \"}\" no fim do bloco correto e indente o código para verificar a estrutura.",
+            "Cole o código no formatador: o diagnóstico assinala a linha e pode corrigi-la."
+          ]
+        },
+        "fr": {
+          "title": "Comment corriger Parse error: Unclosed '{' dans PHP 8.3",
+          "summary": "PHP s'arrête avec une Parse error lorsqu'une fonction, une classe ou une structure ouvre une accolade « { » jamais fermée.",
+          "steps": [
+            "La ligne de l'erreur désigne l'accolade ouverte, pas l'endroit où la fermeture manque.",
+            "Ajoutez le « } » à la fin du bon bloc et indentez le code pour vérifier la structure.",
+            "Collez le code dans le formateur : le diagnostic signale la ligne et peut la corriger."
+          ]
+        },
+        "de": {
+          "title": "Parse error: Unclosed '{' in PHP 8.3 beheben",
+          "summary": "PHP bricht mit einem Parse error ab, wenn eine Funktion, Klasse oder Struktur eine „{“ öffnet, die nie geschlossen wird.",
+          "steps": [
+            "Die Fehlerzeile zeigt auf die offene Klammer, nicht auf die Stelle, an der das Ende fehlt.",
+            "Ergänze das „}“ am Ende des richtigen Blocks und rücke den Code ein, um die Struktur zu prüfen.",
+            "Füge den Code in den Formatierer ein: Die Diagnose markiert die Zeile und kann sie korrigieren."
+          ]
+        },
+        "it": {
+          "title": "Come risolvere Parse error: Unclosed '{' in PHP 8.3",
+          "summary": "PHP si ferma con un Parse error quando una funzione, classe o struttura apre una graffa «{» che non viene mai chiusa.",
+          "steps": [
+            "La riga dell'errore indica la graffa aperta, non il punto in cui manca la chiusura.",
+            "Aggiungi la «}» alla fine del blocco giusto e indenta il codice per verificare la struttura.",
+            "Incolla il codice nel formattatore: la diagnosi segnala la riga e può correggerla."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "json-trailing-comma-unexpected-token",
+      "language": "json",
+      "error": "Unexpected token }",
+      "version": "JSON.parse",
+      "before": "{\n  \"name\": \"Ana\",\n  \"tags\": [\"a\", \"b\",],\n}\n",
+      "after": "{\n  \"name\": \"Ana\",\n  \"tags\": [\"a\", \"b\"]\n}\n",
+      "i18n": {
+        "es": {
+          "title": "Cómo solucionar Unexpected token } en JSON.parse",
+          "summary": "JSON.parse falla con «Unexpected token» cuando hay una coma final, comillas simples, comentarios o claves sin comillas, que el JSON estricto no admite.",
+          "steps": [
+            "Elimina la coma que sigue al último elemento de cada objeto o lista.",
+            "Usa comillas dobles en claves y textos, y quita los comentarios.",
+            "Pega el código en el formateador: el diagnóstico marca la línea y puede corregirla."
+          ]
+        },
+        "en": {
+          "title": "How to fix Unexpected token } in JSON.parse",
+          "summary": "JSON.parse fails with \"Unexpected token\" when there is a trailing comma, single quotes, comments or unquoted keys, none of which strict JSON allows.",
+          "steps": [
+            "Remove the comma after the last item of each object or list.",
+            "Use double quotes for keys and strings, and remove comments.",
+            "Paste the code in the formatter: the diagnostic flags the line and can fix it."
+          ]
+        },
+        "pt-BR": {
+          "title": "Como corrigir Unexpected token } em JSON.parse",
+          "summary": "O JSON.parse falha com \"Unexpected token\" quando há vírgula final, aspas simples, comentários ou chaves sem aspas, que o JSON estrito não aceita.",
+          "steps": [
+            "Remova a vírgula depois do último item de cada objeto ou lista.",
+            "Use aspas duplas em chaves e textos e remova os comentários.",
+            "Cole o código no formatador: o diagnóstico marca a linha e pode corrigi-la."
+          ]
+        },
+        "pt-PT": {
+          "title": "Como corrigir Unexpected token } em JSON.parse",
+          "summary": "O JSON.parse falha com \"Unexpected token\" quando há vírgula final, aspas simples, comentários ou chaves sem aspas, que o JSON estrito não aceita.",
+          "steps": [
+            "Remova a vírgula a seguir ao último item de cada objeto ou lista.",
+            "Use aspas duplas em chaves e textos e remova os comentários.",
+            "Cole o código no formatador: o diagnóstico assinala a linha e pode corrigi-la."
+          ]
+        },
+        "fr": {
+          "title": "Comment corriger Unexpected token } dans JSON.parse",
+          "summary": "JSON.parse échoue avec « Unexpected token » en cas de virgule finale, de guillemets simples, de commentaires ou de clés sans guillemets, que le JSON strict interdit.",
+          "steps": [
+            "Supprimez la virgule après le dernier élément de chaque objet ou liste.",
+            "Utilisez des guillemets doubles pour les clés et les textes, et retirez les commentaires.",
+            "Collez le code dans le formateur : le diagnostic signale la ligne et peut la corriger."
+          ]
+        },
+        "de": {
+          "title": "Unexpected token } in JSON.parse beheben",
+          "summary": "JSON.parse scheitert mit „Unexpected token“ bei abschließendem Komma, einfachen Anführungszeichen, Kommentaren oder Schlüsseln ohne Anführungszeichen – striktes JSON erlaubt nichts davon.",
+          "steps": [
+            "Entferne das Komma nach dem letzten Element jedes Objekts oder jeder Liste.",
+            "Verwende doppelte Anführungszeichen für Schlüssel und Texte und entferne Kommentare.",
+            "Füge den Code in den Formatierer ein: Die Diagnose markiert die Zeile und kann sie korrigieren."
+          ]
+        },
+        "it": {
+          "title": "Come risolvere Unexpected token } in JSON.parse",
+          "summary": "JSON.parse fallisce con «Unexpected token» in presenza di virgola finale, apici singoli, commenti o chiavi senza virgolette, che il JSON rigoroso non ammette.",
+          "steps": [
+            "Rimuovi la virgola dopo l'ultimo elemento di ogni oggetto o lista.",
+            "Usa le virgolette doppie per chiavi e testi e rimuovi i commenti.",
+            "Incolla il codice nel formattatore: la diagnosi segnala la riga e può correggerla."
+          ]
+        }
+      }
+    },
+    {
+      "slug": "yaml-indentation-fix",
+      "language": "yaml",
+      "error": "bad indentation of a mapping entry",
+      "version": "YAML 1.2",
+      "before": "servicio:\n    nombre: api\n  puerto: 8080\n",
+      "after": "servicio:\n  nombre: api\n  puerto: 8080\n",
+      "i18n": {
+        "es": {
+          "title": "Cómo solucionar bad indentation of a mapping entry en YAML 1.2",
+          "summary": "YAML usa la sangría para definir la estructura: un nivel mal alineado produce «bad indentation of a mapping entry» o un error de parseo.",
+          "steps": [
+            "Alinea todas las claves del mismo nivel con el mismo número de espacios.",
+            "Usa solo espacios (2 por nivel): YAML no admite tabuladores en la sangría.",
+            "Pega el código en el formateador: el diagnóstico marca la línea y puede corregirla."
+          ]
+        },
+        "en": {
+          "title": "How to fix bad indentation of a mapping entry in YAML 1.2",
+          "summary": "YAML uses indentation to define structure: a misaligned level causes \"bad indentation of a mapping entry\" or a parse error.",
+          "steps": [
+            "Align all keys of the same level with the same number of spaces.",
+            "Use spaces only (2 per level): YAML does not allow tabs for indentation.",
+            "Paste the code in the formatter: the diagnostic flags the line and can fix it."
+          ]
+        },
+        "pt-BR": {
+          "title": "Como corrigir bad indentation of a mapping entry em YAML 1.2",
+          "summary": "O YAML usa a indentação para definir a estrutura: um nível desalinhado causa \"bad indentation of a mapping entry\" ou erro de parse.",
+          "steps": [
+            "Alinhe todas as chaves do mesmo nível com o mesmo número de espaços.",
+            "Use apenas espaços (2 por nível): o YAML não aceita tabs na indentação.",
+            "Cole o código no formatador: o diagnóstico marca a linha e pode corrigi-la."
+          ]
+        },
+        "pt-PT": {
+          "title": "Como corrigir bad indentation of a mapping entry em YAML 1.2",
+          "summary": "O YAML usa a indentação para definir a estrutura: um nível desalinhado causa \"bad indentation of a mapping entry\" ou erro de parse.",
+          "steps": [
+            "Alinhe todas as chaves do mesmo nível com o mesmo número de espaços.",
+            "Use apenas espaços (2 por nível): o YAML não aceita tabulações na indentação.",
+            "Cole o código no formatador: o diagnóstico assinala a linha e pode corrigi-la."
+          ]
+        },
+        "fr": {
+          "title": "Comment corriger bad indentation of a mapping entry dans YAML 1.2",
+          "summary": "YAML utilise l'indentation pour définir la structure : un niveau mal aligné provoque « bad indentation of a mapping entry » ou une erreur d'analyse.",
+          "steps": [
+            "Alignez toutes les clés d'un même niveau avec le même nombre d'espaces.",
+            "N'utilisez que des espaces (2 par niveau) : YAML n'accepte pas les tabulations pour l'indentation.",
+            "Collez le code dans le formateur : le diagnostic signale la ligne et peut la corriger."
+          ]
+        },
+        "de": {
+          "title": "bad indentation of a mapping entry in YAML 1.2 beheben",
+          "summary": "YAML definiert die Struktur durch Einrückung: Eine falsch ausgerichtete Ebene führt zu „bad indentation of a mapping entry“ oder einem Parse-Fehler.",
+          "steps": [
+            "Richte alle Schlüssel derselben Ebene mit gleich vielen Leerzeichen aus.",
+            "Verwende nur Leerzeichen (2 pro Ebene): YAML erlaubt keine Tabs zur Einrückung.",
+            "Füge den Code in den Formatierer ein: Die Diagnose markiert die Zeile und kann sie korrigieren."
+          ]
+        },
+        "it": {
+          "title": "Come risolvere bad indentation of a mapping entry in YAML 1.2",
+          "summary": "YAML usa l'indentazione per definire la struttura: un livello disallineato causa «bad indentation of a mapping entry» o un errore di parsing.",
+          "steps": [
+            "Allinea tutte le chiavi dello stesso livello con lo stesso numero di spazi.",
+            "Usa solo spazi (2 per livello): YAML non ammette tabulazioni nell'indentazione.",
+            "Incolla il codice nel formattatore: la diagnosi segnala la riga e può correggerla."
+          ]
+        }
+      }
+    }
+  ]
+}

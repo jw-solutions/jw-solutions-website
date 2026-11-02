@@ -76,6 +76,7 @@ export async function setupLangSelector(select) {
  * contenido mostrado (la canónica apunta a él, así un idioma sin traducir no duplica contenido) y description.
  */
 export function applySeo({ langs = SUPPORTED_LANGS, contentLang = lang, description } = {}) {
+  if (document.documentElement.hasAttribute('data-cf-embed')) return; // el widget embebible conserva su canónica estática (apunta a la herramienta)
   const dir = location.pathname.replace(/index\.html$/, '');
   const tip = new URLSearchParams(location.search).get('tip');
   const urlFor = (l) => {

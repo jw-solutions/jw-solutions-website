@@ -3,13 +3,13 @@ import { LANG_EXT } from './detect.js';
 import { t } from './i18n.js';
 
 let toastTimer;
-export function toast(msg) {
+export function toast(msg, ms = 2200) {
   const el = document.getElementById('cf-toast');
   if (!el) return;
   el.textContent = msg;
   el.classList.add('cf-toast--show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('cf-toast--show'), 2200);
+  toastTimer = setTimeout(() => el.classList.remove('cf-toast--show'), ms);
 }
 
 export async function writeClipboard(text) {

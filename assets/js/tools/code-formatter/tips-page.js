@@ -126,6 +126,19 @@ function injectJsonLd(tip, v, description) {
   document.head.append(el('script', { id: 'cf-jsonld', type: 'application/ld+json', textContent: JSON.stringify(data) }));
 }
 
+/** Imagen OpenGraph del tip en el idioma mostrado (generate-og-images.js). Nota: los rastreadores sociales que no ejecutan JS ven la imagen por defecto del HTML. */
+function setOgImage(slug, locale, alt) {
+  const url = `https://jw-solutions.com/assets/images/og/tips/${slug}-${locale}.png`;
+  [['meta[property="og:image"]', { property: 'og:image', content: url }],
+    ['meta[property="og:image:alt"]', { property: 'og:image:alt', content: alt }],
+    ['meta[name="twitter:card"]', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta[name="twitter:image"]', { name: 'twitter:image', content: url }]].forEach(([sel, attrs]) => {
+    let m = document.head.querySelector(sel);
+    if (!m) { m = document.createElement('meta'); document.head.append(m); }
+    Object.entries(attrs).forEach(([k, val]) => m.setAttribute(k, val));
+  });
+}
+
 async function main() {
   applyI18n();
   await setupLangSelector(document.getElementById('cf-ui-lang'));
@@ -165,6 +178,7 @@ async function main() {
       const description = excerptOf(md);
       applySeo({ langs: availableLangs(current), contentLang: v.locale, description });
       injectJsonLd(current, v, description);
+      setOgImage(current.slug, v.locale, v.title);
       return;
     }
     if (!tips.length) { list.replaceChildren(el('p', { className: 'cf-muted', textContent: t('tipsEmpty') })); return; }
