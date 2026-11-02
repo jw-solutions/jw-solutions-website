@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQL &amp; DAX Best Practices | Code Formatter &amp; Auto-Doc AI</title>
+  <meta name="description" content="Tips semanales de SQL y DAX: formato, rendimiento y buenas prácticas.">
+  <meta name="theme-color" content="#0b0f17">
+  <!-- Formulario Formspree PROPIO del newsletter de tips (distinto al del sitio principal). ID del formulario del newsletter de tips. -->
+  <meta name="cf-newsletter-endpoint" content="https://formspree.io/f/mbggprea">
+  <link rel="icon" href="../../../../favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../../../assets/css/tools/code-formatter.css">
+</head>
+<body class="cf-body">
+  <a class="cf-skip" href="#cf-main" data-i18n="skip">Saltar al contenido</a>
+
+  <header class="cf-header">
+    <div class="cf-container cf-header__inner">
+      <div class="cf-logo" role="img" aria-label="JW Solutions">
+        <span class="cf-logo__mark">JW</span>
+        <span class="cf-logo__text">SOLUTIONS</span>
+      </div>
+      <nav class="cf-nav" aria-label="Code Formatter">
+        <select id="cf-ui-lang" class="cf-select cf-select--compact" data-i18n-aria="uiLang" aria-label="Idioma de la interfaz"></select>
+        <a class="cf-nav__link" data-site-link data-i18n="tipsBackTool" href="../../">Volver al formateador</a>
+        <a class="cf-nav__link cf-nav__link--cta" data-site-link data-i18n="back" href="../../../../index.html">Volver al sitio</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="cf-main" class="cf-main" data-tips-langs="sql,dax" data-tips-title="tipSqlDax" data-tips-lead="tipsLeadSqlDax">
+    <section class="cf-container cf-hero">
+      <span class="cf-tag" data-i18n="tipsTag">Tips semanales</span>
+      <h1 id="cf-tips-title" class="cf-title">SQL &amp; DAX Best Practices</h1>
+      <p id="cf-tips-lead" class="cf-lead"></p>
+    </section>
+    <section class="cf-container cf-tips">
+      <div id="cf-tips-list" class="cf-tips__list"></div>
+      <article id="cf-tip-article" class="cf-card cf-tip" hidden></article>
+    </section>
+  </main>
+
+  <footer class="cf-footer">
+    <div class="cf-container cf-footer__grid">
+      <section class="cf-footer__col" aria-labelledby="cf-foot-id">
+        <div class="cf-logo" role="img" aria-label="JW Solutions">
+          <span class="cf-logo__mark">JW</span>
+          <span class="cf-logo__text">SOLUTIONS</span>
+        </div>
+        <h2 id="cf-foot-id" class="cf-footer__title">Code Formatter <span class="cf-gold">&amp; Auto-Doc AI</span></h2>
+        <p class="cf-footer__text" data-i18n="footDesc">Formatea y documenta tu código en Python, JavaScript, SQL, DAX y más. Herramienta independiente de JW Solutions.</p>
+        <ul class="cf-footer__list">
+          <li><a href="../../" data-site-link data-i18n="footEditor">Ir al editor</a></li>
+          <li><a href="../../../../index.html" data-site-link data-i18n="back">Volver al sitio</a></li>
+        </ul>
+      </section>
+
+      <nav class="cf-footer__col" aria-labelledby="cf-foot-tips">
+        <h2 id="cf-foot-tips" class="cf-footer__title" data-i18n="footTipsTitle">Tips semanales</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../python/" data-site-link data-i18n="tipPython">Python Tips</a></li>
+          <li><a href="../javascript/" data-site-link data-i18n="tipJs">JavaScript Standards</a></li>
+          <li><a href="../sql-dax/" data-site-link data-i18n="tipSqlDax">SQL &amp; DAX Best Practices</a></li>
+        </ul>
+      </nav>
+
+      <section class="cf-footer__col" aria-labelledby="cf-foot-nl">
+        <h2 id="cf-foot-nl" class="cf-footer__title" data-i18n="nlTitle">Tips Semanales de Código</h2>
+        <p class="cf-footer__text" data-i18n="nlPromise">Un email por semana con tips prácticos de sintaxis, casos de estudio y novedades de lenguajes (Python, JS, SQL, DAX). Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
+        <form id="cf-newsletter-form" class="cf-newsletter" novalidate>
+          <label class="cf-sr-only" for="cf-newsletter-email" data-i18n="nlEmailLabel">Correo electrónico</label>
+          <input id="cf-newsletter-email" class="cf-input" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="tu@email.com" data-i18n-placeholder="nlPlaceholder">
+          <input type="text" name="_gotcha" class="cf-sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button type="submit" class="cf-btn cf-btn--primary" data-i18n="nlSubmit">Suscribirme</button>
+          <p id="cf-newsletter-status" class="cf-form__status cf-newsletter__status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+    <div class="cf-container cf-footer__legal">
+      <p>&copy; JW Solutions · <span data-i18n="footRights">Todos los derechos reservados</span></p>
+    </div>
+  </footer>
+
+  <script type="module" src="../../../../assets/js/tools/code-formatter/tips-page.js"></script>
+</body>
+</html>

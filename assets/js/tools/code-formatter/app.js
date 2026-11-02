@@ -11,6 +11,7 @@ import { t, applyI18n, setupLangSelector, intlLocale } from './i18n.js';
 
 applyI18n();
 await setupLangSelector(document.getElementById('cf-ui-lang'));
+try { (await import('./newsletter.js')).initNewsletter(); } catch (err) { console.warn('[code-formatter] newsletter no iniciado:', err.message); }
 await featuresReady; // el inventario free/pay decide qué controles existen
 
 // Módulos de funciones opcionales: se importan solo si la función está activa (en dist-public pueden no existir).

@@ -1,0 +1,76 @@
+name: Code Formatter Tips
+
+# Publicación semanal de tips de Code Formatter (content/code-formatter-tips/).
+# Independiente del blog principal: otro cron, otro manifiesto, otro grupo de concurrencia.
+# Idempotencia: manifiesto content/code-formatter-tips/code-formatter-manifest.json + un tip por semana ISO.
+on:
+  schedule:
+    - cron: '0 15 * * 4'   # jueves 15:00 UTC (el blog principal publica los lunes)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Solo validar y mostrar qué se publicaría (no escribe ni sube)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: code-formatter-tips
+  cancel-in-progress: false
+
+jobs:
+  tips:
+    name: Validar y publicar tip
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar gray-matter
+        run: npm install --no-save --no-package-lock gray-matter@4.0.3
+
+      - name: Validar tips
+        run: node scripts/validate-formatter-tips.js
+
+      - name: Dry-run
+        if: ${{ inputs.dry_run }}
+        run: node scripts/validate-formatter-tips.js --publish --dry-run
+
+      - name: Publicar tip listo
+        id: publish
+        # En ejecuciones programadas inputs.dry_run es vacío → se publica de verdad.
+        if: ${{ !inputs.dry_run }}
+        run: node scripts/validate-formatter-tips.js --publish
+
+      - name: Verificar repositorio (después)
+        if: ${{ !inputs.dry_run && steps.publish.outputs.count == '1' }}
+        run: node scripts/validate-formatter-tips.js
+
+      - name: Commit y push
+        if: ${{ !inputs.dry_run && steps.publish.outputs.count == '1' }}
+        env:
+          PUBLISHED: ${{ steps.publish.outputs.published }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A content/code-formatter-tips
+          if git diff --cached --quiet; then
+            echo "Sin cambios que confirmar para $PUBLISHED."
+            exit 1
+          fi
+          git commit -m "chore(formatter-tips): publicar $PUBLISHED (automático)"
+          git pull --rebase origin main
+          git push origin main
+          echo "Publicado: $PUBLISHED" >> "$GITHUB_STEP_SUMMARY"
