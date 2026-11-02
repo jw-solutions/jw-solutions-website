@@ -20,6 +20,7 @@
 const fs = require('fs');
 const path = require('path');
 const { ROOT, renderHtml } = require('./render-article');
+const pubManifest = require('../scripts/publication-manifest');
 
 const SITE = 'https://jw-solutions.com';
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -248,10 +249,22 @@ async function main() {
     process.exit(1);
   }
 
+  /* Manifiesto de idempotencia: COMPILED solo tras pasar la verificación posterior. */
+  batch.forEach(({ slug }) => pubManifest.registerCompiled(slug, opts.date, SITE));
+  const first = batch[0];
+  const entry = manifest.articles.find((a) => a.slug === first.slug);
   setOutput('published', batch.map((b) => b.slug).join(','));
   setOutput('count', String(batch.length));
+  setOutput('slug', first.slug);
+  setOutput('title', entry.es.title);
+  setOutput('summary', entry.es.excerpt);
+  setOutput('url', `${SITE}/blog/${first.slug}/`);
   console.log('CHECK OK tras publicar');
   if (opts.ping) await pingGoogle();
 }
 
-main().catch((e) => { console.error(e.message); process.exit(1); });
+if (require.main === module) {
+  main().catch((e) => { console.error(e.message); process.exit(1); });
+}
+
+module.exports = { validateDraft, SLUG_RE, DATE_RE, SITE };

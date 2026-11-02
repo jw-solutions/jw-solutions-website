@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "articles": [
+    {
+      "slug": "5-errores-dashboard-power-bi",
+      "status": "DEPLOYED",
+      "published_at": "2026-10-12T14:00:00Z",
+      "url": "https://jw-solutions.com/blog/5-errores-dashboard-power-bi/",
+      "legacy": true,
+      "notification": {
+        "event_id": "jw-blog-20261012-5-errores-dashboard-power-bi",
+        "status": "SKIPPED",
+        "attempts": 0
+      }
+    },
+    {
+      "slug": "n8n-vs-zapier-2026",
+      "status": "DEPLOYED",
+      "published_at": "2026-10-05T14:00:00Z",
+      "url": "https://jw-solutions.com/blog/n8n-vs-zapier-2026/",
+      "legacy": true,
+      "notification": {
+        "event_id": "jw-blog-20261005-n8n-vs-zapier-2026",
+        "status": "SKIPPED",
+        "attempts": 0
+      }
+    },
+    {
+      "slug": "llamadas-google-maps-30-dias",
+      "status": "DEPLOYED",
+      "published_at": "2026-09-28T14:00:00Z",
+      "url": "https://jw-solutions.com/blog/llamadas-google-maps-30-dias/",
+      "legacy": true,
+      "notification": {
+        "event_id": "jw-blog-20260928-llamadas-google-maps-30-dias",
+        "status": "SKIPPED",
+        "attempts": 0
+      }
+    }
+  ]
+}

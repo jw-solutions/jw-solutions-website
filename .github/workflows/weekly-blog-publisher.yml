@@ -1,22 +1,22 @@
 name: Weekly Blog Publisher
 
-# Publica cada semana el siguiente borrador con "status": "ready" de content/drafts/.
-# Blue-Green: la verificación (--check) corre ANTES y DESPUÉS de publicar; solo se hace commit/push si pasa.
-# Sin borradores listos el workflow termina en verde sin tocar nada.
+# Pipeline transaccional: validar borradores → verificar → publicar → verificar → commit → comprobar HTTP → notificar.
+# Cada etapa solo corre si la anterior tuvo éxito; el newsletter se envía únicamente con el artículo accesible en producción.
+# Estado por artículo en content/publication-manifest.json (idempotencia: un artículo ya DEPLOYED/NOTIFIED no se repite).
 on:
   schedule:
-    - cron: '0 14 * * 1'   # lunes 14:00 UTC
+    - cron: '0 14 * * 1'   # lunes 14:00 UTC (GitHub puede retrasarlo; ver draft-preflight.yml)
   workflow_dispatch:
     inputs:
+      dry_run:
+        description: 'Solo validar y mostrar qué se publicaría (no escribe, no sube, no notifica)'
+        type: boolean
+        default: true
       target:
-        description: 'Destino del push (preview = rama preview/blog-AAAA-MM-DD para revisar antes de producción)'
+        description: 'Destino del push (preview = rama preview/blog-AAAA-MM-DD; no se verifica despliegue ni se notifica)'
         type: choice
         options: [main, preview]
         default: main
-      dry_run:
-        description: 'Solo validar y mostrar qué se publicaría (no escribe ni sube nada)'
-        type: boolean
-        default: false
       ping:
         description: 'Notificar el sitemap a Google (endpoint retirado por Google; informativo)'
         type: boolean
@@ -24,6 +24,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: weekly-blog-publisher
@@ -31,8 +32,12 @@ concurrency:
 
 jobs:
   publish:
+    name: Validar y publicar
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
+    outputs:
+      published: ${{ steps.publish.outputs.published }}
+      slug: ${{ steps.publish.outputs.slug }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -45,8 +50,13 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Validar borradores (exige al menos uno "ready")
+        run: node scripts/validate-drafts.js --require-ready
+
       - name: Verificar repositorio (antes)
-        run: node content/publish.js --check
+        run: |
+          node content/publish.js --check
+          node scripts/publication-manifest.js verify
 
       - name: Dry-run
         if: ${{ inputs.dry_run }}
@@ -59,9 +69,12 @@ jobs:
 
       - name: Verificar repositorio (después)
         if: ${{ !inputs.dry_run && steps.publish.outputs.count != '0' }}
-        run: node content/publish.js --check
+        run: |
+          node content/publish.js --check
+          node scripts/publication-manifest.js verify
 
       - name: Commit y push
+        id: commit
         if: ${{ !inputs.dry_run && steps.publish.outputs.count != '0' }}
         env:
           TARGET: ${{ inputs.target || 'main' }}
@@ -77,9 +90,92 @@ jobs:
             BRANCH="main"
           fi
           git add blog content sitemap.xml
+          if git diff --cached --quiet; then
+            echo "Sin cambios que confirmar para $PUBLISHED; se detiene (no se crean commits vacíos)."
+            exit 1
+          fi
           git commit -m "chore(blog): publicar $PUBLISHED (automático)"
           if [ "$BRANCH" = "main" ]; then
             git pull --rebase origin main
           fi
           git push origin "$BRANCH"
           echo "Publicado en $BRANCH: $PUBLISHED" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comprobar despliegue público (HTTP 200 + sitemap)
+        if: ${{ !inputs.dry_run && steps.publish.outputs.count != '0' && (inputs.target || 'main') == 'main' }}
+        env:
+          SLUG: ${{ steps.publish.outputs.slug }}
+        run: node scripts/check-deployment.js "$SLUG"
+
+      - name: Registrar estado DEPLOYED
+        if: ${{ !inputs.dry_run && steps.publish.outputs.count != '0' && (inputs.target || 'main') == 'main' }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/publication-manifest.json
+          if git diff --cached --quiet; then
+            echo "Manifiesto sin cambios."
+          else
+            git commit -m "chore(blog): marcar DEPLOYED (automático)"
+            git pull --rebase origin main
+            git push origin main
+          fi
+
+  notify:
+    name: Notificar suscriptores
+    needs: publish
+    # Solo con el artículo publicado y verificado en producción; nunca en dry-run ni en preview.
+    if: ${{ needs.publish.result == 'success' && needs.publish.outputs.published != '' && !inputs.dry_run && (inputs.target || 'main') == 'main' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Enviar evento article.published
+        env:
+          SLUG: ${{ needs.publish.outputs.slug }}
+          NEWSLETTER_WEBHOOK_URL: ${{ secrets.NEWSLETTER_WEBHOOK_URL }}
+          NEWSLETTER_WEBHOOK_TOKEN: ${{ secrets.NEWSLETTER_WEBHOOK_TOKEN }}
+        run: node scripts/notify-newsletter.js "$SLUG"
+
+      - name: Registrar estado de la notificación
+        if: ${{ always() }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/publication-manifest.json
+          if git diff --cached --quiet; then
+            echo "Manifiesto sin cambios."
+          else
+            git commit -m "chore(blog): registrar estado de notificación (automático)"
+            git pull --rebase origin main
+            git push origin main
+          fi
+
+  alert:
+    name: Alerta de fallo
+    needs: [publish, notify]
+    if: ${{ always() && !inputs.dry_run && (needs.publish.result == 'failure' || needs.notify.result == 'failure') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Abrir incidencia
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PUBLISH: ${{ needs.publish.result }}
+          NOTIFY: ${{ needs.notify.result }}
+        run: |
+          gh issue create --repo "${{ github.repository }}" \
+            --title "Weekly Blog Publisher falló ($(date -u +%F))" \
+            --body "publish=$PUBLISH, notify=$NOTIFY. Detalle: $RUN_URL"

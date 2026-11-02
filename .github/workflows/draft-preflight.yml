@@ -1,0 +1,43 @@
+name: Draft Preflight
+
+# Domingo 14:00 UTC: comprueba que el lunes habrá un borrador "ready" válido. Si no, abre una incidencia.
+on:
+  schedule:
+    - cron: '0 14 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validar borradores
+        id: validate
+        continue-on-error: true
+        run: node scripts/validate-drafts.js --require-ready 2>&1 | tee preflight.log
+
+      - name: Estado READY
+        if: ${{ steps.validate.outcome == 'success' }}
+        run: echo "READY: hay borrador válido para el lunes." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Abrir incidencia
+        if: ${{ steps.validate.outcome == 'failure' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create --repo "${{ github.repository }}" \
+            --title "Preflight: sin borrador publicable para el lunes ($(date -u +%F))" \
+            --body "$(printf 'El validador falló. Corrige los borradores antes de las 14:00 UTC del lunes.\n\n```\n%s\n```' "$(cat preflight.log)")"
+          exit 1
