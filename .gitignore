@@ -6,3 +6,6 @@ README_DEPLOY.md
 
 # Artefactos del build público (Code Formatter)
 dist-public/
+
+# Dependencias Node
+node_modules/
