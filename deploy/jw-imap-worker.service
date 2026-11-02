@@ -2,6 +2,8 @@
 Description=JW Solutions - IMAP reconciliation worker (Binance Pay)
 After=network-online.target postgresql.service
 Wants=network-online.target
+StartLimitIntervalSec=600
+StartLimitBurst=5
 
 [Service]
 Type=simple
@@ -13,8 +15,6 @@ ExecStart=/opt/jw-solutions/backend/.venv/bin/python -m app.workers.imap_reconci
 # El worker ya hace backoff interno; esto cubre caidas del proceso. Si otro worker tiene el advisory lock sale con 1.
 Restart=on-failure
 RestartSec=30
-StartLimitIntervalSec=600
-StartLimitBurst=5
 TimeoutStopSec=60
 
 # Endurecimiento

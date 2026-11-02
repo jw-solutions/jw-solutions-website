@@ -106,6 +106,10 @@ def render(event_type: str, payload: dict[str, Any], settings: Settings) -> tupl
         )
         return clean(payload["to"], 254), "Suscripción PRO activada", body
 
+    if event_type == "payment_report_created":
+        lines = [f"{k}: {clean(v)}" for k, v in sorted(payload.items())]
+        return settings.mail_to, "[JW Payments] Nuevo reporte de pago pendiente de revisión", "\n".join(lines)
+
     if event_type in ("payment_evidence_alert", "imap_alert"):
         lines = [f"{k}: {clean(v)}" for k, v in sorted(payload.items()) if k != "subject"]
         subject = clean(payload.get("subject") or "Alerta de conciliación de pagos", 120)

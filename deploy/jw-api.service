@@ -1,0 +1,29 @@
+[Unit]
+Description=JW Solutions - API FastAPI (127.0.0.1:8081)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=jwsolutions
+Group=jwsolutions
+WorkingDirectory=/opt/jw-solutions/backend
+EnvironmentFile=/opt/jw-solutions/backend/.env
+# Solo loopback: el acceso público entra por el túnel/proxy. forwarded-allow-ips=127.0.0.1 para IP real del cliente.
+ExecStart=/opt/jw-solutions/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8081 --proxy-headers --forwarded-allow-ips=127.0.0.1
+Restart=on-failure
+RestartSec=5
+
+# Endurecimiento
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target
