@@ -426,6 +426,43 @@
   })();
 
   /* ─────────────────────────────────────────────────────────────────────────────
+     7b. SCROLL MOTION (reveal-on-scroll + stagger)
+     ───────────────────────────────────────────────────────────────────────────── */
+  const ScrollMotion = (() => {
+    function init() {
+      const items = $$('.reveal-on-scroll');
+      if (items.length === 0) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+        items.forEach(el => el.classList.add('is-visible'));
+        return;
+      }
+
+      // Al terminar la entrada se retiran las clases: la tarjeta recupera sus transiciones/hover originales
+      const release = (el) => {
+        const done = (e) => {
+          if (e.target !== el || e.propertyName !== 'opacity') return;
+          el.removeEventListener('transitionend', done);
+          el.classList.remove('reveal-on-scroll', 'is-visible', 'stagger-1', 'stagger-2', 'stagger-3', 'stagger-4');
+        };
+        el.addEventListener('transitionend', done);
+      };
+
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          release(entry.target);
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        });
+      }, { root: null, rootMargin: '0px 0px -80px 0px', threshold: 0.15 });
+
+      items.forEach(el => observer.observe(el));
+    }
+
+    return { init };
+  })();
+
+  /* ─────────────────────────────────────────────────────────────────────────────
      8. BACK TO TOP BUTTON
      ───────────────────────────────────────────────────────────────────────────── */
   const BackToTop = (() => {
@@ -1529,7 +1566,7 @@
     hideDecorativeIcons();
     const modules = [
       LangSwitcher, MobileMenu, HeaderScroll, Particles,
-      FAQAccordion, ScrollReveal, BackToTop, Forms, SmoothScroll, LazyImages,
+      FAQAccordion, ScrollReveal, ScrollMotion, BackToTop, Forms, SmoothScroll, LazyImages,
       CurrentYear, Analytics, Consent, LegalModals, FxCalculator, FxQuickAccess, MobileCTABar, PWA, Featured
     ];
 
