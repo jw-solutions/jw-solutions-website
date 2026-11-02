@@ -4,6 +4,9 @@
   "description": "Inventario maestro Free/Pay. Fuente de verdad para build_public.py y ui-controller.js.",
   "shared_files": [
     "favicon.ico",
+    "tools/code-formatter/favicon.svg",
+    "tools/code-formatter/favicon.ico",
+    "tools/code-formatter/apple-touch-icon.png",
     "tools/code-formatter/index.html",
     "assets/css/tools/code-formatter.css",
     "assets/js/tools/code-formatter/app.js",
