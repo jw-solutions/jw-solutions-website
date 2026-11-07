@@ -1,0 +1,19 @@
+# NORMAS OBLIGATORIAS DE DESARROLLO Y QA (AUD-WEB-2026-v10)
+
+Todo cambio, nueva característica o refactorización que se realice en este repositorio DEBE cumplir estrictamente con los siguientes 4 pilares:
+
+1. ACCESIBILIDAD (WCAG 2.2 AA / WCAG 2.1.1):
+   - Todo elemento interactivo no nativo (filas, cards, divs con click) debe incluir `tabindex="0"`, `role="button"` y listener de teclado (Enter/Espacio).
+   - Todos los inputs, selectores y filtros de fecha deben incluir `aria-label` descriptivo.
+   - Navegación por teclado visualmente resaltada (`:focus-visible`).
+
+2. PRIVACIDAD Y LEGALIDAD:
+   - Rutas y modales de Política de Privacidad y Términos visibles sin autenticación.
+   - Cobertura explícita de scopes de integración y tratamiento de datos.
+
+3. INTEGRIDAD DE DATOS Y SEGURIDAD (OWASP):
+   - Preservar comisiones/moneda original sin aplicar doble conversión en escrituras.
+   - Sanitización estricta de entradas y cabeceras de seguridad activas (CSP, HSTS, X-Frame-Options).
+
+4. AUTOMATIZACIÓN Y CI/CD:
+   - Toda integración a la rama `main` debe pasar la suite de pruebas automatizadas en GitHub Actions (`.github/workflows/ci.yml`).
