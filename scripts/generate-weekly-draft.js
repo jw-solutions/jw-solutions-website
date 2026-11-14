@@ -22,7 +22,7 @@ const pubManifest = require('./publication-manifest');
 const ROOT = path.resolve(__dirname, '..');
 const DRAFTS_DIR = path.join(ROOT, 'content', 'drafts');
 const ARTICLES_FILE = path.join(ROOT, 'content', 'articles.json');
-const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent';
 
 const TOPIC_PILLARS = [
   'Business Intelligence y diseño de dashboards ejecutivos accionables para PYMEs',
@@ -272,7 +272,7 @@ async function main() {
       log('WARN', 'GEMINI_API_KEY no está definido. Se omite generación automática (fallback a borradores manuales).');
       return;
     }
-    log('INFO', 'Generando borrador semanal bilingüe con Gemini 2.5 Flash...');
+    log('INFO', 'Generando borrador semanal bilingüe con Gemini 3.8 Flash...');
     const prompt = buildPrompt(titles, slugs);
     rawGenerated = await callGemini(apiKey, prompt);
   }
