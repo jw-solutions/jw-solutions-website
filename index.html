@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Seguridad: CSP vía meta (GitHub Pages no permite cabeceras HTTP). Limitaciones en README_DEPLOY.md -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-z2fS2cLOR9t6d0Xez4SOVBdI1uewf3tkgIoxx1mUEXU=' https://*.googletagmanager.com; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://ve.dolarapi.com https://formspree.io https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src https://*.streamlit.app; form-action 'self' https://formspree.io; base-uri 'self'; object-src 'none'; manifest-src 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-z2fS2cLOR9t6d0Xez4SOVBdI1uewf3tkgIoxx1mUEXU=' https://*.googletagmanager.com; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://api.jw-solutions.com https://ve.dolarapi.com https://formspree.io https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src https://*.streamlit.app; form-action 'self' https://api.jw-solutions.com https://formspree.io; base-uri 'self'; object-src 'none'; manifest-src 'self'">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>JW Solutions | Transforma tus datos en decisiones estratégicas</title>
     <meta name="description" content="JW Solutions: Automatización de procesos, análisis de datos, dashboards Power BI, SEO local y consultoría estratégica para empresas globales.">
@@ -826,7 +826,7 @@
                         <p class="section-desc" data-lang="es">Un email por semana con tips prácticos, casos de estudio y herramientas nuevas. Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
                         <p class="section-desc" data-lang="en">One email per week with practical tips, case studies, and new tools. No spam, no noise. Unsubscribe anytime.</p>
 
-                        <form class="newsletter-form" id="newsletter-form" action="https://formspree.io/f/xojbvnzp" method="POST" aria-label="Formulario de suscripción">
+                        <form class="newsletter-form" id="newsletter-form" action="https://api.jw-solutions.com/api/newsletter/subscribe" method="POST" aria-label="Formulario de suscripción">
                             <input type="hidden" name="form_type" value="newsletter">
                             <input type="text" name="_gotcha" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
                             <div class="form-group form-group--inline">

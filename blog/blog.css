@@ -242,6 +242,55 @@
 /* Selector de idioma: en Windows el emoji de bandera se dibuja como letras ("ES ES"); se muestra solo el código */
 .blog-body .lang-flag { display: none; }
 
+.related-articles {
+  margin: var(--space-8) 0;
+  padding: var(--space-5);
+  background: var(--jw-surface);
+  border: 1px solid var(--jw-border);
+  border-radius: var(--radius-md);
+}
+
+.related-title {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  color: var(--jw-gold);
+}
+
+.related-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.related-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  color: #E8EDF3;
+  text-decoration: none;
+  background: rgba(11, 14, 18, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.related-link:hover {
+  color: var(--jw-gold);
+  border-color: rgba(251, 178, 0, 0.45);
+}
+
+.related-tag {
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+  color: var(--jw-gold);
+  opacity: 0.85;
+}
+
 .blog-footer {
   border-top: 1px solid var(--jw-border);
   padding: var(--space-6) var(--container-padding);

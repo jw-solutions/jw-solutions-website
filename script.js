@@ -615,23 +615,33 @@
       const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
       try {
+        const useJson = typeof cfg.jsonPayload === 'function';
         const response = await fetch(form.action, {
           method: 'POST',
-          body: new FormData(form),
-          headers: { 'Accept': 'application/json' },
+          body: useJson ? JSON.stringify(cfg.jsonPayload(form)) : new FormData(form),
+          headers: useJson
+            ? { 'Accept': 'application/json', 'Content-Type': 'application/json' }
+            : { 'Accept': 'application/json' },
           signal: controller.signal
         });
 
+        let responseData = null;
+        try {
+          responseData = await response.json();
+        } catch (_) { /* respuesta sin JSON */ }
+
         if (!response.ok) {
           let detail = '';
-          try {
-            const data = await response.json();
-            detail = (data.errors || []).map(x => x.message).join(' ');
-          } catch (_) { /* respuesta sin JSON */ }
+          if (responseData) {
+            detail = (responseData.errors || []).map(x => x.message).join(' ') || responseData.detail || '';
+          }
           throw new Error(detail || `HTTP ${response.status}`);
         }
 
-        setStatus(statusEl, cfg.successMsg(), 'success');
+        const msg = (responseData && responseData.status === 'already_subscribed' && cfg.alreadyMsg)
+          ? cfg.alreadyMsg()
+          : cfg.successMsg();
+        setStatus(statusEl, msg, 'success');
         form.reset();
         $$('input, textarea, select', form).forEach(clearFieldError);
 
@@ -684,7 +694,13 @@
         status: '#newsletter-message',
         category: 'newsletter',
         label: 'newsletter_subscribe',
-        successMsg: () => t('¡Gracias por suscribirte!', 'Thanks for subscribing!')
+        jsonPayload: (form) => ({
+          email: (form.querySelector('input[name="email"]') || {}).value || '',
+          lang: LangSwitcher.getCurrent(),
+          source: 'main-website'
+        }),
+        alreadyMsg: () => t('Ya estás suscrito a nuestro boletín semanal.', 'You are already subscribed to our weekly newsletter.'),
+        successMsg: () => t('¡Gracias por suscribirte! Recibirás nuestros próximos artículos.', 'Thanks for subscribing! You will receive our upcoming articles.')
       });
 
       // Los mensajes de error ya renderizados quedarían en el idioma anterior
@@ -1578,8 +1594,28 @@
 
         $$('.blog-card', grid).forEach(card => card.remove());
         items.forEach(a => grid.append(buildCard(a)));
+        injectSchema(items);
         LangSwitcher.apply(LangSwitcher.getCurrent());
       }).catch(() => { /* se conserva el contenido estático */ });
+    }
+
+    function injectSchema(items) {
+      const existing = document.getElementById('featured-articles-schema');
+      if (existing) existing.remove();
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = 'featured-articles-schema';
+      script.textContent = JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        itemListElement: items.map((a, idx) => ({
+          '@type': 'ListItem',
+          position: idx + 1,
+          name: a.es.title,
+          url: `https://jw-solutions.com/blog/${encodeURIComponent(a.slug)}/`
+        }))
+      });
+      document.head.appendChild(script);
     }
 
     return { init };

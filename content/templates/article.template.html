@@ -19,9 +19,12 @@
     <meta property="og:description" content="{{DESC_ES}}">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://jw-solutions.com/blog/{{SLUG}}/">
-    <meta property="og:image" content="https://jw-solutions.com/assets/og-image.jpg">
+    <meta property="og:image" content="https://jw-solutions.com/assets/images/og/blog/{{SLUG}}-es.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="article:published_time" content="{{DATE}}">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://jw-solutions.com/assets/images/og/blog/{{SLUG}}-es.png">
 
     <!-- Aplica el idioma antes del primer render (script externo: la CSP no permite inline) -->
     <script src="/blog/blog.js"></script>
@@ -38,14 +41,33 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "BlogPosting",
-      "headline": "{{TITLE_ES}}",
-      "description": "{{DESC_ES}}",
-      "datePublished": "{{DATE}}",
-      "inLanguage": ["es", "en"],
-      "mainEntityOfPage": "https://jw-solutions.com/blog/{{SLUG}}/",
-      "author": { "@type": "Organization", "name": "JW Solutions" },
-      "publisher": { "@type": "Organization", "name": "JW Solutions", "url": "https://jw-solutions.com/" }
+      "@graph": [
+        {
+          "@type": "BlogPosting",
+          "headline": "{{TITLE_ES}}",
+          "description": "{{DESC_ES}}",
+          "image": "https://jw-solutions.com/assets/images/og/blog/{{SLUG}}-es.png",
+          "datePublished": "{{DATE}}",
+          "dateModified": "{{DATE}}",
+          "inLanguage": ["es", "en"],
+          "mainEntityOfPage": "https://jw-solutions.com/blog/{{SLUG}}/",
+          "author": { "@type": "Organization", "name": "JW Solutions" },
+          "publisher": {
+            "@type": "Organization",
+            "name": "JW Solutions",
+            "url": "https://jw-solutions.com/",
+            "logo": { "@type": "ImageObject", "url": "https://jw-solutions.com/assets/og-image.jpg" }
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://jw-solutions.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://jw-solutions.com/#newsletter" },
+            { "@type": "ListItem", "position": 3, "name": "{{TITLE_ES}}", "item": "https://jw-solutions.com/blog/{{SLUG}}/" }
+          ]
+        }
+      ]
     }
     </script>
 </head>
@@ -96,6 +118,17 @@
                 <a class="btn btn--primary" href="/#contacto" data-lang="es">Agendar diagnóstico</a>
                 <a class="btn btn--primary" href="/#contacto" data-lang="en">Book a diagnosis</a>
             </aside>
+
+            <section class="related-articles" aria-labelledby="related-title-es related-title-en">
+                <h2 class="related-title" id="related-title-es" data-lang="es">Artículos relacionados</h2>
+                <h2 class="related-title" id="related-title-en" data-lang="en">Related articles</h2>
+                <ul class="related-list" data-lang="es">
+{{RELATED_ES}}
+                </ul>
+                <ul class="related-list" data-lang="en">
+{{RELATED_EN}}
+                </ul>
+            </section>
 
             <!-- Calificación por estrellas (1 a 5). Se guarda solo en el navegador del lector (localStorage). -->
             <section class="rating" id="rating" data-slug="{{SLUG}}" aria-labelledby="rating-title-es rating-title-en">

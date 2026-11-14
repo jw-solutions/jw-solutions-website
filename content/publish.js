@@ -20,6 +20,7 @@
 const fs = require('fs');
 const path = require('path');
 const { ROOT, renderHtml } = require('./render-article');
+const { generateOgForArticle } = require('../scripts/generate-blog-og');
 const pubManifest = require('../scripts/publication-manifest');
 
 const SITE = 'https://jw-solutions.com';
@@ -210,6 +211,7 @@ async function main() {
 
   const written = [];
   try {
+    const newArticles = [];
     batch.forEach(({ file, slug, draft }) => {
       const article = {
         date: opts.date,
@@ -217,19 +219,15 @@ async function main() {
         es: { title: draft.es.title, description: draft.es.description, body: draft.es.body },
         en: { title: draft.en.title, description: draft.en.description, body: draft.en.body }
       };
-      const html = renderHtml(slug, article, template);
       writeJson(`content/articles/${slug}.json`, article);
       written.push(`content/articles/${slug}.json`);
-      fs.mkdirSync(abs('blog', slug), { recursive: true });
-      writeText(`blog/${slug}/index.html`, html);
-      written.push(`blog/${slug}/index.html`);
       manifest.articles.push({
         slug, date: opts.date, tag: draft.tag, status: 'published', featured: true,
         es: { title: draft.es.title, excerpt: draft.es.excerpt },
         en: { title: draft.en.title, excerpt: draft.en.excerpt }
       });
       fs.unlinkSync(path.join(draftsDir, file));
-      console.log(`OK  ${slug}`);
+      newArticles.push({ slug, article });
     });
 
     manifest.articles.sort((a, b) => b.date.localeCompare(a.date));
@@ -237,6 +235,16 @@ async function main() {
     archived.forEach((s) => console.log(`ARCHIVADO  ${s} (límite de destacados: ${cfg.featured.max})`));
     writeJson('content/articles.json', manifest);
     writeText('sitemap.xml', buildSitemap(manifest, opts.date));
+
+    // Renderizar HTML y OG Images después de actualizar articles.json (para que RELATED_ES/EN incluyan el estado final)
+    newArticles.forEach(({ slug, article }) => {
+      const html = renderHtml(slug, article, template);
+      fs.mkdirSync(abs('blog', slug), { recursive: true });
+      writeText(`blog/${slug}/index.html`, html);
+      written.push(`blog/${slug}/index.html`);
+      generateOgForArticle(slug, article);
+      console.log(`OK  ${slug}`);
+    });
   } catch (e) {
     console.error(`Fallo durante la publicación: ${e.message}`);
     process.exit(1);

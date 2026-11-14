@@ -34,6 +34,26 @@ function renderBody(sections) {
   }).join('\n');
 }
 
+function renderRelated(slug, lang) {
+  try {
+    const manifest = JSON.parse(read('content/articles.json'));
+    const items = (manifest.articles || [])
+      .filter((a) => a.slug !== slug && a.status !== 'draft')
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .slice(0, 3);
+    if (!items.length) return '';
+    return items
+      .map((a) => {
+        const title = esc((a[lang] && a[lang].title) || a.slug);
+        const href = lang === 'en' ? `/blog/${encodeURIComponent(a.slug)}/?lang=en` : `/blog/${encodeURIComponent(a.slug)}/`;
+        return `                    <li><a class="related-link" href="${href}">${title} <span class="related-tag">${esc(a.tag || '')}</span></a></li>`;
+      })
+      .join('\n');
+  } catch {
+    return '';
+  }
+}
+
 function renderHtml(slug, a, template) {
   const map = {
     SLUG: slug,
@@ -47,7 +67,9 @@ function renderHtml(slug, a, template) {
     DESC_ES: esc(a.es.description),
     DESC_EN: esc(a.en.description),
     BODY_ES: renderBody(a.es.body),
-    BODY_EN: renderBody(a.en.body)
+    BODY_EN: renderBody(a.en.body),
+    RELATED_ES: renderRelated(slug, 'es'),
+    RELATED_EN: renderRelated(slug, 'en')
   };
   return template.replace(/\{\{([A-Z_]+)\}\}/g, (_, k) => {
     if (!(k in map)) throw new Error(`Marcador desconocido: ${k}`);

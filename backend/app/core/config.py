@@ -56,6 +56,9 @@ class Settings(BaseSettings):
     mail_from: str = "notifications@jw-solutions.com"
     mail_to: str = "contact@jw-solutions.com"
 
+    newsletter_webhook_token: SecretStr = SecretStr("")
+    newsletter_base_url: str = "https://api.jw-solutions.com"
+
     @field_validator("session_secret")
     @classmethod
     def _secret_strength(cls, v: SecretStr) -> SecretStr:

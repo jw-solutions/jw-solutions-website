@@ -73,6 +73,10 @@ jobs:
         if: ${{ inputs.dry_run }}
         run: node content/publish.js --dry-run
 
+      - name: Instalar @resvg/resvg-js para OG Images
+        if: ${{ github.event_name == 'schedule' || inputs.dry_run != true }}
+        run: npm install --no-save --no-package-lock @resvg/resvg-js@2.6.2
+
       - name: Publicar borrador listo
         id: publish
         if: ${{ !inputs.dry_run }}
@@ -100,7 +104,7 @@ jobs:
           else
             BRANCH="main"
           fi
-          git add blog content sitemap.xml
+          git add blog content sitemap.xml assets/images/og/blog
           if git diff --cached --quiet; then
             echo "Sin cambios que confirmar para $PUBLISHED; se detiene (no se crean commits vacíos)."
             exit 1
@@ -117,6 +121,13 @@ jobs:
         env:
           SLUG: ${{ steps.publish.outputs.slug }}
         run: node scripts/check-deployment.js "$SLUG"
+
+      - name: Notificar IndexNow
+        if: ${{ !inputs.dry_run && steps.publish.outputs.count != '0' && (inputs.target || 'main') == 'main' }}
+        continue-on-error: true
+        env:
+          SLUG: ${{ steps.publish.outputs.slug }}
+        run: node scripts/ping-indexnow.js "$SLUG"
 
       - name: Registrar estado DEPLOYED
         if: ${{ !inputs.dry_run && steps.publish.outputs.count != '0' && (inputs.target || 'main') == 'main' }}

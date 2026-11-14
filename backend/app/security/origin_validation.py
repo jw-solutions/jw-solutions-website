@@ -8,9 +8,8 @@ from app.core.config import get_settings
 
 UNSAFE_METHODS = frozenset({"POST", "PUT", "PATCH", "DELETE"})
 
-# Rutas de webhook exentas de Origin (se autentican con firma criptográfica propia). Vacío mientras no exista
-# el endpoint de Binance Pay Merchant: añadirlo solo junto con su verificación RSA.
-WEBHOOK_PATHS: frozenset[str] = frozenset()
+# Rutas de webhook exentas de Origin (se autentican con token/firma propia en el endpoint).
+WEBHOOK_PATHS: frozenset[str] = frozenset({"/api/newsletter/broadcast"})
 
 
 def check_origin(method: str, path: str, origin: str | None, allowed: Collection[str]) -> None:

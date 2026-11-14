@@ -28,7 +28,20 @@ async function main() {
   const payload = {
     event: 'article.published',
     event_id: n.event_id,
-    article: { title: art.es.title, slug, summary: art.es.excerpt, url: entry.url, published_at: entry.published_at, language: 'es' }
+    article: {
+      slug,
+      title: art.es.title,
+      title_es: art.es.title,
+      title_en: art.en.title,
+      summary: art.es.excerpt,
+      summary_es: art.es.excerpt,
+      summary_en: art.en.excerpt,
+      url: entry.url,
+      url_es: entry.url,
+      url_en: `${entry.url}?lang=en`,
+      published_at: entry.published_at,
+      language: 'es'
+    }
   };
 
   if (dryRun) { console.log('DRY-RUN payload:\n' + JSON.stringify(payload, null, 2)); return; }
