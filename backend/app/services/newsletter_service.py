@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import html
 import smtplib
+import socket
 import ssl
 from email.message import EmailMessage
 from typing import Any
@@ -116,6 +117,26 @@ def render_newsletter_email(article: dict[str, Any], lang: str, unsubscribe_url:
     return subject, text_body, html_body
 
 
+class _IPv4SMTP(smtplib.SMTP):
+    """Conecta por IPv4 conservando el hostname original para validación SNI/TLS."""
+
+    def _get_socket(self, host: str, port: int, timeout: float | None) -> socket.socket:
+        last_err: OSError | None = None
+        for af, socktype, proto, _, sa in socket.getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM):
+            sock = None
+            try:
+                sock = socket.socket(af, socktype, proto)
+                if timeout is not None:
+                    sock.settimeout(timeout)
+                sock.connect(sa)
+                return sock
+            except OSError as exc:
+                last_err = exc
+                if sock is not None:
+                    sock.close()
+        raise last_err or OSError(f"No se pudo conectar por IPv4 a {host}:{port}")
+
+
 def send_html_email(settings: Settings, to: str, subject: str, text_body: str, html_body: str) -> None:
     """Envía correo multipart/alternative (texto + HTML) reutilizando la configuración SMTP."""
     try:
@@ -131,7 +152,7 @@ def send_html_email(settings: Settings, to: str, subject: str, text_body: str, h
     message.add_alternative(html_body, subtype="html")
 
     context = ssl.create_default_context()
-    with smtplib.SMTP(settings.mail_host, settings.mail_port, timeout=30) as smtp:
+    with _IPv4SMTP(settings.mail_host, settings.mail_port, timeout=30) as smtp:
         smtp.starttls(context=context)
         if settings.mail_username:
             smtp.login(settings.mail_username, settings.mail_password.get_secret_value())
