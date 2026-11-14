@@ -184,7 +184,31 @@ async function callGemini(apiKey, prompt) {
     throw new Error('Respuesta vacía de Gemini API (sin candidates[0].content.parts[0].text).');
   }
 
-  return JSON.parse(text);
+  const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+  return JSON.parse(cleaned);
+}
+
+function sanitizeLangBlock(block) {
+  if (!block || typeof block !== 'object') return block;
+  const copy = { ...block };
+  if (typeof copy.title === 'string') copy.title = copy.title.trim().slice(0, 120);
+  if (typeof copy.description === 'string') copy.description = copy.description.trim();
+  if (typeof copy.excerpt === 'string') copy.excerpt = copy.excerpt.trim();
+  if (Array.isArray(copy.body)) {
+    copy.body = copy.body.map((sec) => {
+      if (!sec || typeof sec !== 'object') return sec;
+      const out = {};
+      if (typeof sec.h === 'string' && sec.h.trim()) out.h = sec.h.trim();
+      for (const k of ['p', 'ul', 'ol']) {
+        if (Array.isArray(sec[k])) {
+          const items = sec[k].map((v) => String(v || '').trim()).filter(Boolean);
+          if (items.length > 0) out[k] = items;
+        }
+      }
+      return out;
+    });
+  }
+  return copy;
 }
 
 function writeDraftAtomic(slug, draftObj) {
@@ -214,8 +238,8 @@ function normalizeAndValidate(generated, existingSlugs) {
   const draft = {
     status: 'ready',
     tag: String(generated.tag || '').trim(),
-    es: generated.es,
-    en: generated.en
+    es: sanitizeLangBlock(generated.es),
+    en: sanitizeLangBlock(generated.en)
   };
 
   const errors = validateDraft(draft, slug);

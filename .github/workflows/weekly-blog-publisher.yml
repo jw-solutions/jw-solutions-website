@@ -51,13 +51,18 @@ jobs:
           node-version: '22'
 
       - name: Generar borrador semanal con IA (si no hay uno "ready")
-        if: ${{ !inputs.dry_run }}
+        if: ${{ github.event_name == 'schedule' || inputs.dry_run != true }}
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: node scripts/generate-weekly-draft.js
 
-      - name: Validar borradores (exige al menos uno "ready")
-        run: node scripts/validate-drafts.js --require-ready
+      - name: Validar borradores (exige al menos uno "ready" al publicar)
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.dry_run }}" != "true" ]; then
+            node scripts/validate-drafts.js --require-ready
+          else
+            node scripts/validate-drafts.js
+          fi
 
       - name: Verificar repositorio (antes)
         run: |
