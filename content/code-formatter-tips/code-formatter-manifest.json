@@ -300,6 +300,81 @@
       "deployed_at": "2026-11-14T23:32:12.442Z",
       "indexnow_pinged_at": "2026-11-14T23:32:12.890Z",
       "notified_at": "2026-11-14T23:32:29.507Z"
+    },
+    {
+      "slug": "csharp-12-primary-constructors-xml-doc-refactoring",
+      "title": "C# 12 Moderno: Refactorización con Primary Constructors y XML Docs",
+      "language": "csharp",
+      "programming_language": "csharp",
+      "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+      "meta_description": "Aprende a refactorizar constructores legados en C# 12 usando Primary Constructors y comentarios XML estandarizados con .NET Analyzers.",
+      "summary": "Descubre cómo simplificar la inyección de dependencias en C# 12 mediante Primary Constructors mantención de XML documentation estructurada.",
+      "related_fix_slug": "csharp-cs1026-closing-parenthesis-expected",
+      "interactive_snippet": "namespace JWDocs.Refactoring;\n\n/// <summary>\n/// Processes customer orders and applies valid discounts.\n/// </summary>\n/// <param name=\"logger\">The logging service for audit trails.</param>\n/// <param name=\"calculator\">The discount calculation engine.</param>\npublic class OrderProcessor(ILogger logger, IDiscountCalculator calculator)\n{\n    public OrderResult Process(Order order)\n    {\n        logger.LogInformation(\"Processing order {OrderId}\", order.Id);\n        var discount = calculator.Calculate(order);\n        return new OrderResult(order.Id, order.Total - discount);\n    }\n}",
+      "date": "2026-11-14",
+      "published_at": "2026-11-14",
+      "status": "COMPILED",
+      "locales": [
+        "es",
+        "de",
+        "en",
+        "fr",
+        "it",
+        "pt-BR",
+        "pt-PT"
+      ],
+      "file": "published/csharp-12-primary-constructors-xml-doc-refactoring.md",
+      "sha256": "8aa05f762d5d312bf3f13d62d70b9be54555018b95428df76cd24a3d2d340796",
+      "translations": {
+        "de": {
+          "title": "Modernes C# 12: Refactoring mit Primary Constructors und XML Docs",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Erfahren Sie, wie Sie Legacy-C#-Konstruktoren mit C# 12 Primary Constructors und XML-Dokumentation mittels .NET-Analyzern optimieren.",
+          "summary": "Vereinfachen Sie die Dependency Injection in C# 12 mithilfe von Primary Constructors bei vollständiger XML-Dokumentation.",
+          "file": "published/csharp-12-primary-constructors-xml-doc-refactoring.de.md",
+          "sha256": "905e2047335475c372b30885eb5504b38502f47f8c0040d1c80dd921ab081821"
+        },
+        "en": {
+          "title": "Modern C# 12: Refactoring with Primary Constructors and XML Docs",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Learn how to refactor legacy C# constructors using C# 12 Primary Constructors and XML comments paired with .NET analyzers for cleaner code.",
+          "summary": "Discover how to simplify dependency injection in C# 12 using Primary Constructors while preserving structured XML documentation.",
+          "file": "published/csharp-12-primary-constructors-xml-doc-refactoring.en.md",
+          "sha256": "9c5f6449d229418d43c359a164085c8f50652f5c2b60a574bb915842d1e1493d"
+        },
+        "fr": {
+          "title": "C# 12 Moderne : Refactoring avec Primary Constructors et XML Docs",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Découvrez comment refactoriser les constructeurs C# legacy avec les Primary Constructors C# 12 et la documentation XML sous .NET.",
+          "summary": "Simplifiez l'injection de dépendances en C# 12 grâce aux Primary Constructors tout en préservant une documentation XML structurée.",
+          "file": "published/csharp-12-primary-constructors-xml-doc-refactoring.fr.md",
+          "sha256": "4b0f32d174c91b0c0f8d96f8292d90129a387c4efc8a3e5292b74d850e219d74"
+        },
+        "it": {
+          "title": "C# 12 Moderno: Refactoring con Primary Constructors e XML Docs",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Scopri come eseguire il refactoring dei costruttori C# legacy usando i Primary Constructors di C# 12 e la documentazione XML.",
+          "summary": "Semplifica la Dependency Injection in C# 12 grazie ai Primary Constructors mantenendo una documentazione XML strutturata.",
+          "file": "published/csharp-12-primary-constructors-xml-doc-refactoring.it.md",
+          "sha256": "20254f4f6867666dbed121ada70478652750a0d770e256663a8ed856890d87a7"
+        },
+        "pt-BR": {
+          "title": "C# 12 Moderno: Refatoração com Primary Constructors e XML Docs",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Aprenda a refatorar construtores legados no C# 12 usando Primary Constructors e documentação XML padronizada através dos .NET Analyzers.",
+          "summary": "Descubra como simplificar a injeção de dependências no C# 12 utilizando Primary Constructors com documentação XML estruturada.",
+          "file": "published/csharp-12-primary-constructors-xml-doc-refactoring.pt-BR.md",
+          "sha256": "e1289c16ab4e38d5e58a10f2f6f3d170999ab5b98bffbf971b7fa4a5976636e5"
+        },
+        "pt-PT": {
+          "title": "C# 12 Moderno: Refatoração com Primary Constructors e XML Docs",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Aprenda a refatorar construtores legados no C# 12 usando Primary Constructors e documentação XML padronizada através dos .NET Analyzers.",
+          "summary": "Descubra como simplificar a injeção de dependências no C# 12 utilizando Primary Constructors com documentação XML estruturada.",
+          "file": "published/csharp-12-primary-constructors-xml-doc-refactoring.pt-PT.md",
+          "sha256": "b7c245d1b1317772a7ffb21801282daed2d8576eeaf02c8466ee35d9e87eec3d"
+        }
+      }
     }
   ]
 }
