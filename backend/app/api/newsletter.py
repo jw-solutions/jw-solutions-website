@@ -218,3 +218,37 @@ def broadcast(
         )
 
     return {"ok": True, "sent": sent, "skipped": skipped, "failed": failed}
+
+
+@router.get("/subscribers")
+def list_subscribers(
+    db: Annotated[Session, Depends(get_db)],
+    authorization: Annotated[str | None, Header()] = None,
+) -> dict[str, Any]:
+    settings = get_settings()
+    _require_bearer_token(authorization, settings.newsletter_webhook_token.get_secret_value())
+
+    rows = db.execute(
+        select(NewsletterSubscriber).order_by(NewsletterSubscriber.id)
+    ).scalars().all()
+
+    total_active = sum(1 for r in rows if r.status == "active")
+    total_unsubscribed = sum(1 for r in rows if r.status == "unsubscribed")
+
+    return {
+        "ok": True,
+        "total_active": total_active,
+        "total_unsubscribed": total_unsubscribed,
+        "subscribers": [
+            {
+                "id": r.id,
+                "email": r.email,
+                "lang": r.lang,
+                "status": r.status,
+                "source": r.source,
+                "subscribed_at": r.subscribed_at.isoformat() if r.subscribed_at else None,
+                "unsubscribed_at": r.unsubscribed_at.isoformat() if r.unsubscribed_at else None,
+            }
+            for r in rows
+        ],
+    }

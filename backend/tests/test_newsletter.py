@@ -6,7 +6,15 @@ from unittest.mock import MagicMock, patch
 import pytest
 from fastapi import HTTPException
 
-from app.api.newsletter import ArticlePayload, BroadcastBody, SubscribeBody, broadcast, subscribe, unsubscribe
+from app.api.newsletter import (
+    ArticlePayload,
+    BroadcastBody,
+    SubscribeBody,
+    broadcast,
+    list_subscribers,
+    subscribe,
+    unsubscribe,
+)
 
 
 def _make_request(ip: str = "127.0.0.1"):
@@ -107,3 +115,25 @@ def test_broadcast_auth_and_idempotency(monkeypatch):
         ok = broadcast(payload, fake_db, authorization="Bearer super-secret-webhook-token-123")
     assert ok == {"ok": True, "sent": 1, "skipped": 1, "failed": 0}
     mock_send.assert_called_once()
+
+
+def test_list_subscribers_requires_bearer_and_hides_tokens(monkeypatch):
+    monkeypatch.setenv("NEWSLETTER_WEBHOOK_TOKEN", "super-secret-webhook-token-123")
+    from app.core.config import get_settings
+    get_settings.cache_clear()
+
+    fake_db = MagicMock()
+    sub1 = _make_sub(1, "uno@example.com", "es", "active", "secret_tok_1")
+    sub2 = _make_sub(2, "dos@example.com", "en", "unsubscribed", "secret_tok_2")
+    fake_db.execute.return_value.scalars.return_value.all.return_value = [sub1, sub2]
+
+    with pytest.raises(HTTPException) as exc:
+        list_subscribers(fake_db, authorization="Bearer wrong-token")
+    assert exc.value.status_code == 401
+
+    res = list_subscribers(fake_db, authorization="Bearer super-secret-webhook-token-123")
+    assert res["ok"] is True
+    assert res["total_active"] == 1
+    assert res["total_unsubscribed"] == 1
+    assert len(res["subscribers"]) == 2
+    assert "unsubscribe_token" not in res["subscribers"][0]
