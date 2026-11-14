@@ -157,7 +157,7 @@
       "interactive_snippet": "export interface UserProfile {\n  id: string;\n  role: 'admin' | 'user';\n}\n\nexport function isUserProfile(payload: unknown): payload is UserProfile {\n  return (\n    typeof payload === 'object' &&\n    payload !== null &&\n    'id' in payload &&\n    typeof (payload as Record<string, unknown>).id === 'string' &&\n    'role' in payload &&\n    ['admin', 'user'].includes((payload as Record<string, unknown>).role as string)\n  );\n}",
       "date": "2026-11-14",
       "published_at": "2026-11-14",
-      "status": "DEPLOYED",
+      "status": "NOTIFIED",
       "locales": [
         "es",
         "de",
@@ -220,7 +220,8 @@
         }
       },
       "deployed_at": "2026-11-14T18:56:56.880Z",
-      "indexnow_pinged_at": "2026-11-14T18:56:57.386Z"
+      "indexnow_pinged_at": "2026-11-14T18:56:57.386Z",
+      "notified_at": "2026-11-14T18:57:08.557Z"
     }
   ]
 }
