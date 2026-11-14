@@ -37,9 +37,9 @@ const LANG_STANDARDS = {
   yaml: 'YAML 1.2, indentación de 2 espacios sin tabuladores, anclas y comentarios claros'
 };
 
-const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-2.5-flash-lite'];
+const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite'];
 const RETRYABLE_STATUSES = new Set([404, 429, 500, 502, 503, 504]);
-const REQUEST_TIMEOUT_MS = 90000;
+const REQUEST_TIMEOUT_MS = 120000;
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const MIN_WORDS = 350;
 
@@ -220,7 +220,7 @@ async function callGemini(apiKey, prompt) {
         const data = await res.json();
         const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!text) throw new Error(`Respuesta vacía de ${model}`);
-        return JSON.parse(text);
+        return parseJsonResilient(text);
       } catch (err) {
         lastError = err;
         log('WARN', `Fallo con ${model} (${attempt}/2): ${err.message}`);
@@ -231,6 +231,29 @@ async function callGemini(apiKey, prompt) {
   throw lastError || new Error('Todos los modelos Gemini fallaron.');
 }
 
+function parseJsonResilient(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    let out = '';
+    let inStr = false;
+    let esc = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (esc) { out += ch; esc = false; continue; }
+      if (ch === '\\') { out += ch; esc = true; continue; }
+      if (ch === '"') { inStr = !inStr; out += ch; continue; }
+      if (inStr && ch.charCodeAt(0) < 0x20) {
+        if (ch === '\n') out += '\\n';
+        else if (ch === '\r') continue;
+        else if (ch === '\t') out += '\\t';
+        continue;
+      }
+      out += ch;
+    }
+    return JSON.parse(out);
+  }
+}
 function wordCount(text) {
   return String(text || '').trim().split(/\s+/).filter(Boolean).length;
 }
