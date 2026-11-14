@@ -313,7 +313,7 @@
       "interactive_snippet": "namespace JWDocs.Refactoring;\n\n/// <summary>\n/// Processes customer orders and applies valid discounts.\n/// </summary>\n/// <param name=\"logger\">The logging service for audit trails.</param>\n/// <param name=\"calculator\">The discount calculation engine.</param>\npublic class OrderProcessor(ILogger logger, IDiscountCalculator calculator)\n{\n    public OrderResult Process(Order order)\n    {\n        logger.LogInformation(\"Processing order {OrderId}\", order.Id);\n        var discount = calculator.Calculate(order);\n        return new OrderResult(order.Id, order.Total - discount);\n    }\n}",
       "date": "2026-11-14",
       "published_at": "2026-11-14",
-      "status": "DEPLOYED",
+      "status": "NOTIFIED",
       "locales": [
         "es",
         "de",
@@ -376,7 +376,8 @@
         }
       },
       "deployed_at": "2026-11-14T23:46:29.351Z",
-      "indexnow_pinged_at": "2026-11-14T23:46:30.059Z"
+      "indexnow_pinged_at": "2026-11-14T23:46:30.059Z",
+      "notified_at": "2026-11-14T23:46:50.247Z"
     }
   ]
 }
