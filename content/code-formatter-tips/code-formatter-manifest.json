@@ -235,7 +235,7 @@
       "interactive_snippet": "public sealed interface Result<T> permits Result.Success, Result.Error {\n    record Success<T>(T data) implements Result<T> {}\n    record Error<T>(String message) implements Result<T> {}\n\n    static <T> String handle(Result<T> result) {\n        return switch (result) {\n            case Success<T> s -> \"Success: \" + s.data();\n            case Error<T> e -> \"Error: \" + e.message();\n        };\n    }\n}",
       "date": "2026-11-14",
       "published_at": "2026-11-14",
-      "status": "DEPLOYED",
+      "status": "NOTIFIED",
       "locales": [
         "es",
         "de",
@@ -298,7 +298,8 @@
         }
       },
       "deployed_at": "2026-11-14T23:32:12.442Z",
-      "indexnow_pinged_at": "2026-11-14T23:32:12.890Z"
+      "indexnow_pinged_at": "2026-11-14T23:32:12.890Z",
+      "notified_at": "2026-11-14T23:32:29.507Z"
     }
   ]
 }
