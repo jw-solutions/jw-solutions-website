@@ -27,5 +27,12 @@
   "tips/typescript-refactoring-legacy-any-type-guards-tsdoc-fr": "f77e554f8a6c254f",
   "tips/typescript-refactoring-legacy-any-type-guards-tsdoc-it": "390fc1824051350a",
   "tips/typescript-refactoring-legacy-any-type-guards-tsdoc-pt-BR": "e1ab559604a6085c",
-  "tips/typescript-refactoring-legacy-any-type-guards-tsdoc-pt-PT": "efd026788e681542"
+  "tips/typescript-refactoring-legacy-any-type-guards-tsdoc-pt-PT": "efd026788e681542",
+  "tips/java-21-pattern-matching-records-refactoring-es": "d0bfd4c5d073e9e5",
+  "tips/java-21-pattern-matching-records-refactoring-de": "2cc13c2adabcf206",
+  "tips/java-21-pattern-matching-records-refactoring-en": "ece525ac2e502956",
+  "tips/java-21-pattern-matching-records-refactoring-fr": "32c0321dd7a0c837",
+  "tips/java-21-pattern-matching-records-refactoring-it": "75875d71718b5de2",
+  "tips/java-21-pattern-matching-records-refactoring-pt-BR": "72b432deaf8d338a",
+  "tips/java-21-pattern-matching-records-refactoring-pt-PT": "4cbe0a9bf4365078"
 }

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Refatoração em Java 21+: Records e Pattern Matching para Código Legível | Code Formatter &amp; Auto-Doc AI</title>
+  <meta name="description" content="Aprenda a refatorar código legado em Java 21 usando Records e Pattern Matching em switch para eliminar código repetitivo e melhorar a legibilidade.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="canonical" href="https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/pt-BR/">
+  <link rel="alternate" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/es/">
+  <link rel="alternate" hreflang="en" href="https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/en/">
+  <link rel="alternate" hreflang="pt-BR" href="https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/pt-BR/">
+  <link rel="alternate" hreflang="pt-PT" href="https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/pt-PT/">
+  <link rel="alternate" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/fr/">
+  <link rel="alternate" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/de/">
+  <link rel="alternate" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/it/">
+  <link rel="alternate" hreflang="x-default" href="https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/es/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="JW Solutions">
+  <meta property="og:title" content="Refatoração em Java 21+: Records e Pattern Matching para Código Legível | Code Formatter &amp; Auto-Doc AI">
+  <meta property="og:description" content="Aprenda a refatorar código legado em Java 21 usando Records e Pattern Matching em switch para eliminar código repetitivo e melhorar a legibilidade.">
+  <meta property="og:url" content="https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/pt-BR/">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:image" content="https://jw-solutions.com/assets/images/og/tips/java-21-pattern-matching-records-refactoring-pt-BR.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Refatoração em Java 21+: Records e Pattern Matching para Código Legível | Code Formatter &amp; Auto-Doc AI">
+  <meta name="twitter:description" content="Aprenda a refatorar código legado em Java 21 usando Records e Pattern Matching em switch para eliminar código repetitivo e melhorar a legibilidade.">
+  <meta name="twitter:image" content="https://jw-solutions.com/assets/images/og/tips/java-21-pattern-matching-records-refactoring-pt-BR.png">
+  <meta name="theme-color" content="#0b0f17">
+  <meta name="cf-newsletter-endpoint" content="https://api.jw-solutions.com/api/newsletter/subscribe">
+  <link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
+  <link rel="icon" type="image/x-icon" sizes="any" href="../../../../favicon.ico">
+  <link rel="apple-touch-icon" href="../../../../apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../../../../../assets/css/tools/code-formatter.css">
+  <script type="application/ld+json" id="cf-jsonld">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Refatoração em Java 21+: Records e Pattern Matching para Código Legível", "description": "Aprenda a refatorar código legado em Java 21 usando Records e Pattern Matching em switch para eliminar código repetitivo e melhorar a legibilidade.", "inLanguage": "pt-BR", "articleSection": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI", "keywords": "java, code formatter, auto-doc ai, syntax, best practices", "datePublished": "2026-11-14", "dateModified": "2026-11-14", "url": "https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/pt-BR/", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/pt-BR/"}, "isPartOf": {"@type": "WebApplication", "name": "Code Formatter & Auto-Doc AI", "url": "https://jw-solutions.com/tools/code-formatter/"}, "image": "https://jw-solutions.com/assets/images/og/tips/java-21-pattern-matching-records-refactoring-pt-BR.png", "author": {"@type": "Organization", "name": "JW Solutions"}, "publisher": {"@type": "Organization", "name": "JW Solutions", "url": "https://jw-solutions.com"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Code Formatter", "item": "https://jw-solutions.com/tools/code-formatter/"}, {"@type": "ListItem", "position": 2, "name": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI", "item": "https://jw-solutions.com/tools/code-formatter/tips/java/"}, {"@type": "ListItem", "position": 3, "name": "Refatoração em Java 21+: Records e Pattern Matching para Código Legível", "item": "https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/pt-BR/"}]}]}</script>
+</head>
+<body class="cf-body">
+  <a class="cf-skip" href="#cf-main" data-i18n="skip">Saltar al contenido</a>
+
+  <header class="cf-header">
+    <div class="cf-container cf-header__inner">
+      <div class="cf-logo" role="img" aria-label="JW Solutions">
+        <span class="cf-logo__mark">JW</span>
+        <span class="cf-logo__text">SOLUTIONS</span>
+      </div>
+      <nav class="cf-nav" aria-label="Code Formatter">
+        <select id="cf-ui-lang" class="cf-select cf-select--compact" data-i18n-aria="uiLang" aria-label="Idioma de la interfaz"></select>
+        <a class="cf-nav__link" data-site-link data-i18n="tipsBackTool" href="../../../../">Volver al formateador</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="cf-main" class="cf-main" data-fix-data="">
+    <section class="cf-container cf-hero">
+      <span class="cf-tag" data-i18n="fixTag">Tips de Sintaxis | Buenas prácticas | Auto-Doc AI</span>
+      <h1 id="cf-fix-title" class="cf-title">Refatoração em Java 21+: Records e Pattern Matching para Código Legível</h1>
+      <p id="cf-fix-lead" class="cf-lead cf-fix__lead">Aprenda a refatorar código legado em Java 21 usando Records e Pattern Matching em switch para eliminar código repetitivo e melhorar a legibilidade.</p>
+    </section>
+    <section class="cf-container cf-tips">
+      <div id="cf-fix-body" class="cf-card cf-tip">
+        <p class="cf-muted cf-tip__meta">2026-11-14 · Tips de Sintaxis | Buenas prácticas | Auto-Doc AI · JAVA</p>
+        <h2 class="cf-tip__h">Introdução ao Código Legado em Java</h2>
+        <p>Por anos, os desenvolvedores Java dependeram de hierarquias de classes extensas, múltiplas verificações de tipo usando o operador <code>instanceof</code> e conversões explícitas (*casting*) para modelar dados e lidar com estruturas condicionais complexas. Essa abordagem tradicional não apenas aumenta o volume de código-fonte, mas também introduz riscos latentes de erros em tempo de execução, como <code>ClassCastException</code>, e dificulta profundamente a manutenção de longo prazo do software.</p>
+        <p>Com o lançamento do <strong>Java 21</strong>, a linguagem amadureceu significativamente graças a recursos estáveis de alto impacto, como <strong>Records</strong> e <strong>Pattern Matching para `switch`</strong>. Essas ferramentas modernas permitem que arquitetos e desenvolvedores escrevam códigos altamente expressivos, seguros e alinhados com os padrões do Google Java Style. A seguir, analisaremos um caso real de refatoração de um design clássico para um design moderno e auto-documentável.</p>
+        <h2 class="cf-tip__h">O Problema: Código Legado com Verificações Verbose</h2>
+        <p>Considere uma aplicação corporativa típica que processa respostas de operações de rede ou banco de dados usando classes abstratas e múltiplas subclasses, juntamente com blocos <code>if-else</code> encadeados para determinar o tipo de resposta recebida:</p>
+        <pre class="cf-tip__code"><code>// ANTES: Código legado verboso e sujeito a erros
+public abstract class Response {
+}
+
+public class SuccessResponse extends Response {
+    private final String data;
+    public SuccessResponse(String data) { this.data = data; }
+    public String getData() { return data; }
+}
+
+public class ErrorResponse extends Response {
+    private final String errorCode;
+    public ErrorResponse(String errorCode) { this.errorCode = errorCode; }
+    public String getErrorCode() { return errorCode; }
+}
+
+public class ResponseProcessor {
+    public static String process(Response response) {
+        if (response instanceof SuccessResponse) {
+            SuccessResponse success = (SuccessResponse) response;
+            return &quot;OK: &quot; + success.getData();
+        } else if (response instanceof ErrorResponse) {
+            ErrorResponse error = (ErrorResponse) response;
+            return &quot;FAIL: &quot; + error.getErrorCode();
+        } else {
+            throw new IllegalArgumentException(&quot;Unknown response type&quot;);
+        }
+    }
+}</code></pre>
+        <p>Este padrão tradicional apresenta várias desvantagens: exige a escrita manual de construtores, getters, métodos <code>equals</code>, <code>hashCode</code> e <code>toString</code>, além de duplicar lógica de *casting* desnecessária dentro das estruturas condicionais.</p>
+        <h2 class="cf-tip__h">A Solução: Records e Pattern Matching no Java 21</h2>
+        <p>Podemos refatorar radicalmente este design utilizando interfaces seladas (*sealed interfaces*), <strong>Records</strong> para modelar dados imutáveis de forma concisa, e <strong>Pattern Matching</strong> aplicado à instrução <code>switch</code>. Essa combinação elimina completamente o *casting* explícito e garante a exaustividade dos casos analisados.</p>
+        <pre class="cf-tip__code"><code>// DEPOIS: Código limpo, moderno e seguro no Java 21
+public sealed interface Response permits Response.Success, Response.Error {
+    record Success(String data) implements Response {}
+    record Error(String errorCode) implements Response {}
+
+    /**
+     * Processa a resposta com segurança usando pattern matching.
+     *
+     * @param response a resposta recebida do servidor
+     * @return uma string formatada com o resultado do processamento
+     */
+    static String process(Response response) {
+        return switch (response) {
+            case Success(var data) -&gt; &quot;OK: &quot; + data;
+            case Error(var code) -&gt; &quot;FAIL: &quot; + code;
+        };
+    }
+}</code></pre>
+        <h2 class="cf-tip__h">Vantagens Arquiteturais e Manutenibilidade</h2>
+        <p>1. <strong>Redução de Boilerplate:</strong> Os *records* geram automaticamente o construtor canônico, métodos de acesso, representações em string e contratos de igualdade. 2. <strong>Segurança de Tipos (Exaustividade):</strong> O compilador Java valida se todos os subtipos de uma interface selada são cobertos no <code>switch</code>, evitando erros em tempo de execução por ramificações esquecidas. 3. <strong>Legibilidade Extrema:</strong> Os padrões de desestruturação (*deconstruction patterns*) permitem acesso direto aos componentes internos do *record* dentro do próprio padrão.</p>
+        <h2 class="cf-tip__h">Auto-Documentação com Inteligência Artificial (Auto-Doc AI)</h2>
+        <p>O uso de padrões modernos como o Java 21 facilita drasticamente a tarefa de ferramentas de <strong>Auto-Doc AI</strong>. Graças à semântica clara das interfaces seladas e dos *records*, os geradores automáticos de documentação podem inferir contratos precisos sem exigir anotações redundantes. Ao integrar formatadores automáticos sob o padrão Google Java Style, garantimos que a estrutura do código permaneça uniforme em toda a equipe de desenvolvimento, reduzindo o atrito nas revisões de código e elevando a qualidade geral do repositório corporativo.</p>
+        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="https://jw-solutions.com/tools/code-formatter/?lang=pt-BR&amp;snippet=public%20sealed%20interface%20Result%3CT%3E%20permits%20Result.Success%2C%20Result.Error%20%7B%0A%20%20%20%20record%20Success%3CT%3E%28T%20data%29%20implements%20Result%3CT%3E%20%7B%7D%0A%20%20%20%20record%20Error%3CT%3E%28String%20message%29%20implements%20Result%3CT%3E%20%7B%7D%0A%0A%20%20%20%20static%20%3CT%3E%20String%20handle%28Result%3CT%3E%20result%29%20%7B%0A%20%20%20%20%20%20%20%20return%20switch%20%28result%29%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20case%20Success%3CT%3E%20s%20-%3E%20%22Success%3A%20%22%20%2B%20s.data%28%29%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20case%20Error%3CT%3E%20e%20-%3E%20%22Error%3A%20%22%20%2B%20e.message%28%29%3B%0A%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%7D%0A%7D">Testar trecho no formatador</a></p>
+        <p><a class="cf-nav__link" href="https://jw-solutions.com/tools/code-formatter/fix/java-reached-end-of-file-while-parsing/?lang=pt-BR">Ver guia de correção de erros: Como corrigir reached end of file while parsing em Java 21</a></p>
+        <h2 class="cf-tip__h">Dicas relacionadas</h2>
+        <ul class="cf-fix__list"><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/pt-BR/">PEP 8 no Python 3.12: como escrever blocos match/case legíveis</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/pt-BR/">TypeScript moderno: ?., ?? e satisfies sem erros de formatação</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/pt-BR/">SQL e DAX: três hábitos para consultas rápidas e legíveis</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cf-footer">
+    <div class="cf-container cf-footer__grid">
+      <section class="cf-footer__col" aria-labelledby="cf-foot-id">
+        <div class="cf-logo" role="img" aria-label="JW Solutions">
+          <span class="cf-logo__mark">JW</span>
+          <span class="cf-logo__text">SOLUTIONS</span>
+        </div>
+        <h2 id="cf-foot-id" class="cf-footer__title">Code Formatter <span class="cf-gold">&amp; Auto-Doc AI</span></h2>
+        <p class="cf-footer__text" data-i18n="footDesc">Formatea y documenta tu código en Python, JavaScript, SQL, DAX y más. Herramienta independiente de JW Solutions.</p>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../" data-site-link data-i18n="footEditor">Ir al editor</a></li>
+        </ul>
+      </section>
+
+      <nav class="cf-footer__col" aria-labelledby="cf-foot-tips">
+        <h2 id="cf-foot-tips" class="cf-footer__title" data-i18n="footTipsTitle">Tips semanales</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../tips/python/" data-site-link data-i18n="tipPython">Python Tips</a></li>
+          <li><a href="../../../../tips/javascript/" data-site-link data-i18n="tipJs">JavaScript Standards</a></li>
+          <li><a href="../../../../tips/sql-dax/" data-site-link data-i18n="tipSqlDax">SQL &amp; DAX Best Practices</a></li>
+        </ul>
+        <h2 id="cf-foot-fix" class="cf-footer__title cf-footer__title--sub" data-i18n="footFixTitle">Soluciones a errores</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../fix/" data-site-link data-i18n="fixHubTitle">Soluciones rápidas a errores de sintaxis</a></li>
+        </ul>
+      </nav>
+
+      <section class="cf-footer__col" aria-labelledby="cf-foot-nl">
+        <h2 id="cf-foot-nl" class="cf-footer__title" data-i18n="nlTitle">Tips Semanales de Código</h2>
+        <p class="cf-footer__text" data-i18n="nlPromise">Un email por semana con tips prácticos de sintaxis, casos de estudio y novedades de lenguajes (Python, JS, SQL, DAX). Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
+        <form id="cf-newsletter-form" class="cf-newsletter" novalidate>
+          <label class="cf-sr-only" for="cf-newsletter-email" data-i18n="nlEmailLabel">Correo electrónico</label>
+          <input id="cf-newsletter-email" class="cf-input" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="tu@email.com" data-i18n-placeholder="nlPlaceholder">
+          <input type="text" name="_gotcha" class="cf-sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button type="submit" class="cf-btn cf-btn--primary" data-i18n="nlSubmit">Suscribirme</button>
+          <p id="cf-newsletter-status" class="cf-form__status cf-newsletter__status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+    <div class="cf-container cf-footer__legal">
+      <p>&copy; JW Solutions · <span data-i18n="footRights">Todos los derechos reservados</span></p>
+    </div>
+  </footer>
+
+  <div id="cf-toast" class="cf-toast" role="status" aria-live="polite"></div>
+  
+</body>
+</html>

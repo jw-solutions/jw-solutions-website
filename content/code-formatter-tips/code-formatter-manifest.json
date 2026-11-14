@@ -222,6 +222,81 @@
       "deployed_at": "2026-11-14T18:56:56.880Z",
       "indexnow_pinged_at": "2026-11-14T18:56:57.386Z",
       "notified_at": "2026-11-14T18:57:08.557Z"
+    },
+    {
+      "slug": "java-21-pattern-matching-records-refactoring",
+      "title": "Refactorización en Java 21+: Records y Pattern Matching para Código Legible",
+      "language": "java",
+      "programming_language": "java",
+      "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+      "meta_description": "Aprende a refactorizar código legado en Java 21 usando Records y Pattern Matching en switch para eliminar código repetitivo y mejorar la legibilidad.",
+      "summary": "Descubre cómo transformar jerarquías de clases verbose en elegantes Records y Pattern Matching en Java 21, reduciendo el boilerplate drásticamente.",
+      "related_fix_slug": "java-reached-end-of-file-while-parsing",
+      "interactive_snippet": "public sealed interface Result<T> permits Result.Success, Result.Error {\n    record Success<T>(T data) implements Result<T> {}\n    record Error<T>(String message) implements Result<T> {}\n\n    static <T> String handle(Result<T> result) {\n        return switch (result) {\n            case Success<T> s -> \"Success: \" + s.data();\n            case Error<T> e -> \"Error: \" + e.message();\n        };\n    }\n}",
+      "date": "2026-11-14",
+      "published_at": "2026-11-14",
+      "status": "COMPILED",
+      "locales": [
+        "es",
+        "de",
+        "en",
+        "fr",
+        "it",
+        "pt-BR",
+        "pt-PT"
+      ],
+      "file": "published/java-21-pattern-matching-records-refactoring.md",
+      "sha256": "751283a72b3556dad15c85c00f6553c7e70d182c1e8cd9c9674b2c4a45f4edf1",
+      "translations": {
+        "de": {
+          "title": "Refactoring in Java 21+: Records und Pattern Matching für lesbaren Code",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Erfahren Sie, wie Sie Legacy-Java-Code mit Java 21 Records und switch Pattern Matching refaktorisieren, um Boilerplate-Code zu eliminieren.",
+          "summary": "Entdecken Sie, wie Sie wortreiche Klassenhierarchien in elegante Records und Pattern Matching in Java 21 umwandeln und Boilerplate-Code drastisch reduzieren.",
+          "file": "published/java-21-pattern-matching-records-refactoring.de.md",
+          "sha256": "0e930ef736e787efc66910eb47d8ee63e1feeb25f2e30a0d1c630563cce03f0a"
+        },
+        "en": {
+          "title": "Refactoring in Java 21+: Records and Pattern Matching for Readable Code",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Learn how to refactor legacy Java code to Java 21 using Records and switch Pattern Matching to eliminate boilerplate and enhance code readability.",
+          "summary": "Discover how to transform verbose class hierarchies into elegant Records and Pattern Matching in Java 21, drastically reducing boilerplate code.",
+          "file": "published/java-21-pattern-matching-records-refactoring.en.md",
+          "sha256": "cde963c8e21491deb8ae68436ff93e338030c287adf91d5571ebcf031f74a4e7"
+        },
+        "fr": {
+          "title": "Refactoring en Java 21+ : Records et Pattern Matching pour un Code Lisible",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Apprenez à refactoriser du code Java hérité en Java 21 en utilisant les Records et le Pattern Matching pour éliminer le code répétitif et améliorer la lisibilité.",
+          "summary": "Découvrez comment transformer des hiérarchies de classes verbeuses en Records élégants et Pattern Matching en Java 21, réduisant drastiquement le code boilerplate.",
+          "file": "published/java-21-pattern-matching-records-refactoring.fr.md",
+          "sha256": "7906b0a1bc46bb1e82f3f4e50b90e4e6a285d8e040f377fe9d5a08c94b23baca"
+        },
+        "it": {
+          "title": "Refactoring in Java 21+: Records e Pattern Matching per Codice Leggibile",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Scopri come refattorizzare il codice Java legacy in Java 21 usando Records e Pattern Matching nello switch per eliminare il codice ripetitivo.",
+          "summary": "Scopri come trasformare gerarchie di classi verbose in eleganti Records e Pattern Matching in Java 21, riducendo drasticamente il codice boilerplate.",
+          "file": "published/java-21-pattern-matching-records-refactoring.it.md",
+          "sha256": "a36643d9ef88bb47ed0a659e9b069436d741af22cbbb3d95183b1984ca6c5f33"
+        },
+        "pt-BR": {
+          "title": "Refatoração em Java 21+: Records e Pattern Matching para Código Legível",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Aprenda a refatorar código legado em Java 21 usando Records e Pattern Matching em switch para eliminar código repetitivo e melhorar a legibilidade.",
+          "summary": "Descubra como transformar hierarquias de classes extensas em Records elegantes e Pattern Matching no Java 21, reduzindo drasticamente o código boilerplate.",
+          "file": "published/java-21-pattern-matching-records-refactoring.pt-BR.md",
+          "sha256": "f9daa7b5d5523ccb3145c59ee67b957597edb21538a0aa13ccadc4c9158e8fae"
+        },
+        "pt-PT": {
+          "title": "Refatoração em Java 21+: Records e Pattern Matching para Código Legível",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Aprenda a refatorar código legado em Java 21 usando Records e Pattern Matching em switch para eliminar código repetitivo e melhorar a legibilidade.",
+          "summary": "Descubra como transformar hierarquias de classes extensas em Records elegantes e Pattern Matching no Java 21, reduzindo drasticamente o código boilerplate.",
+          "file": "published/java-21-pattern-matching-records-refactoring.pt-PT.md",
+          "sha256": "f0bce54e00c834332e8e09c36e513986c983fe905b0d1b26cfbadf5e22a909c3"
+        }
+      }
     }
   ]
 }
