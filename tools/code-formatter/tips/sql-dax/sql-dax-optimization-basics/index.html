@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQL y DAX: tres hábitos para consultas rápidas y legibles | Code Formatter &amp; Auto-Doc AI</title>
+  <meta name="description" content="En SQL, selecciona solo las columnas necesarias y filtra temprano. En DAX, guarda subresultados en variables (VAR) para evaluarlos una sola vez.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="canonical" href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/es/">
+  <link rel="alternate" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/es/">
+  <link rel="alternate" hreflang="en" href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/en/">
+  <link rel="alternate" hreflang="pt-BR" href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/pt-BR/">
+  <link rel="alternate" hreflang="pt-PT" href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/pt-PT/">
+  <link rel="alternate" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/fr/">
+  <link rel="alternate" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/de/">
+  <link rel="alternate" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/it/">
+  <link rel="alternate" hreflang="x-default" href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/es/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="JW Solutions">
+  <meta property="og:title" content="SQL y DAX: tres hábitos para consultas rápidas y legibles | Code Formatter &amp; Auto-Doc AI">
+  <meta property="og:description" content="En SQL, selecciona solo las columnas necesarias y filtra temprano. En DAX, guarda subresultados en variables (VAR) para evaluarlos una sola vez.">
+  <meta property="og:url" content="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/es/">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:image" content="https://jw-solutions.com/assets/images/og/tips/sql-dax-optimization-basics-es.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SQL y DAX: tres hábitos para consultas rápidas y legibles | Code Formatter &amp; Auto-Doc AI">
+  <meta name="twitter:description" content="En SQL, selecciona solo las columnas necesarias y filtra temprano. En DAX, guarda subresultados en variables (VAR) para evaluarlos una sola vez.">
+  <meta name="twitter:image" content="https://jw-solutions.com/assets/images/og/tips/sql-dax-optimization-basics-es.png">
+  <meta name="theme-color" content="#0b0f17">
+  <meta name="cf-newsletter-endpoint" content="https://api.jw-solutions.com/api/newsletter/subscribe">
+  <link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+  <link rel="icon" type="image/x-icon" sizes="any" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" href="../../../apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../../../assets/css/tools/code-formatter.css">
+  <script type="application/ld+json" id="cf-jsonld">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "SQL y DAX: tres hábitos para consultas rápidas y legibles", "description": "En SQL, selecciona solo las columnas necesarias y filtra temprano. En DAX, guarda subresultados en variables (VAR) para evaluarlos una sola vez.", "inLanguage": "es", "articleSection": "Buenas prácticas", "keywords": "sql, code formatter, auto-doc ai, syntax, best practices", "datePublished": "2026-11-02", "dateModified": "2026-11-02", "url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/es/", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/es/"}, "isPartOf": {"@type": "WebApplication", "name": "Code Formatter & Auto-Doc AI", "url": "https://jw-solutions.com/tools/code-formatter/"}, "image": "https://jw-solutions.com/assets/images/og/tips/sql-dax-optimization-basics-es.png", "author": {"@type": "Organization", "name": "JW Solutions"}, "publisher": {"@type": "Organization", "name": "JW Solutions", "url": "https://jw-solutions.com"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Code Formatter", "item": "https://jw-solutions.com/tools/code-formatter/"}, {"@type": "ListItem", "position": 2, "name": "Buenas prácticas", "item": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/"}, {"@type": "ListItem", "position": 3, "name": "SQL y DAX: tres hábitos para consultas rápidas y legibles", "item": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/es/"}]}]}</script>
+</head>
+<body class="cf-body">
+  <a class="cf-skip" href="#cf-main" data-i18n="skip">Saltar al contenido</a>
+
+  <header class="cf-header">
+    <div class="cf-container cf-header__inner">
+      <div class="cf-logo" role="img" aria-label="JW Solutions">
+        <span class="cf-logo__mark">JW</span>
+        <span class="cf-logo__text">SOLUTIONS</span>
+      </div>
+      <nav class="cf-nav" aria-label="Code Formatter">
+        <select id="cf-ui-lang" class="cf-select cf-select--compact" data-i18n-aria="uiLang" aria-label="Idioma de la interfaz"></select>
+        <a class="cf-nav__link" data-site-link data-i18n="tipsBackTool" href="../../../">Volver al formateador</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="cf-main" class="cf-main" data-fix-data="">
+    <section class="cf-container cf-hero">
+      <span class="cf-tag" data-i18n="fixTag">Buenas prácticas</span>
+      <h1 id="cf-fix-title" class="cf-title">SQL y DAX: tres hábitos para consultas rápidas y legibles</h1>
+      <p id="cf-fix-lead" class="cf-lead cf-fix__lead">En SQL, selecciona solo las columnas necesarias y filtra temprano. En DAX, guarda subresultados en variables (VAR) para evaluarlos una sola vez.</p>
+    </section>
+    <section class="cf-container cf-tips">
+      <div id="cf-fix-body" class="cf-card cf-tip">
+        <p class="cf-muted cf-tip__meta">2026-11-02 · Buenas prácticas · SQL</p>
+        <h2 class="cf-tip__h">Tip de la semana</h2>
+        <p>En SQL, selecciona solo las columnas necesarias y filtra temprano. En DAX, guarda subresultados en variables (<code>VAR</code>) para evaluarlos una sola vez.</p>
+        <pre class="cf-tip__code"><code>SELECT o.id, o.total, c.name
+FROM orders AS o
+JOIN customers AS c ON c.id = o.customer_id
+WHERE o.created_at &gt;= DATE &#x27;2026-01-01&#x27;
+ORDER BY o.total DESC;</code></pre>
+        <pre class="cf-tip__code"><code>Ventas YTD Margen =
+VAR Ventas = [Ventas Totales]
+VAR Costo = [Costo Total]
+RETURN DIVIDE(Ventas - Costo, Ventas)</code></pre>
+        <h2 class="cf-tip__h">Reglas rápidas</h2>
+        <ul class="cf-tip__list">
+          <li>Evita <code>SELECT *</code> en producción.</li>
+          <li>Usa <code>DIVIDE</code> en DAX para evitar errores de división por cero.</li>
+          <li>Una medida, una responsabilidad: compón medidas en lugar de duplicar lógica.</li>
+        </ul>
+        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="https://jw-solutions.com/tools/code-formatter/?lang=es&amp;snippet=SELECT%20o.id%2C%20o.total%2C%20c.name%0AFROM%20orders%20AS%20o%0AJOIN%20customers%20AS%20c%20ON%20c.id%20%3D%20o.customer_id%0AWHERE%20o.created_at%20%3E%3D%20DATE%20%272026-01-01%27%0AORDER%20BY%20o.total%20DESC%3B">Probar fragmento en el formateador</a></p>
+        <p><a class="cf-nav__link" href="https://jw-solutions.com/tools/code-formatter/fix/sql-dax-formatting-rules/?lang=es">Ver guía de solución de errores: Reglas de formato para SQL y DAX: guía rápida con ejemplos</a></p>
+        <h2 class="cf-tip__h">Tips relacionados</h2>
+        <ul class="cf-fix__list"><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/es/">PEP 8 en Python 3.12: cómo escribir bloques match/case legibles</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/es/">TypeScript moderno: ?., ?? y satisfies sin errores de formato</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cf-footer">
+    <div class="cf-container cf-footer__grid">
+      <section class="cf-footer__col" aria-labelledby="cf-foot-id">
+        <div class="cf-logo" role="img" aria-label="JW Solutions">
+          <span class="cf-logo__mark">JW</span>
+          <span class="cf-logo__text">SOLUTIONS</span>
+        </div>
+        <h2 id="cf-foot-id" class="cf-footer__title">Code Formatter <span class="cf-gold">&amp; Auto-Doc AI</span></h2>
+        <p class="cf-footer__text" data-i18n="footDesc">Formatea y documenta tu código en Python, JavaScript, SQL, DAX y más. Herramienta independiente de JW Solutions.</p>
+        <ul class="cf-footer__list">
+          <li><a href="../../../" data-site-link data-i18n="footEditor">Ir al editor</a></li>
+        </ul>
+      </section>
+
+      <nav class="cf-footer__col" aria-labelledby="cf-foot-tips">
+        <h2 id="cf-foot-tips" class="cf-footer__title" data-i18n="footTipsTitle">Tips semanales</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../tips/python/" data-site-link data-i18n="tipPython">Python Tips</a></li>
+          <li><a href="../../../tips/javascript/" data-site-link data-i18n="tipJs">JavaScript Standards</a></li>
+          <li><a href="../../../tips/sql-dax/" data-site-link data-i18n="tipSqlDax">SQL &amp; DAX Best Practices</a></li>
+        </ul>
+        <h2 id="cf-foot-fix" class="cf-footer__title cf-footer__title--sub" data-i18n="footFixTitle">Soluciones a errores</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../fix/" data-site-link data-i18n="fixHubTitle">Soluciones rápidas a errores de sintaxis</a></li>
+        </ul>
+      </nav>
+
+      <section class="cf-footer__col" aria-labelledby="cf-foot-nl">
+        <h2 id="cf-foot-nl" class="cf-footer__title" data-i18n="nlTitle">Tips Semanales de Código</h2>
+        <p class="cf-footer__text" data-i18n="nlPromise">Un email por semana con tips prácticos de sintaxis, casos de estudio y novedades de lenguajes (Python, JS, SQL, DAX). Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
+        <form id="cf-newsletter-form" class="cf-newsletter" novalidate>
+          <label class="cf-sr-only" for="cf-newsletter-email" data-i18n="nlEmailLabel">Correo electrónico</label>
+          <input id="cf-newsletter-email" class="cf-input" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="tu@email.com" data-i18n-placeholder="nlPlaceholder">
+          <input type="text" name="_gotcha" class="cf-sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button type="submit" class="cf-btn cf-btn--primary" data-i18n="nlSubmit">Suscribirme</button>
+          <p id="cf-newsletter-status" class="cf-form__status cf-newsletter__status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+    <div class="cf-container cf-footer__legal">
+      <p>&copy; JW Solutions · <span data-i18n="footRights">Todos los derechos reservados</span></p>
+    </div>
+  </footer>
+
+  <div id="cf-toast" class="cf-toast" role="status" aria-live="polite"></div>
+  
+</body>
+</html>

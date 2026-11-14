@@ -3,6 +3,8 @@
 import { t, lang } from './i18n.js';
 
 export const NEWSLETTER_SOURCE = 'code-formatter-tips';
+export const NEWSLETTER_CHANNEL = 'code-formatter';
+const DEFAULT_ENDPOINT = 'https://api.jw-solutions.com/api/newsletter/subscribe';
 const SESSION_KEY = 'cf.newsletter.sent';
 const TIMEOUT_MS = 15000;
 // Misma regla práctica que type=email, más un TLD de 2+ letras; el servidor es la validación definitiva.
@@ -18,10 +20,10 @@ function rememberSent(set) {
   try { sessionStorage.setItem(SESSION_KEY, JSON.stringify([...set])); } catch { /* almacenamiento bloqueado: queda el Set en memoria */ }
 }
 
-/** El endpoint sin configurar (placeholder REPLACE) o ajeno a Formspree no se usa. */
+/** Endpoint nativo en api.jw-solutions.com (con fallback seguro si falta la etiqueta meta). */
 export function getEndpoint() {
-  const url = document.querySelector('meta[name="cf-newsletter-endpoint"]')?.content?.trim() || '';
-  return /^https:\/\/formspree\.io\/f\/[A-Za-z0-9]+$/.test(url) && !/REPLACE/i.test(url) ? url : '';
+  const url = document.querySelector('meta[name="cf-newsletter-endpoint"]')?.content?.trim() || DEFAULT_ENDPOINT;
+  return /^https:\/\/api\.jw-solutions\.com\/api\/newsletter\/subscribe$/.test(url) ? url : DEFAULT_ENDPOINT;
 }
 
 export function initNewsletter() {
@@ -45,6 +47,11 @@ export function initNewsletter() {
     if (!isValidEmail(email)) { setStatus('error', 'nlErrInvalid'); input.setAttribute('aria-invalid', 'true'); input.focus(); return; }
     input.removeAttribute('aria-invalid');
     if (sent.has(email)) { setStatus('error', 'nlErrDuplicate'); return; }
+    if (form.elements._gotcha?.value) {
+      form.reset();
+      setStatus('ok', 'nlSuccess');
+      return;
+    }
     const endpoint = getEndpoint();
     if (!endpoint) { setStatus('error', 'nlErrConfig'); return; }
 
@@ -60,10 +67,9 @@ export function initNewsletter() {
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
           email,
-          source: NEWSLETTER_SOURCE,
-          form_type: 'code-formatter-newsletter',
           lang,
-          _gotcha: form.elements._gotcha?.value || '' // honeypot: Formspree descarta el envío si trae valor
+          channel: NEWSLETTER_CHANNEL,
+          source: NEWSLETTER_SOURCE
         }),
         signal: ctrl.signal
       });

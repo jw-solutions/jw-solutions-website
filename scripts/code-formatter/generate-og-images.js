@@ -24,7 +24,18 @@ const STATE = path.join(TIPS_OUT, 'og-manifest.json');
 const TEMPLATE_VERSION = 2; // súbelo al cambiar el diseño para regenerar todo
 const FORCE = process.argv.includes('--force');
 
-const LANG_BADGE = { python: 'PYTHON', javascript: 'JS', sql: 'SQL', dax: 'DAX' };
+const LANG_BADGE = {
+  python: 'PYTHON',
+  javascript: 'JS',
+  typescript: 'TS',
+  sql: 'SQL',
+  dax: 'DAX',
+  java: 'JAVA',
+  csharp: 'C#',
+  php: 'PHP',
+  json: 'JSON',
+  yaml: 'YAML'
+};
 const FONT = "'Segoe UI', 'Liberation Sans', 'DejaVu Sans', Arial, sans-serif";
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 

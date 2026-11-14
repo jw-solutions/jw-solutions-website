@@ -45,7 +45,7 @@ const MANIFEST = path.join(BASE, 'code-formatter-manifest.json');
 
 const REQUIRED = ['title', 'slug', 'date', 'language', 'author', 'category', 'status'];
 const TR_REQUIRED = ['title', 'slug', 'locale', 'category', 'status'];
-const LANGUAGES = ['python', 'javascript', 'sql', 'dax'];
+const LANGUAGES = ['python', 'javascript', 'typescript', 'sql', 'dax', 'java', 'csharp', 'php', 'json', 'yaml'];
 const LOCALES = ['en', 'pt-BR', 'pt-PT', 'fr', 'de', 'it']; // idiomas de traducción (es = archivo base)
 const DRAFT_STATUSES = ['draft', 'ready'];
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -196,9 +196,14 @@ function publishTranslation(tr, entry, today) {
   entry.translations[tr.locale] = {
     title: tr.data.title,
     category: tr.data.category,
+    ...(tr.data.meta_description ? { meta_description: tr.data.meta_description } : {}),
+    ...(tr.data.summary ? { summary: tr.data.summary } : {}),
     file: `published/${tr.file}`,
     sha256: sha256(out)
   };
+  if (Array.isArray(entry.locales) && !entry.locales.includes(tr.locale)) {
+    entry.locales.push(tr.locale);
+  }
   fs.unlinkSync(path.join(DRAFTS_DIR, tr.file));
   log('SUCCESS', `Traducción publicada ${tr.slug} [${tr.locale}] → published/${tr.file}`);
 }
@@ -210,9 +215,15 @@ function publish({ ready, readyTranslations, manifest }, { dryRun, force }) {
     log('INFO', 'Nada que publicar (sin tips "ready").');
   } else {
     const week = isoWeek(today);
-    const dup = !force && manifest.tips.find((t) => isoWeek(t.published_at) === week);
-    if (dup) log('INFO', `Ya se publicó "${dup.slug}" en la semana ${week}; se omite (usa --force para ignorar).`);
-    else picked = [...ready].sort((a, b) => a.data.date.localeCompare(b.data.date) || a.slug.localeCompare(b.slug))[0];
+    const sameDay = !force && manifest.tips.find((t) => t.published_at === today);
+    const weekTips = manifest.tips.filter((t) => isoWeek(t.published_at) === week);
+    if (sameDay) {
+      log('INFO', `Ya se publicó "${sameDay.slug}" hoy (${today}); se omite (usa --force para ignorar).`);
+    } else if (!force && weekTips.length >= 2) {
+      log('INFO', `Ya se publicaron ${weekTips.length} tips en la semana ${week}; se omite (usa --force para ignorar).`);
+    } else {
+      picked = [...ready].sort((a, b) => a.data.date.localeCompare(b.data.date) || a.slug.localeCompare(b.slug))[0];
+    }
   }
   if (picked && dryRun) log('INFO', `[dry-run] Se publicaría "${picked.slug}" (${picked.data.language}, ${picked.data.date}).`);
 
@@ -226,9 +237,16 @@ function publish({ ready, readyTranslations, manifest }, { dryRun, force }) {
       slug: picked.slug,
       title: picked.data.title,
       language: picked.data.language,
+      programming_language: picked.data.language,
       category: picked.data.category,
+      ...(picked.data.meta_description ? { meta_description: picked.data.meta_description } : {}),
+      ...(picked.data.summary ? { summary: picked.data.summary } : {}),
+      ...(picked.data.related_fix_slug ? { related_fix_slug: picked.data.related_fix_slug } : {}),
+      ...(picked.data.interactive_snippet ? { interactive_snippet: picked.data.interactive_snippet } : {}),
       date: picked.data.date,
       published_at: today,
+      status: 'COMPILED',
+      locales: ['es'],
       file: `published/${picked.file}`,
       sha256: sha256(out)
     });

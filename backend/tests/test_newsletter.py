@@ -21,10 +21,18 @@ def _make_request(ip: str = "127.0.0.1"):
     return SimpleNamespace(client=SimpleNamespace(host=ip), headers={})
 
 
-def _make_sub(sub_id: int, email: str, lang: str = "es", status: str = "active", token: str = "tok_1234567890"):
+def _make_sub(
+    sub_id: int,
+    email: str,
+    lang: str = "es",
+    status: str = "active",
+    token: str = "tok_1234567890",
+    channel: str = "main-website",
+):
     return SimpleNamespace(
         id=sub_id,
         email=email,
+        channel=channel,
         lang=lang,
         status=status,
         unsubscribe_token=token,
@@ -137,3 +145,99 @@ def test_list_subscribers_requires_bearer_and_hides_tokens(monkeypatch):
     assert res["total_unsubscribed"] == 1
     assert len(res["subscribers"]) == 2
     assert "unsubscribe_token" not in res["subscribers"][0]
+
+
+def test_code_formatter_channel_7_langs_and_isolation():
+    fake_db = MagicMock()
+    req = _make_request("10.0.0.2")
+
+    for raw_lang, expected_lang in [
+        ("es", "es"),
+        ("en", "en"),
+        ("pt-BR", "pt-BR"),
+        ("pt-pt", "pt-PT"),
+        ("fr-CA", "fr"),
+        ("de", "de"),
+        ("it", "it"),
+        ("ja", "en"),
+    ]:
+        fake_db.execute.return_value.scalar_one_or_none.return_value = None
+        res = subscribe(
+            SubscribeBody(
+                email="dev@example.com",
+                lang=raw_lang,
+                channel="code-formatter",
+                source="code-formatter-tips",
+            ),
+            req,
+            fake_db,
+        )
+        assert res == {"ok": True, "status": "subscribed"}
+        added_obj = fake_db.add.call_args[0][0]
+        assert added_obj.channel == "code-formatter"
+        assert added_obj.lang == expected_lang
+
+    with pytest.raises(HTTPException) as exc:
+        subscribe(
+            SubscribeBody(email="dev@example.com", lang="es", channel="invalid-channel"),
+            req,
+            fake_db,
+        )
+    assert exc.value.status_code == 422
+
+
+def test_code_formatter_unsubscribe_localized_branding():
+    fake_db = MagicMock()
+    sub = _make_sub(10, "dev@example.com", "fr", "active", "cf_tok_1234567890", channel="code-formatter")
+    fake_db.execute.return_value.scalar_one_or_none.return_value = sub
+
+    res = unsubscribe(token="cf_tok_1234567890", db=fake_db)
+    body = res.body.decode("utf-8")
+    assert res.status_code == 200
+    assert sub.status == "unsubscribed"
+    assert "CODE FORMATTER" in body
+    assert "désabonné" in body
+    assert "https://jw-solutions.com/tools/code-formatter/" in body
+
+
+def test_code_formatter_broadcast_7_langs_and_snippet(monkeypatch):
+    monkeypatch.setenv("NEWSLETTER_WEBHOOK_TOKEN", "super-secret-webhook-token-123")
+    from app.core.config import get_settings
+
+    get_settings.cache_clear()
+
+    fake_db = MagicMock()
+    sub_pt = _make_sub(1, "br@example.com", "pt-BR", "active", "tok_pt", channel="code-formatter")
+    res_subs = MagicMock()
+    res_subs.scalars.return_value.all.return_value = [sub_pt]
+    res_sent = MagicMock()
+    res_sent.scalars.return_value.all.return_value = []
+    fake_db.execute.side_effect = [res_subs, res_sent, MagicMock()]
+
+    payload = BroadcastBody(
+        event="code_formatter.tip.published",
+        event_id="cf-tip-pep8-match",
+        channel="code-formatter",
+        slug="pep8-match",
+        programming_language="python",
+        interactive_snippet="def f():\n    return 1",
+        locales={
+            "pt-BR": {
+                "title": "Dica Python PEP 8",
+                "summary": "Resumo técnico em português do Brasil.",
+                "url": "https://jw-solutions.com/tools/code-formatter/tips/python/pep8-match/pt-BR/",
+            }
+        },
+    )
+
+    with patch("app.api.newsletter.send_html_email") as mock_send:
+        ok = broadcast(payload, fake_db, authorization="Bearer super-secret-webhook-token-123")
+
+    assert ok == {"ok": True, "sent": 1, "skipped": 0, "failed": 0}
+    _, to_addr, subject, _, html_body = mock_send.call_args[0]
+    assert to_addr == "br@example.com"
+    assert subject == "[Code Formatter AI] Dica Python PEP 8"
+    assert "https://jw-solutions.com/tools/code-formatter/tips/python/pep8-match/pt-BR/" in html_body
+    assert "snippet=def%20f%28%29%3A%0A%20%20%20%20return%201" in html_body
+    assert "Cancelar inscri" in html_body
+

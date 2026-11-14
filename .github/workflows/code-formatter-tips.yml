@@ -1,45 +1,71 @@
 name: Code Formatter Tips
 
-# Publicación semanal de tips de Code Formatter (content/code-formatter-tips/).
-# Independiente del blog principal: otro cron, otro manifiesto, otro grupo de concurrencia.
-# Publica también traducciones <slug>.<locale>.md de tips ya publicados (aunque no toque tip base esa semana).
-# Idempotencia: manifiesto content/code-formatter-tips/code-formatter-manifest.json + un tip por semana ISO.
+# Orquestación bi-semanal (Martes y Jueves 14:00 UTC) para Code Formatter & Auto-Doc AI.
+# Ciclo idempotente en content/code-formatter-tips/code-formatter-manifest.json:
+#   COMPILED -> DEPLOYED -> NOTIFIED
 on:
   schedule:
-    - cron: '0 15 * * 4'   # jueves 15:00 UTC (el blog principal publica los lunes)
+    - cron: '0 14 * * 2,4'
   workflow_dispatch:
     inputs:
       dry_run:
         description: 'Solo validar y mostrar qué se publicaría (no escribe ni sube)'
         type: boolean
-        default: true
+        default: false
+      force_language:
+        description: 'Lenguaje de programación opcional (python, javascript, typescript, sql, dax, java, csharp, php, json, yaml)'
+        type: string
+        required: false
+        default: ''
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: code-formatter-tips
   cancel-in-progress: false
 
 jobs:
-  tips:
-    name: Validar y publicar tip
+  publish:
+    name: Generar, compilar y desplegar tip
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
+    outputs:
+      changed: ${{ steps.publish.outputs.changed }}
+      slug: ${{ steps.publish.outputs.slug }}
+      summary: ${{ steps.publish.outputs.summary }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
           fetch-depth: 0
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
       - name: Instalar dependencias de build (gray-matter, resvg)
         run: npm install --no-save --no-package-lock gray-matter@4.0.3 @resvg/resvg-js@2.6.2
+
+      - name: Generar tip bi-semanal con IA (si no hay borrador ready)
+        if: ${{ github.event_name == 'schedule' || inputs.dry_run != true }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          FORCE_LANG: ${{ inputs.force_language }}
+        run: |
+          if [ -n "${FORCE_LANG:-}" ]; then
+            node scripts/code-formatter/generate-weekly-tip.js --lang="$FORCE_LANG"
+          else
+            node scripts/code-formatter/generate-weekly-tip.js
+          fi
 
       - name: Validar tips
         run: node scripts/validate-formatter-tips.js
@@ -50,17 +76,23 @@ jobs:
 
       - name: Publicar tip listo
         id: publish
-        # En ejecuciones programadas inputs.dry_run es vacío → se publica de verdad.
         if: ${{ !inputs.dry_run }}
         run: node scripts/validate-formatter-tips.js --publish
 
-      - name: Regenerar sitemap del Code Formatter
-        if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
-        run: python3 scripts/code-formatter/build_public.py --sitemap
-
-      - name: Generar imágenes OpenGraph (7 idiomas por tip)
+      - name: Generar imágenes OpenGraph (7 idiomas)
         if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
         run: node scripts/code-formatter/generate-og-images.js
+
+      - name: Compilar páginas estáticas localizadas y sitemap
+        if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
+        run: python3 scripts/code-formatter/build_public.py
+
+      - name: Ejecutar pruebas de Code Formatter
+        run: |
+          node scripts/code-formatter/test-growth-loops.mjs
+          if ls tests/code-formatter/*.test.mjs >/dev/null 2>&1; then
+            node --test tests/code-formatter/*.test.mjs
+          fi
 
       - name: Verificar repositorio (después)
         if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
@@ -74,7 +106,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A content/code-formatter-tips sitemap-code-formatter.xml assets/images/og
+          git add -A content/code-formatter-tips tools/code-formatter sitemap-code-formatter.xml assets/images/og
           if git diff --cached --quiet; then
             echo "Sin cambios que confirmar para $PUBLISHED."
             exit 1
@@ -83,3 +115,93 @@ jobs:
           git pull --rebase origin main
           git push origin main
           echo "Publicado: $PUBLISHED" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verificar despliegue público (HTTP 200 en 7 idiomas + sitemap)
+        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        env:
+          SLUG: ${{ steps.publish.outputs.slug }}
+        run: node scripts/code-formatter/check-deployment.js "$SLUG"
+
+      - name: Notificar IndexNow (7 URLs + sitemap)
+        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        continue-on-error: true
+        env:
+          SLUG: ${{ steps.publish.outputs.slug }}
+        run: node scripts/code-formatter/ping-indexnow.js "$SLUG"
+
+      - name: Registrar estado DEPLOYED en manifiesto
+        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/code-formatter-tips/code-formatter-manifest.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(formatter-tips): marcar DEPLOYED (automático)"
+            git pull --rebase origin main
+            git push origin main
+          fi
+
+  notify:
+    name: Notificar suscriptores (canal code-formatter)
+    needs: publish
+    if: ${{ needs.publish.result == 'success' && needs.publish.outputs.slug != '' && !inputs.dry_run }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Enviar notificación al canal code-formatter
+        env:
+          SLUG: ${{ needs.publish.outputs.slug }}
+          NEWSLETTER_WEBHOOK_URL: ${{ secrets.NEWSLETTER_WEBHOOK_URL }}
+          NEWSLETTER_WEBHOOK_TOKEN: ${{ secrets.NEWSLETTER_WEBHOOK_TOKEN }}
+        run: |
+          if [ -z "${NEWSLETTER_WEBHOOK_URL:-}" ]; then
+            echo "::warning::NEWSLETTER_WEBHOOK_URL no configurado. Tip $SLUG permanece DEPLOYED sin notificar."
+            exit 0
+          fi
+          node scripts/code-formatter/notify-newsletter.js "$SLUG" || echo "::warning::Fallo al notificar newsletter; el tip $SLUG permanece DEPLOYED."
+
+      - name: Registrar estado NOTIFIED en manifiesto
+        if: ${{ always() }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/code-formatter-tips/code-formatter-manifest.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(formatter-tips): marcar NOTIFIED (automático)"
+            git pull --rebase origin main
+            git push origin main
+          fi
+
+  alert:
+    name: Alerta de fallo
+    needs: [publish, notify]
+    if: ${{ always() && !inputs.dry_run && (needs.publish.result == 'failure' || needs.notify.result == 'failure') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Abrir incidencia en GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PUBLISH: ${{ needs.publish.result }}
+          NOTIFY: ${{ needs.notify.result }}
+        run: |
+          gh issue create --repo "${{ github.repository }}" \
+            --label "automation-alert,code-formatter" \
+            --title "Code Formatter Tips falló ($(date -u +%F))" \
+            --body "publish=$PUBLISH, notify=$NOTIFY. Detalle: $RUN_URL" || \
+          gh issue create --repo "${{ github.repository }}" \
+            --title "Code Formatter Tips falló ($(date -u +%F))" \
+            --body "publish=$PUBLISH, notify=$NOTIFY. Detalle: $RUN_URL"

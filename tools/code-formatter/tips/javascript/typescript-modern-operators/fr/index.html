@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TypeScript moderne : ?., ?? et satisfies sans erreurs de formatage | Code Formatter &amp; Auto-Doc AI</title>
+  <meta name="description" content="Trois opérateurs réduisent le code défensif : le chaînage optionnel ?., la coalescence des nuls ?? et l&#x27;opérateur satisfies de TypeScript 4.9+, qui valide le ty">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="canonical" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/fr/">
+  <link rel="alternate" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/es/">
+  <link rel="alternate" hreflang="en" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/en/">
+  <link rel="alternate" hreflang="pt-BR" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/pt-BR/">
+  <link rel="alternate" hreflang="pt-PT" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/pt-PT/">
+  <link rel="alternate" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/fr/">
+  <link rel="alternate" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/de/">
+  <link rel="alternate" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/it/">
+  <link rel="alternate" hreflang="x-default" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/es/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="JW Solutions">
+  <meta property="og:title" content="TypeScript moderne : ?., ?? et satisfies sans erreurs de formatage | Code Formatter &amp; Auto-Doc AI">
+  <meta property="og:description" content="Trois opérateurs réduisent le code défensif : le chaînage optionnel ?., la coalescence des nuls ?? et l&#x27;opérateur satisfies de TypeScript 4.9+, qui valide le ty">
+  <meta property="og:url" content="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/fr/">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:image" content="https://jw-solutions.com/assets/images/og/tips/typescript-modern-operators-fr.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TypeScript moderne : ?., ?? et satisfies sans erreurs de formatage | Code Formatter &amp; Auto-Doc AI">
+  <meta name="twitter:description" content="Trois opérateurs réduisent le code défensif : le chaînage optionnel ?., la coalescence des nuls ?? et l&#x27;opérateur satisfies de TypeScript 4.9+, qui valide le ty">
+  <meta name="twitter:image" content="https://jw-solutions.com/assets/images/og/tips/typescript-modern-operators-fr.png">
+  <meta name="theme-color" content="#0b0f17">
+  <meta name="cf-newsletter-endpoint" content="https://api.jw-solutions.com/api/newsletter/subscribe">
+  <link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
+  <link rel="icon" type="image/x-icon" sizes="any" href="../../../../favicon.ico">
+  <link rel="apple-touch-icon" href="../../../../apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../../../../../assets/css/tools/code-formatter.css">
+  <script type="application/ld+json" id="cf-jsonld">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "TypeScript moderne : ?., ?? et satisfies sans erreurs de formatage", "description": "Trois opérateurs réduisent le code défensif : le chaînage optionnel ?., la coalescence des nuls ?? et l'opérateur satisfies de TypeScript 4.9+, qui valide le ty", "inLanguage": "fr", "articleSection": "Astuces de syntaxe", "keywords": "javascript, code formatter, auto-doc ai, syntax, best practices", "datePublished": "2026-11-02", "dateModified": "2026-11-02", "url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/fr/", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/fr/"}, "isPartOf": {"@type": "WebApplication", "name": "Code Formatter & Auto-Doc AI", "url": "https://jw-solutions.com/tools/code-formatter/"}, "image": "https://jw-solutions.com/assets/images/og/tips/typescript-modern-operators-fr.png", "author": {"@type": "Organization", "name": "JW Solutions"}, "publisher": {"@type": "Organization", "name": "JW Solutions", "url": "https://jw-solutions.com"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Code Formatter", "item": "https://jw-solutions.com/tools/code-formatter/"}, {"@type": "ListItem", "position": 2, "name": "Astuces de syntaxe", "item": "https://jw-solutions.com/tools/code-formatter/tips/javascript/"}, {"@type": "ListItem", "position": 3, "name": "TypeScript moderne : ?., ?? et satisfies sans erreurs de formatage", "item": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/fr/"}]}]}</script>
+</head>
+<body class="cf-body">
+  <a class="cf-skip" href="#cf-main" data-i18n="skip">Saltar al contenido</a>
+
+  <header class="cf-header">
+    <div class="cf-container cf-header__inner">
+      <div class="cf-logo" role="img" aria-label="JW Solutions">
+        <span class="cf-logo__mark">JW</span>
+        <span class="cf-logo__text">SOLUTIONS</span>
+      </div>
+      <nav class="cf-nav" aria-label="Code Formatter">
+        <select id="cf-ui-lang" class="cf-select cf-select--compact" data-i18n-aria="uiLang" aria-label="Idioma de la interfaz"></select>
+        <a class="cf-nav__link" data-site-link data-i18n="tipsBackTool" href="../../../../">Volver al formateador</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="cf-main" class="cf-main" data-fix-data="">
+    <section class="cf-container cf-hero">
+      <span class="cf-tag" data-i18n="fixTag">Astuces de syntaxe</span>
+      <h1 id="cf-fix-title" class="cf-title">TypeScript moderne : ?., ?? et satisfies sans erreurs de formatage</h1>
+      <p id="cf-fix-lead" class="cf-lead cf-fix__lead">Trois opérateurs réduisent le code défensif : le chaînage optionnel ?., la coalescence des nuls ?? et l&#x27;opérateur satisfies de TypeScript 4.9+, qui valide le ty</p>
+    </section>
+    <section class="cf-container cf-tips">
+      <div id="cf-fix-body" class="cf-card cf-tip">
+        <p class="cf-muted cf-tip__meta">2026-11-02 · Astuces de syntaxe · JAVASCRIPT</p>
+        <h2 class="cf-tip__h">Astuce de la semaine</h2>
+        <p>Trois opérateurs réduisent le code défensif : le chaînage optionnel <code>?.</code>, la coalescence des nuls <code>??</code> et l&#x27;opérateur <code>satisfies</code> de TypeScript 4.9+, qui valide le type sans élargir la valeur.</p>
+        <pre class="cf-tip__code"><code>const config = {
+  retries: 3,
+  endpoint: &quot;https://api.example.com&quot;,
+} satisfies Record&lt;string, string | number&gt;;
+
+const timeout = options?.timeout ?? 5000;
+const city = user?.address?.city ?? &quot;Sin ciudad&quot;;</code></pre>
+        <h2 class="cf-tip__h">Règles rapides</h2>
+        <ul class="cf-tip__list">
+          <li>Utilisez <code>??</code> (et non <code>||</code>) lorsque <code>0</code> ou <code>&quot;&quot;</code> sont des valeurs valides.</li>
+          <li>Évitez les chaînes <code>?.</code> de plus de trois niveaux : signe d&#x27;un modèle mal conçu.</li>
+          <li>Préférez <code>satisfies</code> à <code>as</code> pour ne pas masquer les erreurs de type.</li>
+        </ul>
+        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="https://jw-solutions.com/tools/code-formatter/?lang=fr&amp;snippet=const%20config%20%3D%20%7B%0A%20%20retries%3A%203%2C%0A%20%20endpoint%3A%20%22https%3A//api.example.com%22%2C%0A%7D%20satisfies%20Record%3Cstring%2C%20string%20%7C%20number%3E%3B%0A%0Aconst%20timeout%20%3D%20options%3F.timeout%20%3F%3F%205000%3B%0Aconst%20city%20%3D%20user%3F.address%3F.city%20%3F%3F%20%22Sin%20ciudad%22%3B">Tester l&#x27;extrait dans le formateur</a></p>
+        <p><a class="cf-nav__link" href="https://jw-solutions.com/tools/code-formatter/fix/js-unexpected-token/?lang=fr">Voir le guide de correction: Comment corriger SyntaxError: Unexpected token dans Node.js 22</a></p>
+        <h2 class="cf-tip__h">Astuces associées</h2>
+        <ul class="cf-fix__list"><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/fr/">PEP 8 en Python 3.12 : écrire des blocs match/case lisibles</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/fr/">SQL et DAX : trois habitudes pour des requêtes rapides et lisibles</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cf-footer">
+    <div class="cf-container cf-footer__grid">
+      <section class="cf-footer__col" aria-labelledby="cf-foot-id">
+        <div class="cf-logo" role="img" aria-label="JW Solutions">
+          <span class="cf-logo__mark">JW</span>
+          <span class="cf-logo__text">SOLUTIONS</span>
+        </div>
+        <h2 id="cf-foot-id" class="cf-footer__title">Code Formatter <span class="cf-gold">&amp; Auto-Doc AI</span></h2>
+        <p class="cf-footer__text" data-i18n="footDesc">Formatea y documenta tu código en Python, JavaScript, SQL, DAX y más. Herramienta independiente de JW Solutions.</p>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../" data-site-link data-i18n="footEditor">Ir al editor</a></li>
+        </ul>
+      </section>
+
+      <nav class="cf-footer__col" aria-labelledby="cf-foot-tips">
+        <h2 id="cf-foot-tips" class="cf-footer__title" data-i18n="footTipsTitle">Tips semanales</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../tips/python/" data-site-link data-i18n="tipPython">Python Tips</a></li>
+          <li><a href="../../../../tips/javascript/" data-site-link data-i18n="tipJs">JavaScript Standards</a></li>
+          <li><a href="../../../../tips/sql-dax/" data-site-link data-i18n="tipSqlDax">SQL &amp; DAX Best Practices</a></li>
+        </ul>
+        <h2 id="cf-foot-fix" class="cf-footer__title cf-footer__title--sub" data-i18n="footFixTitle">Soluciones a errores</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../fix/" data-site-link data-i18n="fixHubTitle">Soluciones rápidas a errores de sintaxis</a></li>
+        </ul>
+      </nav>
+
+      <section class="cf-footer__col" aria-labelledby="cf-foot-nl">
+        <h2 id="cf-foot-nl" class="cf-footer__title" data-i18n="nlTitle">Tips Semanales de Código</h2>
+        <p class="cf-footer__text" data-i18n="nlPromise">Un email por semana con tips prácticos de sintaxis, casos de estudio y novedades de lenguajes (Python, JS, SQL, DAX). Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
+        <form id="cf-newsletter-form" class="cf-newsletter" novalidate>
+          <label class="cf-sr-only" for="cf-newsletter-email" data-i18n="nlEmailLabel">Correo electrónico</label>
+          <input id="cf-newsletter-email" class="cf-input" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="tu@email.com" data-i18n-placeholder="nlPlaceholder">
+          <input type="text" name="_gotcha" class="cf-sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button type="submit" class="cf-btn cf-btn--primary" data-i18n="nlSubmit">Suscribirme</button>
+          <p id="cf-newsletter-status" class="cf-form__status cf-newsletter__status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+    <div class="cf-container cf-footer__legal">
+      <p>&copy; JW Solutions · <span data-i18n="footRights">Todos los derechos reservados</span></p>
+    </div>
+  </footer>
+
+  <div id="cf-toast" class="cf-toast" role="status" aria-live="polite"></div>
+  
+</body>
+</html>

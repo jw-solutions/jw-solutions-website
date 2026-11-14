@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PEP 8 in Python 3.12: scrivere blocchi match/case leggibili | Code Formatter &amp; Auto-Doc AI</title>
+  <meta name="description" content="Il match/case di Python 3.10+ è potente, ma se indentato male diventa illeggibile. La PEP 8 raccomanda di indentare ogni case di un livello dentro match, di man">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="canonical" href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/it/">
+  <link rel="alternate" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/es/">
+  <link rel="alternate" hreflang="en" href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/en/">
+  <link rel="alternate" hreflang="pt-BR" href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/pt-BR/">
+  <link rel="alternate" hreflang="pt-PT" href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/pt-PT/">
+  <link rel="alternate" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/fr/">
+  <link rel="alternate" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/de/">
+  <link rel="alternate" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/it/">
+  <link rel="alternate" hreflang="x-default" href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/es/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="JW Solutions">
+  <meta property="og:title" content="PEP 8 in Python 3.12: scrivere blocchi match/case leggibili | Code Formatter &amp; Auto-Doc AI">
+  <meta property="og:description" content="Il match/case di Python 3.10+ è potente, ma se indentato male diventa illeggibile. La PEP 8 raccomanda di indentare ogni case di un livello dentro match, di man">
+  <meta property="og:url" content="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/it/">
+  <meta property="og:locale" content="it_IT">
+  <meta property="og:image" content="https://jw-solutions.com/assets/images/og/tips/python-312-pep8-tips-it.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PEP 8 in Python 3.12: scrivere blocchi match/case leggibili | Code Formatter &amp; Auto-Doc AI">
+  <meta name="twitter:description" content="Il match/case di Python 3.10+ è potente, ma se indentato male diventa illeggibile. La PEP 8 raccomanda di indentare ogni case di un livello dentro match, di man">
+  <meta name="twitter:image" content="https://jw-solutions.com/assets/images/og/tips/python-312-pep8-tips-it.png">
+  <meta name="theme-color" content="#0b0f17">
+  <meta name="cf-newsletter-endpoint" content="https://api.jw-solutions.com/api/newsletter/subscribe">
+  <link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
+  <link rel="icon" type="image/x-icon" sizes="any" href="../../../../favicon.ico">
+  <link rel="apple-touch-icon" href="../../../../apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../../../../../assets/css/tools/code-formatter.css">
+  <script type="application/ld+json" id="cf-jsonld">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "PEP 8 in Python 3.12: scrivere blocchi match/case leggibili", "description": "Il match/case di Python 3.10+ è potente, ma se indentato male diventa illeggibile. La PEP 8 raccomanda di indentare ogni case di un livello dentro match, di man", "inLanguage": "it", "articleSection": "Consigli di sintassi", "keywords": "python, code formatter, auto-doc ai, syntax, best practices", "datePublished": "2026-11-02", "dateModified": "2026-11-02", "url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/it/", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/it/"}, "isPartOf": {"@type": "WebApplication", "name": "Code Formatter & Auto-Doc AI", "url": "https://jw-solutions.com/tools/code-formatter/"}, "image": "https://jw-solutions.com/assets/images/og/tips/python-312-pep8-tips-it.png", "author": {"@type": "Organization", "name": "JW Solutions"}, "publisher": {"@type": "Organization", "name": "JW Solutions", "url": "https://jw-solutions.com"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Code Formatter", "item": "https://jw-solutions.com/tools/code-formatter/"}, {"@type": "ListItem", "position": 2, "name": "Consigli di sintassi", "item": "https://jw-solutions.com/tools/code-formatter/tips/python/"}, {"@type": "ListItem", "position": 3, "name": "PEP 8 in Python 3.12: scrivere blocchi match/case leggibili", "item": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/it/"}]}]}</script>
+</head>
+<body class="cf-body">
+  <a class="cf-skip" href="#cf-main" data-i18n="skip">Saltar al contenido</a>
+
+  <header class="cf-header">
+    <div class="cf-container cf-header__inner">
+      <div class="cf-logo" role="img" aria-label="JW Solutions">
+        <span class="cf-logo__mark">JW</span>
+        <span class="cf-logo__text">SOLUTIONS</span>
+      </div>
+      <nav class="cf-nav" aria-label="Code Formatter">
+        <select id="cf-ui-lang" class="cf-select cf-select--compact" data-i18n-aria="uiLang" aria-label="Idioma de la interfaz"></select>
+        <a class="cf-nav__link" data-site-link data-i18n="tipsBackTool" href="../../../../">Volver al formateador</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="cf-main" class="cf-main" data-fix-data="">
+    <section class="cf-container cf-hero">
+      <span class="cf-tag" data-i18n="fixTag">Consigli di sintassi</span>
+      <h1 id="cf-fix-title" class="cf-title">PEP 8 in Python 3.12: scrivere blocchi match/case leggibili</h1>
+      <p id="cf-fix-lead" class="cf-lead cf-fix__lead">Il match/case di Python 3.10+ è potente, ma se indentato male diventa illeggibile. La PEP 8 raccomanda di indentare ogni case di un livello dentro match, di man</p>
+    </section>
+    <section class="cf-container cf-tips">
+      <div id="cf-fix-body" class="cf-card cf-tip">
+        <p class="cf-muted cf-tip__meta">2026-11-02 · Consigli di sintassi · PYTHON</p>
+        <h2 class="cf-tip__h">Consiglio della settimana</h2>
+        <p>Il <code>match</code>/<code>case</code> di Python 3.10+ è potente, ma se indentato male diventa illeggibile. La PEP 8 raccomanda di indentare ogni <code>case</code> di un livello dentro <code>match</code>, di mantenere le righe entro 79 caratteri e di usare guardie <code>if</code> brevi.</p>
+        <pre class="cf-tip__code"><code>match command.split():
+    case [&quot;go&quot;, direction] if direction in {&quot;north&quot;, &quot;south&quot;}:
+        move(direction)
+    case [&quot;quit&quot; | &quot;exit&quot;]:
+        shutdown()
+    case _:
+        print(&quot;Comando desconocido&quot;)</code></pre>
+        <h2 class="cf-tip__h">Regole rapide</h2>
+        <ul class="cf-tip__list">
+          <li>Un <code>case</code> per pattern; evita guardie con più di una condizione.</li>
+          <li>Usa <code>|</code> per raggruppare le alternative invece di ripetere i rami.</li>
+          <li>Chiudi sempre con <code>case _:</code> per non ignorare input inattesi.</li>
+        </ul>
+        <p>Incolla questo frammento nel formattatore con il pulsante qui sopra e controlla subito l&#x27;indentazione.</p>
+        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="https://jw-solutions.com/tools/code-formatter/?lang=it&amp;snippet=match%20command.split%28%29%3A%0A%20%20%20%20case%20%5B%22go%22%2C%20direction%5D%20if%20direction%20in%20%7B%22north%22%2C%20%22south%22%7D%3A%0A%20%20%20%20%20%20%20%20move%28direction%29%0A%20%20%20%20case%20%5B%22quit%22%20%7C%20%22exit%22%5D%3A%0A%20%20%20%20%20%20%20%20shutdown%28%29%0A%20%20%20%20case%20_%3A%0A%20%20%20%20%20%20%20%20print%28%22Comando%20desconocido%22%29">Prova lo snippet nel formattatore</a></p>
+        <p><a class="cf-nav__link" href="https://jw-solutions.com/tools/code-formatter/fix/python-indentation-error/?lang=it">Vedi guida alla correzione: Come risolvere IndentationError in Python 3.12</a></p>
+        <h2 class="cf-tip__h">Suggerimenti correlati</h2>
+        <ul class="cf-fix__list"><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/it/">TypeScript moderno: ?., ?? e satisfies senza errori di formattazione</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/it/">SQL e DAX: tre abitudini per query veloci e leggibili</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cf-footer">
+    <div class="cf-container cf-footer__grid">
+      <section class="cf-footer__col" aria-labelledby="cf-foot-id">
+        <div class="cf-logo" role="img" aria-label="JW Solutions">
+          <span class="cf-logo__mark">JW</span>
+          <span class="cf-logo__text">SOLUTIONS</span>
+        </div>
+        <h2 id="cf-foot-id" class="cf-footer__title">Code Formatter <span class="cf-gold">&amp; Auto-Doc AI</span></h2>
+        <p class="cf-footer__text" data-i18n="footDesc">Formatea y documenta tu código en Python, JavaScript, SQL, DAX y más. Herramienta independiente de JW Solutions.</p>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../" data-site-link data-i18n="footEditor">Ir al editor</a></li>
+        </ul>
+      </section>
+
+      <nav class="cf-footer__col" aria-labelledby="cf-foot-tips">
+        <h2 id="cf-foot-tips" class="cf-footer__title" data-i18n="footTipsTitle">Tips semanales</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../tips/python/" data-site-link data-i18n="tipPython">Python Tips</a></li>
+          <li><a href="../../../../tips/javascript/" data-site-link data-i18n="tipJs">JavaScript Standards</a></li>
+          <li><a href="../../../../tips/sql-dax/" data-site-link data-i18n="tipSqlDax">SQL &amp; DAX Best Practices</a></li>
+        </ul>
+        <h2 id="cf-foot-fix" class="cf-footer__title cf-footer__title--sub" data-i18n="footFixTitle">Soluciones a errores</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../fix/" data-site-link data-i18n="fixHubTitle">Soluciones rápidas a errores de sintaxis</a></li>
+        </ul>
+      </nav>
+
+      <section class="cf-footer__col" aria-labelledby="cf-foot-nl">
+        <h2 id="cf-foot-nl" class="cf-footer__title" data-i18n="nlTitle">Tips Semanales de Código</h2>
+        <p class="cf-footer__text" data-i18n="nlPromise">Un email por semana con tips prácticos de sintaxis, casos de estudio y novedades de lenguajes (Python, JS, SQL, DAX). Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
+        <form id="cf-newsletter-form" class="cf-newsletter" novalidate>
+          <label class="cf-sr-only" for="cf-newsletter-email" data-i18n="nlEmailLabel">Correo electrónico</label>
+          <input id="cf-newsletter-email" class="cf-input" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="tu@email.com" data-i18n-placeholder="nlPlaceholder">
+          <input type="text" name="_gotcha" class="cf-sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button type="submit" class="cf-btn cf-btn--primary" data-i18n="nlSubmit">Suscribirme</button>
+          <p id="cf-newsletter-status" class="cf-form__status cf-newsletter__status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+    <div class="cf-container cf-footer__legal">
+      <p>&copy; JW Solutions · <span data-i18n="footRights">Todos los derechos reservados</span></p>
+    </div>
+  </footer>
+
+  <div id="cf-toast" class="cf-toast" role="status" aria-live="polite"></div>
+  
+</body>
+</html>

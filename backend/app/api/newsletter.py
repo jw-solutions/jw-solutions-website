@@ -17,7 +17,13 @@ from app.core.config import get_settings
 from app.core.database import get_db
 from app.models.newsletter import NewsletterDelivery, NewsletterSubscriber
 from app.security.rate_limit import client_ip, newsletter_limiter
-from app.services.newsletter_service import render_newsletter_email, send_html_email
+from app.services.newsletter_service import (
+    ALLOWED_CHANNELS,
+    normalize_lang,
+    render_newsletter_email,
+    render_unsubscribe_page,
+    send_html_email,
+)
 
 router = APIRouter(prefix="/api/newsletter")
 
@@ -25,6 +31,7 @@ router = APIRouter(prefix="/api/newsletter")
 class SubscribeBody(BaseModel):
     email: str = Field(min_length=3, max_length=254)
     lang: str = Field(default="es", max_length=10)
+    channel: str = Field(default="main-website", max_length=50)
     source: str = Field(default="website", max_length=50)
 
 
@@ -45,7 +52,20 @@ class ArticlePayload(BaseModel):
 class BroadcastBody(BaseModel):
     event: str = Field(default="article.published", max_length=64)
     event_id: str = Field(min_length=1, max_length=128)
-    article: ArticlePayload
+    channel: str = Field(default="main-website", max_length=50)
+    article: ArticlePayload | None = None
+    slug: str | None = Field(default=None, max_length=255)
+    programming_language: str | None = Field(default=None, max_length=50)
+    interactive_snippet: str | None = None
+    locales: dict[str, Any] | None = None
+    published_at: str | None = None
+
+
+def _validate_channel(raw: str | None) -> str:
+    ch = (raw or "main-website").strip()
+    if ch not in ALLOWED_CHANNELS:
+        raise HTTPException(status_code=422, detail=f"Canal no permitido: {ch}")
+    return ch
 
 
 @router.post("/subscribe")
@@ -61,16 +81,21 @@ def subscribe(
     except EmailNotValidError:
         raise HTTPException(status_code=422, detail="Correo electrónico inválido")
 
-    lang = "en" if body.lang.strip().lower().startswith("en") else "es"
+    channel = _validate_channel(body.channel)
+    lang = normalize_lang(body.lang, default="en")
     source = (body.source or "website").strip()[:50] or "website"
 
     existing = db.execute(
-        select(NewsletterSubscriber).where(NewsletterSubscriber.email == normalized_email)
+        select(NewsletterSubscriber).where(
+            NewsletterSubscriber.email == normalized_email,
+            NewsletterSubscriber.channel == channel,
+        )
     ).scalar_one_or_none()
 
     if existing is None:
         sub = NewsletterSubscriber(
             email=normalized_email,
+            channel=channel,
             lang=lang,
             status="active",
             unsubscribe_token=secrets.token_urlsafe(32),
@@ -106,30 +131,9 @@ def unsubscribe(
         sub.unsubscribed_at = datetime.now(timezone.utc)
         db.flush()
 
-    title = "Baja confirmada | JW Solutions" if sub is not None else "Enlace no válido | JW Solutions"
-    heading = "Te has dado de baja correctamente" if sub is not None else "Enlace de baja no válido o expirado"
-    msg = (
-        "Ya no recibirás correos semanales del boletín de JW Solutions. Puedes volver a suscribirte cuando quieras desde nuestra web."
-        if sub is not None
-        else "No pudimos encontrar una suscripción activa asociada a este enlace."
-    )
-
-    page = f"""<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{title}</title>
-</head>
-<body style="margin:0;padding:40px 16px;background:#0B0E12;color:#F3F4F6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:flex;justify-content:center;align-items:center;min-height:80vh;">
-  <div style="max-width:480px;width:100%;background:#111827;border:1px solid #D4AF37;border-radius:14px;padding:32px;text-align:center;">
-    <div style="display:inline-block;background:#D4AF37;color:#0B0E12;font-weight:800;padding:6px 12px;border-radius:6px;letter-spacing:1px;margin-bottom:16px;">JW SOLUTIONS</div>
-    <h1 style="margin:0 0 12px;font-size:22px;color:#FFFFFF;">{heading}</h1>
-    <p style="margin:0 0 24px;color:#D1D5DB;line-height:1.6;font-size:15px;">{msg}</p>
-    <a href="https://jw-solutions.com/" style="display:inline-block;padding:12px 24px;background:#D4AF37;color:#0B0E12;font-weight:700;text-decoration:none;border-radius:8px;">Volver a jw-solutions.com</a>
-  </div>
-</body>
-</html>"""
+    lang = getattr(sub, "lang", "es") if sub is not None else "es"
+    channel = getattr(sub, "channel", "main-website") if sub is not None else "main-website"
+    page = render_unsubscribe_page(found=(sub is not None), lang=lang, channel=channel)
     return HTMLResponse(content=page, status_code=200 if sub is not None else 404)
 
 
@@ -151,9 +155,30 @@ def broadcast(
 ) -> dict[str, Any]:
     settings = get_settings()
     _require_bearer_token(authorization, settings.newsletter_webhook_token.get_secret_value())
+    channel = _validate_channel(body.channel)
+
+    if body.article is not None:
+        article_slug = body.article.slug
+        payload_dict = body.article.model_dump()
+    elif body.slug:
+        article_slug = body.slug
+        payload_dict = {
+            "slug": body.slug,
+            "programming_language": body.programming_language,
+            "interactive_snippet": body.interactive_snippet,
+            "locales": body.locales or {},
+            "published_at": body.published_at,
+        }
+    else:
+        raise HTTPException(status_code=422, detail="Debe incluir article o slug en el payload")
 
     subscribers = db.execute(
-        select(NewsletterSubscriber).where(NewsletterSubscriber.status == "active").order_by(NewsletterSubscriber.id)
+        select(NewsletterSubscriber)
+        .where(
+            NewsletterSubscriber.status == "active",
+            NewsletterSubscriber.channel == channel,
+        )
+        .order_by(NewsletterSubscriber.id)
     ).scalars().all()
 
     already_sent_ids = set(
@@ -165,7 +190,6 @@ def broadcast(
         ).scalars().all()
     )
 
-    article_dict = body.article.model_dump()
     base_url = settings.newsletter_base_url.rstrip("/")
 
     sent = 0
@@ -178,7 +202,9 @@ def broadcast(
             continue
 
         unsub_url = f"{base_url}/api/newsletter/unsubscribe?token={sub.unsubscribe_token}"
-        subject, text_body, html_body = render_newsletter_email(article_dict, sub.lang, unsub_url)
+        subject, text_body, html_body = render_newsletter_email(
+            payload_dict, sub.lang, unsub_url, channel=channel
+        )
 
         delivery_status = "sent"
         err_msg: str | None = None
@@ -194,7 +220,8 @@ def broadcast(
             pg_insert(NewsletterDelivery)
             .values(
                 event_id=body.event_id,
-                article_slug=body.article.slug,
+                channel=channel,
+                article_slug=article_slug,
                 subscriber_id=sub.id,
                 status=delivery_status,
                 error_message=err_msg,
@@ -224,13 +251,17 @@ def broadcast(
 def list_subscribers(
     db: Annotated[Session, Depends(get_db)],
     authorization: Annotated[str | None, Header()] = None,
+    channel: Annotated[str | None, Query(max_length=50)] = None,
 ) -> dict[str, Any]:
     settings = get_settings()
     _require_bearer_token(authorization, settings.newsletter_webhook_token.get_secret_value())
 
-    rows = db.execute(
-        select(NewsletterSubscriber).order_by(NewsletterSubscriber.id)
-    ).scalars().all()
+    stmt = select(NewsletterSubscriber).order_by(NewsletterSubscriber.id)
+    if channel is not None:
+        validated_channel = _validate_channel(channel)
+        stmt = stmt.where(NewsletterSubscriber.channel == validated_channel)
+
+    rows = db.execute(stmt).scalars().all()
 
     total_active = sum(1 for r in rows if r.status == "active")
     total_unsubscribed = sum(1 for r in rows if r.status == "unsubscribed")
@@ -243,6 +274,7 @@ def list_subscribers(
             {
                 "id": r.id,
                 "email": r.email,
+                "channel": getattr(r, "channel", "main-website"),
                 "lang": r.lang,
                 "status": r.status,
                 "source": r.source,

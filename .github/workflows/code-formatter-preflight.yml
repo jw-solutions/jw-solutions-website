@@ -1,0 +1,63 @@
+name: Code Formatter Preflight
+
+# Lunes y Miércoles 14:00 UTC: verifica sintaxis, conectividad con Gemini API y salud de api.jw-solutions.com
+# antes de las publicaciones bi-semanales de Martes y Jueves.
+on:
+  schedule:
+    - cron: '0 14 * * 1,3'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  preflight:
+    name: Pre-vuelo Code Formatter
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verificar sintaxis de scripts
+        run: |
+          node --check scripts/code-formatter/generate-weekly-tip.js
+          node --check scripts/code-formatter/generate-og-images.js
+          node --check scripts/code-formatter/check-deployment.js
+          node --check scripts/code-formatter/ping-indexnow.js
+          node --check scripts/code-formatter/notify-newsletter.js
+          node --check scripts/validate-formatter-tips.js
+          python3 -m py_compile scripts/code-formatter/build_public.py
+
+      - name: Verificar salud de api.jw-solutions.com
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://api.jw-solutions.com/health)
+          echo "API health HTTP $STATUS"
+          [ "$STATUS" = "200" ]
+
+      - name: Verificar conectividad con GEMINI_API_KEY
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -z "${GEMINI_API_KEY:-}" ]; then
+            echo "::error::GEMINI_API_KEY no configurada en secretos"
+            exit 1
+          fi
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "x-goog-api-key: $GEMINI_API_KEY" \
+            "https://generativelanguage.googleapis.com/v1beta/models")
+          echo "Gemini API models HTTP $STATUS"
+          [ "$STATUS" = "200" ]
