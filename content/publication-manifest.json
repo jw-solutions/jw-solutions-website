@@ -44,8 +44,9 @@
       "url": "https://jw-solutions.com/blog/integracion-crm-erp-reportes-tiempo-real/",
       "notification": {
         "event_id": "jw-blog-20261114-integracion-crm-erp-reportes-tiempo-real",
-        "status": "PENDING",
-        "attempts": 0
+        "status": "NOTIFIED",
+        "attempts": 3,
+        "last_attempt": "2026-11-14T17:57:41.467Z"
       }
     }
   ]
