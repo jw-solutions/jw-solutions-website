@@ -144,6 +144,81 @@
           "sha256": "5228cf41cb6b3f33ed6e8080c9ccbd06bd70159b3bfd02f6f9e72a7e24ad5962"
         }
       }
+    },
+    {
+      "slug": "typescript-refactoring-legacy-any-type-guards-tsdoc",
+      "title": "Refactorización de tipos any en TypeScript con Type Guards y TSDoc",
+      "language": "typescript",
+      "programming_language": "typescript",
+      "category": "Buenas prácticas",
+      "meta_description": "Refactoriza código legado en TypeScript eliminando tipos any mediante Type Guards y TSDoc estructurado para pipelines de Auto-Doc AI y Prettier.",
+      "summary": "Aprende a eliminar el uso de any en repositorios heredados utilizando predicados de tipo estricto en TypeScript y formateo estandarizado TSDoc para Auto-Doc AI.",
+      "related_fix_slug": "ts-unterminated-string-literal",
+      "interactive_snippet": "export interface UserProfile {\n  id: string;\n  role: 'admin' | 'user';\n}\n\nexport function isUserProfile(payload: unknown): payload is UserProfile {\n  return (\n    typeof payload === 'object' &&\n    payload !== null &&\n    'id' in payload &&\n    typeof (payload as Record<string, unknown>).id === 'string' &&\n    'role' in payload &&\n    ['admin', 'user'].includes((payload as Record<string, unknown>).role as string)\n  );\n}",
+      "date": "2026-11-14",
+      "published_at": "2026-11-14",
+      "status": "COMPILED",
+      "locales": [
+        "es",
+        "de",
+        "en",
+        "fr",
+        "it",
+        "pt-BR",
+        "pt-PT"
+      ],
+      "file": "published/typescript-refactoring-legacy-any-type-guards-tsdoc.md",
+      "sha256": "acbb5c428531a0f4aba932ddd319a29011c7f435ed9968145708a4c9cb4f32ee",
+      "translations": {
+        "de": {
+          "title": "Refactoring von legacy any-Typen in TypeScript mit Type Guards und TSDoc",
+          "category": "Buenas prácticas",
+          "meta_description": "Refactoren Sie Legacy-TypeScript-Code durch Elimination von any-Typen mit Type Guards und TSDoc für Auto-Doc AI und Prettier-Pipelines.",
+          "summary": "Lernen Sie, wie Sie any-Typen aus veralteten Codebasen entfernen, indem Sie strikte Type Guards in TypeScript und TSDoc-Standards für Auto-Doc AI nutzen.",
+          "file": "published/typescript-refactoring-legacy-any-type-guards-tsdoc.de.md",
+          "sha256": "75359dd8a3093c9e96007d91c42be1cbc97cf28b063cc00b4a28db02dcc5d25d"
+        },
+        "en": {
+          "title": "Refactoring Legacy any Types in TypeScript with Type Guards and TSDoc",
+          "category": "Buenas prácticas",
+          "meta_description": "Refactor legacy TypeScript code by eliminating any types with custom Type Guards and TSDoc annotations optimized for Prettier and Auto-Doc AI.",
+          "summary": "Learn how to remove any types from legacy codebases using strict type predicates in TypeScript and standardized TSDoc formatting for Auto-Doc AI.",
+          "file": "published/typescript-refactoring-legacy-any-type-guards-tsdoc.en.md",
+          "sha256": "9e6b42f2d1191a8ac7cf098ce489825a40260cfa62ea1bd9434d7e9d54c59003"
+        },
+        "fr": {
+          "title": "Refactoring du Type any en TypeScript avec Type Guards et TSDoc",
+          "category": "Buenas prácticas",
+          "meta_description": "Refactorez le code legacy TypeScript en éliminant any grâce aux Type Guards et TSDoc estructuré pour les pipelines Auto-Doc AI et Prettier.",
+          "summary": "Apprenez à supprimer le type any du code legacy grâce aux prédicats de type stricts en TypeScript et à la documentation TSDoc pour Auto-Doc AI.",
+          "file": "published/typescript-refactoring-legacy-any-type-guards-tsdoc.fr.md",
+          "sha256": "21920118af4646b1772dea8dbacad72bac60f63e0033733b423b86a7f84da18a"
+        },
+        "it": {
+          "title": "Refactoring del Tipo any in TypeScript con Type Guard e TSDoc",
+          "category": "Buenas prácticas",
+          "meta_description": "Refactoring del codice legacy TypeScript: elimina il tipo any usando Type Guard e TSDoc strutturati per Auto-Doc AI e Prettier.",
+          "summary": "Impara a rimuovere i tipi any dal codice legacy TypeScript usando Type Guard e commenti TSDoc ottimizzati per i sistemi Auto-Doc AI.",
+          "file": "published/typescript-refactoring-legacy-any-type-guards-tsdoc.it.md",
+          "sha256": "56b198b1711d171d66cfe2d9f79f554627ebf2d9eb3857ac5d8f700cea3d4ce4"
+        },
+        "pt-BR": {
+          "title": "Refatorando Tipos any Legados em TypeScript com Type Guards e TSDoc",
+          "category": "Buenas prácticas",
+          "meta_description": "Refatore código legado em TypeScript eliminando o tipo any com Type Guards e TSDoc estruturado para automação via Auto-Doc AI e Prettier.",
+          "summary": "Aprenda a remover tipos any de repositórios legados utilizando predicados de tipo estritos em TypeScript e documentação TSDoc para Auto-Doc AI.",
+          "file": "published/typescript-refactoring-legacy-any-type-guards-tsdoc.pt-BR.md",
+          "sha256": "9a06f7f8271b74054c9ea7e5372dfd176025b9723d25276b38b8ea334829bc97"
+        },
+        "pt-PT": {
+          "title": "Refactorização de Tipos any Legados em TypeScript com Type Guards e TSDoc",
+          "category": "Buenas prácticas",
+          "meta_description": "Refactorize código legado em TypeScript eliminando o tipo any com Type Guards e TSDoc estruturado para automatização com Auto-Doc AI e Prettier.",
+          "summary": "Aprenda a remover tipos any de repositórios legados utilizando predicados de tipo estritos em TypeScript e documentação TSDoc para o Auto-Doc AI.",
+          "file": "published/typescript-refactoring-legacy-any-type-guards-tsdoc.pt-PT.md",
+          "sha256": "cb9439bc9dece362eb80fc138b40a84815f213db281ea3986281184a1e9272df"
+        }
+      }
     }
   ]
 }

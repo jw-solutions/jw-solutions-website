@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Refactoring du Type any en TypeScript avec Type Guards et TSDoc | Code Formatter &amp; Auto-Doc AI</title>
+  <meta name="description" content="Refactorez le code legacy TypeScript en éliminant any grâce aux Type Guards et TSDoc estructuré pour les pipelines Auto-Doc AI et Prettier.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="canonical" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/fr/">
+  <link rel="alternate" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/es/">
+  <link rel="alternate" hreflang="en" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/en/">
+  <link rel="alternate" hreflang="pt-BR" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/pt-BR/">
+  <link rel="alternate" hreflang="pt-PT" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/pt-PT/">
+  <link rel="alternate" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/fr/">
+  <link rel="alternate" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/de/">
+  <link rel="alternate" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/it/">
+  <link rel="alternate" hreflang="x-default" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/es/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="JW Solutions">
+  <meta property="og:title" content="Refactoring du Type any en TypeScript avec Type Guards et TSDoc | Code Formatter &amp; Auto-Doc AI">
+  <meta property="og:description" content="Refactorez le code legacy TypeScript en éliminant any grâce aux Type Guards et TSDoc estructuré pour les pipelines Auto-Doc AI et Prettier.">
+  <meta property="og:url" content="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/fr/">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:image" content="https://jw-solutions.com/assets/images/og/tips/typescript-refactoring-legacy-any-type-guards-tsdoc-fr.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Refactoring du Type any en TypeScript avec Type Guards et TSDoc | Code Formatter &amp; Auto-Doc AI">
+  <meta name="twitter:description" content="Refactorez le code legacy TypeScript en éliminant any grâce aux Type Guards et TSDoc estructuré pour les pipelines Auto-Doc AI et Prettier.">
+  <meta name="twitter:image" content="https://jw-solutions.com/assets/images/og/tips/typescript-refactoring-legacy-any-type-guards-tsdoc-fr.png">
+  <meta name="theme-color" content="#0b0f17">
+  <meta name="cf-newsletter-endpoint" content="https://api.jw-solutions.com/api/newsletter/subscribe">
+  <link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
+  <link rel="icon" type="image/x-icon" sizes="any" href="../../../../favicon.ico">
+  <link rel="apple-touch-icon" href="../../../../apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../../../../../assets/css/tools/code-formatter.css">
+  <script type="application/ld+json" id="cf-jsonld">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Refactoring du Type any en TypeScript avec Type Guards et TSDoc", "description": "Refactorez le code legacy TypeScript en éliminant any grâce aux Type Guards et TSDoc estructuré pour les pipelines Auto-Doc AI et Prettier.", "inLanguage": "fr", "articleSection": "Buenas prácticas", "keywords": "typescript, code formatter, auto-doc ai, syntax, best practices", "datePublished": "2026-11-14", "dateModified": "2026-11-14", "url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/fr/", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/fr/"}, "isPartOf": {"@type": "WebApplication", "name": "Code Formatter & Auto-Doc AI", "url": "https://jw-solutions.com/tools/code-formatter/"}, "image": "https://jw-solutions.com/assets/images/og/tips/typescript-refactoring-legacy-any-type-guards-tsdoc-fr.png", "author": {"@type": "Organization", "name": "JW Solutions"}, "publisher": {"@type": "Organization", "name": "JW Solutions", "url": "https://jw-solutions.com"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Code Formatter", "item": "https://jw-solutions.com/tools/code-formatter/"}, {"@type": "ListItem", "position": 2, "name": "Buenas prácticas", "item": "https://jw-solutions.com/tools/code-formatter/tips/javascript/"}, {"@type": "ListItem", "position": 3, "name": "Refactoring du Type any en TypeScript avec Type Guards et TSDoc", "item": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/fr/"}]}]}</script>
+</head>
+<body class="cf-body">
+  <a class="cf-skip" href="#cf-main" data-i18n="skip">Saltar al contenido</a>
+
+  <header class="cf-header">
+    <div class="cf-container cf-header__inner">
+      <div class="cf-logo" role="img" aria-label="JW Solutions">
+        <span class="cf-logo__mark">JW</span>
+        <span class="cf-logo__text">SOLUTIONS</span>
+      </div>
+      <nav class="cf-nav" aria-label="Code Formatter">
+        <select id="cf-ui-lang" class="cf-select cf-select--compact" data-i18n-aria="uiLang" aria-label="Idioma de la interfaz"></select>
+        <a class="cf-nav__link" data-site-link data-i18n="tipsBackTool" href="../../../../">Volver al formateador</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="cf-main" class="cf-main" data-fix-data="">
+    <section class="cf-container cf-hero">
+      <span class="cf-tag" data-i18n="fixTag">Buenas prácticas</span>
+      <h1 id="cf-fix-title" class="cf-title">Refactoring du Type any en TypeScript avec Type Guards et TSDoc</h1>
+      <p id="cf-fix-lead" class="cf-lead cf-fix__lead">Refactorez le code legacy TypeScript en éliminant any grâce aux Type Guards et TSDoc estructuré pour les pipelines Auto-Doc AI et Prettier.</p>
+    </section>
+    <section class="cf-container cf-tips">
+      <div id="cf-fix-body" class="cf-card cf-tip">
+        <p class="cf-muted cf-tip__meta">2026-11-14 · Buenas prácticas · TYPESCRIPT</p>
+        <h2 class="cf-tip__h">Le Risque des Types <code>any</code> dans le Code Legacy</h2>
+        <p>Lors de la migration de projets JavaScript vers TypeScript, il est fréquent de recourir au type <code>any</code> pour contourner rapidement les erreurs de compilation. Bien que le projet compile, cette pratique annule les bénéfices du vérificateur de types statique, masque des exceptions à l&#x27;exécution et empêche les outils comme Auto-Doc AI de générer une documentation précise.</p>
+        <p>Eliminer les types <code>any</code> est indispensable pour maintenir des standards de qualité élevés et sécuriser le traitement des données dans les applications d&#x27;entreprise.</p>
+        <h2 class="cf-tip__h">Code Legacy Non Sécurisé (Avant)</h2>
+        <p>Voici un exemple de fonction legacy manipulant des données non validées sans aucune annotation TSDoc.</p>
+        <pre class="cf-tip__code"><code>// ❌ Code legacy vulnérable sans vérification de type
+function processUserData(data: any) {
+  console.log(&quot;User ID:&quot;, data.id);
+  if (data.role === &quot;admin&quot;) {
+    return data.permissions.includes(&quot;write&quot;);
+  }
+  return false;
+}</code></pre>
+        <h2 class="cf-tip__h">Refactoring Strict avec Type Guards et TSDoc (Après)</h2>
+        <p>Pour respecter les exigences du mode strict de TypeScript et permettre à <strong>Auto-Doc AI</strong> d&#x27;analyser automatiquement le code, nous remplaçons <code>any</code> par <code>unknown</code> et mettons en place un Type Guard accompagné de commentaires TSDoc complets.</p>
+        <pre class="cf-tip__code"><code>/**
+ * Structure de données représentant les privilèges d&#x27;un utilisateur.
+ */
+export interface UserPayload {
+  id: string;
+  role: &#x27;admin&#x27; | &#x27;user&#x27;;
+  permissions: string[];
+}
+
+/**
+ * Prédicat de type vérifiant la structure de l&#x27;objet à l&#x27;exécution.
+ *
+ * @param data - Données non structurées issues d&#x27;une API externe.
+ * @returns `true` si l&#x27;objet correspond au type {@link UserPayload}.
+ */
+export function isUserPayload(data: unknown): data is UserPayload {
+  return (
+    typeof data === &#x27;object&#x27; &amp;&amp;
+    data !== null &amp;&amp;
+    &#x27;id&#x27; in data &amp;&amp;
+    typeof (data as Record&lt;string, unknown&gt;).id === &#x27;string&#x27; &amp;&amp;
+    &#x27;role&#x27; in data &amp;&amp;
+    [&#x27;admin&#x27;, &#x27;user&#x27;].includes((data as Record&lt;string, unknown&gt;).role as string) &amp;&amp;
+    &#x27;permissions&#x27; in data &amp;&amp;
+    Array.isArray((data as Record&lt;string, unknown&gt;).permissions)
+  );
+}
+
+/**
+ * Évalue les droits d&#x27;écriture d&#x27;un utilisateur avec validation stricte.
+ *
+ * @param data - Données brutes non validées.
+ * @returns Statut d&#x27;autorisation d&#x27;écriture.
+ * @throws {TypeError} Si la structure ne respecte pas le type UserPayload.
+ */
+export function processUserDataStrict(data: unknown): boolean {
+  if (!isUserPayload(data)) {
+    throw new TypeError(&#x27;Payload invalide: structure incompatible avec UserPayload&#x27;);
+  }
+  if (data.role === &#x27;admin&#x27;) {
+    return data.permissions.includes(&#x27;write&#x27;);
+  }
+  return false;
+}</code></pre>
+        <h2 class="cf-tip__h">Formatez avec Prettier et Standardisez pour Auto-Doc AI</h2>
+        <p>Configurez Prettier dans votre fichier <code>.prettierrc</code> pour garantir que tout le code de l&#x27;équipe respecte les standards TSDoc :</p>
+        <pre class="cf-tip__code"><code>{
+  &quot;singleQuote&quot;: true,
+  &quot;trailingComma&quot;: &quot;all&quot;,
+  &quot;printWidth&quot;: 100,
+  &quot;tsdoc&quot;: true
+}</code></pre>
+        <h3 class="cf-tip__h">Directives Principales de Refactoring :</h3>
+        <ul class="cf-tip__list">
+          <li><strong>Remplacez `any` par `unknown`</strong> : Oblige à valider le type avant de lire ses propriétés.</li>
+          <li><strong>Utilisez des Type Guards (`data is Type`)</strong> : Permet au compilateur de restreindre le type dans les blocs conditionnels.</li>
+          <li><strong>Structurez vos commentaires avec TSDoc</strong> : Les tags <code>@param</code>, <code>@returns</code> et <code>@throws</code> fournissent au moteur <strong>Auto-Doc AI</strong> les métadonnées requises.</li>
+          <li><strong>Intégrez le contrôle dans le CI/CD</strong> : Automatisez le formatage et le contrôle de types à chaque déploiement.</li>
+        </ul>
+        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="https://jw-solutions.com/tools/code-formatter/?lang=fr&amp;snippet=export%20interface%20UserProfile%20%7B%0A%20%20id%3A%20string%3B%0A%20%20role%3A%20%27admin%27%20%7C%20%27user%27%3B%0A%7D%0A%0Aexport%20function%20isUserProfile%28payload%3A%20unknown%29%3A%20payload%20is%20UserProfile%20%7B%0A%20%20return%20%28%0A%20%20%20%20typeof%20payload%20%3D%3D%3D%20%27object%27%20%26%26%0A%20%20%20%20payload%20%21%3D%3D%20null%20%26%26%0A%20%20%20%20%27id%27%20in%20payload%20%26%26%0A%20%20%20%20typeof%20%28payload%20as%20Record%3Cstring%2C%20unknown%3E%29.id%20%3D%3D%3D%20%27string%27%20%26%26%0A%20%20%20%20%27role%27%20in%20payload%20%26%26%0A%20%20%20%20%5B%27admin%27%2C%20%27user%27%5D.includes%28%28payload%20as%20Record%3Cstring%2C%20unknown%3E%29.role%20as%20string%29%0A%20%20%29%3B%0A%7D">Tester l&#x27;extrait dans le formateur</a></p>
+        <p><a class="cf-nav__link" href="https://jw-solutions.com/tools/code-formatter/fix/ts-unterminated-string-literal/?lang=fr">Voir le guide de correction: Comment corriger TS1002: Unterminated string literal dans TypeScript 5.5</a></p>
+        <h2 class="cf-tip__h">Astuces associées</h2>
+        <ul class="cf-fix__list"><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/fr/">PEP 8 en Python 3.12 : écrire des blocs match/case lisibles</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/fr/">TypeScript moderne : ?., ?? et satisfies sans erreurs de formatage</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/fr/">SQL et DAX : trois habitudes pour des requêtes rapides et lisibles</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cf-footer">
+    <div class="cf-container cf-footer__grid">
+      <section class="cf-footer__col" aria-labelledby="cf-foot-id">
+        <div class="cf-logo" role="img" aria-label="JW Solutions">
+          <span class="cf-logo__mark">JW</span>
+          <span class="cf-logo__text">SOLUTIONS</span>
+        </div>
+        <h2 id="cf-foot-id" class="cf-footer__title">Code Formatter <span class="cf-gold">&amp; Auto-Doc AI</span></h2>
+        <p class="cf-footer__text" data-i18n="footDesc">Formatea y documenta tu código en Python, JavaScript, SQL, DAX y más. Herramienta independiente de JW Solutions.</p>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../" data-site-link data-i18n="footEditor">Ir al editor</a></li>
+        </ul>
+      </section>
+
+      <nav class="cf-footer__col" aria-labelledby="cf-foot-tips">
+        <h2 id="cf-foot-tips" class="cf-footer__title" data-i18n="footTipsTitle">Tips semanales</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../tips/python/" data-site-link data-i18n="tipPython">Python Tips</a></li>
+          <li><a href="../../../../tips/javascript/" data-site-link data-i18n="tipJs">JavaScript Standards</a></li>
+          <li><a href="../../../../tips/sql-dax/" data-site-link data-i18n="tipSqlDax">SQL &amp; DAX Best Practices</a></li>
+        </ul>
+        <h2 id="cf-foot-fix" class="cf-footer__title cf-footer__title--sub" data-i18n="footFixTitle">Soluciones a errores</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../fix/" data-site-link data-i18n="fixHubTitle">Soluciones rápidas a errores de sintaxis</a></li>
+        </ul>
+      </nav>
+
+      <section class="cf-footer__col" aria-labelledby="cf-foot-nl">
+        <h2 id="cf-foot-nl" class="cf-footer__title" data-i18n="nlTitle">Tips Semanales de Código</h2>
+        <p class="cf-footer__text" data-i18n="nlPromise">Un email por semana con tips prácticos de sintaxis, casos de estudio y novedades de lenguajes (Python, JS, SQL, DAX). Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
+        <form id="cf-newsletter-form" class="cf-newsletter" novalidate>
+          <label class="cf-sr-only" for="cf-newsletter-email" data-i18n="nlEmailLabel">Correo electrónico</label>
+          <input id="cf-newsletter-email" class="cf-input" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="tu@email.com" data-i18n-placeholder="nlPlaceholder">
+          <input type="text" name="_gotcha" class="cf-sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button type="submit" class="cf-btn cf-btn--primary" data-i18n="nlSubmit">Suscribirme</button>
+          <p id="cf-newsletter-status" class="cf-form__status cf-newsletter__status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+    <div class="cf-container cf-footer__legal">
+      <p>&copy; JW Solutions · <span data-i18n="footRights">Todos los derechos reservados</span></p>
+    </div>
+  </footer>
+
+  <div id="cf-toast" class="cf-toast" role="status" aria-live="polite"></div>
+  
+</body>
+</html>
