@@ -1,6 +1,21 @@
 {
   "articles": [
     {
+      "slug": "integracion-crm-erp-reportes-tiempo-real",
+      "date": "2026-11-14",
+      "tag": "Integración de Datos",
+      "status": "published",
+      "featured": true,
+      "es": {
+        "title": "Integración CRM y ERP: Arquitectura de datos en tiempo real para PYMEs",
+        "excerpt": "Guía práctica para unificar las ventas de tu CRM con la facturación de tu ERP, eliminando fricciones operativas y creando reportes directivos automatizados."
+      },
+      "en": {
+        "title": "CRM and ERP Integration: Real-Time Data Architecture for Growing SMEs",
+        "excerpt": "A practical guide to unifying CRM sales pipelines with ERP accounting data, eliminating silos and delivering real-time executive dashboards for SMEs."
+      }
+    },
+    {
       "slug": "5-errores-dashboard-power-bi",
       "date": "2026-10-12",
       "tag": "Power BI",
