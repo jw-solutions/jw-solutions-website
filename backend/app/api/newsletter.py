@@ -210,4 +210,10 @@ def broadcast(
         )
         db.execute(stmt)
 
+    if sent == 0 and failed > 0:
+        raise HTTPException(
+            status_code=502,
+            detail={"ok": False, "sent": sent, "skipped": skipped, "failed": failed},
+        )
+
     return {"ok": True, "sent": sent, "skipped": skipped, "failed": failed}
