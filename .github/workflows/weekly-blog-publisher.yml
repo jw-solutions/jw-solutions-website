@@ -40,15 +40,21 @@ jobs:
       slug: ${{ steps.publish.outputs.slug }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
           fetch-depth: 0
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
+
+      - name: Generar borrador semanal con IA (si no hay uno "ready")
+        if: ${{ !inputs.dry_run }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/generate-weekly-draft.js
 
       - name: Validar borradores (exige al menos uno "ready")
         run: node scripts/validate-drafts.js --require-ready
@@ -131,21 +137,27 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Enviar evento article.published
         env:
           SLUG: ${{ needs.publish.outputs.slug }}
           NEWSLETTER_WEBHOOK_URL: ${{ secrets.NEWSLETTER_WEBHOOK_URL }}
           NEWSLETTER_WEBHOOK_TOKEN: ${{ secrets.NEWSLETTER_WEBHOOK_TOKEN }}
-        run: node scripts/notify-newsletter.js "$SLUG"
+        run: |
+          if [ -z "${NEWSLETTER_WEBHOOK_URL:-}" ]; then
+            echo "::warning::NEWSLETTER_WEBHOOK_URL no configurado. El artículo $SLUG quedó DEPLOYED con notification.status=PENDING."
+            echo "WARNING: NEWSLETTER_WEBHOOK_URL no configurado. El artículo \`$SLUG\` fue publicado en la web pero su notificación quedó en estado \`PENDING\`." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          node scripts/notify-newsletter.js "$SLUG"
 
       - name: Registrar estado de la notificación
         if: ${{ always() }}
