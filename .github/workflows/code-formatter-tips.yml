@@ -77,7 +77,12 @@ jobs:
       - name: Publicar tip listo
         id: publish
         if: ${{ !inputs.dry_run }}
-        run: node scripts/validate-formatter-tips.js --publish
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            node scripts/validate-formatter-tips.js --publish --force
+          else
+            node scripts/validate-formatter-tips.js --publish
+          fi
 
       - name: Generar imágenes OpenGraph (7 idiomas)
         if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
