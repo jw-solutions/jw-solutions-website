@@ -22,8 +22,9 @@ const pubManifest = require('./publication-manifest');
 const ROOT = path.resolve(__dirname, '..');
 const DRAFTS_DIR = path.join(ROOT, 'content', 'drafts');
 const ARTICLES_FILE = path.join(ROOT, 'content', 'articles.json');
-const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent';
+const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-2.5-flash-lite'];
 const RETRYABLE_STATUSES = new Set([429, 500, 502, 503, 504]);
+const REQUEST_TIMEOUT_MS = 90000;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const TOPIC_PILLARS = [
@@ -163,54 +164,72 @@ async function callGemini(apiKey, prompt) {
     }
   };
 
-  const maxAttempts = 4;
+  const maxAttemptsPerModel = 2;
   let lastError = null;
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      const res = await fetch(GEMINI_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': apiKey
-        },
-        body: JSON.stringify(payload)
-      });
 
-      if (res.ok) {
-        const data = await res.json();
-        const text = data && data.candidates && data.candidates[0] &&
-          data.candidates[0].content && data.candidates[0].content.parts &&
-          data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+  for (const model of GEMINI_MODELS) {
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+    for (let attempt = 1; attempt <= maxAttemptsPerModel; attempt++) {
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: JSON.stringify(payload),
+          signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+        });
 
-        if (!text) {
-          throw new Error('Respuesta vacía de Gemini API (sin candidates[0].content.parts[0].text).');
+        if (res.ok) {
+          const data = await res.json();
+          const text = data && data.candidates && data.candidates[0] &&
+            data.candidates[0].content && data.candidates[0].content.parts &&
+            data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+
+          if (!text) {
+            throw new Error(`Respuesta vacía de ${model} (sin candidates[0].content.parts[0].text).`);
+          }
+
+          const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+          log('INFO', `Artículo generado con modelo ${model}.`);
+          return JSON.parse(cleaned);
         }
 
-        const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
-        return JSON.parse(cleaned);
-      }
-
-      const errText = await res.text().catch(() => '');
-      lastError = new Error(`Gemini API HTTP ${res.status}: ${errText.slice(0, 300)}`);
-      if (!RETRYABLE_STATUSES.has(res.status) || attempt === maxAttempts) {
-        throw lastError;
-      }
-      const waitMs = attempt * 5000;
-      log('WARN', `Gemini API HTTP ${res.status} (intento ${attempt}/${maxAttempts}). Reintentando en ${waitMs / 1000}s...`);
-      await sleep(waitMs);
-    } catch (err) {
-      lastError = err;
-      if (attempt === maxAttempts || /HTTP 4\d\d/.test(err.message) && !/HTTP 429/.test(err.message)) {
-        throw err;
-      }
-      if (!err.message.startsWith('Gemini API HTTP')) {
-        const waitMs = attempt * 5000;
-        log('WARN', `Error de red llamando a Gemini (${err.message}). Reintentando en ${waitMs / 1000}s...`);
-        await sleep(waitMs);
+        const errText = await res.text().catch(() => '');
+        lastError = new Error(`Gemini API (${model}) HTTP ${res.status}: ${errText.slice(0, 300)}`);
+        if (res.status === 404) {
+          log('WARN', `Modelo ${model} no disponible (HTTP 404). Probando siguiente fallback...`);
+          break;
+        }
+        if (!RETRYABLE_STATUSES.has(res.status)) {
+          throw lastError;
+        }
+        if (attempt < maxAttemptsPerModel) {
+          const waitMs = attempt * 5000;
+          log('WARN', `${model} HTTP ${res.status} (intento ${attempt}/${maxAttemptsPerModel}). Reintentando en ${waitMs / 1000}s...`);
+          await sleep(waitMs);
+        } else {
+          log('WARN', `${model} agotó reintentos (HTTP ${res.status}). Probando siguiente modelo fallback...`);
+        }
+      } catch (err) {
+        lastError = err;
+        if (/HTTP 4\d\d/.test(err.message) && !/HTTP (404|429)/.test(err.message)) {
+          throw err;
+        }
+        if (!err.message.startsWith('Gemini API')) {
+          if (attempt < maxAttemptsPerModel) {
+            const waitMs = attempt * 5000;
+            log('WARN', `Error de red/timeout en ${model} (${err.message}). Reintentando en ${waitMs / 1000}s...`);
+            await sleep(waitMs);
+          } else {
+            log('WARN', `${model} falló (${err.message}). Probando siguiente modelo fallback...`);
+          }
+        }
       }
     }
   }
-  throw lastError;
+  throw lastError || new Error('Todos los modelos Gemini fallaron.');
 }
 
 function sanitizeLangBlock(block) {
