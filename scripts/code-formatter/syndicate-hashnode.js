@@ -172,6 +172,12 @@ async function syndicateAll(options = {}) {
         continue;
       }
 
+      const contentType = (response.headers && response.headers.get && response.headers.get('content-type')) || '';
+      if (contentType && !contentType.includes('json')) {
+        console.log('::warning::Hashnode GraphQL API devolvió respuesta no-JSON (requiere plan Pro: https://hashnode.com/announcements/graphql-api); omitiendo.');
+        break;
+      }
+
       const resJson = await response.json();
       if (Array.isArray(resJson.errors) && resJson.errors.length > 0) {
         errors.push({ slug: entry.slug, error: resJson.errors.map((e) => e.message).join('; ') });

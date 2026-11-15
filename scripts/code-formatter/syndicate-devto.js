@@ -198,6 +198,12 @@ async function syndicateAll(options = {}) {
         signal: AbortSignal.timeout(30000),
       });
 
+      if (response.status === 429) {
+        const errBody = await response.text().catch(() => '');
+        console.log(`::warning::Rate limit de Dev.to alcanzado en ${entry.slug} (HTTP 429): ${errBody.slice(0, 180)}. Los artículos restantes continuarán en la próxima ejecución.`);
+        break;
+      }
+
       if (!response.ok) {
         const errBody = await response.text().catch(() => '');
         errors.push({ slug: entry.slug, error: `HTTP ${response.status}: ${errBody.slice(0, 300)}` });
