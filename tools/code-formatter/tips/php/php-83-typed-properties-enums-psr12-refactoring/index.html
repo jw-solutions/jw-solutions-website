@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PHP 8.3 y PSR-12: Refactorización de código legado con Typed Properties y Enums | Code Formatter &amp; Auto-Doc AI</title>
+  <meta name="description" content="Aprende a modernizar código PHP legado a PHP 8.3 utilizando typed properties, enums estrictos y cumpliendo con PSR-12 para mejorar legibilidad y mantenibilidad.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="canonical" href="https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/es/">
+  <link rel="alternate" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/es/">
+  <link rel="alternate" hreflang="en" href="https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/en/">
+  <link rel="alternate" hreflang="pt-BR" href="https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/pt-BR/">
+  <link rel="alternate" hreflang="pt-PT" href="https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/pt-PT/">
+  <link rel="alternate" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/fr/">
+  <link rel="alternate" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/de/">
+  <link rel="alternate" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/it/">
+  <link rel="alternate" hreflang="x-default" href="https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/es/">
+  <link rel="alternate" type="application/rss+xml" title="Code Formatter &amp; Auto-Doc AI Tips" href="https://jw-solutions.com/tools/code-formatter/tips/feed.es.xml">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="JW Solutions">
+  <meta property="og:title" content="PHP 8.3 y PSR-12: Refactorización de código legado con Typed Properties y Enums | Code Formatter &amp; Auto-Doc AI">
+  <meta property="og:description" content="Aprende a modernizar código PHP legado a PHP 8.3 utilizando typed properties, enums estrictos y cumpliendo con PSR-12 para mejorar legibilidad y mantenibilidad.">
+  <meta property="og:url" content="https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/es/">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:image" content="https://jw-solutions.com/assets/images/og/tips/php-83-typed-properties-enums-psr12-refactoring-es.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PHP 8.3 y PSR-12: Refactorización de código legado con Typed Properties y Enums | Code Formatter &amp; Auto-Doc AI">
+  <meta name="twitter:description" content="Aprende a modernizar código PHP legado a PHP 8.3 utilizando typed properties, enums estrictos y cumpliendo con PSR-12 para mejorar legibilidad y mantenibilidad.">
+  <meta name="twitter:image" content="https://jw-solutions.com/assets/images/og/tips/php-83-typed-properties-enums-psr12-refactoring-es.png">
+  <meta name="theme-color" content="#0b0f17">
+  <meta name="cf-newsletter-endpoint" content="https://api.jw-solutions.com/api/newsletter/subscribe">
+  <link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+  <link rel="icon" type="image/x-icon" sizes="any" href="../../../favicon.ico">
+  <link rel="apple-touch-icon" href="../../../apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../../../assets/css/tools/code-formatter.css">
+  <script type="application/ld+json" id="cf-jsonld">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "PHP 8.3 y PSR-12: Refactorización de código legado con Typed Properties y Enums", "description": "Aprende a modernizar código PHP legado a PHP 8.3 utilizando typed properties, enums estrictos y cumpliendo con PSR-12 para mejorar legibilidad y mantenibilidad.", "inLanguage": "es", "articleSection": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI", "keywords": "php, code formatter, auto-doc ai, syntax, best practices", "datePublished": "2026-11-15", "dateModified": "2026-11-15", "url": "https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/es/", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/es/"}, "isPartOf": {"@type": "WebApplication", "name": "Code Formatter & Auto-Doc AI", "url": "https://jw-solutions.com/tools/code-formatter/"}, "image": "https://jw-solutions.com/assets/images/og/tips/php-83-typed-properties-enums-psr12-refactoring-es.png", "author": {"@type": "Organization", "name": "JW Solutions"}, "publisher": {"@type": "Organization", "name": "JW Solutions", "url": "https://jw-solutions.com"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Code Formatter", "item": "https://jw-solutions.com/tools/code-formatter/"}, {"@type": "ListItem", "position": 2, "name": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI", "item": "https://jw-solutions.com/tools/code-formatter/tips/php/"}, {"@type": "ListItem", "position": 3, "name": "PHP 8.3 y PSR-12: Refactorización de código legado con Typed Properties y Enums", "item": "https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/es/"}]}, {"@type": "FAQPage", "inLanguage": "es", "mainEntity": [{"@type": "Question", "name": "¿Por qué es obligatorio declarar strict_types en PHP 8.3?", "acceptedAnswer": {"@type": "Answer", "text": "Garantiza que PHP no intente realizar conversiones implícitas de tipos de datos, lanzando una excepción si se pasa un tipo incorrecto."}}, {"@type": "Question", "name": "¿Cómo ayudan los Enums a mejorar la refactorización?", "acceptedAnswer": {"@type": "Answer", "text": "Eliminan los 'magic strings' y restringen los valores posibles a un conjunto finito y validado en tiempo de compilación."}}]}]}</script>
+</head>
+<body class="cf-body">
+  <a class="cf-skip" href="#cf-main" data-i18n="skip">Saltar al contenido</a>
+
+  <header class="cf-header">
+    <div class="cf-container cf-header__inner">
+      <div class="cf-logo" role="img" aria-label="JW Solutions">
+        <span class="cf-logo__mark">JW</span>
+        <span class="cf-logo__text">SOLUTIONS</span>
+      </div>
+      <nav class="cf-nav" aria-label="Code Formatter">
+        <select id="cf-ui-lang" class="cf-select cf-select--compact" data-i18n-aria="uiLang" aria-label="Idioma de la interfaz"></select>
+        <a class="cf-nav__link" data-site-link data-i18n="tipsBackTool" href="../../../">Volver al formateador</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="cf-main" class="cf-main" data-fix-data="">
+    <section class="cf-container cf-hero">
+      <span class="cf-tag" data-i18n="fixTag">Tips de Sintaxis | Buenas prácticas | Auto-Doc AI</span>
+      <h1 id="cf-fix-title" class="cf-title">PHP 8.3 y PSR-12: Refactorización de código legado con Typed Properties y Enums</h1>
+      <p id="cf-fix-lead" class="cf-lead cf-fix__lead">Aprende a modernizar código PHP legado a PHP 8.3 utilizando typed properties, enums estrictos y cumpliendo con PSR-12 para mejorar legibilidad y mantenibilidad.</p>
+    </section>
+    <section class="cf-container cf-tips">
+      <div id="cf-fix-body" class="cf-card cf-tip">
+        <p class="cf-muted cf-tip__meta">2026-11-15 · Tips de Sintaxis | Buenas prácticas | Auto-Doc AI · PHP</p>
+        <p>La evolución de PHP hacia un tipado estricto y robusto ha transformado radicalmente cómo diseñamos arquitecturas de software modernas. En las versiones recientes, especialmente con la llegada de PHP 8.3, el uso de propiedades tipadas (typed properties), constructores promocionados y enumeraciones (Enums) nativas permite eliminar una gran cantidad de código boilerplate y errores sutiles de ejecución en tiempo de desarrollo.</p>
+        <p>Sin embargo, muchos proyectos heredados (legados) aún arrastran malas prácticas, como variables globales sueltas, arreglos asociativos genéricos sin estructura definida y una total ausencia de conformidad con las guías de estilo oficiales PSR-12. Esto no solo afecta la legibilidad del código, sino que dificulta la integración de herramientas automatizadas de documentación y formateo.</p>
+        <h3 class="cf-tip__h">El Problema en el Código Legado</h3>
+        <p>El código antiguo en PHP a menudo abusa de arreglos asociativos para transferir datos entre capas de la aplicación, lo que oculta los tipos de datos reales y provoca errores difíciles de rastrear.</p>
+        <pre class="cf-tip__code"><code>// ANTES: Código legado frágil y sin tipado
+class UserManager {
+    public function processUser($data) {
+        $user = [];
+        $user[&#x27;name&#x27;] = $data[&#x27;name&#x27;];
+        $user[&#x27;status&#x27;] = $data[&#x27;status&#x27;]; // ¿Es &#x27;active&#x27;, &#x27;pending&#x27; o un número?
+        return $user;
+    }
+}</code></pre>
+        <p>Este enfoque carece de autocompletado en el IDE, no valida los datos de entrada y viola las normas básicas de PSR-12 relativas a la visibilidad y espaciado de métodos.</p>
+        <h3 class="cf-tip__h">La Solución Moderna con PHP 8.3 y PSR-12</h3>
+        <p>Refactorizar este diseño utilizando clases de solo lectura (<code>readonly class</code>), Enums nativos y tipos estrictos (<code>declare(strict_types=1);</code>) garantiza la integridad de los datos desde el momento en que se instancian.</p>
+        <pre class="cf-tip__code"><code>// DESPUÉS: Código robusto con PHP 8.3, Enums y PSR-12
+declare(strict_types=1);
+
+namespace JWSolutions\Formatting;
+
+enum UserStatus: string {
+    case ACTIVE = &#x27;active&#x27;;
+    case PENDING = &#x27;pending&#x27;;
+}
+
+readonly class UserProfile
+{
+    public function __construct(
+        public string $name,
+        public UserStatus $status
+    ) {}
+}</code></pre>
+        <h3 class="cf-tip__h">Integración con Auto-Doc AI</h3>
+        <p>Nuestra herramienta <strong>Code Formatter &amp; Auto-Doc AI</strong> analiza automáticamente las declaraciones de tipos y los Enums para generar bloques PHPDoc precisos sin intervención manual:</p>
+        <pre class="cf-tip__code"><code>/**
+ * Representa un perfil de usuario inmutable.
+ *
+ * @package JWSolutions\Formatting
+ * @since 2026-11-15
+ */
+readonly class UserProfile
+{
+    /**
+     * @param string $name Nombre completo del usuario.
+     * @param UserStatus $status Estado actual del usuario basado en el Enum.
+     */
+    public function __construct(
+        public string $name,
+        public UserStatus $status
+    ) {}
+}</code></pre>
+        <h3 class="cf-tip__h">Checklist de Verificación</h3>
+        <ul class="cf-tip__list">
+          <li>[ ] ¿Has incluido <code>declare(strict_types=1);</code> al inicio de cada archivo?</li>
+          <li>[ ] ¿Están todas las propiedades de las clases fuertemente tipadas?</li>
+          <li>[ ] ¿Se han sustituido las constantes mágicas por <code>Backed Enums</code>?</li>
+          <li>[ ] ¿Cumple el código con los espacios, indentación y saltos de línea de PSR-12?</li>
+        </ul>
+        <section class="cf-tip-faq" aria-labelledby="cf-faq-title">
+          <h2 id="cf-faq-title" class="cf-tip__h">Preguntas frecuentes</h2>
+          <details class="cf-faq__item"><summary>¿Por qué es obligatorio declarar strict_types en PHP 8.3?</summary><p>Garantiza que PHP no intente realizar conversiones implícitas de tipos de datos, lanzando una excepción si se pasa un tipo incorrecto.</p></details>
+          <details class="cf-faq__item"><summary>¿Cómo ayudan los Enums a mejorar la refactorización?</summary><p>Eliminan los &#x27;magic strings&#x27; y restringen los valores posibles a un conjunto finito y validado en tiempo de compilación.</p></details>
+        </section>
+        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="https://jw-solutions.com/tools/code-formatter/?lang=es&amp;snippet=%3C%3Fphp%0A%0Adeclare%28strict_types%3D1%29%3B%0A%0Anamespace%20JW%5CSolutions%5CFormatting%3B%0A%0Aenum%20Status%3A%20string%0A%7B%0A%20%20%20%20case%20Active%20%3D%20%27active%27%3B%0A%20%20%20%20case%20Pending%20%3D%20%27pending%27%3B%0A%7D%0A%0Areadonly%20class%20UserProfile%0A%7B%0A%20%20%20%20public%20function%20__construct%28%0A%20%20%20%20%20%20%20%20public%20readonly%20string%20%24username%2C%0A%20%20%20%20%20%20%20%20public%20readonly%20Status%20%24status%0A%20%20%20%20%29%20%7B%7D%0A%7D">Probar fragmento en el formateador</a></p>
+        <p><a class="cf-nav__link" href="https://jw-solutions.com/tools/code-formatter/fix/php-parse-error-unclosed-brace/?lang=es">Ver guía de solución de errores: Cómo solucionar Parse error: Unclosed &#x27;{&#x27; en PHP 8.3</a></p>
+        <h2 class="cf-tip__h">Tips relacionados</h2>
+        <ul class="cf-fix__list"><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/es/">PEP 8 en Python 3.12: cómo escribir bloques match/case legibles</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/es/">TypeScript moderno: ?., ?? y satisfies sin errores de formato</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/es/">SQL y DAX: tres hábitos para consultas rápidas y legibles</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cf-footer">
+    <div class="cf-container cf-footer__grid">
+      <section class="cf-footer__col" aria-labelledby="cf-foot-id">
+        <div class="cf-logo" role="img" aria-label="JW Solutions">
+          <span class="cf-logo__mark">JW</span>
+          <span class="cf-logo__text">SOLUTIONS</span>
+        </div>
+        <h2 id="cf-foot-id" class="cf-footer__title">Code Formatter <span class="cf-gold">&amp; Auto-Doc AI</span></h2>
+        <p class="cf-footer__text" data-i18n="footDesc">Formatea y documenta tu código en Python, JavaScript, SQL, DAX y más. Herramienta independiente de JW Solutions.</p>
+        <ul class="cf-footer__list">
+          <li><a href="../../../" data-site-link data-i18n="footEditor">Ir al editor</a></li>
+          <li><a href="https://dly.to/nmdN9vQObOU" target="_blank" rel="noopener noreferrer" data-i18n="footDailyDevSquad">Únete a nuestro Squad en daily.dev</a></li>
+        </ul>
+      </section>
+
+      <nav class="cf-footer__col" aria-labelledby="cf-foot-tips">
+        <h2 id="cf-foot-tips" class="cf-footer__title" data-i18n="footTipsTitle">Tips semanales</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../tips/python/" data-site-link data-i18n="tipPython">Python Tips</a></li>
+          <li><a href="../../../tips/javascript/" data-site-link data-i18n="tipJs">JavaScript Standards</a></li>
+          <li><a href="../../../tips/sql-dax/" data-site-link data-i18n="tipSqlDax">SQL &amp; DAX Best Practices</a></li>
+        </ul>
+        <h2 id="cf-foot-fix" class="cf-footer__title cf-footer__title--sub" data-i18n="footFixTitle">Soluciones a errores</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../fix/" data-site-link data-i18n="fixHubTitle">Soluciones rápidas a errores de sintaxis</a></li>
+        </ul>
+      </nav>
+
+      <section class="cf-footer__col" aria-labelledby="cf-foot-nl">
+        <h2 id="cf-foot-nl" class="cf-footer__title" data-i18n="nlTitle">Tips Semanales de Código</h2>
+        <p class="cf-footer__text" data-i18n="nlPromise">Un email por semana con tips prácticos de sintaxis, casos de estudio y novedades de lenguajes (Python, JS, SQL, DAX). Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
+        <form id="cf-newsletter-form" class="cf-newsletter" novalidate>
+          <label class="cf-sr-only" for="cf-newsletter-email" data-i18n="nlEmailLabel">Correo electrónico</label>
+          <input id="cf-newsletter-email" class="cf-input" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="tu@email.com" data-i18n-placeholder="nlPlaceholder">
+          <input type="text" name="_gotcha" class="cf-sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button type="submit" class="cf-btn cf-btn--primary" data-i18n="nlSubmit">Suscribirme</button>
+          <p id="cf-newsletter-status" class="cf-form__status cf-newsletter__status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+    <div class="cf-container cf-footer__legal">
+      <p>&copy; JW Solutions · <span data-i18n="footRights">Todos los derechos reservados</span></p>
+    </div>
+  </footer>
+
+  <div id="cf-toast" class="cf-toast" role="status" aria-live="polite"></div>
+  
+</body>
+</html>

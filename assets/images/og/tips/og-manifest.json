@@ -48,5 +48,12 @@
   "tips/python-312-match-case-formatting-pep8-fr": "2c2fce45e9e290bd",
   "tips/python-312-match-case-formatting-pep8-it": "6151c3dd12cb80fd",
   "tips/python-312-match-case-formatting-pep8-pt-BR": "2a2139368d8c6924",
-  "tips/python-312-match-case-formatting-pep8-pt-PT": "2326d2b6fb81356e"
+  "tips/python-312-match-case-formatting-pep8-pt-PT": "2326d2b6fb81356e",
+  "tips/php-83-typed-properties-enums-psr12-refactoring-es": "cf9f0d9ae6c990a3",
+  "tips/php-83-typed-properties-enums-psr12-refactoring-de": "330979e74e8ab708",
+  "tips/php-83-typed-properties-enums-psr12-refactoring-en": "48fa04e1c65ff181",
+  "tips/php-83-typed-properties-enums-psr12-refactoring-fr": "829b134c0ce73a59",
+  "tips/php-83-typed-properties-enums-psr12-refactoring-it": "db308614beb62614",
+  "tips/php-83-typed-properties-enums-psr12-refactoring-pt-BR": "026792673675305e",
+  "tips/php-83-typed-properties-enums-psr12-refactoring-pt-PT": "4d195c304c318673"
 }

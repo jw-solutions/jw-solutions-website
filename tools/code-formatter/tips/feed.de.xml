@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>de</language>
-    <lastBuildDate>Sun, 15 Nov 2026 16:46:20 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 15 Nov 2026 18:43:49 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -37,6 +37,24 @@ def process_payload(data):
         v = data.get(&quot;value&quot;)
         return &quot;Numeric metric: &quot; + str(v)
     return &quot;Unknown&quot;</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/de/">Python 3.12 Match Case Formatting und PEP 8: Fortgeschrittener Leitfaden</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>PHP 8.3 und PSR-12: Refactoring von Alcode mit Typed Properties und Enums</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/de/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/de/</guid>
+      <pubDate>Sun, 15 Nov 2026 14:00:00 +0000</pubDate>
+      <category>PHP</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/php-83-typed-properties-enums-psr12-refactoring-de.png" medium="image" />
+      <description>Aktualisieren Sie Ihre PHP-Codebasis auf Version 8.3, indem Sie typisierte Eigenschaften, native Enums und den PSR-12-Standard implementieren.</description>
+      <content:encoded><![CDATA[<p>Aktualisieren Sie Ihre PHP-Codebasis auf Version 8.3, indem Sie typisierte Eigenschaften, native Enums und den PSR-12-Standard implementieren.</p><pre><code>// VORHER: Fragiler und untypisierter Legacy-Code
+class UserManager {
+    public function processUser($data) {
+        $user = [];
+        $user[&#x27;name&#x27;] = $data[&#x27;name&#x27;];
+        $user[&#x27;status&#x27;] = $data[&#x27;status&#x27;]; // Ist es &#x27;active&#x27;, &#x27;pending&#x27; oder eine Zahl?
+        return $user;
+    }
+}</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/de/">PHP 8.3 und PSR-12: Refactoring von Alcode mit Typed Properties und Enums</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Refactoring von legacy any-Typen in TypeScript mit Type Guards und TSDoc</title>

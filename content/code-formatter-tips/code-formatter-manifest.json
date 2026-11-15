@@ -680,6 +680,151 @@
         }
       },
       "notified_at": "2026-11-15T16:48:12.699Z"
+    },
+    {
+      "slug": "php-83-typed-properties-enums-psr12-refactoring",
+      "title": "PHP 8.3 y PSR-12: Refactorización de código legado con Typed Properties y Enums",
+      "language": "php",
+      "programming_language": "php",
+      "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+      "meta_description": "Aprende a modernizar código PHP legado a PHP 8.3 utilizando typed properties, enums estrictos y cumpliendo con PSR-12 para mejorar legibilidad y mantenibilidad.",
+      "summary": "Actualiza tu código base en PHP a la versión 8.3 implementando propiedades tipadas, enums nativos y el estándar PSR-12 para garantizar mantenibilidad a largo plazo.",
+      "related_fix_slug": "php-parse-error-unclosed-brace",
+      "interactive_snippet": "<?php\n\ndeclare(strict_types=1);\n\nnamespace JW\\Solutions\\Formatting;\n\nenum Status: string\n{\n    case Active = 'active';\n    case Pending = 'pending';\n}\n\nreadonly class UserProfile\n{\n    public function __construct(\n        public readonly string $username,\n        public readonly Status $status\n    ) {}\n}",
+      "faq": [
+        {
+          "q": "¿Por qué es obligatorio declarar strict_types en PHP 8.3?",
+          "a": "Garantiza que PHP no intente realizar conversiones implícitas de tipos de datos, lanzando una excepción si se pasa un tipo incorrecto."
+        },
+        {
+          "q": "¿Cómo ayudan los Enums a mejorar la refactorización?",
+          "a": "Eliminan los 'magic strings' y restringen los valores posibles a un conjunto finito y validado en tiempo de compilación."
+        }
+      ],
+      "date": "2026-11-15",
+      "published_at": "2026-11-15",
+      "status": "COMPILED",
+      "locales": [
+        "es",
+        "de",
+        "en",
+        "fr",
+        "it",
+        "pt-BR",
+        "pt-PT"
+      ],
+      "file": "published/php-83-typed-properties-enums-psr12-refactoring.md",
+      "sha256": "c65c2b5df44dce7e215c80859ba5c4b44ccb50a6e1c72e253c150cc023808eb0",
+      "translations": {
+        "de": {
+          "title": "PHP 8.3 und PSR-12: Refactoring von Alcode mit Typed Properties und Enums",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Erfahren Sie, wie Sie alten PHP-Code auf PHP 8.3 mit Typed Properties, strikten Enums und PSR-12-Konformität modernisieren, um die Lesbarkeit zu verbessern.",
+          "summary": "Aktualisieren Sie Ihre PHP-Codebasis auf Version 8.3, indem Sie typisierte Eigenschaften, native Enums und den PSR-12-Standard implementieren.",
+          "faq": [
+            {
+              "q": "Warum ist strict_types in PHP 8.3 obligatorisch?",
+              "a": "Es stellt sicher, dass PHP keine impliziten Typumwandlungen vornimmt und bei falschem Typ eine Ausnahme auslöst."
+            },
+            {
+              "q": "Wie helfen Enums beim Refactoring?",
+              "a": "Sie beseitigen magische Strings und beschränken gültige Werte auf ein zur Kompilierzeit validiertes Set."
+            }
+          ],
+          "file": "published/php-83-typed-properties-enums-psr12-refactoring.de.md",
+          "sha256": "62721e8fb491861bcc2deab875bcf084b210556db510477340913761e487adae"
+        },
+        "en": {
+          "title": "PHP 8.3 and PSR-12: Refactoring Legacy Code with Typed Properties and Enums",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Learn to modernize legacy PHP code to PHP 8.3 using typed properties, strict enums, and PSR-12 compliance to boost readability and maintainability.",
+          "summary": "Upgrade your PHP codebase to version 8.3 by implementing typed properties, native enums, and the PSR-12 standard to ensure long-term maintainability.",
+          "faq": [
+            {
+              "q": "Why is declaring strict_types mandatory in PHP 8.3?",
+              "a": "It ensures PHP does not attempt implicit data type conversions, throwing an exception if an incorrect type is provided."
+            },
+            {
+              "q": "How do Enums help improve refactoring?",
+              "a": "They eliminate magic strings and restrict possible values to a finite set validated at compile time."
+            }
+          ],
+          "file": "published/php-83-typed-properties-enums-psr12-refactoring.en.md",
+          "sha256": "7d8a496a26f09ef6fa373970d3fe1ba6b9f98aea2076c7a8a316271d0cddedc9"
+        },
+        "fr": {
+          "title": "PHP 8.3 et PSR-12 : Refactorisation de code hérité avec Typed Properties et Enums",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Apprenez à moderniser du code PHP hérité vers PHP 8.3 en utilisant des propriétés typées, des enums stricts et les normes PSR-12 pour une maintenabilité accrue.",
+          "summary": "Mettez à niveau votre code PHP vers la version 8.3 en adoptant des propriétés typées, des enums natifs et le standard PSR-12.",
+          "faq": [
+            {
+              "q": "Pourquoi déclarer strict_types est-il obligatoire en PHP 8.3 ?",
+              "a": "Cela garantit que PHP n'effectue pas de conversions de types implicites et lève une exception en cas de type incorrect."
+            },
+            {
+              "q": "Comment les Enums facilitent-ils la refactorisation ?",
+              "a": "Ils éliminent les chaînes magiques et limitent les valeurs possibles à un ensemble fini validé à la compilation."
+            }
+          ],
+          "file": "published/php-83-typed-properties-enums-psr12-refactoring.fr.md",
+          "sha256": "c4f64be07da24c9220088f6ca447b5b93833716e763d88f26af155c94cf31bcc"
+        },
+        "it": {
+          "title": "PHP 8.3 e PSR-12: Refactoring di Codice Legacy con Typed Properties ed Enums",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Scopri come modernizzare il codice PHP legacy a PHP 8.3 utilizzando typed properties, enum rigorosi e conformità PSR-12 per migliorare leggibilità e manutenzione.",
+          "summary": "Aggiorna la tua codebase PHP alla versione 8.3 implementando proprietà tipizzate, enum nativi e lo standard PSR-12 per una manutenzione a lungo termine.",
+          "faq": [
+            {
+              "q": "Perché è obbligatorio dichiarare strict_types in PHP 8.3?",
+              "a": "Garantisce che PHP non tenti conversioni implicite di tipo, lanciando un'eccezione se viene passato un tipo errato."
+            },
+            {
+              "q": "In che modo gli Enums migliorano il refactoring?",
+              "a": "Eliminano le stringhe magiche e limitano i valori possibili a un insieme finito convalidato in compilazione."
+            }
+          ],
+          "file": "published/php-83-typed-properties-enums-psr12-refactoring.it.md",
+          "sha256": "9cdab6fc147366b9347cfa0678797f103ed2462bef15ee5b647d8e57a8c91203"
+        },
+        "pt-BR": {
+          "title": "PHP 8.3 e PSR-12: Refatorando Código Legado com Typed Properties e Enums",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Aprenda a modernizar código PHP legado para PHP 8.3 usando typed properties, enums estritos e conformidade com PSR-12 para legibilidade e manutenção.",
+          "summary": "Atualize sua base de código PHP para a versão 8.3 implementando propriedades tipadas, enums nativos e o padrão PSR-12.",
+          "faq": [
+            {
+              "q": "Por que declarar strict_types é importante no PHP 8.3?",
+              "a": "Garante que o PHP não faça conversões implícitas, lançando exceções se o tipo estiver incorreto."
+            },
+            {
+              "q": "Como os Enums ajudam na refatoração?",
+              "a": "Eliminam strings mágicas e restringem valores a conjuntos finitos validados."
+            }
+          ],
+          "file": "published/php-83-typed-properties-enums-psr12-refactoring.pt-BR.md",
+          "sha256": "cb3ef342dc2f4d0ac526605a27af5b29538ef0c2dbc34a50b90cd0ff64140020"
+        },
+        "pt-PT": {
+          "title": "PHP 8.3 e PSR-12: Refatorizar Código Legado com Typed Properties e Enums",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Aprenda a modernizar código PHP legado para PHP 8.3 usando typed properties, enums estritos e conformidade com PSR-12 para legibilidade e manutenção.",
+          "summary": "Atualize a sua base de código PHP para a versão 8.3 implementando propriedades tipadas, enums nativos e o standard PSR-12.",
+          "faq": [
+            {
+              "q": "Porque é importante declarar strict_types em PHP 8.3?",
+              "a": "Garante que o PHP não faça conversões implícitas, lançando exceções se o tipo estiver incorreto."
+            },
+            {
+              "q": "Como é que os Enums ajudam na refatoração?",
+              "a": "Eliminam strings mágicas e restringem valores a conjuntos finitos validados."
+            }
+          ],
+          "file": "published/php-83-typed-properties-enums-psr12-refactoring.pt-PT.md",
+          "sha256": "e859e0e5036f4336f92a5ee8413454717adc6366abd6634049d1f7b0719fa928"
+        }
+      }
     }
   ]
 }
