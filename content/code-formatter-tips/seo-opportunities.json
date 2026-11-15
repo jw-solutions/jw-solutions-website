@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "priorityQueries": [
+    {
+      "query": "python 3.12 match case formatting pep8",
+      "lang": "en",
+      "language": "python",
+      "status": "pending"
+    }
+  ]
+}

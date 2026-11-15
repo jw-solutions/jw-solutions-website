@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Difusión social automática (Bluesky, Mastodon, Telegram) para tips publicados de Code Formatter & Auto-Doc AI.
+ * Difusión social automática (Bluesky, Mastodon, Telegram, Discord, GitHub Discussions)
+ * para tips publicados de Code Formatter & Auto-Doc AI.
  *
  * Cada conector es independiente y opcional: si faltan sus credenciales, se omite con ::warning::
  * y nunca falla el pipeline. Registra los canales publicados en syndication.social dentro del manifiesto.
@@ -189,6 +190,161 @@ async function publishTelegram(entry, enMeta, creds, fetchImpl) {
   return { messageId: data.result && data.result.message_id ? data.result.message_id : null };
 }
 
+function buildDiscordPayload(entry, enMeta) {
+  const { progLang, articleUrl } = buildTipUrls(entry, 'discord');
+  const title = enMeta.title || (entry.translations && entry.translations.en && entry.translations.en.title) || entry.title;
+  const description =
+    enMeta.description ||
+    (entry.translations && entry.translations.en && entry.translations.en.meta_description) ||
+    title;
+  const ogImageUrl = `${BASE_URL}/assets/images/og/tips/${encodeURIComponent(entry.slug)}-en.png`;
+
+  return {
+    embeds: [
+      {
+        title: String(title).slice(0, 256),
+        description: String(description).slice(0, 2048),
+        url: articleUrl,
+        color: 13938487,
+        image: { url: ogImageUrl },
+        footer: {
+          text: `JW Solutions · ${String(progLang).toUpperCase()} · Code Formatter & Auto-Doc AI`,
+        },
+        timestamp: new Date().toISOString(),
+      },
+    ],
+  };
+}
+
+async function publishDiscord(entry, enMeta, creds, fetchImpl) {
+  const parsedUrl = new URL(creds.webhookUrl);
+  if (parsedUrl.protocol !== 'https:') {
+    throw new Error('Discord webhook debe usar HTTPS.');
+  }
+  const targetUrl = `${creds.webhookUrl}${creds.webhookUrl.includes('?') ? '&' : '?'}wait=true`;
+  const payload = buildDiscordPayload(entry, enMeta);
+
+  const res = await fetchImpl(targetUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!res.ok) {
+    throw new Error(`Discord HTTP ${res.status}`);
+  }
+  if (res.status === 204) {
+    return { messageId: null };
+  }
+  const data = await res.json().catch(() => ({}));
+  return { messageId: data && data.id ? data.id : null };
+}
+
+async function publishGitHubDiscussion(entry, enMeta, creds, fetchImpl) {
+  const [owner, name] = String(creds.repository || '').split('/');
+  if (!owner || !name) {
+    throw new Error('GITHUB_REPOSITORY inválido (esperado owner/repo).');
+  }
+  const { progLang, articleUrl, toolUrl } = buildTipUrls(entry, 'github_discussions');
+  const title = enMeta.title || (entry.translations && entry.translations.en && entry.translations.en.title) || entry.title;
+  const description =
+    enMeta.description ||
+    (entry.translations && entry.translations.en && entry.translations.en.meta_description) ||
+    '';
+
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${creds.token}`,
+    'User-Agent': 'jw-solutions-code-formatter-bot',
+  };
+
+  const queryRes = await fetchImpl('https://api.github.com/graphql', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      query: `query($owner: String!, $name: String!) {
+        repository(owner: $owner, name: $name) {
+          id
+          discussionCategories(first: 25) {
+            nodes { id name slug }
+          }
+        }
+      }`,
+      variables: { owner, name },
+    }),
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!queryRes.ok) {
+    throw new Error(`GitHub GraphQL query HTTP ${queryRes.status}`);
+  }
+  const queryJson = await queryRes.json();
+  if (Array.isArray(queryJson.errors) && queryJson.errors.length > 0) {
+    throw new Error(`GitHub GraphQL query error: ${queryJson.errors[0].message}`);
+  }
+  const repo = queryJson.data && queryJson.data.repository;
+  if (!repo || !repo.id) {
+    throw new Error('Repositorio no encontrado en GitHub GraphQL.');
+  }
+  const categories = (repo.discussionCategories && repo.discussionCategories.nodes) || [];
+  const targetCat =
+    categories.find((c) => String(c.slug || c.name).toLowerCase() === 'announcements') ||
+    categories.find((c) => String(c.slug || c.name).toLowerCase() === 'general') ||
+    categories[0];
+  if (!targetCat) {
+    throw new Error('El repositorio no tiene categorías de GitHub Discussions habilitadas.');
+  }
+
+  const body = [
+    `### ${title}`,
+    '',
+    description,
+    '',
+    `- **Language:** \`${String(progLang).toUpperCase()}\``,
+    `- **Full Guide (EN):** [Read article on jw-solutions.com](${articleUrl})`,
+    `- **Try it live:** [Open Code Formatter & Auto-Doc AI](${toolUrl})`,
+  ].join('\n');
+
+  const mutationRes = await fetchImpl('https://api.github.com/graphql', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      query: `mutation($repositoryId: ID!, $categoryId: ID!, $title: String!, $body: String!) {
+        createDiscussion(input: {
+          repositoryId: $repositoryId,
+          categoryId: $categoryId,
+          title: $title,
+          body: $body
+        }) {
+          discussion { id url number }
+        }
+      }`,
+      variables: {
+        repositoryId: repo.id,
+        categoryId: targetCat.id,
+        title: `[${String(progLang).toUpperCase()}] ${title}`.slice(0, 240),
+        body,
+      },
+    }),
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!mutationRes.ok) {
+    throw new Error(`GitHub GraphQL mutation HTTP ${mutationRes.status}`);
+  }
+  const mutationJson = await mutationRes.json();
+  if (Array.isArray(mutationJson.errors) && mutationJson.errors.length > 0) {
+    throw new Error(`GitHub GraphQL mutation error: ${mutationJson.errors[0].message}`);
+  }
+  const discussion =
+    mutationJson.data &&
+    mutationJson.data.createDiscussion &&
+    mutationJson.data.createDiscussion.discussion;
+  return {
+    id: discussion && discussion.id ? discussion.id : null,
+    url: discussion && discussion.url ? discussion.url : null,
+    number: discussion && discussion.number ? discussion.number : null,
+  };
+}
+
 /**
  * Ejecuta difusión social idempotente para todos los canales configurados.
  * @param {object} [options]
@@ -212,13 +368,29 @@ async function syndicateAll(options = {}) {
     options.telegramToken !== undefined ? options.telegramToken : (process.env.TELEGRAM_BOT_TOKEN || '').trim();
   const telegramChatId =
     options.telegramChatId !== undefined ? options.telegramChatId : (process.env.TELEGRAM_CHAT_ID || '').trim();
+  const discordWebhookUrl =
+    options.discordWebhookUrl !== undefined
+      ? options.discordWebhookUrl
+      : (process.env.DISCORD_WEBHOOK_URL || '').trim();
+  const githubToken =
+    options.githubToken !== undefined
+      ? options.githubToken
+      : (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '').trim();
+  const githubRepository =
+    options.githubRepository !== undefined
+      ? options.githubRepository
+      : (process.env.GITHUB_REPOSITORY || '').trim();
 
   const hasBsky = Boolean(bskyHandle && bskyAppPassword);
   const hasMastodon = Boolean(mastodonUrl && mastodonToken);
   const hasTelegram = Boolean(telegramToken && telegramChatId);
+  const hasDiscord = Boolean(discordWebhookUrl);
+  const hasGithubDiscussions = Boolean(githubToken && githubRepository && githubRepository.includes('/'));
 
-  if (!hasBsky && !hasMastodon && !hasTelegram && !dryRun) {
-    console.log('::warning::Ningún conector social configurado (Bluesky/Mastodon/Telegram); omitiendo difusión social.');
+  if (!hasBsky && !hasMastodon && !hasTelegram && !hasDiscord && !hasGithubDiscussions && !dryRun) {
+    console.log(
+      '::warning::Ningún conector social configurado (Bluesky/Mastodon/Telegram/Discord/GitHub Discussions); omitiendo difusión social.'
+    );
     return { skippedReason: 'missing_credentials', published: [], errors: [] };
   }
 
@@ -256,6 +428,22 @@ async function syndicateAll(options = {}) {
         name: 'telegram',
         enabled: hasTelegram,
         run: () => publishTelegram(entry, enMeta, { botToken: telegramToken, chatId: telegramChatId }, fetchImpl),
+      },
+      {
+        name: 'discord',
+        enabled: hasDiscord,
+        run: () => publishDiscord(entry, enMeta, { webhookUrl: discordWebhookUrl }, fetchImpl),
+      },
+      {
+        name: 'github_discussions',
+        enabled: hasGithubDiscussions,
+        run: () =>
+          publishGitHubDiscussion(
+            entry,
+            enMeta,
+            { token: githubToken, repository: githubRepository },
+            fetchImpl
+          ),
       },
     ];
 
@@ -317,5 +505,6 @@ if (require.main === module) {
 
 module.exports = {
   buildBlueskyPost,
+  buildDiscordPayload,
   syndicateAll,
 };

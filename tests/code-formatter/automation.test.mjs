@@ -374,9 +374,165 @@ test('syndicate-social.js hace fallback seguro sin secretos configurados', async
     mastodonToken: '',
     telegramToken: '',
     telegramChatId: '',
+    discordWebhookUrl: '',
+    githubToken: '',
+    githubRepository: '',
   });
   assert.equal(skipped.skippedReason, 'missing_credentials');
   assert.equal(skipped.published.length, 0);
+});
+
+test('syndicate-social.js publica en Discord (Dark Gold + OG + UTM) y GitHub Discussions de forma idempotente', async () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cf-social-'));
+  try {
+    const manifestPath = path.join(tmpDir, 'manifest.json');
+    const publishedDir = path.join(tmpDir, 'published');
+    fs.mkdirSync(publishedDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(publishedDir, 'match-case-tip.en.md'),
+      '---\ntitle: "Python 3.12 Match-Case Formatting"\ndescription: "Clean PEP 8 structural pattern matching."\nprogramming_language: "python"\n---\n\nBody.\n',
+      'utf8'
+    );
+    fs.writeFileSync(
+      manifestPath,
+      JSON.stringify({
+        tips: [{ slug: 'match-case-tip', language: 'python', programming_language: 'python', status: 'DEPLOYED' }],
+      }),
+      'utf8'
+    );
+
+    const calls = [];
+    const mockFetch = async (url, init) => {
+      const body = JSON.parse(init.body);
+      calls.push({ url, body });
+      if (url.startsWith('https://discord.com/api/webhooks/')) {
+        assert.equal(body.embeds[0].color, 13938487);
+        assert.equal(body.embeds[0].image.url, 'https://jw-solutions.com/assets/images/og/tips/match-case-tip-en.png');
+        assert.match(body.embeds[0].url, /utm_source=discord&utm_medium=social&utm_campaign=match-case-tip/);
+        return { ok: true, status: 200, json: async () => ({ id: 'disc-msg-1' }) };
+      }
+      if (url === 'https://api.github.com/graphql' && body.query.includes('discussionCategories')) {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            data: {
+              repository: {
+                id: 'REPO_ID_1',
+                discussionCategories: { nodes: [{ id: 'CAT_ANN', name: 'Announcements', slug: 'announcements' }] },
+              },
+            },
+          }),
+        };
+      }
+      if (url === 'https://api.github.com/graphql' && body.query.includes('createDiscussion')) {
+        assert.equal(body.variables.repositoryId, 'REPO_ID_1');
+        assert.equal(body.variables.categoryId, 'CAT_ANN');
+        assert.match(body.variables.body, /utm_source=github_discussions&utm_medium=social&utm_campaign=match-case-tip/);
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            data: {
+              createDiscussion: {
+                discussion: { id: 'D_1', url: 'https://github.com/jw-solutions/jw-solutions-website/discussions/1', number: 1 },
+              },
+            },
+          }),
+        };
+      }
+      throw new Error(`Unexpected URL: ${url}`);
+    };
+
+    const first = await social.syndicateAll({
+      manifestPath,
+      publishedDir,
+      bskyHandle: '',
+      bskyAppPassword: '',
+      mastodonUrl: '',
+      mastodonToken: '',
+      telegramToken: '',
+      telegramChatId: '',
+      discordWebhookUrl: 'https://discord.com/api/webhooks/123/abc',
+      githubToken: 'ghp_test',
+      githubRepository: 'jw-solutions/jw-solutions-website',
+      fetchImpl: mockFetch,
+    });
+    assert.equal(first.errors.length, 0);
+    assert.deepEqual(
+      first.published.map((p) => p.channel),
+      ['discord', 'github_discussions']
+    );
+
+    const updated = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    assert.equal(updated.tips[0].syndication.social.discord.status, 'published');
+    assert.equal(updated.tips[0].syndication.social.github_discussions.status, 'published');
+
+    const second = await social.syndicateAll({
+      manifestPath,
+      publishedDir,
+      bskyHandle: '',
+      bskyAppPassword: '',
+      mastodonUrl: '',
+      mastodonToken: '',
+      telegramToken: '',
+      telegramChatId: '',
+      discordWebhookUrl: 'https://discord.com/api/webhooks/123/abc',
+      githubToken: 'ghp_test',
+      githubRepository: 'jw-solutions/jw-solutions-website',
+      fetchImpl: mockFetch,
+    });
+    assert.equal(second.published.length, 0);
+    assert.equal(calls.length, 3);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('seo-opportunities.json prioriza consultas pending en generate-weekly-tip.js y marca published sin romper rotación', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cf-seo-'));
+  try {
+    const seoPath = path.join(tmpDir, 'seo-opportunities.json');
+    fs.writeFileSync(
+      seoPath,
+      JSON.stringify({
+        version: 1,
+        priorityQueries: [
+          { query: 'already done query', lang: 'en', language: 'sql', status: 'published', slug: 'old-slug' },
+          { query: 'python 3.12 match case formatting pep8', lang: 'en', language: 'python', status: 'pending' },
+        ],
+      }),
+      'utf8'
+    );
+
+    const opp = gen.loadPendingSeoOpportunity(seoPath);
+    assert.ok(opp);
+    assert.equal(opp.index, 1);
+    assert.equal(opp.item.language, 'python');
+
+    const prompt = gen.buildPrompt({
+      progLang: opp.item.language,
+      slot: 'tuesday',
+      existingTitles: [],
+      existingSlugs: new Set(),
+      fixes: [],
+      seoOpportunity: opp.item,
+    });
+    assert.match(prompt, /python 3\.12 match case formatting pep8/);
+
+    const marked = gen.markSeoOpportunityPublished(seoPath, opp.index, 'python-312-match-case-pep8');
+    assert.equal(marked, true);
+    assert.equal(gen.loadPendingSeoOpportunity(seoPath), null);
+
+    const saved = JSON.parse(fs.readFileSync(seoPath, 'utf8'));
+    assert.equal(saved.priorityQueries[1].status, 'published');
+    assert.equal(saved.priorityQueries[1].slug, 'python-312-match-case-pep8');
+
+    // Rotación automática sigue intacta cuando no hay pendientes
+    assert.equal(gen.selectLanguage({ slot: 'tuesday', counts: { python: 2, javascript: 0 } }), 'javascript');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
 });
 
 test('generate-distribution-kit.js genera 7 idiomas con comunidades y parámetros UTM correctos', () => {

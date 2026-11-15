@@ -18,6 +18,7 @@ const DRAFTS_DIR = path.join(TIPS_BASE, 'drafts');
 const PUBLISHED_DIR = path.join(TIPS_BASE, 'published');
 const MANIFEST_FILE = path.join(TIPS_BASE, 'code-formatter-manifest.json');
 const FIXES_FILE = path.join(TIPS_BASE, 'syntax-fixes.json');
+const SEO_OPPORTUNITIES_FILE = path.join(TIPS_BASE, 'seo-opportunities.json');
 
 const ALL_LOCALES = ['es', 'en', 'pt-BR', 'pt-PT', 'fr', 'de', 'it'];
 const TUESDAY_LANGS = ['python', 'javascript', 'typescript', 'java', 'csharp', 'php'];
@@ -129,6 +130,40 @@ function selectLanguage({ slot, explicitLang, counts }) {
   return [...pool].sort((a, b) => (counts[a] || 0) - (counts[b] || 0) || pool.indexOf(a) - pool.indexOf(b))[0];
 }
 
+function loadPendingSeoOpportunity(seoFilePath = SEO_OPPORTUNITIES_FILE, explicitLang = null) {
+  if (!seoFilePath || !fs.existsSync(seoFilePath)) return null;
+  let parsed;
+  try {
+    parsed = JSON.parse(fs.readFileSync(seoFilePath, 'utf8'));
+  } catch {
+    return null;
+  }
+  const queries = Array.isArray(parsed && parsed.priorityQueries) ? parsed.priorityQueries : [];
+  const pendingEntries = queries
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) => item && item.status === 'pending' && String(item.query || '').trim());
+
+  if (pendingEntries.length === 0) return null;
+  if (explicitLang) {
+    const match = pendingEntries.find(
+      ({ item }) => String(item.language || '').toLowerCase() === explicitLang.toLowerCase()
+    );
+    if (match) return match;
+  }
+  return pendingEntries[0];
+}
+
+function markSeoOpportunityPublished(seoFilePath = SEO_OPPORTUNITIES_FILE, index, slug) {
+  if (!seoFilePath || !fs.existsSync(seoFilePath) || index === null || index === undefined || index < 0) return false;
+  const parsed = JSON.parse(fs.readFileSync(seoFilePath, 'utf8'));
+  if (!Array.isArray(parsed.priorityQueries) || !parsed.priorityQueries[index]) return false;
+  parsed.priorityQueries[index].status = 'published';
+  parsed.priorityQueries[index].slug = slug;
+  parsed.priorityQueries[index].publishedAt = new Date().toISOString();
+  writeAtomic(seoFilePath, `${JSON.stringify(parsed, null, 2)}\n`);
+  return true;
+}
+
 function sanitizeSlug(raw) {
   return String(raw || '')
     .toLowerCase()
@@ -140,19 +175,27 @@ function sanitizeSlug(raw) {
     .replace(/-+$/g, '');
 }
 
-function buildPrompt({ progLang, slot, existingTitles, existingSlugs, fixes }) {
+function buildPrompt({ progLang, slot, existingTitles, existingSlugs, fixes, seoOpportunity = null }) {
   const today = new Date().toISOString().slice(0, 10);
   const focus = slot === 'thursday'
     ? 'Datos, configuración y flujos de Auto-Documentación con IA (Auto-Doc AI)'
     : 'Lenguajes de aplicación, refactorización de código legado y estándares oficiales';
   const fixSlugs = fixes.map((f) => `${f.slug} (${f.language})`).join(', ');
   const excludedTitles = existingTitles.length ? existingTitles.map((t) => `- ${t}`).join('\n') : '- (ninguno)';
+  const seoSection = seoOpportunity && seoOpportunity.query
+    ? [
+        ``,
+        `CONSULTA SEO PRIORITARIA (Google Search Console / Bing Webmaster Tools):`,
+        `- Query objetivo: "${seoOpportunity.query}" (idioma principal de búsqueda: ${seoOpportunity.lang || 'en'}).`,
+        `- Orienta el título, los encabezados H2, la meta_description y los ejemplos Antes/Después para responder con máxima autoridad técnica a esta consulta.`
+      ].join('\n')
+    : '';
 
   return [
     `Eres el arquitecto de software y editor técnico principal de JW Solutions para el producto "Code Formatter & Auto-Doc AI".`,
     `Fecha objetivo: ${today}.`,
     `Lenguaje de programación asignado: ${progLang} (Estándares clave: ${LANG_STANDARDS[progLang]}).`,
-    `Enfoque editorial de hoy: ${focus}.`,
+    `Enfoque editorial de hoy: ${focus}.${seoSection}`,
     ``,
     `Títulos YA publicados (PROHIBIDO repetir tema, enfoque o título similar):`,
     excludedTitles,
@@ -378,7 +421,17 @@ async function main() {
 
   const ctx = loadContext();
   const slot = detectSlot(opts.slot);
-  const progLang = selectLanguage({ slot, explicitLang: opts.lang, counts: ctx.counts });
+  const seoOpp = loadPendingSeoOpportunity(SEO_OPPORTUNITIES_FILE, opts.lang);
+  const seoLang =
+    seoOpp && seoOpp.item && seoOpp.item.language && ALL_PROG_LANGS.includes(String(seoOpp.item.language).toLowerCase())
+      ? String(seoOpp.item.language).toLowerCase()
+      : null;
+  const progLang = opts.lang
+    ? selectLanguage({ slot, explicitLang: opts.lang, counts: ctx.counts })
+    : (seoLang || selectLanguage({ slot, explicitLang: null, counts: ctx.counts }));
+  if (seoOpp) {
+    log('INFO', `Prioridad SEO detectada: "${seoOpp.item.query}" (lang=${seoOpp.item.lang || 'en'}, lenguaje=${progLang})`);
+  }
   log('INFO', `Slot=${slot}, lenguaje seleccionado=${progLang}`);
 
   let rawTip;
@@ -395,7 +448,8 @@ async function main() {
       slot,
       existingTitles: ctx.titles,
       existingSlugs: ctx.slugs,
-      fixes: ctx.fixes
+      fixes: ctx.fixes,
+      seoOpportunity: seoOpp ? seoOpp.item : null
     });
     rawTip = await callGemini(apiKey, prompt);
   }
@@ -407,6 +461,10 @@ async function main() {
     expectedLang: progLang
   });
   const files = writeTipDrafts(validated);
+  if (seoOpp && !opts.mock) {
+    markSeoOpportunityPublished(SEO_OPPORTUNITIES_FILE, seoOpp.index, validated.slug);
+    log('INFO', `Consulta SEO marcada como published con slug="${validated.slug}".`);
+  }
   log('SUCCESS', `Tip generado en 7 idiomas (${validated.slug}): ${files.length} archivos escritos en drafts/.`);
 }
 
@@ -426,6 +484,8 @@ module.exports = {
   hasReadyDraft,
   detectSlot,
   selectLanguage,
+  loadPendingSeoOpportunity,
+  markSeoOpportunityPublished,
   buildPrompt,
   validateTipPayload,
   writeTipDrafts
