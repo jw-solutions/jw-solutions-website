@@ -1,13 +1,27 @@
 {
   "slug": "java-21-pattern-matching-records-refactoring",
   "language": "java",
-  "generated_at": "2026-11-15T03:29:16.436Z",
+  "generated_at": "2026-11-15T03:52:49.554Z",
+  "daily_dev_squad": {
+    "squad_url": "https://dly.to/nmdN9vQObOU",
+    "en": {
+      "title": "Refactoring in Java 21+: Records and Pattern Matching for Readable Code",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=java-21-pattern-matching-records-refactoring",
+      "post_markdown": "Learn how to refactor legacy Java code to Java 21 using Records and switch Pattern Matching to eliminate boilerplate and enhance code readability.\n\n```java\r\n// BEFORE: Verbose and error-prone legacy code\r\npublic abstract class Response {\r\n}\r\n\r\npublic class SuccessResponse extends Response {\r\n    private final String data;\r\n    public SuccessResponse(String data) { this.data = data; }\r\n    public String getData() { return data; }\r\n}\r\n\r\npublic class ErrorResponse extends Response {\r\n    private final String errorCode;\r\n    public ErrorResponse(String errorCode) { this.errorCode = errorCode; }\r\n    public String getErrorCode() { return errorCode; }\r\n}\r\n\r\npublic class ResponseProcessor {\r\n    public static String process(Response response) {\r\n        if (response instanceof SuccessResponse) {\r\n            SuccessResponse success = (SuccessResponse) response;\r\n            return \"OK: \" + success.getData();\r\n        } else if (response instanceof ErrorResponse) {\r\n            ErrorResponse error = (ErrorResponse) response;\r\n            return \"FAIL: \" + error.getErrorCode();\r\n        } else {\r\n            throw new IllegalArgumentException(\"Unknown response type\");\r\n        }\r\n    }\r\n}\r\n```\n```java\r\n// AFTER: Clean, modern, and safe code in Java 21\r\npublic sealed interface Response permits Response.Success, Response.Error {\r\n    record Success(String data) implements Response {}\r\n    record Error(String errorCode) implements Response {}\r\n\r\n    /**\r\n     * Processes the response safely using pattern matching.\r\n     *\r\n     * @param response the response received from the server\r\n     * @return a formatted string with the processing result\r\n     */\r\n    static String process(Response response) {\r\n        return switch (response) {\r\n            case Success(var data) -> \"OK: \" + data;\r\n            case Error(var code) -> \"FAIL: \" + code;\r\n        };\r\n    }\r\n}\r\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=java-21-pattern-matching-records-refactoring\n#java #CleanCode #DevTools"
+    },
+    "es": {
+      "title": "Refactorización en Java 21+: Records y Pattern Matching para Código Legible",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=java-21-pattern-matching-records-refactoring",
+      "post_markdown": "Aprende a refactorizar código legado en Java 21 usando Records y Pattern Matching en switch para eliminar código repetitivo y mejorar la legibilidad.\n\n```java\r\n// ANTES: Código legado verboso y propenso a errores\r\npublic abstract class Response {\r\n}\r\n\r\npublic class SuccessResponse extends Response {\r\n    private final String data;\r\n    public SuccessResponse(String data) { this.data = data; }\r\n    public String getData() { return data; }\r\n}\r\n\r\npublic class ErrorResponse extends Response {\r\n    private final String errorCode;\r\n    public ErrorResponse(String errorCode) { this.errorCode = errorCode; }\r\n    public String getErrorCode() { return errorCode; }\r\n}\r\n\r\npublic class ResponseProcessor {\r\n    public static String process(Response response) {\r\n        if (response instanceof SuccessResponse) {\r\n            SuccessResponse success = (SuccessResponse) response;\r\n            return \"OK: \" + success.getData();\r\n        } else if (response instanceof ErrorResponse) {\r\n            ErrorResponse error = (ErrorResponse) response;\r\n            return \"FAIL: \" + error.getErrorCode();\r\n        } else {\r\n            throw new IllegalArgumentException(\"Unknown response type\");\r\n        }\r\n    }\r\n}\r\n```\n```java\r\n// DESPUÉS: Código limpio, moderno y seguro en Java 21\r\npublic sealed interface Response permits Response.Success, Response.Error {\r\n    record Success(String data) implements Response {}\r\n    record Error(String errorCode) implements Response {}\r\n\r\n    /**\r\n     * Procesa la respuesta de forma segura utilizando pattern matching.\r\n     *\r\n     * @param response la respuesta recibida del servidor\r\n     * @return una cadena formateada con el resultado del procesamiento\r\n     */\r\n    static String process(Response response) {\r\n        return switch (response) {\r\n            case Success(var data) -> \"OK: \" + data;\r\n            case Error(var code) -> \"FAIL: \" + code;\r\n        };\r\n    }\r\n}\r\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=java-21-pattern-matching-records-refactoring\n#java #Programación #CódigoLimpio"
+    }
+  },
   "locales": {
     "en": {
       "title": "Refactoring in Java 21+: Records and Pattern Matching for Readable Code",
       "communities": [
         "Reddit: r/java",
-        "Hacker News"
+        "Hacker News",
+        "Medium (Importar URL canónica)"
       ],
       "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/en/?utm_source=reddit&utm_medium=community&utm_campaign=java-21-pattern-matching-records-refactoring",
       "hashtags": "#java #CleanCode #DevTools",
@@ -56,7 +70,7 @@
     "de": {
       "title": "Refactoring in Java 21+: Records und Pattern Matching für lesbaren Code",
       "communities": [
-        "Heise Developer",
+        "Heise Developer / iX",
         "Reddit: r/de_EDV"
       ],
       "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/de/?utm_source=reddit&utm_medium=community&utm_campaign=java-21-pattern-matching-records-refactoring",

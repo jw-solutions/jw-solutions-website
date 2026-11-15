@@ -125,6 +125,9 @@ test('Feeds RSS feed.xml y feed.<lang>.xml son XML válidos con items publicados
     assert.ok(fs.existsSync(feedPath), `Falta feed RSS ${feedPath}`);
     const xml = fs.readFileSync(feedPath, 'utf8');
     assert.match(xml, new RegExp(`<language>${loc}</language>`));
+    assert.match(xml, /xmlns:media="http:\/\/search\.yahoo\.com\/mrss\/"/);
+    assert.match(xml, /<media:content url="https:\/\/jw-solutions\.com\/assets\/images\/og\/tips\/[^"]+\.png" medium="image" \/>/);
+    assert.match(xml, /<content:encoded><!\[CDATA\[/);
     assert.match(xml, /<item>[\s\S]*?<title>[\s\S]*?<link>https:\/\/jw-solutions\.com\/tools\/code-formatter\/tips\//);
   }
 });
@@ -393,4 +396,11 @@ test('generate-distribution-kit.js genera 7 idiomas con comunidades y parámetro
   assert.ok(kit.locales.es.communities.includes('Reddit: r/programacion'));
   assert.ok(kit.locales['pt-BR'].communities.includes('TabNews (tabnews.com.br)'));
   assert.ok(kit.locales.fr.communities.includes('Zeste de Savoir'));
+  assert.ok(kit.daily_dev_squad, 'Falta sección daily_dev_squad');
+  assert.equal(kit.daily_dev_squad.squad_url, 'https://dly.to/nmdN9vQObOU');
+  assert.match(kit.daily_dev_squad.en.utm_url, /utm_source=dailydev&utm_medium=squad&utm_campaign=python-312-pep8-tips/);
+  assert.match(kit.daily_dev_squad.es.utm_url, /utm_source=dailydev&utm_medium=squad&utm_campaign=python-312-pep8-tips/);
+
+  const toolHtml = fs.readFileSync(path.join(ROOT, 'tools', 'code-formatter', 'index.html'), 'utf8');
+  assert.match(toolHtml, /https:\/\/dly\.to\/nmdN9vQObOU/);
 });

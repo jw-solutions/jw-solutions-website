@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
     <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>pt-PT</language>
-    <lastBuildDate>Sun, 15 Nov 2026 03:29:09 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 15 Nov 2026 03:52:42 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -25,6 +25,7 @@
       <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/pt-PT/</guid>
       <pubDate>Sat, 14 Nov 2026 14:00:00 +0000</pubDate>
       <category>TYPESCRIPT</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/typescript-refactoring-legacy-any-type-guards-tsdoc-pt-PT.png" medium="image" />
       <description>Aprenda a remover tipos any de repositórios legados utilizando predicados de tipo estritos em TypeScript e documentação TSDoc para o Auto-Doc AI.</description>
       <content:encoded><![CDATA[<p>Aprenda a remover tipos any de repositórios legados utilizando predicados de tipo estritos em TypeScript e documentação TSDoc para o Auto-Doc AI.</p><pre><code>// ❌ Código legado vulnerável a erros em tempo de execução
 function processUserData(data: any) {
@@ -41,6 +42,7 @@ function processUserData(data: any) {
       <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/pt-PT/</guid>
       <pubDate>Sat, 14 Nov 2026 14:00:00 +0000</pubDate>
       <category>JAVA</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/java-21-pattern-matching-records-refactoring-pt-PT.png" medium="image" />
       <description>Descubra como transformar hierarquias de classes extensas em Records elegantes e Pattern Matching no Java 21, reduzindo drasticamente o código boilerplate.</description>
       <content:encoded><![CDATA[<p>Descubra como transformar hierarquias de classes extensas em Records elegantes e Pattern Matching no Java 21, reduzindo drasticamente o código boilerplate.</p><pre><code>// ANTES: Código legado verboso e propenso a erros
 public abstract class Response {
@@ -78,6 +80,7 @@ public class ResponseProcessor {
       <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/csharp/csharp-12-primary-constructors-xml-doc-refactoring/pt-PT/</guid>
       <pubDate>Sat, 14 Nov 2026 14:00:00 +0000</pubDate>
       <category>CSHARP</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/csharp-12-primary-constructors-xml-doc-refactoring-pt-PT.png" medium="image" />
       <description>Descubra como simplificar a injeção de dependências no C# 12 utilizando Primary Constructors com documentação XML estruturada.</description>
       <content:encoded><![CDATA[<p>Descubra como simplificar a injeção de dependências no C# 12 utilizando Primary Constructors com documentação XML estruturada.</p><pre><code>namespace JWDocs.Services;
 
@@ -113,6 +116,7 @@ public class PaymentProcessor
       <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/pt-PT/</guid>
       <pubDate>Mon, 02 Nov 2026 14:00:00 +0000</pubDate>
       <category>JAVASCRIPT</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/typescript-modern-operators-pt-PT.png" medium="image" />
       <description>TypeScript moderno: ?., ?? e satisfies sem erros de formatação</description>
       <content:encoded><![CDATA[<p>TypeScript moderno: ?., ?? e satisfies sem erros de formatação</p><pre><code>const config = {
   retries: 3,
@@ -128,6 +132,7 @@ const city = user?.address?.city ?? &quot;Sin ciudad&quot;;</code></pre><p><a hr
       <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/pt-PT/</guid>
       <pubDate>Mon, 02 Nov 2026 14:00:00 +0000</pubDate>
       <category>SQL</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/sql-dax-optimization-basics-pt-PT.png" medium="image" />
       <description>SQL e DAX: três hábitos para consultas rápidas e legíveis</description>
       <content:encoded><![CDATA[<p>SQL e DAX: três hábitos para consultas rápidas e legíveis</p><pre><code>SELECT o.id, o.total, c.name
 FROM orders AS o
@@ -141,6 +146,7 @@ ORDER BY o.total DESC;</code></pre><p><a href="https://jw-solutions.com/tools/co
       <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/pt-PT/</guid>
       <pubDate>Mon, 02 Nov 2026 14:00:00 +0000</pubDate>
       <category>PYTHON</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/python-312-pep8-tips-pt-PT.png" medium="image" />
       <description>PEP 8 em Python 3.12: como escrever blocos match/case legíveis</description>
       <content:encoded><![CDATA[<p>PEP 8 em Python 3.12: como escrever blocos match/case legíveis</p><pre><code>match command.split():
     case [&quot;go&quot;, direction] if direction in {&quot;north&quot;, &quot;south&quot;}:

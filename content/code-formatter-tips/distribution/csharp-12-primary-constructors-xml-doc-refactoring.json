@@ -1,14 +1,28 @@
 {
   "slug": "csharp-12-primary-constructors-xml-doc-refactoring",
   "language": "csharp",
-  "generated_at": "2026-11-15T03:29:16.441Z",
+  "generated_at": "2026-11-15T03:52:49.557Z",
+  "daily_dev_squad": {
+    "squad_url": "https://dly.to/nmdN9vQObOU",
+    "en": {
+      "title": "Modern C# 12: Refactoring with Primary Constructors and XML Docs",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/csharp/csharp-12-primary-constructors-xml-doc-refactoring/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=csharp-12-primary-constructors-xml-doc-refactoring",
+      "post_markdown": "Learn how to refactor legacy C# constructors using C# 12 Primary Constructors and XML comments paired with .NET analyzers for cleaner code.\n\n```csharp\r\nnamespace JWDocs.Services;\r\n\r\n/// <summary>\r\n/// Service responsible for processing payments and customer receipts.\r\n/// </summary>\r\npublic class PaymentProcessor\r\n{\r\n    private readonly IPaymentGateway _gateway;\r\n    private readonly ILogger _logger;\r\n\r\n    /// <summary>\r\n    /// Initializes a new instance of <see cref=\"PaymentProcessor\"/>.\r\n    /// </summary>\r\n    /// <param name=\"gateway\">The primary payment provider.</param>\r\n    /// <param name=\"logger\">The audit logging service.</param>\r\n    public PaymentProcessor(IPaymentGateway gateway, ILogger logger)\r\n    {\r\n        _gateway = gateway ?? throw new ArgumentNullException(nameof(gateway));\r\n        _logger = logger ?? throw new ArgumentNullException(nameof(logger));\r\n    }\r\n\r\n    public async Task ProcessAsync(decimal amount)\r\n    {\r\n        _logger.LogInfo(\"Starting payment...\");\r\n        await _gateway.ChargeAsync(amount);\r\n    }\r\n}\r\n```\n```csharp\r\nnamespace JWDocs.Services;\r\n\r\n/// <summary>\r\n/// Service responsible for processing payments and customer receipts.\r\n/// </summary>\r\n/// <param name=\"gateway\">The primary payment provider.</param>\r\n/// <param name=\"logger\">The audit logging service.</param>\r\npublic class PaymentProcessor(IPaymentGateway gateway, ILogger logger)\r\n{\r\n    public async Task ProcessAsync(decimal amount)\r\n    {\r\n        ArgumentNullException.ThrowIfNull(gateway);\r\n        ArgumentNullException.ThrowIfNull(logger);\r\n\r\n        logger.LogInfo(\"Starting payment...\");\r\n        await gateway.ChargeAsync(amount);\r\n    }\r\n}\r\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/csharp/csharp-12-primary-constructors-xml-doc-refactoring/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=csharp-12-primary-constructors-xml-doc-refactoring\n#csharp #CleanCode #DevTools"
+    },
+    "es": {
+      "title": "C# 12 Moderno: Refactorización con Primary Constructors y XML Docs",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/csharp/csharp-12-primary-constructors-xml-doc-refactoring/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=csharp-12-primary-constructors-xml-doc-refactoring",
+      "post_markdown": "Aprende a refactorizar constructores legados en C# 12 usando Primary Constructors y comentarios XML estandarizados con .NET Analyzers.\n\n```csharp\r\nnamespace JWDocs.Services;\r\n\r\n/// <summary>\r\n/// Servicio para procesar pagos y emitir recibos de clientes.\r\n/// </summary>\r\npublic class PaymentProcessor\r\n{\r\n    private readonly IPaymentGateway _gateway;\r\n    private readonly ILogger _logger;\r\n\r\n    /// <summary>\r\n    /// Inicializa una nueva instancia de <see cref=\"PaymentProcessor\"/>.\r\n    /// </summary>\r\n    /// <param name=\"gateway\">El proveedor de pagos principal.</param>\r\n    /// <param name=\"logger\">El servicio de registro de eventos auditables.</param>\r\n    public PaymentProcessor(IPaymentGateway gateway, ILogger logger)\r\n    {\r\n        _gateway = gateway ?? throw new ArgumentNullException(nameof(gateway));\r\n        _logger = logger ?? throw new ArgumentNullException(nameof(logger));\r\n    }\r\n\r\n    public async Task ProcessAsync(decimal amount)\r\n    {\r\n        _logger.LogInfo(\"Iniciando pago...\");\r\n        await _gateway.ChargeAsync(amount);\r\n    }\r\n}\r\n```\n```csharp\r\nnamespace JWDocs.Services;\r\n\r\n/// <summary>\r\n/// Servicio para procesar pagos y emitir recibos de clientes.\r\n/// </summary>\r\n/// <param name=\"gateway\">El proveedor de pagos principal.</param>\r\n/// <param name=\"logger\">El servicio de registro de eventos auditables.</param>\r\npublic class PaymentProcessor(IPaymentGateway gateway, ILogger logger)\r\n{\r\n    public async Task ProcessAsync(decimal amount)\r\n    {\r\n        ArgumentNullException.ThrowIfNull(gateway);\r\n        ArgumentNullException.ThrowIfNull(logger);\r\n\r\n        logger.LogInfo(\"Iniciando pago...\");\r\n        await gateway.ChargeAsync(amount);\r\n    }\r\n}\r\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/csharp/csharp-12-primary-constructors-xml-doc-refactoring/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=csharp-12-primary-constructors-xml-doc-refactoring\n#csharp #Programación #CódigoLimpio"
+    }
+  },
   "locales": {
     "en": {
       "title": "Modern C# 12: Refactoring with Primary Constructors and XML Docs",
       "communities": [
         "Reddit: r/csharp",
         "Reddit: r/dotnet",
-        "Hacker News"
+        "Hacker News",
+        "Medium (Importar URL canónica)"
       ],
       "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/csharp/csharp-12-primary-constructors-xml-doc-refactoring/en/?utm_source=reddit&utm_medium=community&utm_campaign=csharp-12-primary-constructors-xml-doc-refactoring",
       "hashtags": "#csharp #CleanCode #DevTools",
@@ -57,7 +71,7 @@
     "de": {
       "title": "Modernes C# 12: Refactoring mit Primary Constructors und XML Docs",
       "communities": [
-        "Heise Developer",
+        "Heise Developer / iX",
         "Reddit: r/de_EDV"
       ],
       "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/csharp/csharp-12-primary-constructors-xml-doc-refactoring/de/?utm_source=reddit&utm_medium=community&utm_campaign=csharp-12-primary-constructors-xml-doc-refactoring",

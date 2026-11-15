@@ -63,9 +63,20 @@ function buildHashnodeInput(entry, markdownRaw, publicationId) {
 
   const langParam = encodeURIComponent(String(progLang).toLowerCase());
   const snippetParam = data.interactive_snippet ? `&snippet=${encodeURIComponent(String(data.interactive_snippet))}` : '';
-  const interactiveUrl = `${BASE_URL}/tools/code-formatter/?lang=${langParam}${snippetParam}&utm_source=hashnode&utm_medium=syndication`;
+  const interactiveUrl = `${BASE_URL}/tools/code-formatter/?lang=${langParam}${snippetParam}&utm_source=hashnode&utm_medium=syndication&utm_campaign=${encodeURIComponent(slug)}`;
+
+  const faqLines = [];
+  if (Array.isArray(data.faq) && data.faq.length > 0) {
+    faqLines.push('', '## Frequently Asked Questions', '');
+    for (const item of data.faq) {
+      if (item && item.q && item.a) {
+        faqLines.push(`### ${item.q}`, '', String(item.a), '');
+      }
+    }
+  }
 
   const footer = [
+    ...faqLines,
     '',
     '---',
     '',

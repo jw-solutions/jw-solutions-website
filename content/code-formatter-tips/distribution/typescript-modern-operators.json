@@ -1,7 +1,20 @@
 {
   "slug": "typescript-modern-operators",
   "language": "javascript",
-  "generated_at": "2026-11-15T03:29:16.426Z",
+  "generated_at": "2026-11-15T03:52:49.541Z",
+  "daily_dev_squad": {
+    "squad_url": "https://dly.to/nmdN9vQObOU",
+    "en": {
+      "title": "Modern TypeScript: ?., ?? and satisfies without formatting errors",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=typescript-modern-operators",
+      "post_markdown": "Modern TypeScript: ?., ?? and satisfies without formatting errors\n\n```typescript\nconst config = {\n  retries: 3,\n  endpoint: \"https://api.example.com\",\n} satisfies Record<string, string | number>;\n\nconst timeout = options?.timeout ?? 5000;\nconst city = user?.address?.city ?? \"Sin ciudad\";\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=typescript-modern-operators\n#javascript #CleanCode #DevTools"
+    },
+    "es": {
+      "title": "TypeScript moderno: ?., ?? y satisfies sin errores de formato",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=typescript-modern-operators",
+      "post_markdown": "TypeScript moderno: ?., ?? y satisfies sin errores de formato\n\n```typescript\nconst config = {\n  retries: 3,\n  endpoint: \"https://api.example.com\",\n} satisfies Record<string, string | number>;\n\nconst timeout = options?.timeout ?? 5000;\nconst city = user?.address?.city ?? \"Sin ciudad\";\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=typescript-modern-operators\n#javascript #Programación #CódigoLimpio"
+    }
+  },
   "locales": {
     "en": {
       "title": "Modern TypeScript: ?., ?? and satisfies without formatting errors",
@@ -9,7 +22,8 @@
         "Reddit: r/typescript",
         "Reddit: r/webdev",
         "Reddit: r/javascript",
-        "Hacker News"
+        "Hacker News",
+        "Medium (Importar URL canónica)"
       ],
       "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/en/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators",
       "hashtags": "#javascript #CleanCode #DevTools",
@@ -61,7 +75,7 @@
     "de": {
       "title": "Modernes TypeScript: ?., ?? und satisfies ohne Formatierungsfehler",
       "communities": [
-        "Heise Developer",
+        "Heise Developer / iX",
         "Reddit: r/de_EDV"
       ],
       "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/de/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators",

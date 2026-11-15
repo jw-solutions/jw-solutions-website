@@ -1,7 +1,20 @@
 {
   "slug": "typescript-refactoring-legacy-any-type-guards-tsdoc",
   "language": "typescript",
-  "generated_at": "2026-11-15T03:29:16.433Z",
+  "generated_at": "2026-11-15T03:52:49.548Z",
+  "daily_dev_squad": {
+    "squad_url": "https://dly.to/nmdN9vQObOU",
+    "en": {
+      "title": "Refactoring Legacy any Types in TypeScript with Type Guards and TSDoc",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=typescript-refactoring-legacy-any-type-guards-tsdoc",
+      "post_markdown": "Refactor legacy TypeScript code by eliminating any types with custom Type Guards and TSDoc annotations optimized for Prettier and Auto-Doc AI.\n\n```typescript\r\n// ❌ Legacy untyped code susceptible to runtime errors\r\nfunction processUserData(data: any) {\r\n  console.log(\"User ID:\", data.id);\r\n  if (data.role === \"admin\") {\r\n    return data.permissions.includes(\"write\");\r\n  }\r\n  return false;\r\n}\r\n```\n```typescript\r\n/**\r\n * Validated user permissions structure.\r\n */\r\nexport interface UserPayload {\r\n  id: string;\r\n  role: 'admin' | 'user';\r\n  permissions: string[];\r\n}\r\n\r\n/**\r\n * Custom type guard predicate verifying object structure.\r\n *\r\n * @param data - Unstructured payload from remote API.\r\n * @returns `true` if payload conforms to {@link UserPayload}.\r\n */\r\nexport function isUserPayload(data: unknown): data is UserPayload {\r\n  return (\r\n    typeof data === 'object' &&\r\n    data !== null &&\r\n    'id' in data &&\r\n    typeof (data as Record<string, unknown>).id === 'string' &&\r\n    'role' in data &&\r\n    ['admin', 'user'].includes((data as Record<string, unknown>).role as string) &&\r\n    'permissions' in data &&\r\n    Array.isArray((data as Record<string, unknown>).permissions)\r\n  );\r\n}\r\n\r\n/**\r\n * Evaluates user write privileges with strict runtime validation.\r\n *\r\n * @param data - Raw unvalidated input object.\r\n * @returns True if user has active write permission.\r\n * @throws {TypeError} If payload structure validation fails.\r\n */\r\nexport function processUserDataStrict(data: unknown): boolean {\r\n  if (!isUserPayload(data)) {\r\n    throw new TypeError('Invalid payload structure: does not satisfy UserPayload');\r\n  }\r\n  if (data.role === 'admin') {\r\n    return data.permissions.includes('write');\r\n  }\r\n  return false;\r\n}\r\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=typescript-refactoring-legacy-any-type-guards-tsdoc\n#typescript #CleanCode #DevTools"
+    },
+    "es": {
+      "title": "Refactorización de tipos any en TypeScript con Type Guards y TSDoc",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=typescript-refactoring-legacy-any-type-guards-tsdoc",
+      "post_markdown": "Refactoriza código legado en TypeScript eliminando tipos any mediante Type Guards y TSDoc estructurado para pipelines de Auto-Doc AI y Prettier.\n\n```typescript\r\n// ❌ Código legado desestructurado y sin seguridad de tipos\r\nfunction processUserData(data: any) {\r\n  console.log(\"User ID:\", data.id);\r\n  if (data.role === \"admin\") {\r\n    return data.permissions.includes(\"write\");\r\n  }\r\n  return false;\r\n}\r\n```\n```typescript\r\n/**\r\n * Estructura de permisos de usuario validada en runtime.\r\n */\r\nexport interface UserPayload {\r\n  id: string;\r\n  role: 'admin' | 'user';\r\n  permissions: string[];\r\n}\r\n\r\n/**\r\n * Predicado de tipo para verificar si una entidad es un UserPayload válido.\r\n *\r\n * @param data - Datos sin estructurar provenientes de una API externa.\r\n * @returns `true` si la estructura coincide con {@link UserPayload}.\r\n */\r\nexport function isUserPayload(data: unknown): data is UserPayload {\r\n  return (\r\n    typeof data === 'object' &&\r\n    data !== null &&\r\n    'id' in data &&\r\n    typeof (data as Record<string, unknown>).id === 'string' &&\r\n    'role' in data &&\r\n    ['admin', 'user'].includes((data as Record<string, unknown>).role as string) &&\r\n    'permissions' in data &&\r\n    Array.isArray((data as Record<string, unknown>).permissions)\r\n  );\r\n}\r\n\r\n/**\r\n * Evalúa los permisos de escritura de un usuario con validación estricta.\r\n *\r\n * @param data - Objeto de datos sin validar.\r\n * @returns Estado de los permisos de escritura del usuario.\r\n * @throws {TypeError} Si la estructura del payload no es válida.\r\n */\r\nexport function processUserDataStrict(data: unknown): boolean {\r\n  if (!isUserPayload(data)) {\r\n    throw new TypeError('El payload proporcionado no satisface el tipo UserPayload');\r\n  }\r\n  if (data.role === 'admin') {\r\n    return data.permissions.includes('write');\r\n  }\r\n  return false;\r\n}\r\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=typescript-refactoring-legacy-any-type-guards-tsdoc\n#typescript #Programación #CódigoLimpio"
+    }
+  },
   "locales": {
     "en": {
       "title": "Refactoring Legacy any Types in TypeScript with Type Guards and TSDoc",
@@ -9,7 +22,8 @@
         "Reddit: r/typescript",
         "Reddit: r/webdev",
         "Reddit: r/javascript",
-        "Hacker News"
+        "Hacker News",
+        "Medium (Importar URL canónica)"
       ],
       "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/en/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-refactoring-legacy-any-type-guards-tsdoc",
       "hashtags": "#typescript #CleanCode #DevTools",
@@ -61,7 +75,7 @@
     "de": {
       "title": "Refactoring von legacy any-Typen in TypeScript mit Type Guards und TSDoc",
       "communities": [
-        "Heise Developer",
+        "Heise Developer / iX",
         "Reddit: r/de_EDV"
       ],
       "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/de/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-refactoring-legacy-any-type-guards-tsdoc",

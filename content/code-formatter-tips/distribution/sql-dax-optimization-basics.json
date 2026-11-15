@@ -1,7 +1,20 @@
 {
   "slug": "sql-dax-optimization-basics",
   "language": "sql",
-  "generated_at": "2026-11-15T03:29:16.429Z",
+  "generated_at": "2026-11-15T03:52:49.545Z",
+  "daily_dev_squad": {
+    "squad_url": "https://dly.to/nmdN9vQObOU",
+    "en": {
+      "title": "SQL and DAX: three habits for fast, readable queries",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=sql-dax-optimization-basics",
+      "post_markdown": "SQL and DAX: three habits for fast, readable queries\n\n```sql\nSELECT o.id, o.total, c.name\nFROM orders AS o\nJOIN customers AS c ON c.id = o.customer_id\nWHERE o.created_at >= DATE '2026-01-01'\nORDER BY o.total DESC;\n```\n```dax\nVentas YTD Margen =\nVAR Ventas = [Ventas Totales]\nVAR Costo = [Costo Total]\nRETURN DIVIDE(Ventas - Costo, Ventas)\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=sql-dax-optimization-basics\n#sql #CleanCode #DevTools"
+    },
+    "es": {
+      "title": "SQL y DAX: tres hábitos para consultas rápidas y legibles",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=sql-dax-optimization-basics",
+      "post_markdown": "SQL y DAX: tres hábitos para consultas rápidas y legibles\n\n```sql\nSELECT o.id, o.total, c.name\nFROM orders AS o\nJOIN customers AS c ON c.id = o.customer_id\nWHERE o.created_at >= DATE '2026-01-01'\nORDER BY o.total DESC;\n```\n```dax\nVentas YTD Margen =\nVAR Ventas = [Ventas Totales]\nVAR Costo = [Costo Total]\nRETURN DIVIDE(Ventas - Costo, Ventas)\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=sql-dax-optimization-basics\n#sql #Programación #CódigoLimpio"
+    }
+  },
   "locales": {
     "en": {
       "title": "SQL and DAX: three habits for fast, readable queries",
@@ -9,7 +22,8 @@
         "Reddit: r/SQL",
         "Reddit: r/PowerBI",
         "Reddit: r/BusinessIntelligence",
-        "Hacker News"
+        "Hacker News",
+        "Medium (Importar URL canónica)"
       ],
       "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/en/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics",
       "hashtags": "#sql #CleanCode #DevTools",
@@ -58,7 +72,7 @@
     "de": {
       "title": "SQL und DAX: drei Gewohnheiten für schnelle, lesbare Abfragen",
       "communities": [
-        "Heise Developer",
+        "Heise Developer / iX",
         "Reddit: r/de_EDV"
       ],
       "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/de/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics",

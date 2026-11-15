@@ -61,6 +61,15 @@ TIP_UI_STRINGS = {
     "de": {"try": "Snippet im Formatter testen", "fix": "Fehlerbehebungs-Guide ansehen", "related": "Verwandte Tipps", "related_guides": "Verwandte Guides & Tipps", "faq": "Häufig gestellte Fragen", "back": "Alle Tipps", "home": "Zurück zum Formatter"},
     "it": {"try": "Prova lo snippet nel formattatore", "fix": "Vedi guida alla correzione", "related": "Suggerimenti correlati", "related_guides": "Guide e Suggerimenti correlati", "faq": "Domande frequenti", "back": "Tutti i suggerimenti", "home": "Torna al formattatore"},
 }
+SQUAD_LABELS = {
+    "es": "Únete a nuestro Squad en daily.dev",
+    "en": "Join our daily.dev Squad",
+    "pt-BR": "Participe do nosso Squad no daily.dev",
+    "pt-PT": "Participe do nosso Squad no daily.dev",
+    "fr": "Rejoignez notre Squad sur daily.dev",
+    "de": "Tritt unserem daily.dev Squad bei",
+    "it": "Unisciti al nostro Squad su daily.dev",
+}
 FIX_SRC = ROOT / "content" / "code-formatter-tips" / "syntax-fixes.json"
 FIX_REL = "tools/code-formatter/fix"
 OG_DEFAULT = f"{SITE}/assets/images/og/code-formatter-default.png"
@@ -209,6 +218,7 @@ FIX_PAGE = """<!DOCTYPE html>
         <p class="cf-footer__text" data-i18n="footDesc">Formatea y documenta tu código en Python, JavaScript, SQL, DAX y más. Herramienta independiente de JW Solutions.</p>
         <ul class="cf-footer__list">
           <li><a href="@@TOOL@@" data-site-link data-i18n="footEditor">Ir al editor</a></li>
+          <li><a href="https://dly.to/nmdN9vQObOU" target="_blank" rel="noopener noreferrer" data-i18n="footDailyDevSquad">@@SQUAD_LABEL@@</a></li>
         </ul>
       </section>
 
@@ -329,7 +339,7 @@ def fix_pages() -> dict[str, str]:
             )
             page_html = _fill(
                 FIX_PAGE, TITLE=escape(loc["title"]), DESC=escape(loc["summary"]), URL=url, ALTERNATES=_alternates(path),
-                RSS_LANG=escape(lang_code), OG=OG_DEFAULT, TOOL=tool_rel, REPO=repo_rel,
+                RSS_LANG=escape(lang_code), SQUAD_LABEL=escape(SQUAD_LABELS.get(lang_code, SQUAD_LABELS["es"])), OG=OG_DEFAULT, TOOL=tool_rel, REPO=repo_rel,
                 DATA=data_rel, MAINATTRS=f' data-fix-slug="{e["slug"]}" data-fix-root="{tool_rel}"', TAG=escape(tag), H1=escape(loc["title"]), LEAD=escape(loc["summary"]), BODY=body,
                 JSONLD='  <script type="application/ld+json" id="cf-jsonld">' + json.dumps(ld, ensure_ascii=False) + "</script>",
             )
@@ -346,7 +356,7 @@ def fix_pages() -> dict[str, str]:
     )
     out[f"{FIX_REL}/index.html"] = _fill(
         FIX_PAGE, TITLE=escape(_es("fixHubTitle")), DESC=escape(_es("fixHubLead")), URL=SITE + hub_path, ALTERNATES=_alternates(hub_path),
-        RSS_LANG="es", OG=OG_DEFAULT, TOOL="../", REPO="../../../",
+        RSS_LANG="es", SQUAD_LABEL=escape(SQUAD_LABELS["es"]), OG=OG_DEFAULT, TOOL="../", REPO="../../../",
         DATA="fix-data.json", MAINATTRS="", TAG=escape(tag), H1=escape(_es("fixHubTitle")), LEAD=escape(_es("fixHubLead")), BODY=f'        <ul class="cf-fix__list">{cards}</ul>', JSONLD="",
     )
     return out
@@ -631,6 +641,7 @@ def tip_pages() -> dict[str, str]:
                 URL=escape(url, quote=True),
                 ALTERNATES=alternates,
                 RSS_LANG=escape(loc),
+                SQUAD_LABEL=escape(SQUAD_LABELS.get(loc, SQUAD_LABELS["es"])),
                 OG=escape(og_img, quote=True),
                 TOOL="../../../../",
                 REPO="../../../../../../",
@@ -707,6 +718,7 @@ def rss_feeds() -> dict[str, str]:
             encoded_parts.append(f'<p><a href="{escape(link, quote=True)}">{escape(title)}</a></p>')
             cdata_html = "".join(encoded_parts).replace("]]>", "]]]]><![CDATA[>")
 
+            og_url = f"{SITE}/assets/images/og/tips/{t['slug']}-{loc}.png"
             items_xml.append(
                 f"    <item>\n"
                 f"      <title>{escape(title)}</title>\n"
@@ -714,6 +726,7 @@ def rss_feeds() -> dict[str, str]:
                 f"      <guid isPermaLink=\"true\">{escape(link)}</guid>\n"
                 f"      <pubDate>{pub}</pubDate>\n"
                 f"      <category>{escape(prog_lang.upper())}</category>\n"
+                f'      <media:content url="{escape(og_url, quote=True)}" medium="image" />\n'
                 f"      <description>{escape(desc)}</description>\n"
                 f"      <content:encoded><![CDATA[{cdata_html}]]></content:encoded>\n"
                 f"    </item>"
@@ -721,7 +734,7 @@ def rss_feeds() -> dict[str, str]:
         last_build = format_datetime(datetime.now(timezone.utc))
         return (
             '<?xml version="1.0" encoding="UTF-8"?>\n'
-            '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">\n'
+            '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/">\n'
             "  <channel>\n"
             "    <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>\n"
             f"    <link>{SITE}{TOOL_PATH}</link>\n"

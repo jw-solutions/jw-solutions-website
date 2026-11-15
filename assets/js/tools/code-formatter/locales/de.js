@@ -32,6 +32,7 @@ export default {
   footDesc: 'Formatiere und dokumentiere deinen Code in Python, JavaScript, SQL, DAX und mehr. Eigenständiges Tool von JW Solutions.',
   footNavTitle: 'Navigation',
   footEditor: 'Zum Editor',
+  footDailyDevSquad: 'Tritt unserem daily.dev Squad bei',
   footTipsTitle: 'Wöchentliche Tipps',
   tipPython: 'Python-Tipps',
   tipJs: 'JavaScript-Standards',

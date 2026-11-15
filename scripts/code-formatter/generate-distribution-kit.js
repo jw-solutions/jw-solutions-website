@@ -37,93 +37,93 @@ const CATEGORY_PATH = {
 
 const COMMUNITY_MAP = {
   python: {
-    en: ['Reddit: r/Python', 'Hacker News'],
+    en: ['Reddit: r/Python', 'Hacker News', 'Medium (Importar URL canónica)'],
     es: ['Reddit: r/programacion', 'Reddit: r/devsarg', 'Reddit: r/taquerosprogramadores', 'Reddit: r/chileIT', 'Menéame'],
     'pt-BR': ['TabNews (tabnews.com.br)', 'Reddit: r/brdev'],
     'pt-PT': ['Reddit: r/devpt', 'TabNews (tabnews.com.br)'],
     fr: ['Zeste de Savoir', 'Developpez.com', 'Reddit: r/developpeurs'],
-    de: ['Heise Developer', 'Reddit: r/de_EDV'],
+    de: ['Heise Developer / iX', 'Reddit: r/de_EDV'],
     it: ['HTML.it', 'Reddit: r/ItalyInformatica'],
   },
   javascript: {
-    en: ['Reddit: r/typescript', 'Reddit: r/webdev', 'Reddit: r/javascript', 'Hacker News'],
+    en: ['Reddit: r/typescript', 'Reddit: r/webdev', 'Reddit: r/javascript', 'Hacker News', 'Medium (Importar URL canónica)'],
     es: ['Reddit: r/programacion', 'Reddit: r/devsarg', 'Reddit: r/taquerosprogramadores', 'Reddit: r/chileIT', 'Menéame'],
     'pt-BR': ['TabNews (tabnews.com.br)', 'Reddit: r/brdev'],
     'pt-PT': ['Reddit: r/devpt'],
     fr: ['Zeste de Savoir', 'Developpez.com', 'Reddit: r/developpeurs'],
-    de: ['Heise Developer', 'Reddit: r/de_EDV'],
+    de: ['Heise Developer / iX', 'Reddit: r/de_EDV'],
     it: ['HTML.it', 'Reddit: r/ItalyInformatica'],
   },
   typescript: {
-    en: ['Reddit: r/typescript', 'Reddit: r/webdev', 'Reddit: r/javascript', 'Hacker News'],
+    en: ['Reddit: r/typescript', 'Reddit: r/webdev', 'Reddit: r/javascript', 'Hacker News', 'Medium (Importar URL canónica)'],
     es: ['Reddit: r/programacion', 'Reddit: r/devsarg', 'Reddit: r/taquerosprogramadores', 'Reddit: r/chileIT', 'Menéame'],
     'pt-BR': ['TabNews (tabnews.com.br)', 'Reddit: r/brdev'],
     'pt-PT': ['Reddit: r/devpt'],
     fr: ['Zeste de Savoir', 'Developpez.com', 'Reddit: r/developpeurs'],
-    de: ['Heise Developer', 'Reddit: r/de_EDV'],
+    de: ['Heise Developer / iX', 'Reddit: r/de_EDV'],
     it: ['HTML.it', 'Reddit: r/ItalyInformatica'],
   },
   sql: {
-    en: ['Reddit: r/SQL', 'Reddit: r/PowerBI', 'Reddit: r/BusinessIntelligence', 'Hacker News'],
+    en: ['Reddit: r/SQL', 'Reddit: r/PowerBI', 'Reddit: r/BusinessIntelligence', 'Hacker News', 'Medium (Importar URL canónica)'],
     es: ['Reddit: r/programacion', 'Reddit: r/devsarg', 'Menéame'],
     'pt-BR': ['TabNews (tabnews.com.br)', 'Reddit: r/brdev'],
     'pt-PT': ['Reddit: r/devpt'],
     fr: ['Developpez.com', 'Reddit: r/developpeurs'],
-    de: ['Heise Developer', 'Reddit: r/de_EDV'],
+    de: ['Heise Developer / iX', 'Reddit: r/de_EDV'],
     it: ['HTML.it', 'Reddit: r/ItalyInformatica'],
   },
   dax: {
-    en: ['Reddit: r/PowerBI', 'Reddit: r/BusinessIntelligence', 'Reddit: r/SQL'],
+    en: ['Reddit: r/PowerBI', 'Reddit: r/BusinessIntelligence', 'Reddit: r/SQL', 'Medium (Importar URL canónica)'],
     es: ['Reddit: r/programacion', 'Reddit: r/chileIT'],
     'pt-BR': ['TabNews (tabnews.com.br)', 'Reddit: r/brdev'],
     'pt-PT': ['Reddit: r/devpt'],
     fr: ['Developpez.com', 'Reddit: r/developpeurs'],
-    de: ['Heise Developer', 'Reddit: r/de_EDV'],
+    de: ['Heise Developer / iX', 'Reddit: r/de_EDV'],
     it: ['HTML.it', 'Reddit: r/ItalyInformatica'],
   },
   java: {
-    en: ['Reddit: r/java', 'Hacker News'],
+    en: ['Reddit: r/java', 'Hacker News', 'Medium (Importar URL canónica)'],
     es: ['Reddit: r/programacion', 'Reddit: r/devsarg', 'Menéame'],
     'pt-BR': ['TabNews (tabnews.com.br)', 'Reddit: r/brdev'],
     'pt-PT': ['Reddit: r/devpt'],
     fr: ['Developpez.com', 'Reddit: r/developpeurs'],
-    de: ['Heise Developer', 'Reddit: r/de_EDV'],
+    de: ['Heise Developer / iX', 'Reddit: r/de_EDV'],
     it: ['HTML.it', 'Reddit: r/ItalyInformatica'],
   },
   csharp: {
-    en: ['Reddit: r/csharp', 'Reddit: r/dotnet', 'Hacker News'],
+    en: ['Reddit: r/csharp', 'Reddit: r/dotnet', 'Hacker News', 'Medium (Importar URL canónica)'],
     es: ['Reddit: r/programacion', 'Reddit: r/taquerosprogramadores', 'Menéame'],
     'pt-BR': ['TabNews (tabnews.com.br)', 'Reddit: r/brdev'],
     'pt-PT': ['Reddit: r/devpt'],
     fr: ['Developpez.com', 'Reddit: r/developpeurs'],
-    de: ['Heise Developer', 'Reddit: r/de_EDV'],
+    de: ['Heise Developer / iX', 'Reddit: r/de_EDV'],
     it: ['HTML.it', 'Reddit: r/ItalyInformatica'],
   },
   php: {
-    en: ['Reddit: r/PHP', 'Reddit: r/webdev'],
+    en: ['Reddit: r/PHP', 'Reddit: r/webdev', 'Medium (Importar URL canónica)'],
     es: ['Reddit: r/programacion', 'Menéame'],
     'pt-BR': ['TabNews (tabnews.com.br)', 'Reddit: r/brdev'],
     'pt-PT': ['Reddit: r/devpt'],
     fr: ['Developpez.com', 'Reddit: r/developpeurs'],
-    de: ['Heise Developer', 'Reddit: r/de_EDV'],
+    de: ['Heise Developer / iX', 'Reddit: r/de_EDV'],
     it: ['HTML.it', 'Reddit: r/ItalyInformatica'],
   },
   json: {
-    en: ['Reddit: r/devops', 'Reddit: r/webdev'],
+    en: ['Reddit: r/devops', 'Reddit: r/webdev', 'Medium (Importar URL canónica)'],
     es: ['Reddit: r/programacion', 'Reddit: r/chileIT'],
     'pt-BR': ['TabNews (tabnews.com.br)', 'Reddit: r/brdev'],
     'pt-PT': ['Reddit: r/devpt'],
     fr: ['Zeste de Savoir', 'Reddit: r/developpeurs'],
-    de: ['Heise Developer', 'Reddit: r/de_EDV'],
+    de: ['Heise Developer / iX', 'Reddit: r/de_EDV'],
     it: ['HTML.it', 'Reddit: r/ItalyInformatica'],
   },
   yaml: {
-    en: ['Reddit: r/devops', 'Reddit: r/webdev'],
+    en: ['Reddit: r/devops', 'Reddit: r/webdev', 'Medium (Importar URL canónica)'],
     es: ['Reddit: r/programacion', 'Reddit: r/chileIT'],
     'pt-BR': ['TabNews (tabnews.com.br)', 'Reddit: r/brdev'],
     'pt-PT': ['Reddit: r/devpt'],
     fr: ['Zeste de Savoir', 'Reddit: r/developpeurs'],
-    de: ['Heise Developer', 'Reddit: r/de_EDV'],
+    de: ['Heise Developer / iX', 'Reddit: r/de_EDV'],
     it: ['HTML.it', 'Reddit: r/ItalyInformatica'],
   },
 };
@@ -191,16 +191,44 @@ function buildKitForTip(entry, publishedDir = DEFAULT_PUBLISHED_DIR) {
     };
   }
 
+  const dailyDevSquad = {
+    squad_url: 'https://dly.to/nmdN9vQObOU',
+    en: locales.en
+      ? {
+          title: locales.en.title,
+          utm_url: `${BASE_URL}/tools/code-formatter/${catPath}${entry.slug}/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=${encodeURIComponent(entry.slug)}`,
+          post_markdown: locales.en.post_markdown.replace(/utm_source=[a-z]+&utm_medium=community/, 'utm_source=dailydev&utm_medium=squad'),
+        }
+      : null,
+    es: locales.es
+      ? {
+          title: locales.es.title,
+          utm_url: `${BASE_URL}/tools/code-formatter/${catPath}${entry.slug}/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=${encodeURIComponent(entry.slug)}`,
+          post_markdown: locales.es.post_markdown.replace(/utm_source=[a-z]+&utm_medium=community/, 'utm_source=dailydev&utm_medium=squad'),
+        }
+      : null,
+  };
+
   return {
     slug: entry.slug,
     language: progLang,
     generated_at: new Date().toISOString(),
+    daily_dev_squad: dailyDevSquad,
     locales,
   };
 }
 
 function formatSummaryMarkdown(kit) {
   const lines = [`### Kit de Distribución Regional — \`${kit.slug}\` (${kit.language.toUpperCase()})`, ''];
+  if (kit.daily_dev_squad) {
+    lines.push(`<details open><summary><strong>Daily.dev Squad</strong> — ${kit.daily_dev_squad.squad_url}</summary>`, '');
+    for (const loc of ['en', 'es']) {
+      const sq = kit.daily_dev_squad[loc];
+      if (!sq) continue;
+      lines.push(`**${loc.toUpperCase()} — ${sq.title}**`, '', '```markdown', sq.post_markdown, '```', '');
+    }
+    lines.push('</details>', '');
+  }
   for (const [loc, data] of Object.entries(kit.locales)) {
     lines.push(`<details><summary><strong>${loc}</strong> — ${data.communities.join(' · ')}</summary>`, '');
     lines.push(`**Título:** ${data.title}`, '');

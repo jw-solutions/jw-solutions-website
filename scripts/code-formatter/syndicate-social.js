@@ -53,9 +53,11 @@ function buildTipUrls(entry, utmSource) {
 function buildBlueskyPost(entry, enMeta) {
   const { progLang, articleUrl } = buildTipUrls(entry, 'bluesky');
   const title = enMeta.title || (entry.translations && entry.translations.en && entry.translations.en.title) || entry.title;
+  const description = enMeta.description || (entry.translations && entry.translations.en && entry.translations.en.meta_description) || title;
   const tag = `#${String(progLang).replace(/[^a-zA-Z0-9]/g, '')}`;
-  const header = `${title.slice(0, 150)}\n\n`;
   const tagsLine = `\n\n${tag} #CodeQuality #DevTools`;
+  const maxTitleLen = Math.max(40, 275 - articleUrl.length - tagsLine.length - 2);
+  const header = `${title.slice(0, maxTitleLen)}\n\n`;
   const text = `${header}${articleUrl}${tagsLine}`;
 
   const encoder = new TextEncoder();
@@ -78,7 +80,16 @@ function buildBlueskyPost(entry, enMeta) {
     cursor += htBytes + 1;
   }
 
-  return { text, facets };
+  const embed = {
+    $type: 'app.bsky.embed.external',
+    external: {
+      uri: articleUrl,
+      title,
+      description,
+    },
+  };
+
+  return { text, facets, embed };
 }
 
 async function publishBluesky(entry, enMeta, creds, fetchImpl) {
@@ -92,7 +103,7 @@ async function publishBluesky(entry, enMeta, creds, fetchImpl) {
     throw new Error(`Bluesky auth HTTP ${sessionRes.status}`);
   }
   const session = await sessionRes.json();
-  const { text, facets } = buildBlueskyPost(entry, enMeta);
+  const { text, facets, embed } = buildBlueskyPost(entry, enMeta);
 
   const postRes = await fetchImpl('https://bsky.social/xrpc/com.atproto.repo.createRecord', {
     method: 'POST',
@@ -107,6 +118,7 @@ async function publishBluesky(entry, enMeta, creds, fetchImpl) {
         $type: 'app.bsky.feed.post',
         text,
         facets,
+        embed,
         langs: ['en'],
         createdAt: new Date().toISOString(),
       },
