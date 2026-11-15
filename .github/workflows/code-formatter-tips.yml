@@ -17,6 +17,11 @@ on:
         type: string
         required: false
         default: ''
+      retry_social_only:
+        description: 'Reintentar solo sindicación social/Dev.to/Discussions sin generar nuevo artículo ni enviar correos'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -57,7 +62,7 @@ jobs:
         run: npm install --no-save --no-package-lock gray-matter@4.0.3 @resvg/resvg-js@2.6.2
 
       - name: Generar tip bi-semanal con IA (si no hay borrador ready)
-        if: ${{ github.event_name == 'schedule' || inputs.dry_run != true }}
+        if: ${{ (github.event_name == 'schedule' || inputs.dry_run != true) && inputs.retry_social_only != true }}
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           FORCE_LANG: ${{ inputs.force_language }}
@@ -69,15 +74,16 @@ jobs:
           fi
 
       - name: Validar tips
+        if: ${{ inputs.retry_social_only != true }}
         run: node scripts/validate-formatter-tips.js
 
       - name: Dry-run
-        if: ${{ inputs.dry_run }}
+        if: ${{ inputs.dry_run && inputs.retry_social_only != true }}
         run: node scripts/validate-formatter-tips.js --publish --dry-run
 
       - name: Publicar tip listo
         id: publish
-        if: ${{ !inputs.dry_run }}
+        if: ${{ !inputs.dry_run && inputs.retry_social_only != true }}
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             node scripts/validate-formatter-tips.js --publish --force
@@ -86,14 +92,15 @@ jobs:
           fi
 
       - name: Generar imágenes OpenGraph (7 idiomas)
-        if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
+        if: ${{ !inputs.dry_run && inputs.retry_social_only != true && steps.publish.outputs.changed == 'true' }}
         run: node scripts/code-formatter/generate-og-images.js
 
       - name: Compilar páginas estáticas localizadas y sitemap
-        if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
+        if: ${{ !inputs.dry_run && inputs.retry_social_only != true && steps.publish.outputs.changed == 'true' }}
         run: python3 scripts/code-formatter/build_public.py
 
       - name: Ejecutar pruebas de Code Formatter
+        if: ${{ inputs.retry_social_only != true }}
         run: |
           node scripts/code-formatter/test-growth-loops.mjs
           if ls tests/code-formatter/*.test.mjs >/dev/null 2>&1; then
@@ -101,11 +108,11 @@ jobs:
           fi
 
       - name: Verificar repositorio (después)
-        if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
+        if: ${{ !inputs.dry_run && inputs.retry_social_only != true && steps.publish.outputs.changed == 'true' }}
         run: node scripts/validate-formatter-tips.js
 
       - name: Commit y push
-        if: ${{ !inputs.dry_run && steps.publish.outputs.changed == 'true' }}
+        if: ${{ !inputs.dry_run && inputs.retry_social_only != true && steps.publish.outputs.changed == 'true' }}
         env:
           PUBLISHED: ${{ steps.publish.outputs.summary }}
         run: |
@@ -123,27 +130,27 @@ jobs:
           echo "Publicado: $PUBLISHED" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Verificar despliegue público (HTTP 200 en 7 idiomas + sitemap)
-        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        if: ${{ !inputs.dry_run && inputs.retry_social_only != true && steps.publish.outputs.slug != '' }}
         env:
           SLUG: ${{ steps.publish.outputs.slug }}
         run: node scripts/code-formatter/check-deployment.js "$SLUG"
 
       - name: Notificar IndexNow (7 URLs + sitemap)
-        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        if: ${{ !inputs.dry_run && inputs.retry_social_only != true && steps.publish.outputs.slug != '' }}
         continue-on-error: true
         env:
           SLUG: ${{ steps.publish.outputs.slug }}
         run: node scripts/code-formatter/ping-indexnow.js "$SLUG"
 
       - name: Sindicar a Dev.to (canonical_url)
-        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        if: ${{ !inputs.dry_run && (steps.publish.outputs.slug != '' || inputs.retry_social_only == true) }}
         continue-on-error: true
         env:
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
         run: node scripts/code-formatter/syndicate-devto.js
 
       - name: Sindicar a Hashnode (originalArticleURL)
-        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        if: ${{ !inputs.dry_run && (steps.publish.outputs.slug != '' || inputs.retry_social_only == true) }}
         continue-on-error: true
         env:
           HASHNODE_TOKEN: ${{ secrets.HASHNODE_TOKEN }}
@@ -151,7 +158,7 @@ jobs:
         run: node scripts/code-formatter/syndicate-hashnode.js
 
       - name: Difusión social (Bluesky, Mastodon, Telegram, Discord, GitHub Discussions)
-        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        if: ${{ !inputs.dry_run && (steps.publish.outputs.slug != '' || inputs.retry_social_only == true) }}
         continue-on-error: true
         env:
           BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
@@ -166,14 +173,19 @@ jobs:
         run: node scripts/code-formatter/syndicate-social.js
 
       - name: Generar Kit de Distribución Regional (7 idiomas)
-        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        if: ${{ !inputs.dry_run && (steps.publish.outputs.slug != '' || inputs.retry_social_only == true) }}
         continue-on-error: true
         env:
           SLUG: ${{ steps.publish.outputs.slug }}
-        run: node scripts/code-formatter/generate-distribution-kit.js --slug "$SLUG"
+        run: |
+          if [ -n "${SLUG:-}" ]; then
+            node scripts/code-formatter/generate-distribution-kit.js --slug "$SLUG"
+          else
+            node scripts/code-formatter/generate-distribution-kit.js
+          fi
 
       - name: Registrar estado DEPLOYED en manifiesto
-        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        if: ${{ !inputs.dry_run && (steps.publish.outputs.slug != '' || inputs.retry_social_only == true) }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -185,10 +197,32 @@ jobs:
             git push origin main
           fi
 
+      - name: Notificar fallo del workflow
+        if: ${{ failure() && env.DISCORD_WEBHOOK_URL != '' }}
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          node -e '
+            const url = process.env.DISCORD_WEBHOOK_URL;
+            const runUrl = process.env.RUN_URL;
+            fetch(url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                embeds: [{
+                  title: "❌ Fallo en Code Formatter Tips",
+                  description: `El pipeline falló. Revisa los logs del run:\n${runUrl}`,
+                  color: 15158332
+                }]
+              })
+            }).then(r => { if (!r.ok) process.exit(1); });
+          '
+
   notify:
     name: Notificar suscriptores (canal code-formatter)
     needs: publish
-    if: ${{ needs.publish.result == 'success' && needs.publish.outputs.slug != '' && !inputs.dry_run }}
+    if: ${{ needs.publish.result == 'success' && needs.publish.outputs.slug != '' && !inputs.dry_run && inputs.retry_social_only != true }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
