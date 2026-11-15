@@ -331,7 +331,15 @@
       },
       "deployed_at": "2026-11-14T23:32:12.442Z",
       "indexnow_pinged_at": "2026-11-14T23:32:12.890Z",
-      "notified_at": "2026-11-14T23:32:29.507Z"
+      "notified_at": "2026-11-14T23:32:29.507Z",
+      "syndication": {
+        "devto": {
+          "status": "published",
+          "id": 5039505,
+          "url": "https://dev.to/jwsolutions/refactoring-in-java-21-records-and-pattern-matching-for-readable-code-34c3",
+          "publishedAt": "2026-11-15T04:57:02.468Z"
+        }
+      }
     },
     {
       "slug": "csharp-12-primary-constructors-xml-doc-refactoring",
@@ -409,7 +417,15 @@
       },
       "deployed_at": "2026-11-14T23:46:29.351Z",
       "indexnow_pinged_at": "2026-11-14T23:46:30.059Z",
-      "notified_at": "2026-11-14T23:46:50.247Z"
+      "notified_at": "2026-11-14T23:46:50.247Z",
+      "syndication": {
+        "devto": {
+          "status": "published",
+          "id": 5039506,
+          "url": "https://dev.to/jwsolutions/modern-c-12-refactoring-with-primary-constructors-and-xml-docs-1afk",
+          "publishedAt": "2026-11-15T04:57:06.699Z"
+        }
+      }
     }
   ]
 }
