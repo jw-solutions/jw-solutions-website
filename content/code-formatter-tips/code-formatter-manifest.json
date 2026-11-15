@@ -54,6 +54,20 @@
           "id": 5039457,
           "url": "https://dev.to/jwsolutions/pep-8-in-python-312-writing-readable-matchcase-blocks-5am5",
           "publishedAt": "2026-11-15T04:41:54.583Z"
+        },
+        "social": {
+          "discord": {
+            "status": "published",
+            "messageId": "1571567165893517316",
+            "publishedAt": "2026-11-15T16:46:50.966Z"
+          },
+          "github_discussions": {
+            "status": "published",
+            "id": "D_kwDOSheTeM4ArKvL",
+            "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/12",
+            "number": 12,
+            "publishedAt": "2026-11-15T16:46:54.125Z"
+          }
         }
       }
     },
@@ -110,6 +124,20 @@
           "id": 5039459,
           "url": "https://dev.to/jwsolutions/modern-typescript-and-satisfies-without-formatting-errors-4925",
           "publishedAt": "2026-11-15T04:41:58.825Z"
+        },
+        "social": {
+          "discord": {
+            "status": "published",
+            "messageId": "1571567209245970683",
+            "publishedAt": "2026-11-15T16:47:01.108Z"
+          },
+          "github_discussions": {
+            "status": "published",
+            "id": "D_kwDOSheTeM4ArKvN",
+            "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/13",
+            "number": 13,
+            "publishedAt": "2026-11-15T16:47:04.058Z"
+          }
         }
       }
     },
@@ -166,6 +194,20 @@
           "id": 5039489,
           "url": "https://dev.to/jwsolutions/sql-and-dax-three-habits-for-fast-readable-queries-kdi",
           "publishedAt": "2026-11-15T04:51:05.261Z"
+        },
+        "social": {
+          "discord": {
+            "status": "published",
+            "messageId": "1571567250870108333",
+            "publishedAt": "2026-11-15T16:47:11.008Z"
+          },
+          "github_discussions": {
+            "status": "published",
+            "id": "D_kwDOSheTeM4ArKvO",
+            "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/14",
+            "number": 14,
+            "publishedAt": "2026-11-15T16:47:14.107Z"
+          }
         }
       }
     },
@@ -252,6 +294,20 @@
           "id": 5039490,
           "url": "https://dev.to/jwsolutions/refactoring-legacy-any-types-in-typescript-with-type-guards-and-tsdoc-30j3",
           "publishedAt": "2026-11-15T04:51:09.544Z"
+        },
+        "social": {
+          "discord": {
+            "status": "published",
+            "messageId": "1571567292871876619",
+            "publishedAt": "2026-11-15T16:47:21.024Z"
+          },
+          "github_discussions": {
+            "status": "published",
+            "id": "D_kwDOSheTeM4ArKvP",
+            "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/15",
+            "number": 15,
+            "publishedAt": "2026-11-15T16:47:23.955Z"
+          }
         }
       }
     },
@@ -338,6 +394,20 @@
           "id": 5039505,
           "url": "https://dev.to/jwsolutions/refactoring-in-java-21-records-and-pattern-matching-for-readable-code-34c3",
           "publishedAt": "2026-11-15T04:57:02.468Z"
+        },
+        "social": {
+          "discord": {
+            "status": "published",
+            "messageId": "1571567334261526731",
+            "publishedAt": "2026-11-15T16:47:30.900Z"
+          },
+          "github_discussions": {
+            "status": "published",
+            "id": "D_kwDOSheTeM4ArKvQ",
+            "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/16",
+            "number": 16,
+            "publishedAt": "2026-11-15T16:47:33.881Z"
+          }
         }
       }
     },
@@ -424,6 +494,20 @@
           "id": 5039506,
           "url": "https://dev.to/jwsolutions/modern-c-12-refactoring-with-primary-constructors-and-xml-docs-1afk",
           "publishedAt": "2026-11-15T04:57:06.699Z"
+        },
+        "social": {
+          "discord": {
+            "status": "published",
+            "messageId": "1571567375520637071",
+            "publishedAt": "2026-11-15T16:47:40.815Z"
+          },
+          "github_discussions": {
+            "status": "published",
+            "id": "D_kwDOSheTeM4ArKvR",
+            "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/17",
+            "number": 17,
+            "publishedAt": "2026-11-15T16:47:43.855Z"
+          }
         }
       }
     },
@@ -449,7 +533,7 @@
       ],
       "date": "2026-11-15",
       "published_at": "2026-11-15",
-      "status": "COMPILED",
+      "status": "DEPLOYED",
       "locales": [
         "es",
         "de",
@@ -569,6 +653,30 @@
           ],
           "file": "published/python-312-match-case-formatting-pep8.pt-PT.md",
           "sha256": "c9f7328c226a984eb7198d892e9a9287119eca1c53129c85bf30b33ba64f51f8"
+        }
+      },
+      "deployed_at": "2026-11-15T16:46:43.463Z",
+      "indexnow_pinged_at": "2026-11-15T16:46:44.521Z",
+      "syndication": {
+        "devto": {
+          "status": "published",
+          "id": 5042631,
+          "url": "https://dev.to/jwsolutions/python-312-match-case-formatting-and-pep-8-advanced-guide-8lk",
+          "publishedAt": "2026-11-15T16:46:44.935Z"
+        },
+        "social": {
+          "discord": {
+            "status": "published",
+            "messageId": "1571567417363144827",
+            "publishedAt": "2026-11-15T16:47:50.760Z"
+          },
+          "github_discussions": {
+            "status": "published",
+            "id": "D_kwDOSheTeM4ArKvT",
+            "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/18",
+            "number": 18,
+            "publishedAt": "2026-11-15T16:47:53.685Z"
+          }
         }
       }
     }

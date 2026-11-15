@@ -1,0 +1,95 @@
+{
+  "slug": "python-312-match-case-formatting-pep8",
+  "language": "python",
+  "generated_at": "2026-11-15T16:47:53.727Z",
+  "daily_dev_squad": {
+    "squad_url": "https://dly.to/nmdN9vQObOU",
+    "en": {
+      "title": "Python 3.12 Match Case Formatting and PEP 8: Advanced Guide",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=python-312-match-case-formatting-pep8",
+      "post_markdown": "Master match case formatting in Python 3.12 following PEP 8, Black, and Ruff standards. Improve code readability and prevent indentation errors.\n\n```python\n# Legacy code hard to maintain and format\ndef process_payload(data):\n    if type(data) == dict and data.get(\"type\") == \"event\":\n        act = data.get(\"action\")\n        if act == \"start\" or act == \"stop\":\n            return \"Event action: \" + act\n    elif type(data) == dict and data.get(\"type\") == \"metric\":\n        v = data.get(\"value\")\n        return \"Numeric metric: \" + str(v)\n    return \"Unknown\"\n```\n```python\nfrom typing import Any, Dict\n\n\ndef process_payload(data: Dict[str, Any]) -> str:\n    \"\"\"Process structured payloads using pattern matching.\n\n    Args:\n        data (Dict[str, Any]): Input dictionary containing metadata.\n\n    Returns:\n        str: Processing result based on payload type.\n    \"\"\"\n    match data:\n        case {\"type\": \"event\", \"action\": str(act)} if act in [\n            \"start\",\n            \"stop\",\n        ]:\n            return f\"Event action: {act}\"\n        case {\"type\": \"metric\", \"value\": int(v) | float(v)}:\n            return f\"Numeric metric: {v}\"\n        case _:\n            return \"Unknown payload structure\"\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=python-312-match-case-formatting-pep8\n#python #CleanCode #DevTools"
+    },
+    "es": {
+      "title": "Python 3.12 Match Case Formatting y PEP 8: Guía Avanzada",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=python-312-match-case-formatting-pep8",
+      "post_markdown": "Domina el formateo de bloques match case en Python 3.12 según PEP 8, Black y Ruff. Mejora la legibilidad de tu código y evita errores de indentación.\n\n```python\n# Código legado difícil de mantener y formatear\ndef process_payload(data):\n    if type(data) == dict and data.get(\"type\") == \"event\":\n        act = data.get(\"action\")\n        if act == \"start\" or act == \"stop\":\n            return \"Event action: \" + act\n    elif type(data) == dict and data.get(\"type\") == \"metric\":\n        v = data.get(\"value\")\n        return \"Numeric metric: \" + str(v)\n    return \"Unknown\"\n```\n```python\nfrom typing import Any, Dict\n\n\ndef process_payload(data: Dict[str, Any]) -> str:\n    \"\"\"Procesa cargas útiles estructuradas usando coincidencia de patrones.\n\n    Args:\n        data (Dict[str, Any]): Diccionario de entrada con metadatos.\n\n    Returns:\n        str: Resultado del procesamiento basado en el tipo.\n    \"\"\"\n    match data:\n        case {\"type\": \"event\", \"action\": str(act)} if act in [\n            \"start\",\n            \"stop\",\n        ]:\n            return f\"Event action: {act}\"\n        case {\"type\": \"metric\", \"value\": int(v) | float(v)}:\n            return f\"Numeric metric: {v}\"\n        case _:\n            return \"Unknown payload structure\"\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=python-312-match-case-formatting-pep8\n#python #Programación #CódigoLimpio"
+    }
+  },
+  "locales": {
+    "en": {
+      "title": "Python 3.12 Match Case Formatting and PEP 8: Advanced Guide",
+      "communities": [
+        "Reddit: r/Python",
+        "Hacker News",
+        "Medium (Importar URL canónica)"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/en/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8",
+      "hashtags": "#python #CleanCode #DevTools",
+      "post_markdown": "Master match case formatting in Python 3.12 following PEP 8, Black, and Ruff standards. Improve code readability and prevent indentation errors.\n\n```python\n# Legacy code hard to maintain and format\ndef process_payload(data):\n    if type(data) == dict and data.get(\"type\") == \"event\":\n        act = data.get(\"action\")\n        if act == \"start\" or act == \"stop\":\n            return \"Event action: \" + act\n    elif type(data) == dict and data.get(\"type\") == \"metric\":\n        v = data.get(\"value\")\n        return \"Numeric metric: \" + str(v)\n    return \"Unknown\"\n```\n```python\nfrom typing import Any, Dict\n\n\ndef process_payload(data: Dict[str, Any]) -> str:\n    \"\"\"Process structured payloads using pattern matching.\n\n    Args:\n        data (Dict[str, Any]): Input dictionary containing metadata.\n\n    Returns:\n        str: Processing result based on payload type.\n    \"\"\"\n    match data:\n        case {\"type\": \"event\", \"action\": str(act)} if act in [\n            \"start\",\n            \"stop\",\n        ]:\n            return f\"Event action: {act}\"\n        case {\"type\": \"metric\", \"value\": int(v) | float(v)}:\n            return f\"Numeric metric: {v}\"\n        case _:\n            return \"Unknown payload structure\"\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/en/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8\n#python #CleanCode #DevTools"
+    },
+    "es": {
+      "title": "Python 3.12 Match Case Formatting y PEP 8: Guía Avanzada",
+      "communities": [
+        "Reddit: r/programacion",
+        "Reddit: r/devsarg",
+        "Reddit: r/taquerosprogramadores",
+        "Reddit: r/chileIT",
+        "Menéame"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/es/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8",
+      "hashtags": "#python #Programación #CódigoLimpio",
+      "post_markdown": "Domina el formateo de bloques match case en Python 3.12 según PEP 8, Black y Ruff. Mejora la legibilidad de tu código y evita errores de indentación.\n\n```python\n# Código legado difícil de mantener y formatear\ndef process_payload(data):\n    if type(data) == dict and data.get(\"type\") == \"event\":\n        act = data.get(\"action\")\n        if act == \"start\" or act == \"stop\":\n            return \"Event action: \" + act\n    elif type(data) == dict and data.get(\"type\") == \"metric\":\n        v = data.get(\"value\")\n        return \"Numeric metric: \" + str(v)\n    return \"Unknown\"\n```\n```python\nfrom typing import Any, Dict\n\n\ndef process_payload(data: Dict[str, Any]) -> str:\n    \"\"\"Procesa cargas útiles estructuradas usando coincidencia de patrones.\n\n    Args:\n        data (Dict[str, Any]): Diccionario de entrada con metadatos.\n\n    Returns:\n        str: Resultado del procesamiento basado en el tipo.\n    \"\"\"\n    match data:\n        case {\"type\": \"event\", \"action\": str(act)} if act in [\n            \"start\",\n            \"stop\",\n        ]:\n            return f\"Event action: {act}\"\n        case {\"type\": \"metric\", \"value\": int(v) | float(v)}:\n            return f\"Numeric metric: {v}\"\n        case _:\n            return \"Unknown payload structure\"\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/es/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8\n#python #Programación #CódigoLimpio"
+    },
+    "pt-BR": {
+      "title": "Python 3.12 Match Case Formatting e PEP 8: Guia Avançado",
+      "communities": [
+        "TabNews (tabnews.com.br)",
+        "Reddit: r/brdev"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8",
+      "hashtags": "#python #Programação #CódigoLimpo",
+      "post_markdown": "Domine a formatação de blocos match case no Python 3.12 seguindo PEP 8, Black e Ruff. Melhore a legibilidade e evite erros de indentação.\n\n```python\n# Código legado difícil de manter e formatar\ndef process_payload(data):\n    if type(data) == dict and data.get(\"type\") == \"event\":\n        act = data.get(\"action\")\n        if act == \"start\" or act == \"stop\":\n            return \"Event action: \" + act\n    elif type(data) == dict and data.get(\"type\") == \"metric\":\n        v = data.get(\"value\")\n        return \"Numeric metric: \" + str(v)\n    return \"Unknown\"\n```\n```python\nfrom typing import Any, Dict\n\n\ndef process_payload(data: Dict[str, Any]) -> str:\n    \"\"\"Processa payloads estruturados usando correspondência de padrões.\n\n    Args:\n        data (Dict[str, Any]): Dicionário de entrada contendo metadados.\n\n    Returns:\n        str: Resultado do processamento baseado no tipo.\n    \"\"\"\n    match data:\n        case {\"type\": \"event\", \"action\": str(act)} if act in [\n            \"start\",\n            \"stop\",\n        ]:\n            return f\"Event action: {act}\"\n        case {\"type\": \"metric\", \"value\": int(v) | float(v)}:\n            return f\"Numeric metric: {v}\"\n        case _:\n            return \"Unknown payload structure\"\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8\n#python #Programação #CódigoLimpo"
+    },
+    "pt-PT": {
+      "title": "Python 3.12 Match Case Formatting e PEP 8: Guia Avançado",
+      "communities": [
+        "Reddit: r/devpt",
+        "TabNews (tabnews.com.br)"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8",
+      "hashtags": "#python #Programação #CódigoLimpo",
+      "post_markdown": "Domine a formatação de blocos match case em Python 3.12 seguindo PEP 8, Black e Ruff. Melhore a legibilidade e evite erros de indentação.\n\n```python\n# Código legado difícil de manter e formatar\ndef process_payload(data):\n    if type(data) == dict and data.get(\"type\") == \"event\":\n        act = data.get(\"action\")\n        if act == \"start\" or act == \"stop\":\n            return \"Event action: \" + act\n    elif type(data) == dict and data.get(\"type\") == \"metric\":\n        v = data.get(\"value\")\n        return \"Numeric metric: \" + str(v)\n    return \"Unknown\"\n```\n```python\nfrom typing import Any, Dict\n\n\ndef process_payload(data: Dict[str, Any]) -> str:\n    \"\"\"Processa payloads estruturados usando correspondência de padrões.\n\n    Args:\n        data (Dict[str, Any]): Dicionário de entrada contendo metadados.\n\n    Returns:\n        str: Resultado do processamento baseado no tipo.\n    \"\"\"\n    match data:\n        case {\"type\": \"event\", \"action\": str(act)} if act in [\n            \"start\",\n            \"stop\",\n        ]:\n            return f\"Event action: {act}\"\n        case {\"type\": \"metric\", \"value\": int(v) | float(v)}:\n            return f\"Numeric metric: {v}\"\n        case _:\n            return \"Unknown payload structure\"\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8\n#python #Programação #CódigoLimpo"
+    },
+    "fr": {
+      "title": "Python 3.12 Match Case Formatting et PEP 8 : Guide Avancé",
+      "communities": [
+        "Zeste de Savoir",
+        "Developpez.com",
+        "Reddit: r/developpeurs"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/fr/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8",
+      "hashtags": "#python #Développement #CleanCode",
+      "post_markdown": "Maîtrisez le formatage des blocs match case en Python 3.12 selon PEP 8, Black et Ruff. Améliorez la lisibilité et évitez les erreurs d'indentation.\n\n```python\n# Code hérité difficile à maintenir et formater\ndef process_payload(data):\n    if type(data) == dict and data.get(\"type\") == \"event\":\n        act = data.get(\"action\")\n        if act == \"start\" or act == \"stop\":\n            return \"Event action: \" + act\n    elif type(data) == dict and data.get(\"type\") == \"metric\":\n        v = data.get(\"value\")\n        return \"Numeric metric: \" + str(v)\n    return \"Unknown\"\n```\n```python\nfrom typing import Any, Dict\n\n\ndef process_payload(data: Dict[str, Any]) -> str:\n    \"\"\"Traite les charges utiles structurées à l'aide de la correspondance de motifs.\n\n    Args:\n        data (Dict[str, Any]): Dictionnaire d'entrée contenant les métadonnées.\n\n    Returns:\n        str: Résultat du traitement basé sur le type.\n    \"\"\"\n    match data:\n        case {\"type\": \"event\", \"action\": str(act)} if act in [\n            \"start\",\n            \"stop\",\n        ]:\n            return f\"Event action: {act}\"\n        case {\"type\": \"metric\", \"value\": int(v) | float(v)}:\n            return f\"Numeric metric: {v}\"\n        case _:\n            return \"Unknown payload structure\"\n```\n\nGuide complet et bac à sable interactif: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/fr/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8\n#python #Développement #CleanCode"
+    },
+    "de": {
+      "title": "Python 3.12 Match Case Formatting und PEP 8: Fortgeschrittener Leitfaden",
+      "communities": [
+        "Heise Developer / iX",
+        "Reddit: r/de_EDV"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/de/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8",
+      "hashtags": "#python #CleanCode #Entwicklung",
+      "post_markdown": "Beherrschen Sie das Formatieren von match case Blöcken in Python 3.12 nach PEP 8, Black und Ruff. Verbessern Sie die Lesbarkeit und vermeiden Sie Fehler.\n\n```python\n# Schwer zu wartender und zu formatierender Legacy-Code\ndef process_payload(data):\n    if type(data) == dict and data.get(\"type\") == \"event\":\n        act = data.get(\"action\")\n        if act == \"start\" or act == \"stop\":\n            return \"Event action: \" + act\n    elif type(data) == dict and data.get(\"type\") == \"metric\":\n        v = data.get(\"value\")\n        return \"Numeric metric: \" + str(v)\n    return \"Unknown\"\n```\n```python\nfrom typing import Any, Dict\n\n\ndef process_payload(data: Dict[str, Any]) -> str:\n    \"\"\"Verarbeitet strukturierte Payloads mithilfe von Musterabgleich.\n\n    Args:\n        data (Dict[str, Any]): Eingabewörterbuch mit Metadaten.\n\n    Returns:\n        str: Verarbeitungsergebnis basierend auf dem Typ.\n    \"\"\"\n    match data:\n        case {\"type\": \"event\", \"action\": str(act)} if act in [\n            \"start\",\n            \"stop\",\n        ]:\n            return f\"Event action: {act}\"\n        case {\"type\": \"metric\", \"value\": int(v) | float(v)}:\n            return f\"Numeric metric: {v}\"\n        case _:\n            return \"Unknown payload structure\"\n```\n\nVollständiger Leitfaden & interaktive Sandbox: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/de/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8\n#python #CleanCode #Entwicklung"
+    },
+    "it": {
+      "title": "Python 3.12 Match Case Formatting e PEP 8: Guida Avanzata",
+      "communities": [
+        "HTML.it",
+        "Reddit: r/ItalyInformatica"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/it/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8",
+      "hashtags": "#python #Sviluppo #CleanCode",
+      "post_markdown": "Padroneggia la formattazione dei blocchi match case in Python 3.12 secondo PEP 8, Black e Ruff. Migliora la leggibilità ed evita errori di indentazione.\n\n```python\n# Codice legacy difficile da mantenere e formattare\ndef process_payload(data):\n    if type(data) == dict and data.get(\"type\") == \"event\":\n        act = data.get(\"action\")\n        if act == \"start\" or act == \"stop\":\n            return \"Event action: \" + act\n    elif type(data) == dict and data.get(\"type\") == \"metric\":\n        v = data.get(\"value\")\n        return \"Numeric metric: \" + str(v)\n    return \"Unknown\"\n```\n```python\nfrom typing import Any, Dict\n\n\ndef process_payload(data: Dict[str, Any]) -> str:\n    \"\"\"Elabora payload strutturati utilizzando il pattern matching.\n\n    Args:\n        data (Dict[str, Any]): Dizionario di input contenente metadati.\n\n    Returns:\n        str: Risultato dell'elaborazione basato sul tipo.\n    \"\"\"\n    match data:\n        case {\"type\": \"event\", \"action\": str(act)} if act in [\n            \"start\",\n            \"stop\",\n        ]:\n            return f\"Event action: {act}\"\n        case {\"type\": \"metric\", \"value\": int(v) | float(v)}:\n            return f\"Numeric metric: {v}\"\n        case _:\n            return \"Unknown payload structure\"\n```\n\nGuida completa e sandbox interattivo: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/it/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-match-case-formatting-pep8\n#python #Sviluppo #CleanCode"
+    }
+  }
+}
