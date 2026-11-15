@@ -426,6 +426,151 @@
           "publishedAt": "2026-11-15T04:57:06.699Z"
         }
       }
+    },
+    {
+      "slug": "python-312-match-case-formatting-pep8",
+      "title": "Python 3.12 Match Case Formatting y PEP 8: Guía Avanzada",
+      "language": "python",
+      "programming_language": "python",
+      "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+      "meta_description": "Domina el formateo de bloques match case en Python 3.12 según PEP 8, Black y Ruff. Mejora la legibilidad de tu código y evita errores de indentación.",
+      "summary": "Aprende a formatear sentencias match/case en Python 3.12 cumpliendo con PEP 8, evitando errores de indentación y mejorando la legibilidad.",
+      "related_fix_slug": "python-indentation-error",
+      "interactive_snippet": "def process_payload(data: dict) -> str:\n    match data:\n        case {\"type\": \"event\", \"action\": str(act)} if act in [\"start\", \"stop\"]:\n            return f\"Event action: {act}\"\n        case {\"type\": \"metric\", \"value\": (int(v) | float(v))}:\n            return f\"Numeric metric: {v}\"\n        case _:\n            return \"Unknown payload structure\"",
+      "faq": [
+        {
+          "q": "¿Cómo maneja Black el salto de línea en las guardas de match/case?",
+          "a": "Black divide automáticamente las condiciones complejas dentro de las guardas `if` cuando superan el límite de caracteres, manteniendo una indentación limpia de 4 espacios adicionales."
+        },
+        {
+          "q": "¿Es obligatorio usar type hints en las cláusulas case de Python 3.12?",
+          "a": "No es estrictamente obligatorio para que el intérprete funcione, pero es altamente recomendable para que herramientas de análisis estático como Ruff y MyPy validen los tipos."
+        }
+      ],
+      "date": "2026-11-15",
+      "published_at": "2026-11-15",
+      "status": "COMPILED",
+      "locales": [
+        "es",
+        "de",
+        "en",
+        "fr",
+        "it",
+        "pt-BR",
+        "pt-PT"
+      ],
+      "file": "published/python-312-match-case-formatting-pep8.md",
+      "sha256": "110ad3bb60da5de2c6ef21bcef353ac958fded680e56227a210465fb53ba6191",
+      "translations": {
+        "de": {
+          "title": "Python 3.12 Match Case Formatting und PEP 8: Fortgeschrittener Leitfaden",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Beherrschen Sie das Formatieren von match case Blöcken in Python 3.12 nach PEP 8, Black und Ruff. Verbessern Sie die Lesbarkeit und vermeiden Sie Fehler.",
+          "summary": "Erfahren Sie, wie Sie match/case-Anweisungen in Python 3.12 gemäß PEP 8 formatieren, Einrückungsfehler vermeiden und die Codeklarheit erhöhen.",
+          "faq": [
+            {
+              "q": "Wie handhabt Black Zeilenumbrüche in match/case-Guard-Klauseln?",
+              "a": "Black bricht komplexe Bedingungen innerhalb von `if`-Guards automatisch um, wenn sie das Zeichenlimit überschreiten, und behält dabei eine saubere Einrückung von 4 zusätzlichen Leerzeichen bei."
+            },
+            {
+              "q": "Sind Type Hints in Python 3.12 case-Klauseln obligatorisch?",
+              "a": "Sie sind für die Ausführung nicht zwingend erforderlich, werden jedoch dringend empfohlen, damit statische Analysetools wie Ruff und MyPy Datentypen validieren können."
+            }
+          ],
+          "file": "published/python-312-match-case-formatting-pep8.de.md",
+          "sha256": "f7d3190926d1bd7d808a8f893b9d692f710cacc33824c951472f61719805ef43"
+        },
+        "en": {
+          "title": "Python 3.12 Match Case Formatting and PEP 8: Advanced Guide",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Master match case formatting in Python 3.12 following PEP 8, Black, and Ruff standards. Improve code readability and prevent indentation errors.",
+          "summary": "Learn how to format match/case statements in Python 3.12 while complying with PEP 8, avoiding indentation errors and boosting code clarity.",
+          "faq": [
+            {
+              "q": "How does Black handle line wrapping in match/case guard clauses?",
+              "a": "Black automatically breaks complex conditions inside `if` guards when they exceed the character limit, maintaining a clean 4-space extra indentation."
+            },
+            {
+              "q": "Are type hints mandatory in Python 3.12 case clauses?",
+              "a": "They are not strictly required for execution, but highly recommended for static analysis tools like Ruff and MyPy to validate data types."
+            }
+          ],
+          "file": "published/python-312-match-case-formatting-pep8.en.md",
+          "sha256": "e174be085be28ae1b0d5ef4c96316dd2c45f92e8744e673e256959f4956db9a7"
+        },
+        "fr": {
+          "title": "Python 3.12 Match Case Formatting et PEP 8 : Guide Avancé",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Maîtrisez le formatage des blocs match case en Python 3.12 selon PEP 8, Black et Ruff. Améliorez la lisibilité et évitez les erreurs d'indentation.",
+          "summary": "Apprenez à formater les instructions match/case en Python 3.12 tout en respectant PEP 8, en évitant les erreurs d'indentation et en optimisant la lisibilité.",
+          "faq": [
+            {
+              "q": "Comment Black gère-t-il les retours à la ligne dans les clauses de garde match/case ?",
+              "a": "Black découpe automatiquement les conditions complexes à l'intérieur des gardes `if` lorsqu'elles dépassent la limite de caractères, en maintenant une indentation propre de 4 espaces supplémentaires."
+            },
+            {
+              "q": "Les type hints sont-ils obligatoires dans les clauses case de Python 3.12 ?",
+              "a": "Ils ne sont pas strictement requis pour l'exécution, mais fortement recommandés pour que les outils d'analyse statique comme Ruff et MyPy valident les types de données."
+            }
+          ],
+          "file": "published/python-312-match-case-formatting-pep8.fr.md",
+          "sha256": "4e411bca04d6e4fec3c54bfc04e97c994b44722ded318bb96c0303b2ca82bfb7"
+        },
+        "it": {
+          "title": "Python 3.12 Match Case Formatting e PEP 8: Guida Avanzata",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Padroneggia la formattazione dei blocchi match case in Python 3.12 secondo PEP 8, Black e Ruff. Migliora la leggibilità ed evita errori di indentazione.",
+          "summary": "Impara a formattare le istruzioni match/case in Python 3.12 rispettando PEP 8, evitando errori di indentazione e migliorando la leggibilità.",
+          "faq": [
+            {
+              "q": "In che modo Black gestisce l'andata a capo nelle clausole di guardia match/case?",
+              "a": "Black suddivide automaticamente le condizioni complesse all'interno delle guardie `if` quando superano il limite di caratteri, mantenendo un'indentazione pulita di 4 spazi aggiuntivi."
+            },
+            {
+              "q": "I type hint sono obbligatori nelle clausole case di Python 3.12?",
+              "a": "Non sono strettamente obbligatori per l'esecuzione, ma altamente consigliati affinché strumenti di analisi statica come Ruff e MyPy convalidino i tipi di dati."
+            }
+          ],
+          "file": "published/python-312-match-case-formatting-pep8.it.md",
+          "sha256": "738acf9aee26f50c5b389e87c5d526b0bb640f25fd486c42f082cbea36856b34"
+        },
+        "pt-BR": {
+          "title": "Python 3.12 Match Case Formatting e PEP 8: Guia Avançado",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Domine a formatação de blocos match case no Python 3.12 seguindo PEP 8, Black e Ruff. Melhore a legibilidade e evite erros de indentação.",
+          "summary": "Aprenda a formatar declarações match/case no Python 3.12 cumprindo o PEP 8, evitando erros de indentação e melhorando a legibilidade.",
+          "faq": [
+            {
+              "q": "Como o Black lida com quebras de linha em cláusulas de guarda match/case?",
+              "a": "O Black divide automaticamente condições complexas dentro de guardas `if` quando excedem o limite de caracteres, mantendo uma indentação limpa de 4 espaços adicionais."
+            },
+            {
+              "q": "Type hints são obrigatórios em cláusulas case do Python 3.12?",
+              "a": "Não são estritamente obrigatórios para execução, mas altamente recomendados para ferramentas de análise estática como Ruff e MyPy validarem tipos de dados."
+            }
+          ],
+          "file": "published/python-312-match-case-formatting-pep8.pt-BR.md",
+          "sha256": "9c9711f59274da2f6b9c25644f8618871605cdf5ed059164e23fcb0b8b32a18f"
+        },
+        "pt-PT": {
+          "title": "Python 3.12 Match Case Formatting e PEP 8: Guia Avançado",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Domine a formatação de blocos match case em Python 3.12 seguindo PEP 8, Black e Ruff. Melhore a legibilidade e evite erros de indentação.",
+          "summary": "Aprenda a formatar declarações match/case em Python 3.12 cumprindo o PEP 8, evitando erros de indentação e melhorando a clareza do código.",
+          "faq": [
+            {
+              "q": "Como é que o Black lida com quebras de linha em cláusulas de guarda match/case?",
+              "a": "O Black divide automaticamente condições complexas dentro de guardas `if` quando excedem o limite de caracteres, mantendo uma indentação limpa de 4 espaços adicionais."
+            },
+            {
+              "q": "Os type hints são obrigatórios em cláusulas case do Python 3.12?",
+              "a": "Não são estritamente obrigatórios para execução, mas altamente recomendados para ferramentas de análise estática como Ruff e MyPy validarem tipos de dados."
+            }
+          ],
+          "file": "published/python-312-match-case-formatting-pep8.pt-PT.md",
+          "sha256": "c9f7328c226a984eb7198d892e9a9287119eca1c53129c85bf30b33ba64f51f8"
+        }
+      }
     }
   ]
 }

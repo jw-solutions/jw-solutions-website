@@ -5,7 +5,9 @@
       "query": "python 3.12 match case formatting pep8",
       "lang": "en",
       "language": "python",
-      "status": "pending"
+      "status": "published",
+      "slug": "python-312-match-case-formatting-pep8",
+      "publishedAt": "2026-11-15T16:46:19.088Z"
     }
   ]
 }

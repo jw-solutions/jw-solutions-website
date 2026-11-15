@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>en</language>
-    <lastBuildDate>Sun, 15 Nov 2026 03:52:42 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 15 Nov 2026 16:46:20 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -19,6 +19,25 @@
     <atom:link rel="alternate" type="application/rss+xml" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/feed.fr.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/feed.de.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/feed.it.xml"/>
+    <item>
+      <title>Python 3.12 Match Case Formatting and PEP 8: Advanced Guide</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/en/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/en/</guid>
+      <pubDate>Sun, 15 Nov 2026 14:00:00 +0000</pubDate>
+      <category>PYTHON</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/python-312-match-case-formatting-pep8-en.png" medium="image" />
+      <description>Learn how to format match/case statements in Python 3.12 while complying with PEP 8, avoiding indentation errors and boosting code clarity.</description>
+      <content:encoded><![CDATA[<p>Learn how to format match/case statements in Python 3.12 while complying with PEP 8, avoiding indentation errors and boosting code clarity.</p><pre><code># Legacy code hard to maintain and format
+def process_payload(data):
+    if type(data) == dict and data.get(&quot;type&quot;) == &quot;event&quot;:
+        act = data.get(&quot;action&quot;)
+        if act == &quot;start&quot; or act == &quot;stop&quot;:
+            return &quot;Event action: &quot; + act
+    elif type(data) == dict and data.get(&quot;type&quot;) == &quot;metric&quot;:
+        v = data.get(&quot;value&quot;)
+        return &quot;Numeric metric: &quot; + str(v)
+    return &quot;Unknown&quot;</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/en/">Python 3.12 Match Case Formatting and PEP 8: Advanced Guide</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Refactoring Legacy any Types in TypeScript with Type Guards and TSDoc</title>
       <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/en/</link>
