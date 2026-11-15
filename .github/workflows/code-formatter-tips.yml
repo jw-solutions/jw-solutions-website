@@ -134,6 +134,13 @@ jobs:
           SLUG: ${{ steps.publish.outputs.slug }}
         run: node scripts/code-formatter/ping-indexnow.js "$SLUG"
 
+      - name: Sindicar a Dev.to (canonical_url)
+        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        continue-on-error: true
+        env:
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+        run: node scripts/code-formatter/syndicate-devto.js
+
       - name: Registrar estado DEPLOYED en manifiesto
         if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
         run: |

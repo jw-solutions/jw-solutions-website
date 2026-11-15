@@ -31,6 +31,14 @@
     "assets/js/tools/code-formatter/embed.js",
     "assets/js/tools/code-formatter/fix-page.js",
     "tools/code-formatter/embed/index.html",
+    "tools/code-formatter/tips/feed.xml",
+    "tools/code-formatter/tips/feed.es.xml",
+    "tools/code-formatter/tips/feed.en.xml",
+    "tools/code-formatter/tips/feed.pt-BR.xml",
+    "tools/code-formatter/tips/feed.pt-PT.xml",
+    "tools/code-formatter/tips/feed.fr.xml",
+    "tools/code-formatter/tips/feed.de.xml",
+    "tools/code-formatter/tips/feed.it.xml",
     "assets/images/badges/formatted-with-jw.svg"
   ],
   "features": [

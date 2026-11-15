@@ -16,6 +16,7 @@ import re
 import shutil
 import sys
 from datetime import date, datetime, timezone
+from email.utils import format_datetime
 from html import escape
 from html.parser import HTMLParser
 from pathlib import Path
@@ -52,13 +53,13 @@ OG_LOCALE = {
     "it": "it_IT",
 }
 TIP_UI_STRINGS = {
-    "es": {"try": "Probar fragmento en el formateador", "fix": "Ver guía de solución de errores", "related": "Tips relacionados", "back": "Todos los tips", "home": "Volver al formateador"},
-    "en": {"try": "Try snippet in the formatter", "fix": "View syntax error fix guide", "related": "Related tips", "back": "All tips", "home": "Back to formatter"},
-    "pt-BR": {"try": "Testar trecho no formatador", "fix": "Ver guia de correção de erros", "related": "Dicas relacionadas", "back": "Todas as dicas", "home": "Voltar ao formatador"},
-    "pt-PT": {"try": "Experimentar excerto no formatador", "fix": "Ver guia de correção de erros", "related": "Dicas relacionadas", "back": "Todas as dicas", "home": "Voltar ao formatador"},
-    "fr": {"try": "Tester l'extrait dans le formateur", "fix": "Voir le guide de correction", "related": "Astuces associées", "back": "Toutes les astuces", "home": "Retour au formateur"},
-    "de": {"try": "Snippet im Formatter testen", "fix": "Fehlerbehebungs-Guide ansehen", "related": "Verwandte Tipps", "back": "Alle Tipps", "home": "Zurück zum Formatter"},
-    "it": {"try": "Prova lo snippet nel formattatore", "fix": "Vedi guida alla correzione", "related": "Suggerimenti correlati", "back": "Tutti i suggerimenti", "home": "Torna al formattatore"},
+    "es": {"try": "Probar fragmento en el formateador", "fix": "Ver guía de solución de errores", "related": "Tips relacionados", "related_guides": "Guías y Tips relacionados", "faq": "Preguntas frecuentes", "back": "Todos los tips", "home": "Volver al formateador"},
+    "en": {"try": "Try snippet in the formatter", "fix": "View syntax error fix guide", "related": "Related tips", "related_guides": "Related Guides & Tips", "faq": "Frequently Asked Questions", "back": "All tips", "home": "Back to formatter"},
+    "pt-BR": {"try": "Testar trecho no formatador", "fix": "Ver guia de correção de erros", "related": "Dicas relacionadas", "related_guides": "Guias e Dicas relacionados", "faq": "Perguntas frequentes", "back": "Todas as dicas", "home": "Voltar ao formatador"},
+    "pt-PT": {"try": "Experimentar excerto no formatador", "fix": "Ver guia de correção de erros", "related": "Dicas relacionadas", "related_guides": "Guias e Dicas relacionados", "faq": "Perguntas frequentes", "back": "Todas as dicas", "home": "Voltar ao formatador"},
+    "fr": {"try": "Tester l'extrait dans le formateur", "fix": "Voir le guide de correction", "related": "Astuces associées", "related_guides": "Guides et Astuces associés", "faq": "Foire aux questions", "back": "Toutes les astuces", "home": "Retour au formateur"},
+    "de": {"try": "Snippet im Formatter testen", "fix": "Fehlerbehebungs-Guide ansehen", "related": "Verwandte Tipps", "related_guides": "Verwandte Guides & Tipps", "faq": "Häufig gestellte Fragen", "back": "Alle Tipps", "home": "Zurück zum Formatter"},
+    "it": {"try": "Prova lo snippet nel formattatore", "fix": "Vedi guida alla correzione", "related": "Suggerimenti correlati", "related_guides": "Guide e Suggerimenti correlati", "faq": "Domande frequenti", "back": "Tutti i suggerimenti", "home": "Torna al formattatore"},
 }
 FIX_SRC = ROOT / "content" / "code-formatter-tips" / "syntax-fixes.json"
 FIX_REL = "tools/code-formatter/fix"
@@ -143,6 +144,7 @@ FIX_PAGE = """<!DOCTYPE html>
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="canonical" href="@@URL@@">
 @@ALTERNATES@@
+  <link rel="alternate" type="application/rss+xml" title="Code Formatter &amp; Auto-Doc AI Tips" href="https://jw-solutions.com/tools/code-formatter/tips/feed.@@RSS_LANG@@.xml">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="JW Solutions">
   <meta property="og:title" content="@@TITLE@@ | Code Formatter &amp; Auto-Doc AI">
@@ -253,52 +255,98 @@ def _fill(template: str, **kv: str) -> str:
     return template
 
 
+def _load_published_tips() -> list[dict]:
+    if not TIPS_MANIFEST.is_file():
+        return []
+    tips = json.loads(TIPS_MANIFEST.read_text(encoding="utf-8")).get("tips", [])
+    return sorted(tips, key=lambda t: (t.get("published_at") or t.get("date") or "", t["slug"]), reverse=True)
+
+
+def _related_tips_block(prog_lang: str, loc: str, tips: list[dict]) -> str:
+    """Devuelve los últimos 3 tips del mismo lenguaje (con fallback a los últimos 3 generales)."""
+    if not tips:
+        return ""
+    matched = [t for t in tips if (t.get("programming_language") or t.get("language")) == prog_lang][:3]
+    if len(matched) < 3:
+        matched.extend([t for t in tips if t not in matched][: 3 - len(matched)])
+    ui = TIP_UI_STRINGS.get(loc, TIP_UI_STRINGS["en"])
+    items = []
+    for t in matched:
+        t_lang = t.get("programming_language") or t.get("language") or "python"
+        cat_path = TIP_CATEGORY_PATH.get(t_lang, "tips/python/")
+        t_loc = t if loc == "es" else (t.get("translations", {}).get(loc) or t)
+        target_loc = loc if (loc == "es" or loc in t.get("translations", {})) else "es"
+        href = f"{SITE}{TOOL_PATH}{cat_path}{t['slug']}/{target_loc}/"
+        items.append(f'<li class="cf-card"><a href="{escape(href, quote=True)}">{escape(t_loc["title"])}</a></li>')
+    return f'        <h2 class="cf-tip__h">{escape(ui["related_guides"])}</h2>\n        <ul class="cf-fix__list">{"".join(items)}</ul>'
+
+
 def fix_pages() -> dict[str, str]:
-    """{ruta relativa al repo: contenido}. Hub + una landing por error + fix-data.json (textos en 7 idiomas)."""
+    """{ruta relativa al repo: contenido}. Hub + landings por error en 7 idiomas + fix-data.json."""
     cfg = load_fixes()
     errors = cfg["errors"]
     pub = cfg.get("published_at", date.today().isoformat())
+    tips = _load_published_tips()
     out: dict[str, str] = {}
     data = {"published_at": pub, "errors": {e["slug"]: {k: e[k] for k in ("language", "error", "version", "before", "after", "i18n")} for e in errors}}
     out[f"{FIX_REL}/fix-data.json"] = json.dumps(data, ensure_ascii=False, indent=1) + "\n"
     tag = _es("fixTag")
 
     for e in errors:
-        loc = e["i18n"]["es"]
         path = f"{TOOL_PATH}fix/{e['slug']}/"
-        url = SITE + path
-        steps = loc["steps"]
-        ld = {
-            "@context": "https://schema.org",
-            "@graph": [
-                {"@type": "TechArticle", "headline": loc["title"], "description": loc["summary"], "inLanguage": "es", "url": url,
-                 "mainEntityOfPage": {"@type": "WebPage", "@id": url}, "image": OG_DEFAULT, "about": {"@type": "Thing", "name": e["error"]},
-                 "datePublished": pub, "dateModified": pub, "author": {"@type": "Organization", "name": "JW Solutions"},
-                 "publisher": {"@type": "Organization", "name": "JW Solutions", "url": SITE}},
-                {"@type": "HowTo", "name": loc["title"], "description": loc["summary"], "inLanguage": "es", "url": url,
-                 "step": [{"@type": "HowToStep", "position": i + 1, "name": t, "text": t} for i, t in enumerate(steps)]},
-            ],
-        }
-        others = "".join(f'<li class="cf-card"><a href="../{o["slug"]}/">{escape(o["i18n"]["es"]["title"])}</a></li>' for o in errors if o["slug"] != e["slug"])
-        body = (
-            f'        <div class="cf-fix__pair"><div><p class="cf-fix__label cf-fix__label--bad">{escape(_es("fixBefore"))}</p><pre class="cf-tip__code"><code>{escape(e["before"])}</code></pre></div>'
-            f'<div><p class="cf-fix__label cf-fix__label--good">{escape(_es("fixAfter"))}</p><pre class="cf-tip__code"><code>{escape(e["after"])}</code></pre></div></div>\n'
-            f'        <h2 class="cf-tip__h">{escape(_es("fixSteps"))}</h2>\n        <ol class="cf-fix__steps">{"".join(f"<li>{escape(t)}</li>" for t in steps)}</ol>\n'
-            f'        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="../../?sample=1">{escape(_es("fixCta"))}</a></p>\n'
-            f'        <h2 class="cf-tip__h">{escape(_es("fixOthers"))}</h2>\n        <ul class="cf-fix__list">{others}</ul>'
-        )
-        out[f"{FIX_REL}/{e['slug']}/index.html"] = _fill(
-            FIX_PAGE, TITLE=escape(loc["title"]), DESC=escape(loc["summary"]), URL=url, ALTERNATES=_alternates(path), OG=OG_DEFAULT, TOOL="../../", REPO="../../../../",
-            DATA="../fix-data.json", MAINATTRS=f' data-fix-slug="{e["slug"]}" data-fix-root="../../"', TAG=escape(tag), H1=escape(loc["title"]), LEAD=escape(loc["summary"]), BODY=body,
-            JSONLD='  <script type="application/ld+json" id="cf-jsonld">' + json.dumps(ld, ensure_ascii=False) + "</script>",
-        )
+        for lang_code in SITEMAP_LANGS:
+            loc = e["i18n"].get(lang_code) or e["i18n"]["es"]
+            is_root = lang_code == "es"
+            url = SITE + (path if is_root else f"{path}{lang_code}/")
+            steps = loc["steps"]
+            ld = {
+                "@context": "https://schema.org",
+                "@graph": [
+                    {"@type": "TechArticle", "headline": loc["title"], "description": loc["summary"], "inLanguage": lang_code, "url": url,
+                     "mainEntityOfPage": {"@type": "WebPage", "@id": url}, "image": OG_DEFAULT, "about": {"@type": "Thing", "name": e["error"]},
+                     "datePublished": pub, "dateModified": pub, "author": {"@type": "Organization", "name": "JW Solutions"},
+                     "publisher": {"@type": "Organization", "name": "JW Solutions", "url": SITE}},
+                    {"@type": "HowTo", "name": loc["title"], "description": loc["summary"], "inLanguage": lang_code, "url": url,
+                     "step": [{"@type": "HowToStep", "position": i + 1, "name": t, "text": t} for i, t in enumerate(steps)]},
+                ],
+            }
+            others_prefix = "../" if is_root else "../../"
+            tool_rel = "../../" if is_root else "../../../"
+            repo_rel = "../../../../" if is_root else "../../../../../"
+            data_rel = "../fix-data.json" if is_root else "../../fix-data.json"
+            others = "".join(
+                f'<li class="cf-card"><a href="{others_prefix}{o["slug"]}/{"" if is_root else f"?lang={lang_code}"}">{escape((o["i18n"].get(lang_code) or o["i18n"]["es"])["title"])}</a></li>'
+                for o in errors if o["slug"] != e["slug"]
+            )
+            related_tips = _related_tips_block(e["language"], lang_code, tips)
+            body = (
+                f'        <div class="cf-fix__pair"><div><p class="cf-fix__label cf-fix__label--bad">{escape(_es("fixBefore"))}</p><pre class="cf-tip__code"><code>{escape(e["before"])}</code></pre></div>'
+                f'<div><p class="cf-fix__label cf-fix__label--good">{escape(_es("fixAfter"))}</p><pre class="cf-tip__code"><code>{escape(e["after"])}</code></pre></div></div>\n'
+                f'        <h2 class="cf-tip__h">{escape(_es("fixSteps"))}</h2>\n        <ol class="cf-fix__steps">{"".join(f"<li>{escape(t)}</li>" for t in steps)}</ol>\n'
+                f'        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="{tool_rel}?sample=1&amp;lang={escape(lang_code)}">{escape(_es("fixCta"))}</a></p>\n'
+                f'{related_tips}\n'
+                f'        <h2 class="cf-tip__h">{escape(_es("fixOthers"))}</h2>\n        <ul class="cf-fix__list">{others}</ul>'
+            )
+            page_html = _fill(
+                FIX_PAGE, TITLE=escape(loc["title"]), DESC=escape(loc["summary"]), URL=url, ALTERNATES=_alternates(path),
+                RSS_LANG=escape(lang_code), OG=OG_DEFAULT, TOOL=tool_rel, REPO=repo_rel,
+                DATA=data_rel, MAINATTRS=f' data-fix-slug="{e["slug"]}" data-fix-root="{tool_rel}"', TAG=escape(tag), H1=escape(loc["title"]), LEAD=escape(loc["summary"]), BODY=body,
+                JSONLD='  <script type="application/ld+json" id="cf-jsonld">' + json.dumps(ld, ensure_ascii=False) + "</script>",
+            )
+            if not is_root:
+                page_html = page_html.replace('<html lang="es">', f'<html lang="{escape(lang_code)}">', 1)
+                page_html = page_html.replace('content="es_ES"', f'content="{OG_LOCALE.get(lang_code, "en_US")}"', 1)
+            out[f"{FIX_REL}/{e['slug']}/{lang_code}/index.html"] = page_html
+            if is_root:
+                out[f"{FIX_REL}/{e['slug']}/index.html"] = page_html
 
     hub_path = f"{TOOL_PATH}fix/"
     cards = "".join(
         f'<li class="cf-card"><a href="{e["slug"]}/"><span class="cf-fix__chip">{escape(e["language"])}</span><br>{escape(e["i18n"]["es"]["title"])}</a></li>' for e in errors
     )
     out[f"{FIX_REL}/index.html"] = _fill(
-        FIX_PAGE, TITLE=escape(_es("fixHubTitle")), DESC=escape(_es("fixHubLead")), URL=SITE + hub_path, ALTERNATES=_alternates(hub_path), OG=OG_DEFAULT, TOOL="../", REPO="../../../",
+        FIX_PAGE, TITLE=escape(_es("fixHubTitle")), DESC=escape(_es("fixHubLead")), URL=SITE + hub_path, ALTERNATES=_alternates(hub_path),
+        RSS_LANG="es", OG=OG_DEFAULT, TOOL="../", REPO="../../../",
         DATA="fix-data.json", MAINATTRS="", TAG=escape(tag), H1=escape(_es("fixHubTitle")), LEAD=escape(_es("fixHubLead")), BODY=f'        <ul class="cf-fix__list">{cards}</ul>', JSONLD="",
     )
     return out
@@ -314,16 +362,22 @@ def write_fix_pages(*roots: Path) -> list[str]:
     return sorted(pages)
 
 
-def _strip_frontmatter(raw: str) -> tuple[dict[str, str], str]:
+def _strip_frontmatter(raw: str) -> tuple[dict[str, object], str]:
     m = re.match(r"^---\r?\n([\s\S]*?)\r?\n---\r?\n?", raw)
     if not m:
         return {}, raw
-    meta: dict[str, str] = {}
+    meta: dict[str, object] = {}
     for line in m.group(1).splitlines():
         kv = re.match(r"^([A-Za-z0-9_]+):\s*(.*)$", line)
         if not kv:
             continue
         k, v = kv.group(1), kv.group(2).strip()
+        if (v.startswith("[") and v.endswith("]")) or (v.startswith("{") and v.endswith("}")):
+            try:
+                meta[k] = json.loads(v)
+                continue
+            except Exception:
+                pass
         if (v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'")):
             try:
                 v = json.loads(v) if v.startswith('"') else v[1:-1]
@@ -498,43 +552,77 @@ def tip_pages() -> dict[str, str]:
                 else ""
             )
 
+            faq_items = tr.get("faq") or fm.get("faq")
+            valid_faq = (
+                [x for x in faq_items if isinstance(x, dict) and str(x.get("q", "")).strip() and str(x.get("a", "")).strip()]
+                if isinstance(faq_items, list)
+                else []
+            )
+            faq_section = ""
+            if valid_faq:
+                details_html = "".join(
+                    f'          <details class="cf-faq__item"><summary>{escape(str(item["q"]))}</summary>'
+                    f'<p>{escape(str(item["a"]))}</p></details>\n'
+                    for item in valid_faq
+                )
+                faq_section = (
+                    f'        <section class="cf-tip-faq" aria-labelledby="cf-faq-title">\n'
+                    f'          <h2 id="cf-faq-title" class="cf-tip__h">{escape(ui["faq"])}</h2>\n'
+                    f'{details_html}'
+                    f'        </section>\n'
+                )
+
             full_body = (
                 f'        <p class="cf-muted cf-tip__meta">{escape(pub_date)} · {escape(category)} · {escape(prog_lang.upper())}</p>\n'
                 f"{body_html}\n"
+                f"{faq_section}"
                 f'        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="{escape(cta_href, quote=True)}">{escape(ui["try"])}</a></p>\n'
                 f"{fix_block}"
                 f"{rel_block}"
             )
 
-            ld = {
-                "@context": "https://schema.org",
-                "@graph": [
+            graph: list[dict] = [
+                {
+                    "@type": "TechArticle",
+                    "headline": title,
+                    "description": desc,
+                    "inLanguage": loc,
+                    "articleSection": category,
+                    "keywords": f"{prog_lang}, code formatter, auto-doc ai, syntax, best practices",
+                    "datePublished": pub_date,
+                    "dateModified": pub_date,
+                    "url": url,
+                    "mainEntityOfPage": {"@type": "WebPage", "@id": url},
+                    "isPartOf": {"@type": "WebApplication", "name": "Code Formatter & Auto-Doc AI", "url": f"{SITE}{TOOL_PATH}"},
+                    "image": og_img,
+                    "author": {"@type": "Organization", "name": "JW Solutions"},
+                    "publisher": {"@type": "Organization", "name": "JW Solutions", "url": SITE},
+                },
+                {
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {"@type": "ListItem", "position": 1, "name": "Code Formatter", "item": f"{SITE}{TOOL_PATH}"},
+                        {"@type": "ListItem", "position": 2, "name": category, "item": f"{SITE}{TOOL_PATH}{cat_path}"},
+                        {"@type": "ListItem", "position": 3, "name": title, "item": url},
+                    ],
+                },
+            ]
+            if valid_faq:
+                graph.append(
                     {
-                        "@type": "TechArticle",
-                        "headline": title,
-                        "description": desc,
+                        "@type": "FAQPage",
                         "inLanguage": loc,
-                        "articleSection": category,
-                        "keywords": f"{prog_lang}, code formatter, auto-doc ai, syntax, best practices",
-                        "datePublished": pub_date,
-                        "dateModified": pub_date,
-                        "url": url,
-                        "mainEntityOfPage": {"@type": "WebPage", "@id": url},
-                        "isPartOf": {"@type": "WebApplication", "name": "Code Formatter & Auto-Doc AI", "url": f"{SITE}{TOOL_PATH}"},
-                        "image": og_img,
-                        "author": {"@type": "Organization", "name": "JW Solutions"},
-                        "publisher": {"@type": "Organization", "name": "JW Solutions", "url": SITE},
-                    },
-                    {
-                        "@type": "BreadcrumbList",
-                        "itemListElement": [
-                            {"@type": "ListItem", "position": 1, "name": "Code Formatter", "item": f"{SITE}{TOOL_PATH}"},
-                            {"@type": "ListItem", "position": 2, "name": category, "item": f"{SITE}{TOOL_PATH}{cat_path}"},
-                            {"@type": "ListItem", "position": 3, "name": title, "item": url},
+                        "mainEntity": [
+                            {
+                                "@type": "Question",
+                                "name": str(item["q"]),
+                                "acceptedAnswer": {"@type": "Answer", "text": str(item["a"])},
+                            }
+                            for item in valid_faq
                         ],
-                    },
-                ],
-            }
+                    }
+                )
+            ld = {"@context": "https://schema.org", "@graph": graph}
 
             html_page = _fill(
                 FIX_PAGE,
@@ -542,6 +630,7 @@ def tip_pages() -> dict[str, str]:
                 DESC=escape(desc),
                 URL=escape(url, quote=True),
                 ALTERNATES=alternates,
+                RSS_LANG=escape(loc),
                 OG=escape(og_img, quote=True),
                 TOOL="../../../../",
                 REPO="../../../../../../",
@@ -573,6 +662,78 @@ def write_tip_pages(*roots: Path) -> list[str]:
             dst.parent.mkdir(parents=True, exist_ok=True)
             dst.write_text(content, encoding="utf-8", newline="\n")
     return sorted(pages)
+
+
+def _rfc822_date(iso_date: str) -> str:
+    try:
+        d = date.fromisoformat(iso_date[:10])
+        dt = datetime(d.year, d.month, d.day, 14, 0, 0, tzinfo=timezone.utc)
+    except Exception:
+        dt = datetime.now(timezone.utc)
+    return format_datetime(dt)
+
+
+def rss_feeds() -> dict[str, str]:
+    """Genera tools/code-formatter/tips/feed.xml (EN) y feed.<lang>.xml para los 7 idiomas."""
+    tips = _load_published_tips()[:20]
+    out: dict[str, str] = {}
+    atom_links = "\n".join(
+        f'    <atom:link rel="alternate" type="application/rss+xml" hreflang="{escape(l)}" href="{SITE}{TOOL_PATH}tips/feed.{escape(l)}.xml"/>'
+        for l in SITEMAP_LANGS
+    )
+
+    def build_feed(loc: str, self_name: str) -> str:
+        items_xml: list[str] = []
+        for t in tips:
+            tr = t if loc == "es" else t.get("translations", {}).get(loc)
+            if not tr:
+                continue
+            prog_lang = t.get("programming_language") or t.get("language") or "python"
+            cat_path = TIP_CATEGORY_PATH.get(prog_lang, "tips/python/")
+            link = f"{SITE}{TOOL_PATH}{cat_path}{t['slug']}/{loc}/"
+            title = tr.get("title") or t["title"]
+            desc = tr.get("summary") or tr.get("meta_description") or title
+            pub = _rfc822_date(t.get("published_at") or t.get("date") or date.today().isoformat())
+            items_xml.append(
+                f"    <item>\n"
+                f"      <title>{escape(title)}</title>\n"
+                f"      <link>{escape(link)}</link>\n"
+                f"      <guid isPermaLink=\"true\">{escape(link)}</guid>\n"
+                f"      <pubDate>{pub}</pubDate>\n"
+                f"      <category>{escape(prog_lang.upper())}</category>\n"
+                f"      <description>{escape(desc)}</description>\n"
+                f"    </item>"
+            )
+        last_build = format_datetime(datetime.now(timezone.utc))
+        return (
+            '<?xml version="1.0" encoding="UTF-8"?>\n'
+            '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n'
+            "  <channel>\n"
+            "    <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>\n"
+            f"    <link>{SITE}{TOOL_PATH}</link>\n"
+            "    <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>\n"
+            f"    <language>{escape(loc)}</language>\n"
+            f"    <lastBuildDate>{last_build}</lastBuildDate>\n"
+            f'    <atom:link rel="self" type="application/rss+xml" href="{SITE}{TOOL_PATH}tips/{escape(self_name)}"/>\n'
+            f"{atom_links}\n"
+            + "\n".join(items_xml)
+            + "\n  </channel>\n</rss>\n"
+        )
+
+    out["tools/code-formatter/tips/feed.xml"] = build_feed("en", "feed.xml")
+    for l in SITEMAP_LANGS:
+        out[f"tools/code-formatter/tips/feed.{l}.xml"] = build_feed(l, f"feed.{l}.xml")
+    return out
+
+
+def write_rss_feeds(*roots: Path) -> list[str]:
+    feeds = rss_feeds()
+    for root in roots:
+        for rel, content in feeds.items():
+            dst = root / rel
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            dst.write_text(content, encoding="utf-8", newline="\n")
+    return sorted(feeds)
 
 
 def sitemap_xml() -> str:
@@ -662,6 +823,7 @@ def build_public(matrix: dict) -> int:
     to_copy += [f"content/code-formatter-tips/published/{m.name}" for m in sorted((tips_dir / "published").glob("*.md"))]
     to_copy += write_fix_pages(ROOT)  # landings /fix/ (se generan en el repo: GitHub Pages sirve la raíz)
     to_copy += write_tip_pages(ROOT)  # páginas estáticas localizadas de tips
+    to_copy += write_rss_feeds(ROOT)  # feeds RSS multilingües
     to_copy += [m.relative_to(ROOT).as_posix() for m in sorted((ROOT / "assets" / "images" / "og").rglob("*.png"))]  # imágenes OpenGraph
 
     missing = [p for p in to_copy if not (ROOT / p).is_file()]
@@ -720,6 +882,7 @@ def main() -> int:
     ap.add_argument("--dev", action="store_true", help="solo genera features.runtime.json de desarrollo")
     ap.add_argument("--fix", action="store_true", help="solo regenera las landings tools/code-formatter/fix/")
     ap.add_argument("--tips", action="store_true", help="solo regenera las páginas estáticas localizadas de tips")
+    ap.add_argument("--rss", action="store_true", help="solo regenera los feeds RSS multilingües")
     ap.add_argument("--sitemap", action="store_true", help="solo regenera sitemap-code-formatter.xml en la raíz del repo")
     args = ap.parse_args()
     if args.fix:
@@ -727,6 +890,9 @@ def main() -> int:
         return 0
     if args.tips:
         print(f"OK {len(write_tip_pages(ROOT))} páginas estáticas de tips")
+        return 0
+    if args.rss:
+        print(f"OK {len(write_rss_feeds(ROOT))} feeds RSS")
         return 0
     if args.sitemap:
         write_sitemap(ROOT / SITEMAP_NAME)

@@ -170,18 +170,18 @@ function buildPrompt({ progLang, slot, existingTitles, existingSlugs, fixes }) {
     `  "related_fix_slug": "uno de los slugs de /fix/ arriba listados",`,
     `  "interactive_snippet": "fragmento de código limpio y funcional en ${progLang} (5 a 20 líneas) listo para probar en el editor",`,
     `  "locales": {`,
-    `    "es": { "title": "...", "meta_description": "140-160 chars", "summary": "resumen ejecutivo 1-2 frases para newsletter", "body_markdown": "mínimo ${MIN_WORDS} palabras en Markdown con bloques Antes/Después y buenas prácticas de documentación" },`,
-    `    "en": { "title": "...", "meta_description": "...", "summary": "...", "body_markdown": "..." },`,
-    `    "pt-BR": { "title": "...", "meta_description": "...", "summary": "...", "body_markdown": "..." },`,
-    `    "pt-PT": { "title": "...", "meta_description": "...", "summary": "...", "body_markdown": "..." },`,
-    `    "fr": { "title": "...", "meta_description": "...", "summary": "...", "body_markdown": "..." },`,
-    `    "de": { "title": "...", "meta_description": "...", "summary": "...", "body_markdown": "..." },`,
-    `    "it": { "title": "...", "meta_description": "...", "summary": "...", "body_markdown": "..." }`,
+    `    "es": { "title": "...", "meta_description": "140-160 chars", "summary": "resumen ejecutivo 1-2 frases para newsletter", "body_markdown": "mínimo ${MIN_WORDS} palabras en Markdown con bloques Antes/Después y buenas prácticas de documentación", "faq": [{ "q": "Pregunta técnica frecuente 1", "a": "Respuesta clara y concisa 1" }, { "q": "Pregunta técnica frecuente 2", "a": "Respuesta clara y concisa 2" }] },`,
+    `    "en": { "title": "...", "meta_description": "...", "summary": "...", "body_markdown": "...", "faq": [{ "q": "...", "a": "..." }, { "q": "...", "a": "..." }] },`,
+    `    "pt-BR": { "title": "...", "meta_description": "...", "summary": "...", "body_markdown": "...", "faq": [{ "q": "...", "a": "..." }, { "q": "...", "a": "..." }] },`,
+    `    "pt-PT": { "title": "...", "meta_description": "...", "summary": "...", "body_markdown": "...", "faq": [{ "q": "...", "a": "..." }, { "q": "...", "a": "..." }] },`,
+    `    "fr": { "title": "...", "meta_description": "...", "summary": "...", "body_markdown": "...", "faq": [{ "q": "...", "a": "..." }, { "q": "...", "a": "..." }] },`,
+    `    "de": { "title": "...", "meta_description": "...", "summary": "...", "body_markdown": "...", "faq": [{ "q": "...", "a": "..." }, { "q": "...", "a": "..." }] },`,
+    `    "it": { "title": "...", "meta_description": "...", "summary": "...", "body_markdown": "...", "faq": [{ "q": "...", "a": "..." }, { "q": "...", "a": "..." }] }`,
     `  }`,
     `}`,
     ``,
     `Reglas estrictas:`,
-    `1. Cada idioma en "locales" DEBE tener >= ${MIN_WORDS} palabras en "body_markdown".`,
+    `1. Cada idioma en "locales" DEBE tener >= ${MIN_WORDS} palabras en "body_markdown" y entre 2 y 3 elementos en "faq" ({ "q", "a" }).`,
     `2. Usa Markdown estándar (## encabezados, listas -, bloques \`\`\`${progLang} ... \`\`\`) con un ejemplo claro "Antes" y "Después" y sección de Auto-Documentación.`,
     `3. NO incluyas frontmatter YAML dentro de "body_markdown".`,
     `4. "meta_description" debe tener entre 130 y 165 caracteres optimizados para CTR.`
@@ -288,6 +288,16 @@ function validateTipPayload(raw, { existingSlugs, validFixSlugs, expectedLang })
     if (!String(entry.summary || '').trim()) throw new Error(`Falta summary en locale "${loc}".`);
     const wc = wordCount(entry.body_markdown);
     if (wc < MIN_WORDS) throw new Error(`Locale "${loc}" tiene ${wc} palabras (mínimo ${MIN_WORDS}).`);
+    if (entry.faq !== undefined) {
+      if (!Array.isArray(entry.faq) || entry.faq.length < 2) {
+        throw new Error(`Locale "${loc}" tiene faq inválido (se esperan >=2 preguntas).`);
+      }
+      for (const item of entry.faq) {
+        if (!item || !String(item.q || '').trim() || !String(item.a || '').trim()) {
+          throw new Error(`Locale "${loc}" contiene pregunta/respuesta vacía en faq.`);
+        }
+      }
+    }
   }
 
   return {
@@ -312,7 +322,7 @@ function formatFrontmatter(fields) {
   const lines = ['---'];
   for (const [k, v] of Object.entries(fields)) {
     if (v === undefined || v === null || v === '') continue;
-    lines.push(`${k}: ${JSON.stringify(String(v))}`);
+    lines.push(`${k}: ${Array.isArray(v) || typeof v === 'object' ? JSON.stringify(v) : JSON.stringify(String(v))}`);
   }
   lines.push('---', '');
   return lines.join('\n');
@@ -332,6 +342,7 @@ function writeTipDrafts(tip, draftsDir = DRAFTS_DIR) {
     summary: esLoc.summary,
     related_fix_slug: tip.related_fix_slug,
     interactive_snippet: tip.interactive_snippet,
+    ...(Array.isArray(esLoc.faq) && esLoc.faq.length ? { faq: esLoc.faq } : {}),
     status: 'ready'
   });
   const basePath = path.join(draftsDir, `${tip.slug}.md`);
@@ -347,6 +358,7 @@ function writeTipDrafts(tip, draftsDir = DRAFTS_DIR) {
       category: tip.category,
       meta_description: tr.meta_description,
       summary: tr.summary,
+      ...(Array.isArray(tr.faq) && tr.faq.length ? { faq: tr.faq } : {}),
       status: 'ready'
     });
     const trPath = path.join(draftsDir, `${tip.slug}.${loc}.md`);

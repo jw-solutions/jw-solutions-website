@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
+    <link>https://jw-solutions.com/tools/code-formatter/</link>
+    <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
+    <language>pt-BR</language>
+    <lastBuildDate>Sun, 15 Nov 2026 00:00:35 +0000</lastBuildDate>
+    <atom:link rel="self" type="application/rss+xml" href="https://jw-solutions.com/tools/code-formatter/tips/feed.pt-BR.xml"/>
+    <atom:link rel="alternate" type="application/rss+xml" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/tips/feed.es.xml"/>
+    <atom:link rel="alternate" type="application/rss+xml" hreflang="en" href="https://jw-solutions.com/tools/code-formatter/tips/feed.en.xml"/>
+    <atom:link rel="alternate" type="application/rss+xml" hreflang="pt-BR" href="https://jw-solutions.com/tools/code-formatter/tips/feed.pt-BR.xml"/>
+    <atom:link rel="alternate" type="application/rss+xml" hreflang="pt-PT" href="https://jw-solutions.com/tools/code-formatter/tips/feed.pt-PT.xml"/>
+    <atom:link rel="alternate" type="application/rss+xml" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/feed.fr.xml"/>
+    <atom:link rel="alternate" type="application/rss+xml" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/feed.de.xml"/>
+    <atom:link rel="alternate" type="application/rss+xml" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/feed.it.xml"/>
+    <item>
+      <title>Refatorando Tipos any Legados em TypeScript com Type Guards e TSDoc</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/pt-BR/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/pt-BR/</guid>
+      <pubDate>Sat, 14 Nov 2026 14:00:00 +0000</pubDate>
+      <category>TYPESCRIPT</category>
+      <description>Aprenda a remover tipos any de repositórios legados utilizando predicados de tipo estritos em TypeScript e documentação TSDoc para Auto-Doc AI.</description>
+    </item>
+    <item>
+      <title>Refatoração em Java 21+: Records e Pattern Matching para Código Legível</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/pt-BR/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/pt-BR/</guid>
+      <pubDate>Sat, 14 Nov 2026 14:00:00 +0000</pubDate>
+      <category>JAVA</category>
+      <description>Descubra como transformar hierarquias de classes extensas em Records elegantes e Pattern Matching no Java 21, reduzindo drasticamente o código boilerplate.</description>
+    </item>
+    <item>
+      <title>C# 12 Moderno: Refatoração com Primary Constructors e XML Docs</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/csharp/csharp-12-primary-constructors-xml-doc-refactoring/pt-BR/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/csharp/csharp-12-primary-constructors-xml-doc-refactoring/pt-BR/</guid>
+      <pubDate>Sat, 14 Nov 2026 14:00:00 +0000</pubDate>
+      <category>CSHARP</category>
+      <description>Descubra como simplificar a injeção de dependências no C# 12 utilizando Primary Constructors com documentação XML estruturada.</description>
+    </item>
+    <item>
+      <title>TypeScript moderno: ?., ?? e satisfies sem erros de formatação</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/pt-BR/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/pt-BR/</guid>
+      <pubDate>Mon, 02 Nov 2026 14:00:00 +0000</pubDate>
+      <category>JAVASCRIPT</category>
+      <description>TypeScript moderno: ?., ?? e satisfies sem erros de formatação</description>
+    </item>
+    <item>
+      <title>SQL e DAX: três hábitos para consultas rápidas e legíveis</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/pt-BR/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/pt-BR/</guid>
+      <pubDate>Mon, 02 Nov 2026 14:00:00 +0000</pubDate>
+      <category>SQL</category>
+      <description>SQL e DAX: três hábitos para consultas rápidas e legíveis</description>
+    </item>
+    <item>
+      <title>PEP 8 no Python 3.12: como escrever blocos match/case legíveis</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/pt-BR/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/pt-BR/</guid>
+      <pubDate>Mon, 02 Nov 2026 14:00:00 +0000</pubDate>
+      <category>PYTHON</category>
+      <description>PEP 8 no Python 3.12: como escrever blocos match/case legíveis</description>
+    </item>
+  </channel>
+</rss>

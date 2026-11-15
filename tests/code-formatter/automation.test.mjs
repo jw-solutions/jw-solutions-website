@@ -4,9 +4,11 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
+import { execFileSync } from 'node:child_process';
 
 const require = createRequire(import.meta.url);
 const gen = require('../../scripts/code-formatter/generate-weekly-tip.js');
+const devto = require('../../scripts/code-formatter/syndicate-devto.js');
 const ROOT = path.resolve(import.meta.dirname, '..', '..');
 
 function makeWords(n, prefix = 'palabra') {
@@ -86,4 +88,196 @@ test('HTML estático pre-renderizado por idioma y sitemap-code-formatter.xml tie
   }
   const sitemap = fs.readFileSync(path.join(ROOT, 'sitemap-code-formatter.xml'), 'utf8');
   assert.match(sitemap, /https:\/\/jw-solutions\.com\/tools\/code-formatter\/tips\/python\/python-312-pep8-tips\/pt-BR\//);
+});
+
+test('Enlazado bidireccional /fix/ -> /tips/ renderiza hasta 3 tips relacionados en 7 idiomas', () => {
+  const langs = ['es', 'en', 'pt-BR', 'pt-PT', 'fr', 'de', 'it'];
+  const rootFix = fs.readFileSync(path.join(ROOT, 'tools', 'code-formatter', 'fix', 'python-indentation-error', 'index.html'), 'utf8');
+  assert.match(rootFix, /Guías y Tips relacionados/);
+  assert.match(rootFix, /https:\/\/jw-solutions\.com\/tools\/code-formatter\/tips\/[a-z0-9-]+\/[a-z0-9-]+\/es\//);
+
+  for (const loc of langs) {
+    const locFixPath = path.join(ROOT, 'tools', 'code-formatter', 'fix', 'python-indentation-error', loc, 'index.html');
+    assert.ok(fs.existsSync(locFixPath), `Falta landing /fix/ localizada ${locFixPath}`);
+    const html = fs.readFileSync(locFixPath, 'utf8');
+    assert.match(html, new RegExp(`<html lang="${loc}">`));
+    assert.match(html, new RegExp(`https://jw-solutions\\.com/tools/code-formatter/tips/[a-z0-9-]+/[a-z0-9-]+/${loc}/`));
+    assert.match(html, new RegExp(`href="https://jw-solutions\\.com/tools/code-formatter/tips/feed\\.${loc}\\.xml"`));
+  }
+});
+
+test('Feeds RSS feed.xml y feed.<lang>.xml son XML válidos con items publicados', () => {
+  const langs = ['es', 'en', 'pt-BR', 'pt-PT', 'fr', 'de', 'it'];
+  const mainFeed = fs.readFileSync(path.join(ROOT, 'tools', 'code-formatter', 'tips', 'feed.xml'), 'utf8');
+  assert.match(mainFeed, /^<\?xml version="1\.0" encoding="UTF-8"\?>/);
+  assert.match(mainFeed, /<rss version="2\.0"/);
+  assert.match(mainFeed, /<atom:link rel="alternate" type="application\/rss\+xml" hreflang="es" href="https:\/\/jw-solutions\.com\/tools\/code-formatter\/tips\/feed\.es\.xml"\/>/);
+  assert.match(mainFeed, /<item>/);
+
+  for (const loc of langs) {
+    const feedPath = path.join(ROOT, 'tools', 'code-formatter', 'tips', `feed.${loc}.xml`);
+    assert.ok(fs.existsSync(feedPath), `Falta feed RSS ${feedPath}`);
+    const xml = fs.readFileSync(feedPath, 'utf8');
+    assert.match(xml, new RegExp(`<language>${loc}</language>`));
+    assert.match(xml, /<item>[\s\S]*?<title>[\s\S]*?<link>https:\/\/jw-solutions\.com\/tools\/code-formatter\/tips\//);
+  }
+});
+
+test('FAQPage JSON-LD y <section class="cf-tip-faq"> se generan cuando el tip incluye faq', () => {
+  const validBody = `## Antes\n\`\`\`python\nx=1\n\`\`\`\n## Después\n${makeWords(360)}`;
+  const locales = Object.fromEntries(
+    gen.ALL_LOCALES.map((l) => [
+      l,
+      {
+        title: `FAQ Test ${l}`,
+        meta_description: 'Descripción SEO de prueba para validar la generación de FAQPage.',
+        summary: `Resumen ${l}`,
+        body_markdown: validBody,
+        faq: [
+          { q: `¿Cómo evitar errores de tipado en ${l}?`, a: 'Usa anotaciones explícitas y validación estática.' },
+          { q: `¿Por qué usar formateo automático en ${l}?`, a: 'Reduce fricción en code reviews y mantiene consistencia.' },
+        ],
+      },
+    ])
+  );
+  const validated = gen.validateTipPayload(
+    {
+      slug: 'faq-unit-test-tip',
+      date: '2026-11-14',
+      programming_language: 'python',
+      category: 'Tips de Sintaxis',
+      related_fix_slug: 'python-indentation-error',
+      interactive_snippet: 'x: int = 1',
+      locales,
+    },
+    { existingSlugs: new Set(), validFixSlugs: new Set(['python-indentation-error']), expectedLang: 'python' }
+  );
+
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cf-faq-'));
+  try {
+    gen.writeTipDrafts(validated, tmpDir);
+    const mdRaw = fs.readFileSync(path.join(tmpDir, 'faq-unit-test-tip.en.md'), 'utf8');
+    assert.match(mdRaw, /^faq:\s*\[/m);
+
+    const parsed = devto.stripFrontmatter(mdRaw);
+    assert.ok(Array.isArray(parsed.data.faq));
+    assert.equal(parsed.data.faq.length, 2);
+
+    // Verificar que build_public.py renderiza FAQPage y <section class="cf-tip-faq">
+    const manifestPath = path.join(tmpDir, 'manifest.json');
+    fs.writeFileSync(
+      manifestPath,
+      JSON.stringify({
+        tips: [
+          {
+            slug: 'faq-unit-test-tip',
+            language: 'python',
+            programming_language: 'python',
+            category: 'Tips de Sintaxis',
+            title: 'FAQ Test es',
+            meta_description: 'Desc',
+            file: path.join(tmpDir, 'faq-unit-test-tip.md'),
+            published_at: '2026-11-14',
+            status: 'DEPLOYED',
+            translations: Object.fromEntries(
+              gen.ALL_LOCALES.filter((l) => l !== 'es').map((l) => [
+                l,
+                {
+                  title: `FAQ Test ${l}`,
+                  meta_description: 'Desc',
+                  file: path.join(tmpDir, `faq-unit-test-tip.${l}.md`),
+                  faq: locales[l].faq,
+                },
+              ])
+            ),
+          },
+        ],
+      }),
+      'utf8'
+    );
+
+    const pyCheck = execFileSync(
+      'python',
+      [
+        '-c',
+        [
+          'import sys; from pathlib import Path; sys.path.insert(0, "scripts/code-formatter")',
+          'import build_public as bp',
+          'bp.TIPS_MANIFEST = Path(sys.argv[1])',
+          'bp.TIPS_PUBLISHED_DIR = Path(sys.argv[2])',
+          'pages = bp.tip_pages()',
+          'en_html = pages["tools/code-formatter/tips/python/faq-unit-test-tip/en/index.html"]',
+          'assert "<section class=\\"cf-tip-faq\\"" in en_html',
+          'assert "<details class=\\"cf-faq__item\\"><summary>" in en_html',
+          'assert \'"@type": "FAQPage"\' in en_html',
+          'print("FAQ_OK")',
+        ].join('; '),
+        manifestPath,
+        tmpDir,
+      ],
+      { cwd: ROOT, encoding: 'utf8' }
+    );
+    assert.match(pyCheck, /FAQ_OK/);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('syndicate-devto.js es idempotente y hace fallback seguro sin DEVTO_API_KEY', async () => {
+  const skipped = await devto.syndicateAll({ apiKey: '' });
+  assert.equal(skipped.skippedReason, 'missing_api_key');
+  assert.equal(skipped.published.length, 0);
+
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cf-devto-'));
+  try {
+    const manifestPath = path.join(tmpDir, 'manifest.json');
+    const publishedDir = path.join(tmpDir, 'published');
+    fs.mkdirSync(publishedDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(publishedDir, 'sample-tip.en.md'),
+      '---\ntitle: "Sample Tip"\ndescription: "Desc"\ncategory: "python"\nlanguage: "python"\ntags: ["python","pep8"]\n---\n\n## Hello\nBody content here.\n',
+      'utf8'
+    );
+    fs.writeFileSync(
+      manifestPath,
+      JSON.stringify({
+        tips: [
+          { slug: 'sample-tip', category: 'python', language: 'python', status: 'DEPLOYED' },
+          {
+            slug: 'already-tip',
+            category: 'python',
+            language: 'python',
+            status: 'NOTIFIED',
+            syndication: { devto: { status: 'published', url: 'https://dev.to/jw/already' } },
+          },
+        ],
+      }),
+      'utf8'
+    );
+
+    let calls = 0;
+    const mockFetch = async (url, init) => {
+      calls += 1;
+      const body = JSON.parse(init.body);
+      assert.equal(body.article.canonical_url, 'https://jw-solutions.com/tools/code-formatter/tips/python/sample-tip/en/');
+      assert.equal(init.headers['api-key'], 'test-key');
+      return {
+        ok: true,
+        status: 201,
+        json: async () => ({ id: 42, url: 'https://dev.to/jw/sample-tip' }),
+      };
+    };
+
+    const first = await devto.syndicateAll({ manifestPath, publishedDir, apiKey: 'test-key', fetchImpl: mockFetch });
+    assert.equal(first.published.length, 1);
+    assert.equal(first.alreadyPublished, 1);
+    assert.equal(calls, 1);
+
+    const second = await devto.syndicateAll({ manifestPath, publishedDir, apiKey: 'test-key', fetchImpl: mockFetch });
+    assert.equal(second.published.length, 0);
+    assert.equal(second.alreadyPublished, 2);
+    assert.equal(calls, 1);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
 });

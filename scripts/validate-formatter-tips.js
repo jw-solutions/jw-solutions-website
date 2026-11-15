@@ -106,6 +106,11 @@ function validateFile(dir, file, allowedStatuses) {
   if (data.date && (!DATE_RE.test(data.date) || Number.isNaN(Date.parse(data.date)))) errors.push(`date inválida "${data.date}" (AAAA-MM-DD)`);
   if (data.language && !LANGUAGES.includes(data.language)) errors.push(`language "${data.language}" no soportado (${LANGUAGES.join(', ')})`);
   if (data.status && !allowedStatuses.includes(data.status)) errors.push(`status "${data.status}" inválido aquí (${allowedStatuses.join(' | ')})`);
+  if (data.faq !== undefined) {
+    if (!Array.isArray(data.faq) || data.faq.some((x) => !x || !String(x.q || '').trim() || !String(x.a || '').trim())) {
+      errors.push('faq inválido (debe ser un arreglo de objetos { q, a } no vacíos)');
+    }
+  }
   if (data.status === 'ready' && parsed.content.trim().length < 50) errors.push('un tip "ready" necesita cuerpo de contenido');
   return { errors, data, content: parsed.content };
 }
@@ -126,6 +131,11 @@ function validateTranslation(dir, tr, allowedStatuses) {
   if (data.slug && data.slug !== tr.slug) errors.push(`slug "${data.slug}" no coincide con "${tr.slug}"`);
   if (data.locale && data.locale !== tr.locale) errors.push(`locale "${data.locale}" no coincide con el sufijo "${tr.locale}"`);
   if (data.status && !allowedStatuses.includes(data.status)) errors.push(`status "${data.status}" inválido aquí (${allowedStatuses.join(' | ')})`);
+  if (data.faq !== undefined) {
+    if (!Array.isArray(data.faq) || data.faq.some((x) => !x || !String(x.q || '').trim() || !String(x.a || '').trim())) {
+      errors.push('faq inválido (debe ser un arreglo de objetos { q, a } no vacíos)');
+    }
+  }
   if (parsed.content.trim().length < 50) errors.push('la traducción necesita cuerpo de contenido');
   return { errors, data, content: parsed.content };
 }
@@ -198,6 +208,7 @@ function publishTranslation(tr, entry, today) {
     category: tr.data.category,
     ...(tr.data.meta_description ? { meta_description: tr.data.meta_description } : {}),
     ...(tr.data.summary ? { summary: tr.data.summary } : {}),
+    ...(Array.isArray(tr.data.faq) && tr.data.faq.length ? { faq: tr.data.faq } : {}),
     file: `published/${tr.file}`,
     sha256: sha256(out)
   };
@@ -243,6 +254,7 @@ function publish({ ready, readyTranslations, manifest }, { dryRun, force }) {
       ...(picked.data.summary ? { summary: picked.data.summary } : {}),
       ...(picked.data.related_fix_slug ? { related_fix_slug: picked.data.related_fix_slug } : {}),
       ...(picked.data.interactive_snippet ? { interactive_snippet: picked.data.interactive_snippet } : {}),
+      ...(Array.isArray(picked.data.faq) && picked.data.faq.length ? { faq: picked.data.faq } : {}),
       date: picked.data.date,
       published_at: today,
       status: 'COMPILED',
