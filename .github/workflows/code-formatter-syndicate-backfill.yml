@@ -1,0 +1,73 @@
+name: Backfill Sindicación Code Formatter
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Máximo de artículos pendientes a sindicar por ejecución'
+        required: false
+        default: '6'
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  backfill-syndicate:
+    name: Sindicar artículos pendientes (Dev.to, Hashnode, Social, Kits)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Sindicar a Dev.to (canonical_url)
+        continue-on-error: true
+        env:
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+          SYNDICATE_LIMIT: ${{ inputs.limit }}
+        run: node scripts/code-formatter/syndicate-devto.js
+
+      - name: Sindicar a Hashnode (originalArticleURL)
+        continue-on-error: true
+        env:
+          HASHNODE_TOKEN: ${{ secrets.HASHNODE_TOKEN }}
+          HASHNODE_PUBLICATION_ID: ${{ secrets.HASHNODE_PUBLICATION_ID }}
+          SYNDICATE_LIMIT: ${{ inputs.limit }}
+        run: node scripts/code-formatter/syndicate-hashnode.js
+
+      - name: Difusión social (Bluesky, Mastodon, Telegram)
+        continue-on-error: true
+        env:
+          BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
+          BSKY_APP_PASSWORD: ${{ secrets.BSKY_APP_PASSWORD }}
+          MASTODON_INSTANCE_URL: ${{ secrets.MASTODON_INSTANCE_URL }}
+          MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SYNDICATE_LIMIT: ${{ inputs.limit }}
+        run: node scripts/code-formatter/syndicate-social.js
+
+      - name: Regenerar Kits de Distribución y READY_TO_POST_ALL_6_ARTICLES.md
+        run: node scripts/code-formatter/generate-distribution-kit.js --all
+
+      - name: Commit y push de manifiesto y kits
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/code-formatter-tips/code-formatter-manifest.json content/code-formatter-tips/distribution/
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(formatter-tips): backfill sindicación multicanal y kits (automático)"
+            git pull --rebase origin main
+            git push origin main
+          else
+            echo "Sin cambios nuevos en manifiesto o kits."
+          fi

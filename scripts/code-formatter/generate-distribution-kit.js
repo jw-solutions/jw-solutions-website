@@ -238,6 +238,54 @@ function formatSummaryMarkdown(kit) {
   return `${lines.join('\n')}\n`;
 }
 
+function buildConsolidatedMarkdown(kits) {
+  const lines = [
+    '# Ready to Post — All Published Code Formatter & Auto-Doc AI Articles',
+    '',
+    `> **Generado:** ${new Date().toISOString()} · **Artículos:** ${kits.length} · **Squad oficial:** https://dly.to/nmdN9vQObOU`,
+    '',
+    '---',
+    '',
+    '## Bloque 1 — Para daily.dev Squad (https://dly.to/nmdN9vQObOU)',
+    '',
+  ];
+
+  for (const kit of kits) {
+    const sq = kit.daily_dev_squad;
+    if (!sq) continue;
+    lines.push(`### ${kit.slug} (\`${kit.language.toUpperCase()}\`)`, '');
+    for (const loc of ['en', 'es']) {
+      if (!sq[loc]) continue;
+      lines.push(`#### [${loc.toUpperCase()}] ${sq[loc].title}`, '');
+      lines.push(`- **URL rastreable:** ${sq[loc].utm_url}`, '');
+      lines.push('```markdown', sq[loc].post_markdown, '```', '');
+    }
+  }
+
+  lines.push('---', '', '## Bloque 2 — Para Comunidades Regionales (7 Idiomas)', '');
+  const regionalGroups = [
+    { label: 'EN (Reddit / Hacker News / Medium)', locs: ['en'] },
+    { label: 'ES (r/programacion / r/devsarg / Menéame)', locs: ['es'] },
+    { label: 'PT-BR / PT-PT (TabNews Markdown nativo / r/brdev / r/devpt)', locs: ['pt-BR', 'pt-PT'] },
+    { label: 'FR / DE / IT (Zeste de Savoir / Heise Developer / r/de_EDV / r/ItalyInformatica)', locs: ['fr', 'de', 'it'] },
+  ];
+
+  for (const grp of regionalGroups) {
+    lines.push(`### ${grp.label}`, '');
+    for (const kit of kits) {
+      for (const loc of grp.locs) {
+        const d = kit.locales[loc];
+        if (!d) continue;
+        lines.push(`#### \`${kit.slug}\` [${loc}] — ${d.communities.join(' · ')}`, '');
+        lines.push(`**Título:** ${d.title}`, '');
+        lines.push('```markdown', d.post_markdown, '```', '');
+      }
+    }
+  }
+
+  return `${lines.join('\n')}\n`;
+}
+
 function generateDistributionKits(options = {}) {
   const manifestPath = options.manifestPath || DEFAULT_MANIFEST;
   const publishedDir = options.publishedDir || DEFAULT_PUBLISHED_DIR;
@@ -272,6 +320,11 @@ function generateDistributionKits(options = {}) {
     const outPath = path.join(distDir, `${entry.slug}.json`);
     fs.writeFileSync(outPath, `${JSON.stringify(kit, null, 2)}\n`, 'utf8');
     generated.push({ slug: entry.slug, path: outPath, kit });
+  }
+
+  if (all && generated.length > 0) {
+    const consolidatedPath = path.join(distDir, 'READY_TO_POST_ALL_6_ARTICLES.md');
+    fs.writeFileSync(consolidatedPath, buildConsolidatedMarkdown(generated.map((g) => g.kit)), 'utf8');
   }
 
   if (summaryPath && generated.length > 0) {

@@ -109,6 +109,8 @@ async function syndicateAll(options = {}) {
     options.publicationId !== undefined ? options.publicationId : (process.env.HASHNODE_PUBLICATION_ID || '').trim();
   const fetchImpl = options.fetchImpl || fetch;
   const dryRun = Boolean(options.dryRun);
+  const delayMs = options.delayMs !== undefined ? options.delayMs : (options.fetchImpl ? 0 : 4000);
+  const limit = Number(options.limit || process.env.SYNDICATE_LIMIT || 0) || Infinity;
 
   if ((!token || !publicationId) && !dryRun) {
     console.log('::warning::HASHNODE_TOKEN o HASHNODE_PUBLICATION_ID no configurados; omitiendo Hashnode.');
@@ -126,7 +128,8 @@ async function syndicateAll(options = {}) {
   let alreadyPublished = 0;
 
   for (const entry of tips) {
-    if (!['DEPLOYED', 'NOTIFIED'].includes(entry.status)) {
+    if (published.length >= limit) break;
+    if (entry.status && !['DEPLOYED', 'NOTIFIED'].includes(entry.status)) {
       continue;
     }
     if (entry.syndication && entry.syndication.hashnode && entry.syndication.hashnode.status === 'published') {
@@ -146,6 +149,10 @@ async function syndicateAll(options = {}) {
     if (dryRun) {
       published.push({ slug: entry.slug, url: input.originalArticleURL });
       continue;
+    }
+
+    if (published.length > 0 && delayMs > 0) {
+      await new Promise((r) => setTimeout(r, delayMs));
     }
 
     try {

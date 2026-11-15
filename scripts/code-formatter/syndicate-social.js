@@ -198,6 +198,8 @@ async function syndicateAll(options = {}) {
   const publishedDir = options.publishedDir || DEFAULT_PUBLISHED_DIR;
   const fetchImpl = options.fetchImpl || fetch;
   const dryRun = Boolean(options.dryRun);
+  const delayMs = options.delayMs !== undefined ? options.delayMs : (options.fetchImpl ? 0 : 2000);
+  const limit = Number(options.limit || process.env.SYNDICATE_LIMIT || 0) || Infinity;
 
   const bskyHandle = options.bskyHandle !== undefined ? options.bskyHandle : (process.env.BSKY_HANDLE || '').trim();
   const bskyAppPassword =
@@ -230,8 +232,10 @@ async function syndicateAll(options = {}) {
   const errors = [];
   let manifestDirty = false;
 
+  const processedSlugs = new Set();
   for (const entry of tips) {
-    if (!['DEPLOYED', 'NOTIFIED'].includes(entry.status)) continue;
+    if (processedSlugs.size >= limit) break;
+    if (entry.status && !['DEPLOYED', 'NOTIFIED'].includes(entry.status)) continue;
 
     const socialState = (entry.syndication && entry.syndication.social) || {};
     const enMdPath = path.join(publishedDir, `${entry.slug}.en.md`);
@@ -263,6 +267,9 @@ async function syndicateAll(options = {}) {
         continue;
       }
       try {
+        if (published.length > 0 && delayMs > 0) {
+          await new Promise((r) => setTimeout(r, delayMs));
+        }
         const res = await ch.run();
         entry.syndication = entry.syndication || {};
         entry.syndication.social = entry.syndication.social || {};
@@ -272,6 +279,7 @@ async function syndicateAll(options = {}) {
           publishedAt: new Date().toISOString(),
         };
         manifestDirty = true;
+        processedSlugs.add(entry.slug);
         published.push({ slug: entry.slug, channel: ch.name });
       } catch (err) {
         errors.push({ slug: entry.slug, channel: ch.name, error: err && err.message ? err.message : String(err) });

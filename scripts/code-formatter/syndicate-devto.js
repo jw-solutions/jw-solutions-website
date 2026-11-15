@@ -19,6 +19,19 @@ const DEFAULT_MANIFEST = path.join(ROOT_DIR, 'content', 'code-formatter-tips', '
 const DEFAULT_PUBLISHED_DIR = path.join(ROOT_DIR, 'content', 'code-formatter-tips', 'published');
 const BASE_URL = 'https://jw-solutions.com';
 
+const CATEGORY_PATH = {
+  python: 'tips/python/',
+  javascript: 'tips/javascript/',
+  typescript: 'tips/javascript/',
+  sql: 'tips/sql-dax/',
+  dax: 'tips/sql-dax/',
+  java: 'tips/java/',
+  csharp: 'tips/csharp/',
+  php: 'tips/php/',
+  json: 'tips/config/',
+  yaml: 'tips/config/',
+};
+
 /**
  * Extrae frontmatter YAML simple y cuerpo Markdown sin dependencias externas.
  * @param {string} raw
@@ -83,12 +96,13 @@ function normalizeDevtoTags(language, tags) {
 function buildDevtoPayload(entry, markdownRaw) {
   const { data, body } = stripFrontmatter(markdownRaw);
   const slug = entry.slug;
-  const category = entry.category || data.category || 'general';
+  const progLang = String(entry.programming_language || data.programming_language || entry.language || data.language || 'python').toLowerCase();
+  const catPath = CATEGORY_PATH[progLang] || 'tips/python/';
   const title = data.title || entry.title || slug;
   const description = data.description || entry.description || '';
-  const canonicalUrl = `${BASE_URL}/tools/code-formatter/tips/${category}/${slug}/en/`;
-  const langParam = encodeURIComponent(String(entry.language || data.language || 'python').toLowerCase());
-  const interactiveUrl = `${BASE_URL}/tools/code-formatter/?lang=${langParam}`;
+  const canonicalUrl = `${BASE_URL}/tools/code-formatter/${catPath}${slug}/en/`;
+  const langParam = encodeURIComponent(progLang);
+  const interactiveUrl = `${BASE_URL}/tools/code-formatter/?lang=${langParam}&utm_source=devto&utm_medium=syndication&utm_campaign=${encodeURIComponent(slug)}`;
 
   const footer = [
     '',
@@ -126,6 +140,8 @@ async function syndicateAll(options = {}) {
   const apiKey = options.apiKey !== undefined ? options.apiKey : (process.env.DEVTO_API_KEY || '').trim();
   const fetchImpl = options.fetchImpl || fetch;
   const dryRun = Boolean(options.dryRun);
+  const delayMs = options.delayMs !== undefined ? options.delayMs : (options.fetchImpl ? 0 : 4000);
+  const limit = Number(options.limit || process.env.SYNDICATE_LIMIT || 0) || Infinity;
 
   if (!apiKey && !dryRun) {
     console.log('::warning::DEVTO_API_KEY no configurado; omitiendo sindicación externa a Dev.to.');
@@ -143,7 +159,8 @@ async function syndicateAll(options = {}) {
   let alreadyPublished = 0;
 
   for (const entry of tips) {
-    if (!['DEPLOYED', 'NOTIFIED'].includes(entry.status)) {
+    if (published.length >= limit) break;
+    if (entry.status && !['DEPLOYED', 'NOTIFIED'].includes(entry.status)) {
       continue;
     }
     if (entry.syndication && entry.syndication.devto && entry.syndication.devto.status === 'published') {
@@ -163,6 +180,10 @@ async function syndicateAll(options = {}) {
     if (dryRun) {
       published.push({ slug: entry.slug, url: payload.article.canonical_url });
       continue;
+    }
+
+    if (published.length > 0 && delayMs > 0) {
+      await new Promise((r) => setTimeout(r, delayMs));
     }
 
     try {
