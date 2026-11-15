@@ -159,6 +159,14 @@
           "file": "published/sql-dax-optimization-basics.pt-PT.md",
           "sha256": "5228cf41cb6b3f33ed6e8080c9ccbd06bd70159b3bfd02f6f9e72a7e24ad5962"
         }
+      },
+      "syndication": {
+        "devto": {
+          "status": "published",
+          "id": 5039489,
+          "url": "https://dev.to/jwsolutions/sql-and-dax-three-habits-for-fast-readable-queries-kdi",
+          "publishedAt": "2026-11-15T04:51:05.261Z"
+        }
       }
     },
     {
@@ -237,7 +245,15 @@
       },
       "deployed_at": "2026-11-14T18:56:56.880Z",
       "indexnow_pinged_at": "2026-11-14T18:56:57.386Z",
-      "notified_at": "2026-11-14T18:57:08.557Z"
+      "notified_at": "2026-11-14T18:57:08.557Z",
+      "syndication": {
+        "devto": {
+          "status": "published",
+          "id": 5039490,
+          "url": "https://dev.to/jwsolutions/refactoring-legacy-any-types-in-typescript-with-type-guards-and-tsdoc-30j3",
+          "publishedAt": "2026-11-15T04:51:09.544Z"
+        }
+      }
     },
     {
       "slug": "java-21-pattern-matching-records-refactoring",
