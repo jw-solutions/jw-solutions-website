@@ -73,6 +73,11 @@
             "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq4bjzot25",
             "cid": "bafyreif4cix6xmfvmp7hujmemsaubljq6dkmkuwd2obvhfi7kkx74rxtca",
             "publishedAt": "2026-11-15T19:17:51.739Z"
+          },
+          "telegram": {
+            "status": "published",
+            "messageId": 3,
+            "publishedAt": "2026-11-15T19:45:45.320Z"
           }
         }
       }
@@ -149,6 +154,11 @@
             "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq4hiwiq2u",
             "cid": "bafyreihngmf2glh4ayr6srxu5lhkkalzbqygxu6qov6umq7qgstfmhtrdm",
             "publishedAt": "2026-11-15T19:17:58.013Z"
+          },
+          "telegram": {
+            "status": "published",
+            "messageId": 4,
+            "publishedAt": "2026-11-15T19:45:47.776Z"
           }
         }
       }
@@ -225,6 +235,11 @@
             "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq4nhd7r2s",
             "cid": "bafyreianubijp72sgte5qnzrymvlrtncvv3df7dmcpoiimzjgtjzcvr57m",
             "publishedAt": "2026-11-15T19:18:04.219Z"
+          },
+          "telegram": {
+            "status": "published",
+            "messageId": 5,
+            "publishedAt": "2026-11-15T19:45:50.229Z"
           }
         }
       }
@@ -331,6 +346,11 @@
             "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq4tdy7o2o",
             "cid": "bafyreid6q3hisxqz3jv7p4fvf5jyx7jsrhowigw7l2jresjduwbwcup3sy",
             "publishedAt": "2026-11-15T19:18:10.414Z"
+          },
+          "telegram": {
+            "status": "published",
+            "messageId": 6,
+            "publishedAt": "2026-11-15T19:45:52.708Z"
           }
         }
       }
@@ -437,6 +457,11 @@
             "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq4z7rso2x",
             "cid": "bafyreigcnjralsklmgzvfpx73ve2axe7m6v7al6kbxwufnxy6m3svzfqm4",
             "publishedAt": "2026-11-15T19:18:16.624Z"
+          },
+          "telegram": {
+            "status": "published",
+            "messageId": 7,
+            "publishedAt": "2026-11-15T19:45:55.161Z"
           }
         }
       }
@@ -543,6 +568,11 @@
             "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq5752et25",
             "cid": "bafyreickh5xkyvfsdzbpz4ictaeyltxz6hvfc2zpfwyl6afsoofwambfv4",
             "publishedAt": "2026-11-15T19:18:22.810Z"
+          },
+          "telegram": {
+            "status": "published",
+            "messageId": 8,
+            "publishedAt": "2026-11-15T19:45:57.630Z"
           }
         }
       }
@@ -718,6 +748,11 @@
             "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq5ezhw62o",
             "cid": "bafyreigehq27zpoitljrzjzsj475dhbjqvyolaqwf7hjy77dsmgvz4tkya",
             "publishedAt": "2026-11-15T19:18:29.034Z"
+          },
+          "telegram": {
+            "status": "published",
+            "messageId": 9,
+            "publishedAt": "2026-11-15T19:46:00.085Z"
           }
         }
       },
@@ -894,6 +929,11 @@
             "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq5kwplg2o",
             "cid": "bafyreie2of7tw4pjwqc7eh7pkq7yq3xre4ggduzwtmdnxnpn3jatnu5mva",
             "publishedAt": "2026-11-15T19:18:35.127Z"
+          },
+          "telegram": {
+            "status": "published",
+            "messageId": 10,
+            "publishedAt": "2026-11-15T19:46:02.544Z"
           }
         }
       },
@@ -1070,6 +1110,11 @@
             "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/22",
             "number": 22,
             "publishedAt": "2026-11-15T19:18:49.581Z"
+          },
+          "telegram": {
+            "status": "published",
+            "messageId": 11,
+            "publishedAt": "2026-11-15T19:46:05.005Z"
           }
         }
       },
