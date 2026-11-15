@@ -224,7 +224,7 @@ function buildPrompt({ progLang, slot, existingTitles, existingSlugs, fixes, seo
     `}`,
     ``,
     `Reglas estrictas:`,
-    `1. Cada idioma en "locales" DEBE tener entre 420 y 550 palabras en "body_markdown" (OBLIGATORIO >= ${MIN_WORDS} palabras en TODOS los idiomas, incluidos pt-BR, pt-PT, fr, de, it) y entre 2 y 3 elementos en "faq" ({ "q", "a" }).`,
+    `1. Cada idioma en "locales" DEBE tener entre 480 y 620 palabras en "body_markdown" (OBLIGATORIO >= ${MIN_WORDS} palabras en TODOS los idiomas, incluidos es, en, pt-BR, pt-PT, fr, de, it; incluye explicaciones detalladas, bloques Antes/Después comentados y checklist de verificación) y entre 2 y 3 elementos en "faq" ({ "q", "a" }).`,
     `2. Usa Markdown estándar (## encabezados, listas -, bloques \`\`\`${progLang} ... \`\`\`) con un ejemplo claro "Antes" y "Después" y sección de Auto-Documentación.`,
     `3. NO incluyas frontmatter YAML dentro de "body_markdown". Escapa correctamente comillas dobles (\\") y saltos de línea (\\n) en el JSON.`,
     `4. "meta_description" debe tener entre 130 y 165 caracteres optimizados para CTR.`
@@ -232,13 +232,20 @@ function buildPrompt({ progLang, slot, existingTitles, existingSlugs, fixes, seo
 }
 
 async function callGemini(apiKey, prompt, validator = null) {
-  const payload = {
-    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    generationConfig: { responseMimeType: 'application/json', temperature: 0.65 }
-  };
-
   let lastError = null;
   for (const model of GEMINI_MODELS) {
+    const generationConfig = {
+      responseMimeType: 'application/json',
+      temperature: 0.65,
+      maxOutputTokens: 16384
+    };
+    if (model === 'gemini-3.8-flash') {
+      generationConfig.thinkingConfig = { thinkingLevel: 'low' };
+    }
+    const payload = {
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig
+    };
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
