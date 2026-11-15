@@ -428,7 +428,7 @@ test('syndicate-social.js publica en Discord (Dark Gold + OG + UTM) y GitHub Dis
       if (url === 'https://api.github.com/graphql' && body.query.includes('createDiscussion')) {
         assert.equal(body.variables.repositoryId, 'REPO_ID_1');
         assert.equal(body.variables.categoryId, 'CAT_ANN');
-        assert.match(body.variables.body, /utm_source=github_discussions&utm_medium=social&utm_campaign=match-case-tip/);
+        assert.match(body.variables.body, /utm_source=github&utm_medium=discussions&utm_campaign=match-case-tip/);
         return {
           ok: true,
           status: 200,

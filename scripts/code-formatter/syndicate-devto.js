@@ -101,6 +101,7 @@ function buildDevtoPayload(entry, markdownRaw) {
   const title = data.title || entry.title || slug;
   const description = data.description || entry.description || '';
   const canonicalUrl = `${BASE_URL}/tools/code-formatter/${catPath}${slug}/en/`;
+  const coverImage = `${BASE_URL}/assets/images/og/tips/${encodeURIComponent(slug)}-en.png`;
   const langParam = encodeURIComponent(progLang);
   const interactiveUrl = `${BASE_URL}/tools/code-formatter/?lang=${langParam}&utm_source=devto&utm_medium=syndication&utm_campaign=${encodeURIComponent(slug)}`;
 
@@ -118,6 +119,7 @@ function buildDevtoPayload(entry, markdownRaw) {
       published: true,
       body_markdown: `${body}\n${footer}`,
       canonical_url: canonicalUrl,
+      cover_image: coverImage,
       description,
       tags: normalizeDevtoTags(entry.language || data.language, data.tags || entry.tags),
     },

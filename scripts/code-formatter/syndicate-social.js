@@ -40,12 +40,19 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-function buildTipUrls(entry, utmSource) {
+function buildTipUrls(entry, utmSource, utmMedium = 'social') {
   const progLang = entry.programming_language || entry.language || 'python';
   const catPath = CATEGORY_PATH[progLang] || 'tips/python/';
-  const articleUrl = `${BASE_URL}/tools/code-formatter/${catPath}${entry.slug}/en/?utm_source=${utmSource}&utm_medium=social&utm_campaign=${encodeURIComponent(entry.slug)}`;
-  const toolUrl = `${BASE_URL}/tools/code-formatter/?lang=${encodeURIComponent(progLang)}&utm_source=${utmSource}&utm_medium=social&utm_campaign=${encodeURIComponent(entry.slug)}`;
+  const articleUrl = `${BASE_URL}/tools/code-formatter/${catPath}${entry.slug}/en/?utm_source=${utmSource}&utm_medium=${utmMedium}&utm_campaign=${encodeURIComponent(entry.slug)}`;
+  const toolUrl = `${BASE_URL}/tools/code-formatter/?lang=${encodeURIComponent(progLang)}&utm_source=${utmSource}&utm_medium=${utmMedium}&utm_campaign=${encodeURIComponent(entry.slug)}`;
   return { progLang, articleUrl, toolUrl };
+}
+
+function graphemeLength(str) {
+  if (typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function') {
+    return [...new Intl.Segmenter('en', { granularity: 'grapheme' }).segment(String(str || ''))].length;
+  }
+  return Array.from(String(str || '')).length;
 }
 
 /**
@@ -57,9 +64,16 @@ function buildBlueskyPost(entry, enMeta) {
   const description = enMeta.description || (entry.translations && entry.translations.en && entry.translations.en.meta_description) || title;
   const tag = `#${String(progLang).replace(/[^a-zA-Z0-9]/g, '')}`;
   const tagsLine = `\n\n${tag} #CodeQuality #DevTools`;
-  const maxTitleLen = Math.max(40, 275 - articleUrl.length - tagsLine.length - 2);
-  const header = `${title.slice(0, maxTitleLen)}\n\n`;
-  const text = `${header}${articleUrl}${tagsLine}`;
+  let maxTitleLen = Math.max(30, 295 - graphemeLength(articleUrl) - graphemeLength(tagsLine) - 2);
+  let clippedTitle = Array.from(String(title)).slice(0, maxTitleLen).join('');
+  let header = `${clippedTitle}\n\n`;
+  let text = `${header}${articleUrl}${tagsLine}`;
+  while (graphemeLength(text) > 300 && maxTitleLen > 10) {
+    maxTitleLen -= 5;
+    clippedTitle = `${Array.from(String(title)).slice(0, maxTitleLen).join('')}…`;
+    header = `${clippedTitle}\n\n`;
+    text = `${header}${articleUrl}${tagsLine}`;
+  }
 
   const encoder = new TextEncoder();
   const urlStart = encoder.encode(header).byteLength;
@@ -105,6 +119,30 @@ async function publishBluesky(entry, enMeta, creds, fetchImpl) {
   }
   const session = await sessionRes.json();
   const { text, facets, embed } = buildBlueskyPost(entry, enMeta);
+
+  const ogPngPath = path.join(ROOT_DIR, 'assets', 'images', 'og', 'tips', `${entry.slug}-en.png`);
+  if (fs.existsSync(ogPngPath)) {
+    try {
+      const pngBytes = fs.readFileSync(ogPngPath);
+      const blobRes = await fetchImpl('https://bsky.social/xrpc/com.atproto.repo.uploadBlob', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'image/png',
+          Authorization: `Bearer ${session.accessJwt}`,
+        },
+        body: pngBytes,
+        signal: AbortSignal.timeout(20000),
+      });
+      if (blobRes.ok) {
+        const blobData = await blobRes.json();
+        if (blobData && blobData.blob) {
+          embed.external.thumb = blobData.blob;
+        }
+      }
+    } catch (_) {
+      // fallback sin miniatura si uploadBlob no está disponible
+    }
+  }
 
   const postRes = await fetchImpl('https://bsky.social/xrpc/com.atproto.repo.createRecord', {
     method: 'POST',
@@ -162,12 +200,12 @@ async function publishTelegram(entry, enMeta, creds, fetchImpl) {
   const title = enMeta.title || (entry.translations && entry.translations.en && entry.translations.en.title) || entry.title;
   const summary = enMeta.description || '';
   const text = [
-    `<b>${escapeHtml(title)}</b>`,
-    `<i>${escapeHtml(progLang.toUpperCase())} · Code Formatter &amp; Auto-Doc AI</i>`,
+    `<code>[${escapeHtml(progLang.toUpperCase())}]</code> <b>${escapeHtml(title)}</b>`,
+    `<i>Code Formatter &amp; Auto-Doc AI</i>`,
     '',
     escapeHtml(summary),
     '',
-    `👉 <a href="${escapeHtml(articleUrl)}">Read full guide</a>`,
+    `👉 <a href="${escapeHtml(articleUrl)}">Leer guía completa</a>`,
   ].join('\n');
 
   const res = await fetchImpl(`https://api.telegram.org/bot${creds.botToken}/sendMessage`, {
@@ -178,7 +216,10 @@ async function publishTelegram(entry, enMeta, creds, fetchImpl) {
       text,
       parse_mode: 'HTML',
       reply_markup: {
-        inline_keyboard: [[{ text: 'Open Interactive Formatter', url: toolUrl }]],
+        inline_keyboard: [[
+          { text: 'Leer guía completa', url: articleUrl },
+          { text: 'Probar en el formateador', url: toolUrl },
+        ]],
       },
     }),
     signal: AbortSignal.timeout(20000),
@@ -206,6 +247,11 @@ function buildDiscordPayload(entry, enMeta) {
         description: String(description).slice(0, 2048),
         url: articleUrl,
         color: 13938487,
+        fields: [
+          { name: 'Language', value: String(progLang).toUpperCase(), inline: true },
+          { name: 'Category', value: String(entry.category || 'Code Quality').slice(0, 1024), inline: true },
+          { name: 'Format', value: 'Before / After + Auto-Doc AI', inline: true },
+        ],
         image: { url: ogImageUrl },
         footer: {
           text: `JW Solutions · ${String(progLang).toUpperCase()} · Code Formatter & Auto-Doc AI`,
@@ -245,12 +291,13 @@ async function publishGitHubDiscussion(entry, enMeta, creds, fetchImpl) {
   if (!owner || !name) {
     throw new Error('GITHUB_REPOSITORY inválido (esperado owner/repo).');
   }
-  const { progLang, articleUrl, toolUrl } = buildTipUrls(entry, 'github_discussions');
+  const { progLang, articleUrl, toolUrl } = buildTipUrls(entry, 'github', 'discussions');
   const title = enMeta.title || (entry.translations && entry.translations.en && entry.translations.en.title) || entry.title;
   const description =
     enMeta.description ||
     (entry.translations && entry.translations.en && entry.translations.en.meta_description) ||
     '';
+  const snippet = String(entry.interactive_snippet || '').trim();
 
   const headers = {
     'Content-Type': 'application/json',
@@ -294,15 +341,21 @@ async function publishGitHubDiscussion(entry, enMeta, creds, fetchImpl) {
     throw new Error('El repositorio no tiene categorías de GitHub Discussions habilitadas.');
   }
 
-  const body = [
+  const bodyLines = [
     `### ${title}`,
     '',
     description,
     '',
+  ];
+  if (snippet) {
+    bodyLines.push(`\`\`\`${progLang}`, snippet, '```', '');
+  }
+  bodyLines.push(
     `- **Language:** \`${String(progLang).toUpperCase()}\``,
     `- **Full Guide (EN):** [Read article on jw-solutions.com](${articleUrl})`,
     `- **Try it live:** [Open Code Formatter & Auto-Doc AI](${toolUrl})`,
-  ].join('\n');
+  );
+  const body = bodyLines.join('\n');
 
   const mutationRes = await fetchImpl('https://api.github.com/graphql', {
     method: 'POST',
