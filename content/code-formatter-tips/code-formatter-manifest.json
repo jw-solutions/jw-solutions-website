@@ -47,6 +47,14 @@
           "file": "published/python-312-pep8-tips.pt-PT.md",
           "sha256": "5d8184657784638a22ca8983b0505323a888bf1c09db4c7011cb618da535fac6"
         }
+      },
+      "syndication": {
+        "devto": {
+          "status": "published",
+          "id": 5039457,
+          "url": "https://dev.to/jwsolutions/pep-8-in-python-312-writing-readable-matchcase-blocks-5am5",
+          "publishedAt": "2026-11-15T04:41:54.583Z"
+        }
       }
     },
     {
@@ -94,6 +102,14 @@
           "category": "Dicas de Sintaxe",
           "file": "published/typescript-modern-operators.pt-PT.md",
           "sha256": "74b03139a75a24f8147bb8851524b99d0cb011ecf170991465cee0cf808eb4a2"
+        }
+      },
+      "syndication": {
+        "devto": {
+          "status": "published",
+          "id": 5039459,
+          "url": "https://dev.to/jwsolutions/modern-typescript-and-satisfies-without-formatting-errors-4925",
+          "publishedAt": "2026-11-15T04:41:58.825Z"
         }
       }
     },
