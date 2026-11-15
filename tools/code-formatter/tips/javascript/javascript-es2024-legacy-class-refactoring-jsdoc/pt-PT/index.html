@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Refactorização em JavaScript ES2024+: Campos Privados, Blocos Estáticos e JSDoc Estruturado | Code Formatter &amp; Auto-Doc AI</title>
+  <meta name="description" content="Refactorize código legado em JavaScript ES2024+ com campos privados, blocos estáticos e JSDoc estruturado alinhado ao ESLint e Prettier.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="canonical" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/pt-PT/">
+  <link rel="alternate" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/es/">
+  <link rel="alternate" hreflang="en" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/en/">
+  <link rel="alternate" hreflang="pt-BR" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/pt-BR/">
+  <link rel="alternate" hreflang="pt-PT" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/pt-PT/">
+  <link rel="alternate" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/fr/">
+  <link rel="alternate" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/de/">
+  <link rel="alternate" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/it/">
+  <link rel="alternate" hreflang="x-default" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/es/">
+  <link rel="alternate" type="application/rss+xml" title="Code Formatter &amp; Auto-Doc AI Tips" href="https://jw-solutions.com/tools/code-formatter/tips/feed.pt-PT.xml">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="JW Solutions">
+  <meta property="og:title" content="Refactorização em JavaScript ES2024+: Campos Privados, Blocos Estáticos e JSDoc Estruturado | Code Formatter &amp; Auto-Doc AI">
+  <meta property="og:description" content="Refactorize código legado em JavaScript ES2024+ com campos privados, blocos estáticos e JSDoc estruturado alinhado ao ESLint e Prettier.">
+  <meta property="og:url" content="https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/pt-PT/">
+  <meta property="og:locale" content="pt_PT">
+  <meta property="og:image" content="https://jw-solutions.com/assets/images/og/tips/javascript-es2024-legacy-class-refactoring-jsdoc-pt-PT.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Refactorização em JavaScript ES2024+: Campos Privados, Blocos Estáticos e JSDoc Estruturado | Code Formatter &amp; Auto-Doc AI">
+  <meta name="twitter:description" content="Refactorize código legado em JavaScript ES2024+ com campos privados, blocos estáticos e JSDoc estruturado alinhado ao ESLint e Prettier.">
+  <meta name="twitter:image" content="https://jw-solutions.com/assets/images/og/tips/javascript-es2024-legacy-class-refactoring-jsdoc-pt-PT.png">
+  <meta name="theme-color" content="#0b0f17">
+  <meta name="cf-newsletter-endpoint" content="https://api.jw-solutions.com/api/newsletter/subscribe">
+  <link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
+  <link rel="icon" type="image/x-icon" sizes="any" href="../../../../favicon.ico">
+  <link rel="apple-touch-icon" href="../../../../apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../../../../../assets/css/tools/code-formatter.css">
+  <script type="application/ld+json" id="cf-jsonld">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "Refactorização em JavaScript ES2024+: Campos Privados, Blocos Estáticos e JSDoc Estruturado", "description": "Refactorize código legado em JavaScript ES2024+ com campos privados, blocos estáticos e JSDoc estruturado alinhado ao ESLint e Prettier.", "inLanguage": "pt-PT", "articleSection": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI", "keywords": "javascript, code formatter, auto-doc ai, syntax, best practices", "datePublished": "2026-11-15", "dateModified": "2026-11-15", "url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/pt-PT/", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/pt-PT/"}, "isPartOf": {"@type": "WebApplication", "name": "Code Formatter & Auto-Doc AI", "url": "https://jw-solutions.com/tools/code-formatter/"}, "image": "https://jw-solutions.com/assets/images/og/tips/javascript-es2024-legacy-class-refactoring-jsdoc-pt-PT.png", "author": {"@type": "Organization", "name": "JW Solutions"}, "publisher": {"@type": "Organization", "name": "JW Solutions", "url": "https://jw-solutions.com"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Code Formatter", "item": "https://jw-solutions.com/tools/code-formatter/"}, {"@type": "ListItem", "position": 2, "name": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI", "item": "https://jw-solutions.com/tools/code-formatter/tips/javascript/"}, {"@type": "ListItem", "position": 3, "name": "Refactorização em JavaScript ES2024+: Campos Privados, Blocos Estáticos e JSDoc Estruturado", "item": "https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/pt-PT/"}]}, {"@type": "FAQPage", "inLanguage": "pt-PT", "mainEntity": [{"@type": "Question", "name": "Os campos privados `#` são suportados por todos os motores modernos?", "acceptedAnswer": {"@type": "Answer", "text": "Sim, os campos privados `#` são suportados nativamente nos principais navegadores e no Node.js a partir da versão 14.6.0."}}, {"@type": "Question", "name": "É possível obter validação de tipos sem compilar para TypeScript?", "acceptedAnswer": {"@type": "Answer", "text": "Sim, o uso de JSDoc em conjunto com o VS Code oferece verificação de tipos e sugestões em tempo de desenvolvimento."}}]}]}</script>
+</head>
+<body class="cf-body">
+  <a class="cf-skip" href="#cf-main" data-i18n="skip">Saltar al contenido</a>
+
+  <header class="cf-header">
+    <div class="cf-container cf-header__inner">
+      <div class="cf-logo" role="img" aria-label="JW Solutions">
+        <span class="cf-logo__mark">JW</span>
+        <span class="cf-logo__text">SOLUTIONS</span>
+      </div>
+      <nav class="cf-nav" aria-label="Code Formatter">
+        <select id="cf-ui-lang" class="cf-select cf-select--compact" data-i18n-aria="uiLang" aria-label="Idioma de la interfaz"></select>
+        <a class="cf-nav__link" data-site-link data-i18n="tipsBackTool" href="../../../../">Volver al formateador</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="cf-main" class="cf-main" data-fix-data="">
+    <section class="cf-container cf-hero">
+      <span class="cf-tag" data-i18n="fixTag">Tips de Sintaxis | Buenas prácticas | Auto-Doc AI</span>
+      <h1 id="cf-fix-title" class="cf-title">Refactorização em JavaScript ES2024+: Campos Privados, Blocos Estáticos e JSDoc Estruturado</h1>
+      <p id="cf-fix-lead" class="cf-lead cf-fix__lead">Refactorize código legado em JavaScript ES2024+ com campos privados, blocos estáticos e JSDoc estruturado alinhado ao ESLint e Prettier.</p>
+    </section>
+    <section class="cf-container cf-tips">
+      <div id="cf-fix-body" class="cf-card cf-tip">
+        <p class="cf-muted cf-tip__meta">2026-11-15 · Tips de Sintaxis | Buenas prácticas | Auto-Doc AI · JAVASCRIPT</p>
+        <h2 class="cf-tip__h">Modernização de Código Legado em JavaScript ES2024+</h2>
+        <p>O desenvolvimento em JavaScript evoluiu substancialmente desde os tempos das funções construtoras e da simulação de privacidade através de prefixos com sublinhado (<code>_privateProperty</code>). Com o padrão ES2024+, a combinação de campos privados reais (prefixados por <code>#</code>), blocos de inicialização estática (<code>static {}</code>) e documentação estrita via JSDoc permite manter bases de código limpas e seguras em JavaScript puro.</p>
+        <h3 class="cf-tip__h">O Problema: Padrões Antigos e Encapsulamento Frágil</h3>
+        <p>Em aplicações mais antigas desenvolvidas em ES5 ou no início do ES6, a proteção de propriedades baseava-se meramente em convenções. Esta abordagem resultava em acoplamentos indesejados e prejudicava a análise estática executada por ferramentas como o ESLint.</p>
+        <pre class="cf-tip__code"><code>// Código Legado (Antes)
+function UserManager(initialUsers) {
+  this._users = initialUsers || [];
+  this._accessCount = 0;
+}
+
+UserManager.prototype.addUser = function(user) {
+  if (user &amp;&amp; user.id) {
+    this._users.push(user);
+    this._accessCount++;
+    return true;
+  }
+  return false;
+};</code></pre>
+        <p>Este padrão deixa o atributo <code>_users</code> exposto a alterações externas não autorizadas e carece de anotações explicativas sobre os tipos aceites.</p>
+        <h3 class="cf-tip__h">A Solução Modernizada: ES2024+ e JSDoc Avançado</h3>
+        <p>A sintaxe moderna do ES2024 garante o encapsulamento dos dados no motor de execução através de <code>#</code>. Além disso, os blocos estáticos isolam a inicialização de constantes ou recursos globais da classe.</p>
+        <pre class="cf-tip__code"><code>/**
+ * @typedef {Object} User
+ * @property {string} id - Identificador único.
+ * @property {string} name - Nome completo.
+ */
+
+/**
+ * Gestor centralizado de utilizadores.
+ * @template {User} T
+ */
+class UserManager {
+  #users = new Map();
+  #accessCount = 0;
+  static #MAX_CAPACITY;
+
+  static {
+    // Inicialização estática imutável
+    UserManager.#MAX_CAPACITY = 1000;
+  }
+
+  /**
+   * @param {T[]} [initialUsers=[]] - Lista inicial de utilizadores.
+   */
+  constructor(initialUsers = []) {
+    for (const user of initialUsers) {
+      this.addUser(user);
+    }
+  }
+
+  /**
+   * Adiciona um utilizador se a capacidade permitir.
+   * @param {T} user - Objeto do utilizador.
+   * @returns {boolean} Resultado da operação.
+   */
+  addUser(user) {
+    if (!user?.id || this.#users.size &gt;= UserManager.#MAX_CAPACITY) {
+      return false;
+    }
+    this.#users.set(user.id, Object.freeze({ ...user }));
+    this.#accessCount++;
+    return true;
+  }
+}</code></pre>
+        <h3 class="cf-tip__h">Normas de Formatação e Integração com ESLint/Prettier</h3>
+        <p>Manter o código padronizado requer a configuração conjunta do <strong>Prettier</strong> e do <strong>ESLint</strong>. Utilize o plugin <code>prettier-plugin-jsdoc</code> para alinhar os comentários automaticamente e ative as regras do <code>eslint-plugin-jsdoc</code> para validar a cobertura da documentação.</p>
+        <h3 class="cf-tip__h">Checklist de Refactorização para ES2024</h3>
+        <ul class="cf-tip__list">
+          <li>Substitua propriedades <code>_</code> por campos verdadeiramente privados <code>#</code>.</li>
+          <li>Mova lógicas de configuração estática para blocos <code>static {}</code>.</li>
+          <li>Adicione anotações JSDoc detalhadas com <code>@param</code>, <code>@returns</code> e <code>@typedef</code>.</li>
+          <li>Corra o Prettier e o ESLint no fluxo de integração contínua (CI).</li>
+        </ul>
+        <section class="cf-tip-faq" aria-labelledby="cf-faq-title">
+          <h2 id="cf-faq-title" class="cf-tip__h">Perguntas frequentes</h2>
+          <details class="cf-faq__item"><summary>Os campos privados `#` são suportados por todos os motores modernos?</summary><p>Sim, os campos privados `#` são suportados nativamente nos principais navegadores e no Node.js a partir da versão 14.6.0.</p></details>
+          <details class="cf-faq__item"><summary>É possível obter validação de tipos sem compilar para TypeScript?</summary><p>Sim, o uso de JSDoc em conjunto com o VS Code oferece verificação de tipos e sugestões em tempo de desenvolvimento.</p></details>
+        </section>
+        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="https://jw-solutions.com/tools/code-formatter/?lang=pt-PT&amp;snippet=/%2A%2A%0A%20%2A%20%40template%20T%0A%20%2A%20%40class%20DataBuffer%0A%20%2A/%0Aclass%20DataBuffer%20%7B%0A%20%20%23items%20%3D%20new%20Set%28%29%3B%0A%20%20static%20%23MAX_LIMIT%3B%0A%0A%20%20static%20%7B%0A%20%20%20%20this.%23MAX_LIMIT%20%3D%20500%3B%0A%20%20%7D%0A%0A%20%20/%2A%2A%0A%20%20%20%2A%20%40param%20%7BT%7D%20item%0A%20%20%20%2A%20%40returns%20%7Bboolean%7D%0A%20%20%20%2A/%0A%20%20push%28item%29%20%7B%0A%20%20%20%20if%20%28this.%23items.size%20%3E%3D%20DataBuffer.%23MAX_LIMIT%29%20return%20false%3B%0A%20%20%20%20this.%23items.add%28item%29%3B%0A%20%20%20%20return%20true%3B%0A%20%20%7D%0A%7D">Experimentar excerto no formatador</a></p>
+        <p><a class="cf-nav__link" href="https://jw-solutions.com/tools/code-formatter/fix/js-unexpected-token/?lang=pt-PT">Ver guia de correção de erros: Como corrigir SyntaxError: Unexpected token em Node.js 22</a></p>
+        <h2 class="cf-tip__h">Dicas relacionadas</h2>
+        <ul class="cf-fix__list"><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/pt-PT/">TypeScript moderno: ?., ?? e satisfies sem erros de formatação</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/pt-PT/">PEP 8 em Python 3.12: como escrever blocos match/case legíveis</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/pt-PT/">SQL e DAX: três hábitos para consultas rápidas e legíveis</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cf-footer">
+    <div class="cf-container cf-footer__grid">
+      <section class="cf-footer__col" aria-labelledby="cf-foot-id">
+        <div class="cf-logo" role="img" aria-label="JW Solutions">
+          <span class="cf-logo__mark">JW</span>
+          <span class="cf-logo__text">SOLUTIONS</span>
+        </div>
+        <h2 id="cf-foot-id" class="cf-footer__title">Code Formatter <span class="cf-gold">&amp; Auto-Doc AI</span></h2>
+        <p class="cf-footer__text" data-i18n="footDesc">Formatea y documenta tu código en Python, JavaScript, SQL, DAX y más. Herramienta independiente de JW Solutions.</p>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../" data-site-link data-i18n="footEditor">Ir al editor</a></li>
+          <li><a href="https://dly.to/nmdN9vQObOU" target="_blank" rel="noopener noreferrer" data-i18n="footDailyDevSquad">Participe do nosso Squad no daily.dev</a></li>
+        </ul>
+      </section>
+
+      <nav class="cf-footer__col" aria-labelledby="cf-foot-tips">
+        <h2 id="cf-foot-tips" class="cf-footer__title" data-i18n="footTipsTitle">Tips semanales</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../tips/python/" data-site-link data-i18n="tipPython">Python Tips</a></li>
+          <li><a href="../../../../tips/javascript/" data-site-link data-i18n="tipJs">JavaScript Standards</a></li>
+          <li><a href="../../../../tips/sql-dax/" data-site-link data-i18n="tipSqlDax">SQL &amp; DAX Best Practices</a></li>
+        </ul>
+        <h2 id="cf-foot-fix" class="cf-footer__title cf-footer__title--sub" data-i18n="footFixTitle">Soluciones a errores</h2>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../fix/" data-site-link data-i18n="fixHubTitle">Soluciones rápidas a errores de sintaxis</a></li>
+        </ul>
+      </nav>
+
+      <section class="cf-footer__col" aria-labelledby="cf-foot-nl">
+        <h2 id="cf-foot-nl" class="cf-footer__title" data-i18n="nlTitle">Tips Semanales de Código</h2>
+        <p class="cf-footer__text" data-i18n="nlPromise">Un email por semana con tips prácticos de sintaxis, casos de estudio y novedades de lenguajes (Python, JS, SQL, DAX). Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
+        <form id="cf-newsletter-form" class="cf-newsletter" novalidate>
+          <label class="cf-sr-only" for="cf-newsletter-email" data-i18n="nlEmailLabel">Correo electrónico</label>
+          <input id="cf-newsletter-email" class="cf-input" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="tu@email.com" data-i18n-placeholder="nlPlaceholder">
+          <input type="text" name="_gotcha" class="cf-sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button type="submit" class="cf-btn cf-btn--primary" data-i18n="nlSubmit">Suscribirme</button>
+          <p id="cf-newsletter-status" class="cf-form__status cf-newsletter__status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+    <div class="cf-container cf-footer__legal">
+      <p>&copy; JW Solutions · <span data-i18n="footRights">Todos los derechos reservados</span></p>
+    </div>
+  </footer>
+
+  <div id="cf-toast" class="cf-toast" role="status" aria-live="polite"></div>
+  
+</body>
+</html>

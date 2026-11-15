@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>fr</language>
-    <lastBuildDate>Sun, 15 Nov 2026 18:43:49 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 15 Nov 2026 19:17:15 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -55,6 +55,29 @@ class UserManager {
         return $user;
     }
 }</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/fr/">PHP 8.3 et PSR-12 : Refactorisation de code hérité avec Typed Properties et Enums</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Refactoring JavaScript ES2024+: Champs Privés, Blocs Statiques et JSDoc Structuré</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/fr/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/fr/</guid>
+      <pubDate>Sun, 15 Nov 2026 14:00:00 +0000</pubDate>
+      <category>JAVASCRIPT</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/javascript-es2024-legacy-class-refactoring-jsdoc-fr.png" medium="image" />
+      <description>Transformez vos fonctions constructeurs héritées en classes ES2024+ modernes avec une véritable confidentialité via `#` et une documentation JSDoc standardisée.</description>
+      <content:encoded><![CDATA[<p>Transformez vos fonctions constructeurs héritées en classes ES2024+ modernes avec une véritable confidentialité via `#` et une documentation JSDoc standardisée.</p><pre><code>// Code Hérité (Avant)
+function UserManager(initialUsers) {
+  this._users = initialUsers || [];
+  this._accessCount = 0;
+}
+
+UserManager.prototype.addUser = function(user) {
+  if (user &amp;&amp; user.id) {
+    this._users.push(user);
+    this._accessCount++;
+    return true;
+  }
+  return false;
+};</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/fr/">Refactoring JavaScript ES2024+: Champs Privés, Blocs Statiques et JSDoc Structuré</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Refactoring du Type any en TypeScript avec Type Guards et TSDoc</title>

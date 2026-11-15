@@ -850,6 +850,151 @@
         }
       },
       "notified_at": "2026-11-15T18:44:49.511Z"
+    },
+    {
+      "slug": "javascript-es2024-legacy-class-refactoring-jsdoc",
+      "title": "Refactorización en JavaScript ES2024+: Campos Privados, Bloques Estáticos y JSDoc Estructurado",
+      "language": "javascript",
+      "programming_language": "javascript",
+      "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+      "meta_description": "Refactoriza código legacy en JavaScript ES2024+ usando campos privados, bloques estáticos y JSDoc estructurado con ESLint y Prettier sin errores.",
+      "summary": "Aprende a transformar funciones constructoras y cierres legados de JavaScript en clases modernas ES2024+ con privacidad real mediante `#` y documentación estandarizada en JSDoc.",
+      "related_fix_slug": "js-unexpected-token",
+      "interactive_snippet": "/**\n * @template T\n * @class DataBuffer\n */\nclass DataBuffer {\n  #items = new Set();\n  static #MAX_LIMIT;\n\n  static {\n    this.#MAX_LIMIT = 500;\n  }\n\n  /**\n   * @param {T} item\n   * @returns {boolean}\n   */\n  push(item) {\n    if (this.#items.size >= DataBuffer.#MAX_LIMIT) return false;\n    this.#items.add(item);\n    return true;\n  }\n}",
+      "faq": [
+        {
+          "q": "¿Los campos privados `#` de ES2024 funcionan en navegadores antiguos?",
+          "a": "Los campos privados con `#` están soportados nativamente en todos los navegadores modernos y en Node.js >= 14.6.0. Para entornos antiguos se requiere transpilar mediante Babel."
+        },
+        {
+          "q": "¿Es necesario migrar a TypeScript si uso JSDoc completo?",
+          "a": "No obligatoriamente. JSDoc junto con VS Code y ESLint proporciona validación de tipos e intellisense de alto nivel sin requerir una etapa de compilación explícita."
+        }
+      ],
+      "date": "2026-11-15",
+      "published_at": "2026-11-15",
+      "status": "COMPILED",
+      "locales": [
+        "es",
+        "de",
+        "en",
+        "fr",
+        "it",
+        "pt-BR",
+        "pt-PT"
+      ],
+      "file": "published/javascript-es2024-legacy-class-refactoring-jsdoc.md",
+      "sha256": "67b14cb6614d79311be85ecaa6b794596720eaaf1b6b64faaefef55d620b9bdd",
+      "translations": {
+        "de": {
+          "title": "JavaScript ES2024+ Refactoring: Private Felder, Statische Blöcke und JSDoc",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Refactorn Sie Legacy-JavaScript zu ES2024+ mit privaten Feldern, statischen Blöcken und JSDoc für saubere ESLint- und Prettier-Workflows.",
+          "summary": "Lernen Sie, wie Sie alte Konstruktorfunktionen in moderne ES2024+-Klassen mit echter Laufzeit-Kapselung (#) und strukturiertem JSDoc umwandeln.",
+          "faq": [
+            {
+              "q": "Werden private `#`-Felder in allen modernen Umgebungen unterstützt?",
+              "a": "Ja, private `#`-Felder werden von allen modernen Browsern sowie Node.js ab Version 14.6.0 nativ unterstützt."
+            },
+            {
+              "q": "Ersetzt JSDoc die Notwendigkeit von TypeScript?",
+              "a": "JSDoc bietet in Kombination mit VS Code und ESLint hervorragende Typprüfung ohne einen Kompilierungsschritt."
+            }
+          ],
+          "file": "published/javascript-es2024-legacy-class-refactoring-jsdoc.de.md",
+          "sha256": "6b1b83df00118b1ff8cb1d8490e3654288ab29d086cdb929edc36e137eebe527"
+        },
+        "en": {
+          "title": "Refactoring to JavaScript ES2024+: Private Fields, Static Blocks, and Structured JSDoc",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Refactor legacy JavaScript to ES2024+ using private fields, static blocks, and structured JSDoc paired with ESLint and Prettier seamlessly.",
+          "summary": "Discover how to transform legacy constructor functions and closures into clean ES2024+ classes with runtime privacy (#) and standardized JSDoc documentation.",
+          "faq": [
+            {
+              "q": "Are ES2024 private `#` fields supported across modern environments?",
+              "a": "Yes, `#` private fields are natively supported in all modern evergreen browsers and Node.js versions starting from 14.6.0+."
+            },
+            {
+              "q": "Does structured JSDoc replace TypeScript in JavaScript projects?",
+              "a": "JSDoc provides powerful type checking via VS Code and ESLint without compilation steps, making it ideal for pure JS projects."
+            }
+          ],
+          "file": "published/javascript-es2024-legacy-class-refactoring-jsdoc.en.md",
+          "sha256": "a5921cfee2eaae61a42f7e5302fb469c549e603ee9bef77c39bac5809c646cb0"
+        },
+        "fr": {
+          "title": "Refactoring JavaScript ES2024+: Champs Privés, Blocs Statiques et JSDoc Structuré",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Refactorez le code JavaScript hérité vers ES2024+ avec des champs privés, des blocs statiques et JSDoc structuré pour ESLint et Prettier.",
+          "summary": "Transformez vos fonctions constructeurs héritées en classes ES2024+ modernes avec une véritable confidentialité via `#` et une documentation JSDoc standardisée.",
+          "faq": [
+            {
+              "q": "Les champs privés `#` sont-ils supportés par tous les moteurs modernes?",
+              "a": "Oui, les champs privés `#` sont pris en charge nativement par l'ensemble des navigateurs modernes et Node.js (v14.6.0+)."
+            },
+            {
+              "q": "Le JSDoc peut-il remplacer TypeScript dans un projet JavaScript?",
+              "a": "JSDoc permet de bénéficier de l'auto-complétion et de la vérification de types dans VS Code sans nécessiter d'étape de compilation."
+            }
+          ],
+          "file": "published/javascript-es2024-legacy-class-refactoring-jsdoc.fr.md",
+          "sha256": "ec1af16604ad1df2084db1a6e8a66232b0da74b919cb7e7a3a7f097f50d269af"
+        },
+        "it": {
+          "title": "Refactoring in JavaScript ES2024+: Campi Privati, Blocchi Statici e JSDoc Strutturato",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Rifattorizza il codice JavaScript legacy a ES2024+ usando campi privati, blocchi statici e JSDoc strutturato per ESLint e Prettier.",
+          "summary": "Scopri come trasformare le funzioni costruttore legacy in moderne classi ES2024+ con incapsulamento nativo (#) e documentazione JSDoc standardizzata.",
+          "faq": [
+            {
+              "q": "I campi privati `#` sono supportati in tutti i browser moderni?",
+              "a": "Sì, i campi privati `#` sono supportati nativamente da tutti i browser moderni e da Node.js v14.6.0+."
+            },
+            {
+              "q": "È necessario usare TypeScript se si utilizza JSDoc avanzato?",
+              "a": "No, JSDoc accoppiato a VS Code ed ESLint fornisce un controllo dei tipi completo senza richiedere una fase di compilazione."
+            }
+          ],
+          "file": "published/javascript-es2024-legacy-class-refactoring-jsdoc.it.md",
+          "sha256": "4f323eedae81625a73e25fb4d6fc989361e101a3ab69af085130de3f28d7b4fa"
+        },
+        "pt-BR": {
+          "title": "Refatoração em JavaScript ES2024+: Campos Privados, Blocos Estáticos e JSDoc Estruturado",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Refatore código legado em JavaScript ES2024+ com campos privados, blocos estáticos e JSDoc estruturado integrado ao ESLint e Prettier.",
+          "summary": "Aprenda a transformar funções construtoras legadas em classes modernas ES2024+ com privacidade real via `#` e documentação padronizada em JSDoc.",
+          "faq": [
+            {
+              "q": "Os campos privados `#` funcionam em todos os ambientes modernos?",
+              "a": "Sim, campos privados `#` possuem suporte nativo em navegadores modernos e no Node.js a partir da versão 14.6.0."
+            },
+            {
+              "q": "O JSDoc substitui o TypeScript em projetos JavaScript?",
+              "a": "O JSDoc oferece validação de tipos e autocompletar no VS Code sem a necessidade de uma etapa de compilação explícita."
+            }
+          ],
+          "file": "published/javascript-es2024-legacy-class-refactoring-jsdoc.pt-BR.md",
+          "sha256": "da2d4bc1aba5a5b9b80b563b3fd3d65a2aeada8bb031e6e23d4d7a53a2022347"
+        },
+        "pt-PT": {
+          "title": "Refactorização em JavaScript ES2024+: Campos Privados, Blocos Estáticos e JSDoc Estruturado",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Refactorize código legado em JavaScript ES2024+ com campos privados, blocos estáticos e JSDoc estruturado alinhado ao ESLint e Prettier.",
+          "summary": "Aprenda a transformar funções construtoras legadas em classes modernas ES2024+ com privacidade real através de `#` e documentação padronizada em JSDoc.",
+          "faq": [
+            {
+              "q": "Os campos privados `#` são suportados por todos os motores modernos?",
+              "a": "Sim, os campos privados `#` são suportados nativamente nos principais navegadores e no Node.js a partir da versão 14.6.0."
+            },
+            {
+              "q": "É possível obter validação de tipos sem compilar para TypeScript?",
+              "a": "Sim, o uso de JSDoc em conjunto com o VS Code oferece verificação de tipos e sugestões em tempo de desenvolvimento."
+            }
+          ],
+          "file": "published/javascript-es2024-legacy-class-refactoring-jsdoc.pt-PT.md",
+          "sha256": "e2d6fa60a45b43624743d5cc991a7b557b5063e46d40abeead31d66e54acb039"
+        }
+      }
     }
   ]
 }

@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>de</language>
-    <lastBuildDate>Sun, 15 Nov 2026 18:43:49 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 15 Nov 2026 19:17:15 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -55,6 +55,29 @@ class UserManager {
         return $user;
     }
 }</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/de/">PHP 8.3 und PSR-12: Refactoring von Alcode mit Typed Properties und Enums</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>JavaScript ES2024+ Refactoring: Private Felder, Statische Blöcke und JSDoc</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/de/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/de/</guid>
+      <pubDate>Sun, 15 Nov 2026 14:00:00 +0000</pubDate>
+      <category>JAVASCRIPT</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/javascript-es2024-legacy-class-refactoring-jsdoc-de.png" medium="image" />
+      <description>Lernen Sie, wie Sie alte Konstruktorfunktionen in moderne ES2024+-Klassen mit echter Laufzeit-Kapselung (#) und strukturiertem JSDoc umwandeln.</description>
+      <content:encoded><![CDATA[<p>Lernen Sie, wie Sie alte Konstruktorfunktionen in moderne ES2024+-Klassen mit echter Laufzeit-Kapselung (#) und strukturiertem JSDoc umwandeln.</p><pre><code>// Legacy-Code (Vorher)
+function UserManager(initialUsers) {
+  this._users = initialUsers || [];
+  this._accessCount = 0;
+}
+
+UserManager.prototype.addUser = function(user) {
+  if (user &amp;&amp; user.id) {
+    this._users.push(user);
+    this._accessCount++;
+    return true;
+  }
+  return false;
+};</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/de/">JavaScript ES2024+ Refactoring: Private Felder, Statische Blöcke und JSDoc</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Refactoring von legacy any-Typen in TypeScript mit Type Guards und TSDoc</title>

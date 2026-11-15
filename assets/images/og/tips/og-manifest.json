@@ -55,5 +55,12 @@
   "tips/php-83-typed-properties-enums-psr12-refactoring-fr": "829b134c0ce73a59",
   "tips/php-83-typed-properties-enums-psr12-refactoring-it": "db308614beb62614",
   "tips/php-83-typed-properties-enums-psr12-refactoring-pt-BR": "026792673675305e",
-  "tips/php-83-typed-properties-enums-psr12-refactoring-pt-PT": "4d195c304c318673"
+  "tips/php-83-typed-properties-enums-psr12-refactoring-pt-PT": "4d195c304c318673",
+  "tips/javascript-es2024-legacy-class-refactoring-jsdoc-es": "759d1338eb26b0e8",
+  "tips/javascript-es2024-legacy-class-refactoring-jsdoc-de": "37b91c6e69b34323",
+  "tips/javascript-es2024-legacy-class-refactoring-jsdoc-en": "a329498709111991",
+  "tips/javascript-es2024-legacy-class-refactoring-jsdoc-fr": "b28938d96be248bd",
+  "tips/javascript-es2024-legacy-class-refactoring-jsdoc-it": "47b57973d829eacc",
+  "tips/javascript-es2024-legacy-class-refactoring-jsdoc-pt-BR": "d0fd556ce2c87d16",
+  "tips/javascript-es2024-legacy-class-refactoring-jsdoc-pt-PT": "7d6fee119d3dbb4b"
 }
