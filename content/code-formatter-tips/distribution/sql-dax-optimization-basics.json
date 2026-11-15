@@ -1,0 +1,79 @@
+{
+  "slug": "sql-dax-optimization-basics",
+  "language": "sql",
+  "generated_at": "2026-11-15T03:29:16.429Z",
+  "locales": {
+    "en": {
+      "title": "SQL and DAX: three habits for fast, readable queries",
+      "communities": [
+        "Reddit: r/SQL",
+        "Reddit: r/PowerBI",
+        "Reddit: r/BusinessIntelligence",
+        "Hacker News"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/en/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics",
+      "hashtags": "#sql #CleanCode #DevTools",
+      "post_markdown": "SQL and DAX: three habits for fast, readable queries\n\n```sql\nSELECT o.id, o.total, c.name\nFROM orders AS o\nJOIN customers AS c ON c.id = o.customer_id\nWHERE o.created_at >= DATE '2026-01-01'\nORDER BY o.total DESC;\n```\n```dax\nVentas YTD Margen =\nVAR Ventas = [Ventas Totales]\nVAR Costo = [Costo Total]\nRETURN DIVIDE(Ventas - Costo, Ventas)\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/en/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics\n#sql #CleanCode #DevTools"
+    },
+    "es": {
+      "title": "SQL y DAX: tres hábitos para consultas rápidas y legibles",
+      "communities": [
+        "Reddit: r/programacion",
+        "Reddit: r/devsarg",
+        "Menéame"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/es/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics",
+      "hashtags": "#sql #Programación #CódigoLimpio",
+      "post_markdown": "SQL y DAX: tres hábitos para consultas rápidas y legibles\n\n```sql\nSELECT o.id, o.total, c.name\nFROM orders AS o\nJOIN customers AS c ON c.id = o.customer_id\nWHERE o.created_at >= DATE '2026-01-01'\nORDER BY o.total DESC;\n```\n```dax\nVentas YTD Margen =\nVAR Ventas = [Ventas Totales]\nVAR Costo = [Costo Total]\nRETURN DIVIDE(Ventas - Costo, Ventas)\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/es/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics\n#sql #Programación #CódigoLimpio"
+    },
+    "pt-BR": {
+      "title": "SQL e DAX: três hábitos para consultas rápidas e legíveis",
+      "communities": [
+        "TabNews (tabnews.com.br)",
+        "Reddit: r/brdev"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=sql-dax-optimization-basics",
+      "hashtags": "#sql #Programação #CódigoLimpo",
+      "post_markdown": "SQL e DAX: três hábitos para consultas rápidas e legíveis\n\n```sql\nSELECT o.id, o.total, c.name\nFROM orders AS o\nJOIN customers AS c ON c.id = o.customer_id\nWHERE o.created_at >= DATE '2026-01-01'\nORDER BY o.total DESC;\n```\n```dax\nVentas YTD Margen =\nVAR Ventas = [Ventas Totales]\nVAR Costo = [Costo Total]\nRETURN DIVIDE(Ventas - Costo, Ventas)\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=sql-dax-optimization-basics\n#sql #Programação #CódigoLimpo"
+    },
+    "pt-PT": {
+      "title": "SQL e DAX: três hábitos para consultas rápidas e legíveis",
+      "communities": [
+        "Reddit: r/devpt"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics",
+      "hashtags": "#sql #Programação #CódigoLimpo",
+      "post_markdown": "SQL e DAX: três hábitos para consultas rápidas e legíveis\n\n```sql\nSELECT o.id, o.total, c.name\nFROM orders AS o\nJOIN customers AS c ON c.id = o.customer_id\nWHERE o.created_at >= DATE '2026-01-01'\nORDER BY o.total DESC;\n```\n```dax\nVentas YTD Margen =\nVAR Ventas = [Ventas Totales]\nVAR Costo = [Costo Total]\nRETURN DIVIDE(Ventas - Costo, Ventas)\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics\n#sql #Programação #CódigoLimpo"
+    },
+    "fr": {
+      "title": "SQL et DAX : trois habitudes pour des requêtes rapides et lisibles",
+      "communities": [
+        "Developpez.com",
+        "Reddit: r/developpeurs"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/fr/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics",
+      "hashtags": "#sql #Développement #CleanCode",
+      "post_markdown": "SQL et DAX : trois habitudes pour des requêtes rapides et lisibles\n\n```sql\nSELECT o.id, o.total, c.name\nFROM orders AS o\nJOIN customers AS c ON c.id = o.customer_id\nWHERE o.created_at >= DATE '2026-01-01'\nORDER BY o.total DESC;\n```\n```dax\nVentas YTD Margen =\nVAR Ventas = [Ventas Totales]\nVAR Costo = [Costo Total]\nRETURN DIVIDE(Ventas - Costo, Ventas)\n```\n\nGuide complet et bac à sable interactif: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/fr/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics\n#sql #Développement #CleanCode"
+    },
+    "de": {
+      "title": "SQL und DAX: drei Gewohnheiten für schnelle, lesbare Abfragen",
+      "communities": [
+        "Heise Developer",
+        "Reddit: r/de_EDV"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/de/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics",
+      "hashtags": "#sql #CleanCode #Entwicklung",
+      "post_markdown": "SQL und DAX: drei Gewohnheiten für schnelle, lesbare Abfragen\n\n```sql\nSELECT o.id, o.total, c.name\nFROM orders AS o\nJOIN customers AS c ON c.id = o.customer_id\nWHERE o.created_at >= DATE '2026-01-01'\nORDER BY o.total DESC;\n```\n```dax\nVentas YTD Margen =\nVAR Ventas = [Ventas Totales]\nVAR Costo = [Costo Total]\nRETURN DIVIDE(Ventas - Costo, Ventas)\n```\n\nVollständiger Leitfaden & interaktive Sandbox: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/de/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics\n#sql #CleanCode #Entwicklung"
+    },
+    "it": {
+      "title": "SQL e DAX: tre abitudini per query veloci e leggibili",
+      "communities": [
+        "HTML.it",
+        "Reddit: r/ItalyInformatica"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/it/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics",
+      "hashtags": "#sql #Sviluppo #CleanCode",
+      "post_markdown": "SQL e DAX: tre abitudini per query veloci e leggibili\n\n```sql\nSELECT o.id, o.total, c.name\nFROM orders AS o\nJOIN customers AS c ON c.id = o.customer_id\nWHERE o.created_at >= DATE '2026-01-01'\nORDER BY o.total DESC;\n```\n```dax\nVentas YTD Margen =\nVAR Ventas = [Ventas Totales]\nVAR Costo = [Costo Total]\nRETURN DIVIDE(Ventas - Costo, Ventas)\n```\n\nGuida completa e sandbox interattivo: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/it/?utm_source=reddit&utm_medium=community&utm_campaign=sql-dax-optimization-basics\n#sql #Sviluppo #CleanCode"
+    }
+  }
+}

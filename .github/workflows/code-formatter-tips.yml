@@ -141,13 +141,40 @@ jobs:
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
         run: node scripts/code-formatter/syndicate-devto.js
 
+      - name: Sindicar a Hashnode (originalArticleURL)
+        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        continue-on-error: true
+        env:
+          HASHNODE_TOKEN: ${{ secrets.HASHNODE_TOKEN }}
+          HASHNODE_PUBLICATION_ID: ${{ secrets.HASHNODE_PUBLICATION_ID }}
+        run: node scripts/code-formatter/syndicate-hashnode.js
+
+      - name: Difusión social (Bluesky, Mastodon, Telegram)
+        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        continue-on-error: true
+        env:
+          BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
+          BSKY_APP_PASSWORD: ${{ secrets.BSKY_APP_PASSWORD }}
+          MASTODON_INSTANCE_URL: ${{ secrets.MASTODON_INSTANCE_URL }}
+          MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node scripts/code-formatter/syndicate-social.js
+
+      - name: Generar Kit de Distribución Regional (7 idiomas)
+        if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
+        continue-on-error: true
+        env:
+          SLUG: ${{ steps.publish.outputs.slug }}
+        run: node scripts/code-formatter/generate-distribution-kit.js --slug "$SLUG"
+
       - name: Registrar estado DEPLOYED en manifiesto
         if: ${{ !inputs.dry_run && steps.publish.outputs.slug != '' }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add content/code-formatter-tips/code-formatter-manifest.json
+          git add content/code-formatter-tips/code-formatter-manifest.json content/code-formatter-tips/distribution/
           if ! git diff --cached --quiet; then
             git commit -m "chore(formatter-tips): marcar DEPLOYED (automático)"
             git pull --rebase origin main

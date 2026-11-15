@@ -1,0 +1,81 @@
+{
+  "slug": "python-312-pep8-tips",
+  "language": "python",
+  "generated_at": "2026-11-15T03:29:16.419Z",
+  "locales": {
+    "en": {
+      "title": "PEP 8 in Python 3.12: writing readable match/case blocks",
+      "communities": [
+        "Reddit: r/Python",
+        "Hacker News"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/en/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-pep8-tips",
+      "hashtags": "#python #CleanCode #DevTools",
+      "post_markdown": "PEP 8 in Python 3.12: writing readable match/case blocks\n\n```python\nmatch command.split():\n    case [\"go\", direction] if direction in {\"north\", \"south\"}:\n        move(direction)\n    case [\"quit\" | \"exit\"]:\n        shutdown()\n    case _:\n        print(\"Comando desconocido\")\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/en/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-pep8-tips\n#python #CleanCode #DevTools"
+    },
+    "es": {
+      "title": "PEP 8 en Python 3.12: cómo escribir bloques match/case legibles",
+      "communities": [
+        "Reddit: r/programacion",
+        "Reddit: r/devsarg",
+        "Reddit: r/taquerosprogramadores",
+        "Reddit: r/chileIT",
+        "Menéame"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/es/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-pep8-tips",
+      "hashtags": "#python #Programación #CódigoLimpio",
+      "post_markdown": "PEP 8 en Python 3.12: cómo escribir bloques match/case legibles\n\n```python\nmatch command.split():\n    case [\"go\", direction] if direction in {\"north\", \"south\"}:\n        move(direction)\n    case [\"quit\" | \"exit\"]:\n        shutdown()\n    case _:\n        print(\"Comando desconocido\")\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/es/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-pep8-tips\n#python #Programación #CódigoLimpio"
+    },
+    "pt-BR": {
+      "title": "PEP 8 no Python 3.12: como escrever blocos match/case legíveis",
+      "communities": [
+        "TabNews (tabnews.com.br)",
+        "Reddit: r/brdev"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=python-312-pep8-tips",
+      "hashtags": "#python #Programação #CódigoLimpo",
+      "post_markdown": "PEP 8 no Python 3.12: como escrever blocos match/case legíveis\n\n```python\nmatch command.split():\n    case [\"go\", direction] if direction in {\"north\", \"south\"}:\n        move(direction)\n    case [\"quit\" | \"exit\"]:\n        shutdown()\n    case _:\n        print(\"Comando desconocido\")\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=python-312-pep8-tips\n#python #Programação #CódigoLimpo"
+    },
+    "pt-PT": {
+      "title": "PEP 8 em Python 3.12: como escrever blocos match/case legíveis",
+      "communities": [
+        "Reddit: r/devpt",
+        "TabNews (tabnews.com.br)"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-pep8-tips",
+      "hashtags": "#python #Programação #CódigoLimpo",
+      "post_markdown": "PEP 8 em Python 3.12: como escrever blocos match/case legíveis\n\n```python\nmatch command.split():\n    case [\"go\", direction] if direction in {\"north\", \"south\"}:\n        move(direction)\n    case [\"quit\" | \"exit\"]:\n        shutdown()\n    case _:\n        print(\"Comando desconocido\")\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-pep8-tips\n#python #Programação #CódigoLimpo"
+    },
+    "fr": {
+      "title": "PEP 8 en Python 3.12 : écrire des blocs match/case lisibles",
+      "communities": [
+        "Zeste de Savoir",
+        "Developpez.com",
+        "Reddit: r/developpeurs"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/fr/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-pep8-tips",
+      "hashtags": "#python #Développement #CleanCode",
+      "post_markdown": "PEP 8 en Python 3.12 : écrire des blocs match/case lisibles\n\n```python\nmatch command.split():\n    case [\"go\", direction] if direction in {\"north\", \"south\"}:\n        move(direction)\n    case [\"quit\" | \"exit\"]:\n        shutdown()\n    case _:\n        print(\"Comando desconocido\")\n```\n\nGuide complet et bac à sable interactif: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/fr/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-pep8-tips\n#python #Développement #CleanCode"
+    },
+    "de": {
+      "title": "PEP 8 in Python 3.12: lesbare match/case-Blöcke schreiben",
+      "communities": [
+        "Heise Developer",
+        "Reddit: r/de_EDV"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/de/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-pep8-tips",
+      "hashtags": "#python #CleanCode #Entwicklung",
+      "post_markdown": "PEP 8 in Python 3.12: lesbare match/case-Blöcke schreiben\n\n```python\nmatch command.split():\n    case [\"go\", direction] if direction in {\"north\", \"south\"}:\n        move(direction)\n    case [\"quit\" | \"exit\"]:\n        shutdown()\n    case _:\n        print(\"Comando desconocido\")\n```\n\nVollständiger Leitfaden & interaktive Sandbox: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/de/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-pep8-tips\n#python #CleanCode #Entwicklung"
+    },
+    "it": {
+      "title": "PEP 8 in Python 3.12: scrivere blocchi match/case leggibili",
+      "communities": [
+        "HTML.it",
+        "Reddit: r/ItalyInformatica"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/it/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-pep8-tips",
+      "hashtags": "#python #Sviluppo #CleanCode",
+      "post_markdown": "PEP 8 in Python 3.12: scrivere blocchi match/case leggibili\n\n```python\nmatch command.split():\n    case [\"go\", direction] if direction in {\"north\", \"south\"}:\n        move(direction)\n    case [\"quit\" | \"exit\"]:\n        shutdown()\n    case _:\n        print(\"Comando desconocido\")\n```\n\nGuida completa e sandbox interattivo: https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/it/?utm_source=reddit&utm_medium=community&utm_campaign=python-312-pep8-tips\n#python #Sviluppo #CleanCode"
+    }
+  }
+}

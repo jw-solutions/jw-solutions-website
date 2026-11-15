@@ -1,0 +1,82 @@
+{
+  "slug": "typescript-modern-operators",
+  "language": "javascript",
+  "generated_at": "2026-11-15T03:29:16.426Z",
+  "locales": {
+    "en": {
+      "title": "Modern TypeScript: ?., ?? and satisfies without formatting errors",
+      "communities": [
+        "Reddit: r/typescript",
+        "Reddit: r/webdev",
+        "Reddit: r/javascript",
+        "Hacker News"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/en/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators",
+      "hashtags": "#javascript #CleanCode #DevTools",
+      "post_markdown": "Modern TypeScript: ?., ?? and satisfies without formatting errors\n\n```typescript\nconst config = {\n  retries: 3,\n  endpoint: \"https://api.example.com\",\n} satisfies Record<string, string | number>;\n\nconst timeout = options?.timeout ?? 5000;\nconst city = user?.address?.city ?? \"Sin ciudad\";\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/en/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators\n#javascript #CleanCode #DevTools"
+    },
+    "es": {
+      "title": "TypeScript moderno: ?., ?? y satisfies sin errores de formato",
+      "communities": [
+        "Reddit: r/programacion",
+        "Reddit: r/devsarg",
+        "Reddit: r/taquerosprogramadores",
+        "Reddit: r/chileIT",
+        "Menéame"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/es/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators",
+      "hashtags": "#javascript #Programación #CódigoLimpio",
+      "post_markdown": "TypeScript moderno: ?., ?? y satisfies sin errores de formato\n\n```typescript\nconst config = {\n  retries: 3,\n  endpoint: \"https://api.example.com\",\n} satisfies Record<string, string | number>;\n\nconst timeout = options?.timeout ?? 5000;\nconst city = user?.address?.city ?? \"Sin ciudad\";\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/es/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators\n#javascript #Programación #CódigoLimpio"
+    },
+    "pt-BR": {
+      "title": "TypeScript moderno: ?., ?? e satisfies sem erros de formatação",
+      "communities": [
+        "TabNews (tabnews.com.br)",
+        "Reddit: r/brdev"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=typescript-modern-operators",
+      "hashtags": "#javascript #Programação #CódigoLimpo",
+      "post_markdown": "TypeScript moderno: ?., ?? e satisfies sem erros de formatação\n\n```typescript\nconst config = {\n  retries: 3,\n  endpoint: \"https://api.example.com\",\n} satisfies Record<string, string | number>;\n\nconst timeout = options?.timeout ?? 5000;\nconst city = user?.address?.city ?? \"Sin ciudad\";\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=typescript-modern-operators\n#javascript #Programação #CódigoLimpo"
+    },
+    "pt-PT": {
+      "title": "TypeScript moderno: ?., ?? e satisfies sem erros de formatação",
+      "communities": [
+        "Reddit: r/devpt"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators",
+      "hashtags": "#javascript #Programação #CódigoLimpo",
+      "post_markdown": "TypeScript moderno: ?., ?? e satisfies sem erros de formatação\n\n```typescript\nconst config = {\n  retries: 3,\n  endpoint: \"https://api.example.com\",\n} satisfies Record<string, string | number>;\n\nconst timeout = options?.timeout ?? 5000;\nconst city = user?.address?.city ?? \"Sin ciudad\";\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators\n#javascript #Programação #CódigoLimpo"
+    },
+    "fr": {
+      "title": "TypeScript moderne : ?., ?? et satisfies sans erreurs de formatage",
+      "communities": [
+        "Zeste de Savoir",
+        "Developpez.com",
+        "Reddit: r/developpeurs"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/fr/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators",
+      "hashtags": "#javascript #Développement #CleanCode",
+      "post_markdown": "TypeScript moderne : ?., ?? et satisfies sans erreurs de formatage\n\n```typescript\nconst config = {\n  retries: 3,\n  endpoint: \"https://api.example.com\",\n} satisfies Record<string, string | number>;\n\nconst timeout = options?.timeout ?? 5000;\nconst city = user?.address?.city ?? \"Sin ciudad\";\n```\n\nGuide complet et bac à sable interactif: https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/fr/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators\n#javascript #Développement #CleanCode"
+    },
+    "de": {
+      "title": "Modernes TypeScript: ?., ?? und satisfies ohne Formatierungsfehler",
+      "communities": [
+        "Heise Developer",
+        "Reddit: r/de_EDV"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/de/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators",
+      "hashtags": "#javascript #CleanCode #Entwicklung",
+      "post_markdown": "Modernes TypeScript: ?., ?? und satisfies ohne Formatierungsfehler\n\n```typescript\nconst config = {\n  retries: 3,\n  endpoint: \"https://api.example.com\",\n} satisfies Record<string, string | number>;\n\nconst timeout = options?.timeout ?? 5000;\nconst city = user?.address?.city ?? \"Sin ciudad\";\n```\n\nVollständiger Leitfaden & interaktive Sandbox: https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/de/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators\n#javascript #CleanCode #Entwicklung"
+    },
+    "it": {
+      "title": "TypeScript moderno: ?., ?? e satisfies senza errori di formattazione",
+      "communities": [
+        "HTML.it",
+        "Reddit: r/ItalyInformatica"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/it/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators",
+      "hashtags": "#javascript #Sviluppo #CleanCode",
+      "post_markdown": "TypeScript moderno: ?., ?? e satisfies senza errori di formattazione\n\n```typescript\nconst config = {\n  retries: 3,\n  endpoint: \"https://api.example.com\",\n} satisfies Record<string, string | number>;\n\nconst timeout = options?.timeout ?? 5000;\nconst city = user?.address?.city ?? \"Sin ciudad\";\n```\n\nGuida completa e sandbox interattivo: https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/it/?utm_source=reddit&utm_medium=community&utm_campaign=typescript-modern-operators\n#javascript #Sviluppo #CleanCode"
+    }
+  }
+}

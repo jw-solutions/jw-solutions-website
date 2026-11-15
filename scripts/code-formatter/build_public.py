@@ -684,6 +684,7 @@ def rss_feeds() -> dict[str, str]:
 
     def build_feed(loc: str, self_name: str) -> str:
         items_xml: list[str] = []
+        tips_dir = ROOT / "content" / "code-formatter-tips"
         for t in tips:
             tr = t if loc == "es" else t.get("translations", {}).get(loc)
             if not tr:
@@ -694,6 +695,18 @@ def rss_feeds() -> dict[str, str]:
             title = tr.get("title") or t["title"]
             desc = tr.get("summary") or tr.get("meta_description") or title
             pub = _rfc822_date(t.get("published_at") or t.get("date") or date.today().isoformat())
+
+            encoded_parts = [f"<p>{escape(desc)}</p>"]
+            md_rel = tr.get("file") or (f"published/{t['slug']}.md" if loc == "es" else f"published/{t['slug']}.{loc}.md")
+            md_path = tips_dir / md_rel
+            if md_path.is_file():
+                _, md_body = _strip_frontmatter(md_path.read_text(encoding="utf-8"))
+                _, _, first_code = _md_to_html(md_body)
+                if first_code:
+                    encoded_parts.append(f"<pre><code>{escape(first_code)}</code></pre>")
+            encoded_parts.append(f'<p><a href="{escape(link, quote=True)}">{escape(title)}</a></p>')
+            cdata_html = "".join(encoded_parts).replace("]]>", "]]]]><![CDATA[>")
+
             items_xml.append(
                 f"    <item>\n"
                 f"      <title>{escape(title)}</title>\n"
@@ -702,18 +715,24 @@ def rss_feeds() -> dict[str, str]:
                 f"      <pubDate>{pub}</pubDate>\n"
                 f"      <category>{escape(prog_lang.upper())}</category>\n"
                 f"      <description>{escape(desc)}</description>\n"
+                f"      <content:encoded><![CDATA[{cdata_html}]]></content:encoded>\n"
                 f"    </item>"
             )
         last_build = format_datetime(datetime.now(timezone.utc))
         return (
             '<?xml version="1.0" encoding="UTF-8"?>\n'
-            '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n'
+            '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">\n'
             "  <channel>\n"
             "    <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>\n"
             f"    <link>{SITE}{TOOL_PATH}</link>\n"
             "    <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>\n"
             f"    <language>{escape(loc)}</language>\n"
             f"    <lastBuildDate>{last_build}</lastBuildDate>\n"
+            "    <image>\n"
+            f"      <url>{OG_DEFAULT}</url>\n"
+            "      <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>\n"
+            f"      <link>{SITE}{TOOL_PATH}</link>\n"
+            "    </image>\n"
             f'    <atom:link rel="self" type="application/rss+xml" href="{SITE}{TOOL_PATH}tips/{escape(self_name)}"/>\n'
             f"{atom_links}\n"
             + "\n".join(items_xml)

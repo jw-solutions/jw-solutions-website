@@ -9,6 +9,9 @@ import { execFileSync } from 'node:child_process';
 const require = createRequire(import.meta.url);
 const gen = require('../../scripts/code-formatter/generate-weekly-tip.js');
 const devto = require('../../scripts/code-formatter/syndicate-devto.js');
+const hashnode = require('../../scripts/code-formatter/syndicate-hashnode.js');
+const social = require('../../scripts/code-formatter/syndicate-social.js');
+const distKit = require('../../scripts/code-formatter/generate-distribution-kit.js');
 const ROOT = path.resolve(import.meta.dirname, '..', '..');
 
 function makeWords(n, prefix = 'palabra') {
@@ -111,7 +114,10 @@ test('Feeds RSS feed.xml y feed.<lang>.xml son XML válidos con items publicados
   const mainFeed = fs.readFileSync(path.join(ROOT, 'tools', 'code-formatter', 'tips', 'feed.xml'), 'utf8');
   assert.match(mainFeed, /^<\?xml version="1\.0" encoding="UTF-8"\?>/);
   assert.match(mainFeed, /<rss version="2\.0"/);
+  assert.match(mainFeed, /xmlns:content="http:\/\/purl\.org\/rss\/1\.0\/modules\/content\/"/);
+  assert.match(mainFeed, /<image>[\s\S]*?<url>https:\/\/jw-solutions\.com\/assets\/images\/og\/code-formatter-default\.png<\/url>/);
   assert.match(mainFeed, /<atom:link rel="alternate" type="application\/rss\+xml" hreflang="es" href="https:\/\/jw-solutions\.com\/tools\/code-formatter\/tips\/feed\.es\.xml"\/>/);
+  assert.match(mainFeed, /<content:encoded><!\[CDATA\[/);
   assert.match(mainFeed, /<item>/);
 
   for (const loc of langs) {
@@ -280,4 +286,111 @@ test('syndicate-devto.js es idempotente y hace fallback seguro sin DEVTO_API_KEY
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
+});
+
+test('syndicate-hashnode.js es idempotente y hace fallback seguro sin credenciales', async () => {
+  const skipped = await hashnode.syndicateAll({ token: '', publicationId: '' });
+  assert.equal(skipped.skippedReason, 'missing_credentials');
+  assert.equal(skipped.published.length, 0);
+
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cf-hn-'));
+  try {
+    const manifestPath = path.join(tmpDir, 'manifest.json');
+    const publishedDir = path.join(tmpDir, 'published');
+    fs.mkdirSync(publishedDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(publishedDir, 'hn-tip.en.md'),
+      '---\ntitle: "Hashnode Tip"\ndescription: "Desc"\nprogramming_language: "python"\ntags: ["python","pep8"]\n---\n\n## Guide\nContent here.\n',
+      'utf8'
+    );
+    fs.writeFileSync(
+      manifestPath,
+      JSON.stringify({
+        tips: [
+          { slug: 'hn-tip', language: 'python', programming_language: 'python', status: 'DEPLOYED' },
+          {
+            slug: 'hn-done',
+            language: 'python',
+            status: 'NOTIFIED',
+            syndication: { hashnode: { status: 'published', url: 'https://blog.jw.com/hn-done' } },
+          },
+        ],
+      }),
+      'utf8'
+    );
+
+    let calls = 0;
+    const mockFetch = async (_url, init) => {
+      calls += 1;
+      const body = JSON.parse(init.body);
+      assert.equal(body.variables.input.publicationId, 'pub-123');
+      assert.equal(
+        body.variables.input.originalArticleURL,
+        'https://jw-solutions.com/tools/code-formatter/tips/python/hn-tip/en/'
+      );
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          data: { publishPost: { post: { id: 'p1', slug: 'hn-tip', url: 'https://blog.jw.com/hn-tip' } } },
+        }),
+      };
+    };
+
+    const first = await hashnode.syndicateAll({
+      manifestPath,
+      publishedDir,
+      token: 'hn-tok',
+      publicationId: 'pub-123',
+      fetchImpl: mockFetch,
+    });
+    assert.equal(first.published.length, 1);
+    assert.equal(first.alreadyPublished, 1);
+    assert.equal(calls, 1);
+
+    const second = await hashnode.syndicateAll({
+      manifestPath,
+      publishedDir,
+      token: 'hn-tok',
+      publicationId: 'pub-123',
+      fetchImpl: mockFetch,
+    });
+    assert.equal(second.published.length, 0);
+    assert.equal(second.alreadyPublished, 2);
+    assert.equal(calls, 1);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('syndicate-social.js hace fallback seguro sin secretos configurados', async () => {
+  const skipped = await social.syndicateAll({
+    bskyHandle: '',
+    bskyAppPassword: '',
+    mastodonUrl: '',
+    mastodonToken: '',
+    telegramToken: '',
+    telegramChatId: '',
+  });
+  assert.equal(skipped.skippedReason, 'missing_credentials');
+  assert.equal(skipped.published.length, 0);
+});
+
+test('generate-distribution-kit.js genera 7 idiomas con comunidades y parámetros UTM correctos', () => {
+  const kitPath = path.join(ROOT, 'content', 'code-formatter-tips', 'distribution', 'python-312-pep8-tips.json');
+  assert.ok(fs.existsSync(kitPath), `Falta kit de distribución ${kitPath}`);
+  const kit = JSON.parse(fs.readFileSync(kitPath, 'utf8'));
+  assert.equal(kit.slug, 'python-312-pep8-tips');
+  assert.equal(kit.language, 'python');
+  for (const loc of distKit.ALL_LOCALES) {
+    assert.ok(kit.locales[loc], `Falta locale ${loc} en kit`);
+    assert.ok(Array.isArray(kit.locales[loc].communities) && kit.locales[loc].communities.length > 0);
+    assert.match(kit.locales[loc].utm_url, /utm_source=/);
+    assert.match(kit.locales[loc].utm_url, /utm_medium=community/);
+    assert.match(kit.locales[loc].utm_url, /utm_campaign=python-312-pep8-tips/);
+  }
+  assert.ok(kit.locales.en.communities.includes('Reddit: r/Python'));
+  assert.ok(kit.locales.es.communities.includes('Reddit: r/programacion'));
+  assert.ok(kit.locales['pt-BR'].communities.includes('TabNews (tabnews.com.br)'));
+  assert.ok(kit.locales.fr.communities.includes('Zeste de Savoir'));
 });

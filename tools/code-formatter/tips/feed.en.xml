@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>en</language>
-    <lastBuildDate>Sun, 15 Nov 2026 00:00:35 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 15 Nov 2026 03:29:09 +0000</lastBuildDate>
+    <image>
+      <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
+      <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
+      <link>https://jw-solutions.com/tools/code-formatter/</link>
+    </image>
     <atom:link rel="self" type="application/rss+xml" href="https://jw-solutions.com/tools/code-formatter/tips/feed.en.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/tips/feed.es.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="en" href="https://jw-solutions.com/tools/code-formatter/tips/feed.en.xml"/>
@@ -21,6 +26,14 @@
       <pubDate>Sat, 14 Nov 2026 14:00:00 +0000</pubDate>
       <category>TYPESCRIPT</category>
       <description>Learn how to remove any types from legacy codebases using strict type predicates in TypeScript and standardized TSDoc formatting for Auto-Doc AI.</description>
+      <content:encoded><![CDATA[<p>Learn how to remove any types from legacy codebases using strict type predicates in TypeScript and standardized TSDoc formatting for Auto-Doc AI.</p><pre><code>// ❌ Legacy untyped code susceptible to runtime errors
+function processUserData(data: any) {
+  console.log(&quot;User ID:&quot;, data.id);
+  if (data.role === &quot;admin&quot;) {
+    return data.permissions.includes(&quot;write&quot;);
+  }
+  return false;
+}</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/en/">Refactoring Legacy any Types in TypeScript with Type Guards and TSDoc</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Refactoring in Java 21+: Records and Pattern Matching for Readable Code</title>
@@ -29,6 +42,35 @@
       <pubDate>Sat, 14 Nov 2026 14:00:00 +0000</pubDate>
       <category>JAVA</category>
       <description>Discover how to transform verbose class hierarchies into elegant Records and Pattern Matching in Java 21, drastically reducing boilerplate code.</description>
+      <content:encoded><![CDATA[<p>Discover how to transform verbose class hierarchies into elegant Records and Pattern Matching in Java 21, drastically reducing boilerplate code.</p><pre><code>// BEFORE: Verbose and error-prone legacy code
+public abstract class Response {
+}
+
+public class SuccessResponse extends Response {
+    private final String data;
+    public SuccessResponse(String data) { this.data = data; }
+    public String getData() { return data; }
+}
+
+public class ErrorResponse extends Response {
+    private final String errorCode;
+    public ErrorResponse(String errorCode) { this.errorCode = errorCode; }
+    public String getErrorCode() { return errorCode; }
+}
+
+public class ResponseProcessor {
+    public static String process(Response response) {
+        if (response instanceof SuccessResponse) {
+            SuccessResponse success = (SuccessResponse) response;
+            return &quot;OK: &quot; + success.getData();
+        } else if (response instanceof ErrorResponse) {
+            ErrorResponse error = (ErrorResponse) response;
+            return &quot;FAIL: &quot; + error.getErrorCode();
+        } else {
+            throw new IllegalArgumentException(&quot;Unknown response type&quot;);
+        }
+    }
+}</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/java/java-21-pattern-matching-records-refactoring/en/">Refactoring in Java 21+: Records and Pattern Matching for Readable Code</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Modern C# 12: Refactoring with Primary Constructors and XML Docs</title>
@@ -37,6 +79,33 @@
       <pubDate>Sat, 14 Nov 2026 14:00:00 +0000</pubDate>
       <category>CSHARP</category>
       <description>Discover how to simplify dependency injection in C# 12 using Primary Constructors while preserving structured XML documentation.</description>
+      <content:encoded><![CDATA[<p>Discover how to simplify dependency injection in C# 12 using Primary Constructors while preserving structured XML documentation.</p><pre><code>namespace JWDocs.Services;
+
+/// &lt;summary&gt;
+/// Service responsible for processing payments and customer receipts.
+/// &lt;/summary&gt;
+public class PaymentProcessor
+{
+    private readonly IPaymentGateway _gateway;
+    private readonly ILogger _logger;
+
+    /// &lt;summary&gt;
+    /// Initializes a new instance of &lt;see cref=&quot;PaymentProcessor&quot;/&gt;.
+    /// &lt;/summary&gt;
+    /// &lt;param name=&quot;gateway&quot;&gt;The primary payment provider.&lt;/param&gt;
+    /// &lt;param name=&quot;logger&quot;&gt;The audit logging service.&lt;/param&gt;
+    public PaymentProcessor(IPaymentGateway gateway, ILogger logger)
+    {
+        _gateway = gateway ?? throw new ArgumentNullException(nameof(gateway));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
+
+    public async Task ProcessAsync(decimal amount)
+    {
+        _logger.LogInfo(&quot;Starting payment...&quot;);
+        await _gateway.ChargeAsync(amount);
+    }
+}</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/csharp/csharp-12-primary-constructors-xml-doc-refactoring/en/">Modern C# 12: Refactoring with Primary Constructors and XML Docs</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Modern TypeScript: ?., ?? and satisfies without formatting errors</title>
@@ -45,6 +114,13 @@
       <pubDate>Mon, 02 Nov 2026 14:00:00 +0000</pubDate>
       <category>JAVASCRIPT</category>
       <description>Modern TypeScript: ?., ?? and satisfies without formatting errors</description>
+      <content:encoded><![CDATA[<p>Modern TypeScript: ?., ?? and satisfies without formatting errors</p><pre><code>const config = {
+  retries: 3,
+  endpoint: &quot;https://api.example.com&quot;,
+} satisfies Record&lt;string, string | number&gt;;
+
+const timeout = options?.timeout ?? 5000;
+const city = user?.address?.city ?? &quot;Sin ciudad&quot;;</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/en/">Modern TypeScript: ?., ?? and satisfies without formatting errors</a></p>]]></content:encoded>
     </item>
     <item>
       <title>SQL and DAX: three habits for fast, readable queries</title>
@@ -53,6 +129,11 @@
       <pubDate>Mon, 02 Nov 2026 14:00:00 +0000</pubDate>
       <category>SQL</category>
       <description>SQL and DAX: three habits for fast, readable queries</description>
+      <content:encoded><![CDATA[<p>SQL and DAX: three habits for fast, readable queries</p><pre><code>SELECT o.id, o.total, c.name
+FROM orders AS o
+JOIN customers AS c ON c.id = o.customer_id
+WHERE o.created_at &gt;= DATE &#x27;2026-01-01&#x27;
+ORDER BY o.total DESC;</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/en/">SQL and DAX: three habits for fast, readable queries</a></p>]]></content:encoded>
     </item>
     <item>
       <title>PEP 8 in Python 3.12: writing readable match/case blocks</title>
@@ -61,6 +142,13 @@
       <pubDate>Mon, 02 Nov 2026 14:00:00 +0000</pubDate>
       <category>PYTHON</category>
       <description>PEP 8 in Python 3.12: writing readable match/case blocks</description>
+      <content:encoded><![CDATA[<p>PEP 8 in Python 3.12: writing readable match/case blocks</p><pre><code>match command.split():
+    case [&quot;go&quot;, direction] if direction in {&quot;north&quot;, &quot;south&quot;}:
+        move(direction)
+    case [&quot;quit&quot; | &quot;exit&quot;]:
+        shutdown()
+    case _:
+        print(&quot;Comando desconocido&quot;)</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/en/">PEP 8 in Python 3.12: writing readable match/case blocks</a></p>]]></content:encoded>
     </item>
   </channel>
 </rss>
