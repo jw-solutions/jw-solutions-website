@@ -921,7 +921,7 @@
       ],
       "date": "2026-11-15",
       "published_at": "2026-11-15",
-      "status": "DEPLOYED",
+      "status": "NOTIFIED",
       "locales": [
         "es",
         "de",
@@ -1072,7 +1072,8 @@
             "publishedAt": "2026-11-15T19:18:49.581Z"
           }
         }
-      }
+      },
+      "notified_at": "2026-11-15T19:19:11.692Z"
     }
   ]
 }
