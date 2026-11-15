@@ -67,6 +67,12 @@
             "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/12",
             "number": 12,
             "publishedAt": "2026-11-15T16:46:54.125Z"
+          },
+          "bluesky": {
+            "status": "published",
+            "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq4bjzot25",
+            "cid": "bafyreif4cix6xmfvmp7hujmemsaubljq6dkmkuwd2obvhfi7kkx74rxtca",
+            "publishedAt": "2026-11-15T19:17:51.739Z"
           }
         }
       }
@@ -137,6 +143,12 @@
             "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/13",
             "number": 13,
             "publishedAt": "2026-11-15T16:47:04.058Z"
+          },
+          "bluesky": {
+            "status": "published",
+            "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq4hiwiq2u",
+            "cid": "bafyreihngmf2glh4ayr6srxu5lhkkalzbqygxu6qov6umq7qgstfmhtrdm",
+            "publishedAt": "2026-11-15T19:17:58.013Z"
           }
         }
       }
@@ -207,6 +219,12 @@
             "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/14",
             "number": 14,
             "publishedAt": "2026-11-15T16:47:14.107Z"
+          },
+          "bluesky": {
+            "status": "published",
+            "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq4nhd7r2s",
+            "cid": "bafyreianubijp72sgte5qnzrymvlrtncvv3df7dmcpoiimzjgtjzcvr57m",
+            "publishedAt": "2026-11-15T19:18:04.219Z"
           }
         }
       }
@@ -307,6 +325,12 @@
             "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/15",
             "number": 15,
             "publishedAt": "2026-11-15T16:47:23.955Z"
+          },
+          "bluesky": {
+            "status": "published",
+            "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq4tdy7o2o",
+            "cid": "bafyreid6q3hisxqz3jv7p4fvf5jyx7jsrhowigw7l2jresjduwbwcup3sy",
+            "publishedAt": "2026-11-15T19:18:10.414Z"
           }
         }
       }
@@ -407,6 +431,12 @@
             "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/16",
             "number": 16,
             "publishedAt": "2026-11-15T16:47:33.881Z"
+          },
+          "bluesky": {
+            "status": "published",
+            "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq4z7rso2x",
+            "cid": "bafyreigcnjralsklmgzvfpx73ve2axe7m6v7al6kbxwufnxy6m3svzfqm4",
+            "publishedAt": "2026-11-15T19:18:16.624Z"
           }
         }
       }
@@ -507,6 +537,12 @@
             "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/17",
             "number": 17,
             "publishedAt": "2026-11-15T16:47:43.855Z"
+          },
+          "bluesky": {
+            "status": "published",
+            "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq5752et25",
+            "cid": "bafyreickh5xkyvfsdzbpz4ictaeyltxz6hvfc2zpfwyl6afsoofwambfv4",
+            "publishedAt": "2026-11-15T19:18:22.810Z"
           }
         }
       }
@@ -676,6 +712,12 @@
             "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/18",
             "number": 18,
             "publishedAt": "2026-11-15T16:47:53.685Z"
+          },
+          "bluesky": {
+            "status": "published",
+            "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq5ezhw62o",
+            "cid": "bafyreigehq27zpoitljrzjzsj475dhbjqvyolaqwf7hjy77dsmgvz4tkya",
+            "publishedAt": "2026-11-15T19:18:29.034Z"
           }
         }
       },
@@ -846,6 +888,12 @@
             "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/21",
             "number": 21,
             "publishedAt": "2026-11-15T18:44:29.459Z"
+          },
+          "bluesky": {
+            "status": "published",
+            "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq5kwplg2o",
+            "cid": "bafyreie2of7tw4pjwqc7eh7pkq7yq3xre4ggduzwtmdnxnpn3jatnu5mva",
+            "publishedAt": "2026-11-15T19:18:35.127Z"
           }
         }
       },
@@ -873,7 +921,7 @@
       ],
       "date": "2026-11-15",
       "published_at": "2026-11-15",
-      "status": "COMPILED",
+      "status": "DEPLOYED",
       "locales": [
         "es",
         "de",
@@ -993,6 +1041,36 @@
           ],
           "file": "published/javascript-es2024-legacy-class-refactoring-jsdoc.pt-PT.md",
           "sha256": "e2d6fa60a45b43624743d5cc991a7b557b5063e46d40abeead31d66e54acb039"
+        }
+      },
+      "deployed_at": "2026-11-15T19:17:48.415Z",
+      "indexnow_pinged_at": "2026-11-15T19:17:48.954Z",
+      "syndication": {
+        "devto": {
+          "status": "published",
+          "id": 5043202,
+          "url": "https://dev.to/jwsolutions/--1pne",
+          "publishedAt": "2026-11-15T19:17:49.533Z"
+        },
+        "social": {
+          "bluesky": {
+            "status": "published",
+            "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2eq5r44ki2g",
+            "cid": "bafyreiezopukum2gix2xtuyjogjjtiiexjm7wbxx6d5wf2n3ia546ta2de",
+            "publishedAt": "2026-11-15T19:18:41.635Z"
+          },
+          "discord": {
+            "status": "published",
+            "messageId": "1571605400111943721",
+            "publishedAt": "2026-11-15T19:18:46.475Z"
+          },
+          "github_discussions": {
+            "status": "published",
+            "id": "D_kwDOSheTeM4ArK9T",
+            "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/22",
+            "number": 22,
+            "publishedAt": "2026-11-15T19:18:49.581Z"
+          }
         }
       }
     }
