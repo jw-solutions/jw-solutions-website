@@ -1,10 +1,12 @@
 // Carrusel interactivo de Weekly Tips, filtros por lenguaje, vista rápida y canales automáticos.
 // Seguridad: cero innerHTML con datos dinámicos; todo se construye con document.createElement y textContent.
-import { t, lang, SUPPORTED_LANGS, intlLocale, MAX_CODE_BYTES } from './i18n.js';
+import { t, lang, SUPPORTED_LANGS, intlLocale, MAX_CODE_BYTES, applyI18n, setupLangSelector } from './i18n.js';
 import { toast } from './actions.js';
+import { initNewsletter } from './newsletter.js';
 
-const CONTENT_BASE = '../../content/code-formatter-tips/';
+const CONTENT_BASE = new URL('../../../../content/code-formatter-tips/', import.meta.url).href;
 const MANIFEST_URL = `${CONTENT_BASE}code-formatter-manifest.json`;
+const TOOL_BASE = new URL('../../../../tools/code-formatter/', import.meta.url).href;
 const FALLBACK_CHAIN = { 'pt-PT': ['pt-BR'], 'pt-BR': ['pt-PT'] };
 
 const TIP_CATEGORY_PATH = {
@@ -72,7 +74,7 @@ function fmtDate(iso) {
 
 function tipFullPageUrl(tip, locale) {
   const catPath = TIP_CATEGORY_PATH[tip.language] || 'tips/python/';
-  return `${catPath}${encodeURIComponent(tip.slug)}/${encodeURIComponent(locale)}/`;
+  return `${TOOL_BASE}${catPath}${encodeURIComponent(tip.slug)}/${encodeURIComponent(locale)}/`;
 }
 
 function parseMarkdownDetails(md) {
@@ -145,9 +147,17 @@ export async function initTipsShowcase({ onLoadSnippet } = {}) {
   const nextBtn = document.getElementById('cf-tips-next');
   const toggleBtn = document.getElementById('cf-tips-toggle');
   const rssLink = document.getElementById('cf-channel-rss');
-  const discordBtn = document.getElementById('cf-channel-discord');
-  const discordModal = document.getElementById('cf-discord-modal');
   const modal = document.getElementById('cf-tip-detail-modal');
+
+  // En páginas estáticas /tips/<cat>/<slug>/<lang>/ que no cargan app.js ni tips-page.js, inicializar i18n y newsletter
+  const uiSel = document.getElementById('cf-ui-lang');
+  if (uiSel && uiSel.options.length === 0) {
+    applyI18n();
+    setupLangSelector(uiSel, { reactive: true }).catch(() => {});
+    try { initNewsletter(); } catch { /* opcional */ }
+  } else {
+    applyI18n(section);
+  }
 
   const mdCache = new Map();
   let tips = [];
@@ -169,7 +179,7 @@ export async function initTipsShowcase({ onLoadSnippet } = {}) {
   function updateRssLink() {
     if (!rssLink) return;
     const feedLang = SUPPORTED_LANGS.includes(lang) ? lang : 'en';
-    rssLink.setAttribute('href', `tips/feed.${feedLang}.xml`);
+    rssLink.setAttribute('href', `${TOOL_BASE}tips/feed.${feedLang}.xml`);
   }
 
   function updateToggleButton() {
@@ -386,13 +396,20 @@ export async function initTipsShowcase({ onLoadSnippet } = {}) {
         const editorLang = mapEditorLanguage(tip.language, parsed.codeLang);
         if (typeof onLoadSnippet === 'function') {
           onLoadSnippet({ lang: editorLang, code: parsed.codeSnippet });
-        } else {
+          modal.close();
+          toast(t('tipsLoadedInEditor'));
+        } else if (document.getElementById('cf-editor')) {
           document.dispatchEvent(
             new CustomEvent('cf:load-snippet', { detail: { lang: editorLang, code: parsed.codeSnippet } }),
           );
+          modal.close();
+          toast(t('tipsLoadedInEditor'));
+        } else {
+          try {
+            sessionStorage.setItem('cf.sample', JSON.stringify({ lang: editorLang, code: parsed.codeSnippet }));
+          } catch { /* sin almacenamiento: abrir con ?snippet= */ }
+          location.href = `${TOOL_BASE}?lang=${encodeURIComponent(lang)}&sample=1`;
         }
-        modal.close();
-        toast(t('tipsLoadedInEditor'));
       };
     }
 
@@ -442,18 +459,13 @@ export async function initTipsShowcase({ onLoadSnippet } = {}) {
     updateToggleButton();
   });
 
-  // Cierre de modales (clic en backdrop o botón cerrar)
-  [modal, discordModal].forEach((dlg) => {
-    if (!dlg) return;
-    dlg.querySelectorAll('[data-cf-close]').forEach((btn) => btn.addEventListener('click', () => dlg.close()));
-    dlg.addEventListener('click', (e) => {
-      if (e.target === dlg) dlg.close();
+  // Cierre del modal (clic en backdrop o botón cerrar)
+  if (modal) {
+    modal.querySelectorAll('[data-cf-close]').forEach((btn) => btn.addEventListener('click', () => modal.close()));
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.close();
     });
-  });
-
-  discordBtn?.addEventListener('click', () => {
-    if (discordModal && !discordModal.open) discordModal.showModal();
-  });
+  }
 
   updateRssLink();
   updateToggleButton();

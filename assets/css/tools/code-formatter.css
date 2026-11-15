@@ -314,3 +314,70 @@
 @media (prefers-reduced-motion: reduce) {
   .cf-tip-carousel-card, .cf-channel-link { transition: none; }
 }
+
+/* Contraste WCAG AA/AAA en botones primarios dorados y secundarios (cubre .cf-tip a, :visited, :hover, :focus-visible, :active) */
+.cf-body .cf-btn:not(.cf-btn--primary),
+.cf-body a.cf-btn:not(.cf-btn--primary),
+.cf-tip a.cf-btn:not(.cf-btn--primary),
+.cf-body a.cf-btn:not(.cf-btn--primary):link,
+.cf-body a.cf-btn:not(.cf-btn--primary):visited {
+  background: #171b22;
+  border-color: rgba(251, 178, 0, 0.35);
+  color: #f3f4f6;
+  text-decoration: none;
+}
+.cf-body .cf-btn:not(.cf-btn--primary):hover,
+.cf-body a.cf-btn:not(.cf-btn--primary):hover,
+.cf-tip a.cf-btn:not(.cf-btn--primary):hover {
+  border-color: #fbb200;
+  color: #fbb200;
+  background: rgba(251, 178, 0, 0.1);
+}
+
+.cf-body .cf-btn.cf-btn--primary,
+.cf-body a.cf-btn--primary,
+.cf-tip a.cf-btn--primary,
+.cf-tip .cf-tip__cta,
+.cf-body .cf-tip-try-btn,
+.cf-body .cf-fix-cta,
+.cf-body .cf-fix__cta,
+.cf-body a.cf-btn--primary:link,
+.cf-body a.cf-btn--primary:visited,
+.cf-tip a.cf-btn--primary:link,
+.cf-tip a.cf-btn--primary:visited {
+  background: #fbb200;
+  border-color: #fbb200;
+  color: #0b0e12;
+  font-weight: 700;
+  text-decoration: none;
+}
+.cf-body .cf-btn.cf-btn--primary svg,
+.cf-body a.cf-btn--primary svg,
+.cf-tip a.cf-btn--primary svg,
+.cf-body .cf-tip-try-btn svg,
+.cf-body .cf-fix-cta svg,
+.cf-body .cf-fix__cta svg {
+  color: #0b0e12;
+  fill: currentColor;
+}
+.cf-body .cf-btn.cf-btn--primary:hover,
+.cf-body a.cf-btn--primary:hover,
+.cf-tip a.cf-btn--primary:hover,
+.cf-body .cf-tip-try-btn:hover,
+.cf-body .cf-fix-cta:hover,
+.cf-body .cf-fix__cta:hover {
+  background: #ffc633;
+  border-color: #ffc633;
+  color: #0b0e12;
+}
+.cf-body .cf-btn.cf-btn--primary:focus-visible,
+.cf-body a.cf-btn--primary:focus-visible,
+.cf-tip a.cf-btn--primary:focus-visible,
+.cf-body .cf-btn.cf-btn--primary:active,
+.cf-body a.cf-btn--primary:active,
+.cf-tip a.cf-btn--primary:active {
+  background: #fbb200;
+  color: #0b0e12;
+  outline: 2px solid #ffd166;
+  outline-offset: 2px;
+}

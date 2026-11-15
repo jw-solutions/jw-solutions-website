@@ -16,6 +16,10 @@ function normalize(raw) {
 
 function resolveLang() {
   try { const q = normalize(new URLSearchParams(location.search).get('lang')); if (q) return q; } catch { /* sin URLSearchParams */ }
+  if (location.pathname.includes('/tips/') && document.documentElement.lang) {
+    const docLang = normalize(document.documentElement.lang);
+    if (docLang) return docLang;
+  }
   try { const s = normalize(localStorage.getItem(UI_KEY)) || normalize(localStorage.getItem('jw_lang')); if (s) return s; } catch { /* almacenamiento bloqueado */ }
   return normalize(navigator.language) || 'es';
 }
