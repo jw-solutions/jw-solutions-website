@@ -845,6 +845,41 @@ def write_dev_runtime(matrix: dict) -> None:
     print(f"[dev] {path.relative_to(ROOT)}: {len(active)} funciones activas (free + pay)")
 
 
+def inject_tips_fallback(root: Path) -> int:
+    """Inyecta tarjetas SEO estáticas de todos los tips publicados en tools/code-formatter/index.html."""
+    index_path = root / "tools" / "code-formatter" / "index.html"
+    if not index_path.is_file() or not TIPS_MANIFEST.is_file():
+        return 0
+    manifest = json.loads(TIPS_MANIFEST.read_text(encoding="utf-8"))
+    tips = list(reversed(manifest.get("tips", [])))
+    cards = []
+    for tip in tips:
+        cat_path = TIP_CATEGORY_PATH.get(tip.get("language", "python"), "tips/python/")
+        slug = escape(tip.get("slug", ""))
+        title = escape(tip.get("title", slug))
+        lang_label = escape(str(tip.get("language", "")).upper())
+        pub = escape(str(tip.get("published_at", "")))
+        href = f"{cat_path}{slug}/es/"
+        cards.append(
+            f'          <article class="cf-card cf-tip-carousel-card">\n'
+            f'            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">{lang_label}</span>'
+            f'<time class="cf-tip-carousel-card__date" datetime="{pub}">{pub}</time></div>\n'
+            f'            <h3 class="cf-tip-carousel-card__title"><a href="{href}">{title}</a></h3>\n'
+            f'          </article>'
+        )
+    block = "<!-- CF_TIPS_FALLBACK_START -->\n" + "\n".join(cards) + "\n          <!-- CF_TIPS_FALLBACK_END -->"
+    html = index_path.read_text(encoding="utf-8")
+    updated, count = re.subn(
+        r"<!-- CF_TIPS_FALLBACK_START -->[\s\S]*?<!-- CF_TIPS_FALLBACK_END -->",
+        block,
+        html,
+        count=1,
+    )
+    if count and updated != html:
+        index_path.write_text(updated, encoding="utf-8")
+    return len(cards)
+
+
 def build_public(matrix: dict) -> int:
     free = [f for f in matrix["features"] if f["tier"] == "free" and f["status"] == "ready"]
     pay_files = {p for f in matrix["features"] if f["tier"] == "pay" for p in f["files"]}
@@ -853,6 +888,7 @@ def build_public(matrix: dict) -> int:
     tips_dir = ROOT / "content" / "code-formatter-tips"
     to_copy.append("content/code-formatter-tips/code-formatter-manifest.json")
     to_copy += [f"content/code-formatter-tips/published/{m.name}" for m in sorted((tips_dir / "published").glob("*.md"))]
+    inject_tips_fallback(ROOT)
     to_copy += write_fix_pages(ROOT)  # landings /fix/ (se generan en el repo: GitHub Pages sirve la raíz)
     to_copy += write_tip_pages(ROOT)  # páginas estáticas localizadas de tips
     to_copy += write_rss_feeds(ROOT)  # feeds RSS multilingües

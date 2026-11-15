@@ -15,6 +15,20 @@ applyI18n();
 await setupLangSelector(document.getElementById('cf-ui-lang'), { reactive: true }); // cambio de idioma sin recargar (evento cf:lang)
 try { (await import('./embed.js')).initEmbedModal(); } catch (err) { console.warn('[code-formatter] embebido no iniciado:', err.message); }
 try { (await import('./newsletter.js')).initNewsletter(); } catch (err) { console.warn('[code-formatter] newsletter no iniciado:', err.message); }
+document.addEventListener('cf:load-snippet', (e) => {
+  const { lang, code } = e.detail || {};
+  if (typeof code !== 'string') return;
+  const sel = document.getElementById('cf-language');
+  const det = document.getElementById('cf-detected');
+  if (sel && [...sel.options].some((o) => o.value === lang)) {
+    sel.value = lang;
+    if (det) det.hidden = true;
+    setLanguage(lang);
+  }
+  view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: code } });
+  document.getElementById('cf-editor')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  view.focus();
+});
 await featuresReady; // el inventario free/pay decide qué controles existen
 
 // Módulos de funciones opcionales: se importan solo si la función está activa (en dist-public pueden no existir).

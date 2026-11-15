@@ -14,6 +14,7 @@
     "assets/js/tools/code-formatter/ui-controller.js",
     "assets/js/tools/code-formatter/i18n.js",
     "assets/js/tools/code-formatter/newsletter.js",
+    "assets/js/tools/code-formatter/tips-carousel.js",
     "assets/js/tools/code-formatter/tips-page.js",
     "tools/code-formatter/tips/python/index.html",
     "tools/code-formatter/tips/javascript/index.html",
