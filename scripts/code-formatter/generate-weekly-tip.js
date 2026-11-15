@@ -40,7 +40,7 @@ const LANG_STANDARDS = {
 
 const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite'];
 const RETRYABLE_STATUSES = new Set([404, 429, 500, 502, 503, 504]);
-const REQUEST_TIMEOUT_MS = 120000;
+const REQUEST_TIMEOUT_MS = 180000;
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const MIN_WORDS = 350;
 
@@ -224,14 +224,14 @@ function buildPrompt({ progLang, slot, existingTitles, existingSlugs, fixes, seo
     `}`,
     ``,
     `Reglas estrictas:`,
-    `1. Cada idioma en "locales" DEBE tener >= ${MIN_WORDS} palabras en "body_markdown" y entre 2 y 3 elementos en "faq" ({ "q", "a" }).`,
+    `1. Cada idioma en "locales" DEBE tener entre 420 y 550 palabras en "body_markdown" (OBLIGATORIO >= ${MIN_WORDS} palabras en TODOS los idiomas, incluidos pt-BR, pt-PT, fr, de, it) y entre 2 y 3 elementos en "faq" ({ "q", "a" }).`,
     `2. Usa Markdown estándar (## encabezados, listas -, bloques \`\`\`${progLang} ... \`\`\`) con un ejemplo claro "Antes" y "Después" y sección de Auto-Documentación.`,
-    `3. NO incluyas frontmatter YAML dentro de "body_markdown".`,
+    `3. NO incluyas frontmatter YAML dentro de "body_markdown". Escapa correctamente comillas dobles (\\") y saltos de línea (\\n) en el JSON.`,
     `4. "meta_description" debe tener entre 130 y 165 caracteres optimizados para CTR.`
   ].join('\n');
 }
 
-async function callGemini(apiKey, prompt) {
+async function callGemini(apiKey, prompt, validator = null) {
   const payload = {
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
     generationConfig: { responseMimeType: 'application/json', temperature: 0.65 }
@@ -263,7 +263,9 @@ async function callGemini(apiKey, prompt) {
         const data = await res.json();
         const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!text) throw new Error(`Respuesta vacía de ${model}`);
-        return parseJsonResilient(text);
+        const parsed = parseJsonResilient(text);
+        if (validator) validator(parsed);
+        return parsed;
       } catch (err) {
         lastError = err;
         log('WARN', `Fallo con ${model} (${attempt}/2): ${err.message}`);
@@ -434,9 +436,16 @@ async function main() {
   }
   log('INFO', `Slot=${slot}, lenguaje seleccionado=${progLang}`);
 
+  const validFixSlugs = new Set(ctx.fixes.map((f) => f.slug));
   let rawTip;
+  let validated;
   if (opts.mock) {
     rawTip = JSON.parse(fs.readFileSync(path.resolve(opts.mock), 'utf8'));
+    validated = validateTipPayload(rawTip, {
+      existingSlugs: ctx.slugs,
+      validFixSlugs,
+      expectedLang: progLang
+    });
   } else {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -451,15 +460,14 @@ async function main() {
       fixes: ctx.fixes,
       seoOpportunity: seoOpp ? seoOpp.item : null
     });
-    rawTip = await callGemini(apiKey, prompt);
+    rawTip = await callGemini(apiKey, prompt, (candidate) => {
+      validated = validateTipPayload(candidate, {
+        existingSlugs: ctx.slugs,
+        validFixSlugs,
+        expectedLang: progLang
+      });
+    });
   }
-
-  const validFixSlugs = new Set(ctx.fixes.map((f) => f.slug));
-  const validated = validateTipPayload(rawTip, {
-    existingSlugs: ctx.slugs,
-    validFixSlugs,
-    expectedLang: progLang
-  });
   const files = writeTipDrafts(validated);
   if (seoOpp && !opts.mock) {
     markSeoOpportunityPublished(SEO_OPPORTUNITIES_FILE, seoOpp.index, validated.slug);
