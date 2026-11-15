@@ -1,0 +1,90 @@
+{
+  "slug": "php-83-typed-properties-enums-psr12-refactoring",
+  "language": "php",
+  "generated_at": "2026-11-15T18:44:29.510Z",
+  "daily_dev_squad": {
+    "squad_url": "https://dly.to/nmdN9vQObOU",
+    "en": {
+      "title": "PHP 8.3 and PSR-12: Refactoring Legacy Code with Typed Properties and Enums",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=php-83-typed-properties-enums-psr12-refactoring",
+      "post_markdown": "Learn to modernize legacy PHP code to PHP 8.3 using typed properties, strict enums, and PSR-12 compliance to boost readability and maintainability.\n\n```php\n// BEFORE: Fragile and untyped legacy code\nclass UserManager {\n    public function processUser($data) {\n        $user = [];\n        $user['name'] = $data['name'];\n        $user['status'] = $data['status']; // Is it 'active', 'pending', or a number?\n        return $user;\n    }\n}\n```\n```php\n// AFTER: Robust code using PHP 8.3, Enums, and PSR-12\ndeclare(strict_types=1);\n\nnamespace JWSolutions\\Formatting;\n\nenum UserStatus: string {\n    case ACTIVE = 'active';\n    case PENDING = 'pending';\n}\n\nreadonly class UserProfile\n{\n    public function __construct(\n        public string $name,\n        public UserStatus $status\n    ) {}\n}\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=php-83-typed-properties-enums-psr12-refactoring\n#php #CleanCode #DevTools"
+    },
+    "es": {
+      "title": ">-",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=php-83-typed-properties-enums-psr12-refactoring",
+      "post_markdown": "Aprende a modernizar código PHP legado a PHP 8.3 utilizando typed properties, enums estrictos y cumpliendo con PSR-12 para mejorar legibilidad y mantenibilidad.\n\n```php\n// ANTES: Código legado frágil y sin tipado\nclass UserManager {\n    public function processUser($data) {\n        $user = [];\n        $user['name'] = $data['name'];\n        $user['status'] = $data['status']; // ¿Es 'active', 'pending' o un número?\n        return $user;\n    }\n}\n```\n```php\n// DESPUÉS: Código robusto con PHP 8.3, Enums y PSR-12\ndeclare(strict_types=1);\n\nnamespace JWSolutions\\Formatting;\n\nenum UserStatus: string {\n    case ACTIVE = 'active';\n    case PENDING = 'pending';\n}\n\nreadonly class UserProfile\n{\n    public function __construct(\n        public string $name,\n        public UserStatus $status\n    ) {}\n}\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=php-83-typed-properties-enums-psr12-refactoring\n#php #Programación #CódigoLimpio"
+    }
+  },
+  "locales": {
+    "en": {
+      "title": "PHP 8.3 and PSR-12: Refactoring Legacy Code with Typed Properties and Enums",
+      "communities": [
+        "Reddit: r/PHP",
+        "Reddit: r/webdev",
+        "Medium (Importar URL canónica)"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/en/?utm_source=reddit&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring",
+      "hashtags": "#php #CleanCode #DevTools",
+      "post_markdown": "Learn to modernize legacy PHP code to PHP 8.3 using typed properties, strict enums, and PSR-12 compliance to boost readability and maintainability.\n\n```php\n// BEFORE: Fragile and untyped legacy code\nclass UserManager {\n    public function processUser($data) {\n        $user = [];\n        $user['name'] = $data['name'];\n        $user['status'] = $data['status']; // Is it 'active', 'pending', or a number?\n        return $user;\n    }\n}\n```\n```php\n// AFTER: Robust code using PHP 8.3, Enums, and PSR-12\ndeclare(strict_types=1);\n\nnamespace JWSolutions\\Formatting;\n\nenum UserStatus: string {\n    case ACTIVE = 'active';\n    case PENDING = 'pending';\n}\n\nreadonly class UserProfile\n{\n    public function __construct(\n        public string $name,\n        public UserStatus $status\n    ) {}\n}\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/en/?utm_source=reddit&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring\n#php #CleanCode #DevTools"
+    },
+    "es": {
+      "title": ">-",
+      "communities": [
+        "Reddit: r/programacion",
+        "Menéame"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/es/?utm_source=reddit&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring",
+      "hashtags": "#php #Programación #CódigoLimpio",
+      "post_markdown": "Aprende a modernizar código PHP legado a PHP 8.3 utilizando typed properties, enums estrictos y cumpliendo con PSR-12 para mejorar legibilidad y mantenibilidad.\n\n```php\n// ANTES: Código legado frágil y sin tipado\nclass UserManager {\n    public function processUser($data) {\n        $user = [];\n        $user['name'] = $data['name'];\n        $user['status'] = $data['status']; // ¿Es 'active', 'pending' o un número?\n        return $user;\n    }\n}\n```\n```php\n// DESPUÉS: Código robusto con PHP 8.3, Enums y PSR-12\ndeclare(strict_types=1);\n\nnamespace JWSolutions\\Formatting;\n\nenum UserStatus: string {\n    case ACTIVE = 'active';\n    case PENDING = 'pending';\n}\n\nreadonly class UserProfile\n{\n    public function __construct(\n        public string $name,\n        public UserStatus $status\n    ) {}\n}\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/es/?utm_source=reddit&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring\n#php #Programación #CódigoLimpio"
+    },
+    "pt-BR": {
+      "title": "PHP 8.3 e PSR-12: Refatorando Código Legado com Typed Properties e Enums",
+      "communities": [
+        "TabNews (tabnews.com.br)",
+        "Reddit: r/brdev"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring",
+      "hashtags": "#php #Programação #CódigoLimpo",
+      "post_markdown": "Aprenda a modernizar código PHP legado para PHP 8.3 usando typed properties, enums estritos e conformidade com PSR-12 para legibilidade e manutenção.\n\n```php\n// ANTES: Código legado frágil e sem tipagem\nclass UserManager {\n    public function processUser($data) {\n        $user = [];\n        $user['name'] = $data['name'];\n        $user['status'] = $data['status']; // É 'active', 'pending' ou um número?\n        return $user;\n    }\n}\n```\n```php\n// DEPOIS: Código robusto com PHP 8.3, Enums e PSR-12\ndeclare(strict_types=1);\n\nnamespace JWSolutions\\Formatting;\n\nenum UserStatus: string {\n    case ACTIVE = 'active';\n    case PENDING = 'pending';\n}\n\nreadonly class UserProfile\n{\n    public function __construct(\n        public string $name,\n        public UserStatus $status\n    ) {}\n}\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring\n#php #Programação #CódigoLimpo"
+    },
+    "pt-PT": {
+      "title": "PHP 8.3 e PSR-12: Refatorizar Código Legado com Typed Properties e Enums",
+      "communities": [
+        "Reddit: r/devpt"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring",
+      "hashtags": "#php #Programação #CódigoLimpo",
+      "post_markdown": "Aprenda a modernizar código PHP legado para PHP 8.3 usando typed properties, enums estritos e conformidade com PSR-12 para legibilidade e manutenção.\n\n```php\n// ANTES: Código legado frágil e sem tipagem\nclass UserManager {\n    public function processUser($data) {\n        $user = [];\n        $user['name'] = $data['name'];\n        $user['status'] = $data['status']; // É 'active', 'pending' ou um número?\n        return $user;\n    }\n}\n```\n```php\n// DEPOIS: Código robusto com PHP 8.3, Enums e PSR-12\ndeclare(strict_types=1);\n\nnamespace JWSolutions\\Formatting;\n\nenum UserStatus: string {\n    case ACTIVE = 'active';\n    case PENDING = 'pending';\n}\n\nreadonly class UserProfile\n{\n    public function __construct(\n        public string $name,\n        public UserStatus $status\n    ) {}\n}\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring\n#php #Programação #CódigoLimpo"
+    },
+    "fr": {
+      "title": ">-",
+      "communities": [
+        "Developpez.com",
+        "Reddit: r/developpeurs"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/fr/?utm_source=reddit&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring",
+      "hashtags": "#php #Développement #CleanCode",
+      "post_markdown": "Apprenez à moderniser du code PHP hérité vers PHP 8.3 en utilisant des propriétés typées, des enums stricts et les normes PSR-12 pour une maintenabilité accrue.\n\n```php\n// AVANT : Code hérité fragile et non typé\nclass UserManager {\n    public function processUser($data) {\n        $user = [];\n        $user['name'] = $data['name'];\n        $user['status'] = $data['status']; // Est-ce 'active', 'pending' ou un chiffre ?\n        return $user;\n    }\n}\n```\n```php\n// APRÈS : Code robuste avec PHP 8.3, Enums et PSR-12\ndeclare(strict_types=1);\n\nnamespace JWSolutions\\Formatting;\n\nenum UserStatus: string {\n    case ACTIVE = 'active';\n    case PENDING = 'pending';\n}\n\nreadonly class UserProfile\n{\n    public function __construct(\n        public string $name,\n        public UserStatus $status\n    ) {}\n}\n```\n\nGuide complet et bac à sable interactif: https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/fr/?utm_source=reddit&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring\n#php #Développement #CleanCode"
+    },
+    "de": {
+      "title": "PHP 8.3 und PSR-12: Refactoring von Alcode mit Typed Properties und Enums",
+      "communities": [
+        "Heise Developer / iX",
+        "Reddit: r/de_EDV"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/de/?utm_source=reddit&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring",
+      "hashtags": "#php #CleanCode #Entwicklung",
+      "post_markdown": "Erfahren Sie, wie Sie alten PHP-Code auf PHP 8.3 mit Typed Properties, strikten Enums und PSR-12-Konformität modernisieren, um die Lesbarkeit zu verbessern.\n\n```php\n// VORHER: Fragiler und untypisierter Legacy-Code\nclass UserManager {\n    public function processUser($data) {\n        $user = [];\n        $user['name'] = $data['name'];\n        $user['status'] = $data['status']; // Ist es 'active', 'pending' oder eine Zahl?\n        return $user;\n    }\n}\n```\n```php\n// NACHHER: Robustes Code mit PHP 8.3, Enums und PSR-12\ndeclare(strict_types=1);\n\nnamespace JWSolutions\\Formatting;\n\nenum UserStatus: string {\n    case ACTIVE = 'active';\n    case PENDING = 'pending';\n}\n\nreadonly class UserProfile\n{\n    public function __construct(\n        public string $name,\n        public UserStatus $status\n    ) {}\n}\n```\n\nVollständiger Leitfaden & interaktive Sandbox: https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/de/?utm_source=reddit&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring\n#php #CleanCode #Entwicklung"
+    },
+    "it": {
+      "title": "PHP 8.3 e PSR-12: Refactoring di Codice Legacy con Typed Properties ed Enums",
+      "communities": [
+        "HTML.it",
+        "Reddit: r/ItalyInformatica"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/it/?utm_source=reddit&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring",
+      "hashtags": "#php #Sviluppo #CleanCode",
+      "post_markdown": "Scopri come modernizzare il codice PHP legacy a PHP 8.3 utilizzando typed properties, enum rigorosi e conformità PSR-12 per migliorare leggibilità e manutenzione.\n\n```php\n// PRIMA: Codice legacy fragile e non tipizzato\nclass UserManager {\n    public function processUser($data) {\n        $user = [];\n        $user['name'] = $data['name'];\n        $user['status'] = $data['status']; // È 'active', 'pending' o un numero?\n        return $user;\n    }\n}\n```\n```php\n// DOPO: Codice robusto con PHP 8.3, Enums e PSR-12\ndeclare(strict_types=1);\n\nnamespace JWSolutions\\Formatting;\n\nenum UserStatus: string {\n    case ACTIVE = 'active';\n    case PENDING = 'pending';\n}\n\nreadonly class UserProfile\n{\n    public function __construct(\n        public string $name,\n        public UserStatus $status\n    ) {}\n}\n```\n\nGuida completa e sandbox interattivo: https://jw-solutions.com/tools/code-formatter/tips/php/php-83-typed-properties-enums-psr12-refactoring/it/?utm_source=reddit&utm_medium=community&utm_campaign=php-83-typed-properties-enums-psr12-refactoring\n#php #Sviluppo #CleanCode"
+    }
+  }
+}

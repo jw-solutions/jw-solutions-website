@@ -703,7 +703,7 @@
       ],
       "date": "2026-11-15",
       "published_at": "2026-11-15",
-      "status": "COMPILED",
+      "status": "DEPLOYED",
       "locales": [
         "es",
         "de",
@@ -823,6 +823,30 @@
           ],
           "file": "published/php-83-typed-properties-enums-psr12-refactoring.pt-PT.md",
           "sha256": "e859e0e5036f4336f92a5ee8413454717adc6366abd6634049d1f7b0719fa928"
+        }
+      },
+      "deployed_at": "2026-11-15T18:44:23.047Z",
+      "indexnow_pinged_at": "2026-11-15T18:44:23.699Z",
+      "syndication": {
+        "devto": {
+          "status": "published",
+          "id": 5043105,
+          "url": "https://dev.to/jwsolutions/php-83-and-psr-12-refactoring-legacy-code-with-typed-properties-and-enums-48p4",
+          "publishedAt": "2026-11-15T18:44:24.134Z"
+        },
+        "social": {
+          "discord": {
+            "status": "published",
+            "messageId": "1571596759447117918",
+            "publishedAt": "2026-11-15T18:44:26.455Z"
+          },
+          "github_discussions": {
+            "status": "published",
+            "id": "D_kwDOSheTeM4ArK6T",
+            "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/21",
+            "number": 21,
+            "publishedAt": "2026-11-15T18:44:29.459Z"
+          }
         }
       }
     }
