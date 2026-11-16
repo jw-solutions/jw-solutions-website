@@ -363,8 +363,15 @@ def test_imap_dual_binance_forwarded_paypal_and_dkim_rejection(db_session: Sessi
     assert analysis_fwd.parsed.amount == Decimal("30.00")
 
 
-@pytest.mark.anyio
-async def test_crypto_webhook_hmac_validation_tolerance_and_idempotency(db_session: Session):
+def _run_sync(coro):
+    try:
+        coro.send(None)
+    except StopIteration as exc:
+        return exc.value
+    raise AssertionError("Corrutina suspendida inesperadamente")
+
+
+def test_crypto_webhook_hmac_validation_tolerance_and_idempotency(db_session: Session):
     from fastapi import HTTPException
     import app.api.payments as payments_api
 
@@ -397,15 +404,15 @@ async def test_crypto_webhook_hmac_validation_tolerance_and_idempotency(db_sessi
 
         # Firma inválida -> 401
         with pytest.raises(HTTPException) as exc:
-            await payments_api.crypto_webhook(_FakeRequest(raw_body, "deadbeef"), db=db_session)
+            _run_sync(payments_api.crypto_webhook(_FakeRequest(raw_body, "deadbeef"), db=db_session))
         assert exc.value.status_code == 401
 
         # Firma válida -> 200 y activa la orden
-        ok = await payments_api.crypto_webhook(_FakeRequest(raw_body, valid_sig), db=db_session)
+        ok = _run_sync(payments_api.crypto_webhook(_FakeRequest(raw_body, valid_sig), db=db_session))
         assert ok["activated"] is True
 
         # Reintento idempotente -> no acredita dos veces
-        dup = await payments_api.crypto_webhook(_FakeRequest(raw_body, valid_sig), db=db_session)
+        dup = _run_sync(payments_api.crypto_webhook(_FakeRequest(raw_body, valid_sig), db=db_session))
         assert dup["activated"] is False
     finally:
         payments_api.get_settings = orig_get_settings
