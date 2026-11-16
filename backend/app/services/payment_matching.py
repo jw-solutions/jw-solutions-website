@@ -1,18 +1,20 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
 from app.core.logging import get_logger
 from app.models.payment import STATUS_PENDING_REVIEW, PaymentReport
 from app.models.payment_evidence import PaymentEvidence
+from app.models.payment_order import ORDER_STATUS_CANDIDATE, ORDER_STATUS_PENDING, PaymentOrder
 from app.services.notification_service import enqueue
+from app.services.order_service import activate_paid_order
 
 log = get_logger("JW-IMAP")
 
@@ -110,6 +112,47 @@ def reconcile_evidence(session: Session, evidence_id: Any, settings: Settings) -
         evidence.notes = "parse incompleto: requiere revisión manual"
         _alert(session, evidence, "MANUAL_REVIEW", evidence.notes)
         return evidence.match_status
+
+    # Primero intentar conciliación contra órdenes multicanal (payment_orders)
+    order_filters = []
+    if evidence.reference_code:
+        order_filters.append(PaymentOrder.order_code == evidence.reference_code)
+    if evidence.transaction_id:
+        order_filters.append(func.lower(PaymentOrder.reported_txid) == _norm_tx(evidence.transaction_id))
+
+    if order_filters:
+        now = datetime.now(timezone.utc)
+        order = session.execute(
+            select(PaymentOrder)
+            .where(
+                or_(*order_filters),
+                PaymentOrder.status.in_((ORDER_STATUS_PENDING, ORDER_STATUS_CANDIDATE)),
+            )
+            .with_for_update()
+        ).scalars().first()
+        if order is not None:
+            exp = order.expires_at if order.expires_at.tzinfo else order.expires_at.replace(tzinfo=timezone.utc)
+            if exp > now and evidence.amount is not None and Decimal(evidence.amount) == Decimal(order.amount_usd):
+                if settings.auto_activate_verified_p2p:
+                    activate_paid_order(
+                        session,
+                        order_id=order.id,
+                        channel=order.channel,
+                        external_txid=evidence.transaction_id,
+                        paid_amount=Decimal(evidence.amount),
+                        allow_fee_tolerance=False,
+                        approved_by="imap_auto",
+                        now=now,
+                    )
+                    evidence.match_status = "VERIFIED"
+                    evidence.matched_order_id = order.id
+                    return "VERIFIED"
+            order.status = ORDER_STATUS_CANDIDATE
+            evidence.match_status = "MANUAL_REVIEW"
+            evidence.matched_order_id = order.id
+            evidence.notes = "discrepancia de monto o vigencia en orden"
+            _alert(session, evidence, "MANUAL_REVIEW", evidence.notes)
+            return "MANUAL_REVIEW"
 
     reports = list(
         session.execute(

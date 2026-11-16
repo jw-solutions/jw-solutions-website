@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import hashlib
+import hmac
 import uuid
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import func, select, text, update
+from sqlalchemy import func, or_, select, text, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -11,6 +13,7 @@ from app.core.config import Settings
 from app.models.account import Account
 from app.models.payment import STATUS_APPROVED, STATUS_PENDING_REVIEW, PaymentReport
 from app.models.payment_evidence import PaymentEvidence
+from app.models.payment_order import TrialUsage
 from app.models.subscription import Subscription
 from app.services.notification_service import enqueue
 
@@ -160,3 +163,153 @@ def has_active_pro(session: Session, account_id: uuid.UUID, now: datetime | None
             .where(Subscription.account_id == account_id, Subscription.status == "ACTIVE", Subscription.expires_at > now)
         ).scalar_one()
     )
+
+
+class TrialAlreadyUsedError(ApprovalError):
+    """El usuario, email normalizado, IP o dispositivo ya usó el bono Trial de 7 días."""
+
+
+def normalize_email(email: str) -> str:
+    """Normaliza correos (puntos y +tag en gmail.com/googlemail.com) para bloqueo anti-abuso."""
+    cleaned = str(email or "").strip().lower()
+    if "@" not in cleaned:
+        return cleaned
+    local, domain = cleaned.rsplit("@", 1)
+    if domain in ("gmail.com", "googlemail.com"):
+        local = local.split("+", 1)[0].replace(".", "")
+        domain = "gmail.com"
+    return f"{local}@{domain}"
+
+
+def hash_identifier(secret: str, value: str) -> str:
+    return hmac.new(secret.encode("utf-8"), value.encode("utf-8"), hashlib.sha256).hexdigest()
+
+
+def grant_subscription_days(
+    db: Session,
+    account_id: uuid.UUID,
+    days: int,
+    *,
+    plan_id: str = "pro",
+    approved_by: str = "system_auto",
+    payment_order_id: uuid.UUID | None = None,
+    now: datetime | None = None,
+) -> Subscription:
+    """Acredita días acumulativos sobre la suscripción activa usando SELECT ... FOR UPDATE."""
+    if days <= 0:
+        raise ValueError("days debe ser positivo")
+    now = now or datetime.now(timezone.utc)
+
+    # Bloqueo transaccional de cuenta y suscripciones activas para evitar carreras.
+    db.execute(select(Account).where(Account.account_id == account_id).with_for_update()).scalar_one()
+    active_subs = list(
+        db.execute(
+            select(Subscription)
+            .where(
+                Subscription.account_id == account_id,
+                Subscription.status == "ACTIVE",
+                Subscription.expires_at > now,
+            )
+            .with_for_update()
+        ).scalars()
+    )
+    current_expires = now
+    for sub in active_subs:
+        exp = sub.expires_at if sub.expires_at.tzinfo else sub.expires_at.replace(tzinfo=timezone.utc)
+        if exp > current_expires:
+            current_expires = exp
+
+    base_time = max(current_expires, now)
+    new_expires_at = base_time + timedelta(days=days)
+    subscription = Subscription(
+        account_id=account_id,
+        plan_id=plan_id,
+        status="ACTIVE",
+        starts_at=base_time,
+        expires_at=new_expires_at,
+        payment_order_id=payment_order_id,
+        approved_by=approved_by,
+        approved_at=now,
+    )
+    db.add(subscription)
+    db.flush()
+
+    db.execute(
+        update(Account).where(Account.account_id == account_id, Account.status == "active").values(plan="pro")
+    )
+    return subscription
+
+
+def activate_trial_7d(
+    db: Session,
+    settings: Settings,
+    *,
+    account: Account,
+    client_ip_addr: str,
+    device_fingerprint: str,
+    now: datetime | None = None,
+) -> Subscription:
+    """Activa el bono Trial Pro de 7 días con blindaje anti-abuso multicapa."""
+    now = now or datetime.now(timezone.utc)
+    secret = settings.session_secret.get_secret_value()
+    norm_email = normalize_email(account.email)
+    ip_hash = hash_identifier(secret, (client_ip_addr or "unknown").strip())
+    fp_hash = hash_identifier(secret, (device_fingerprint or "unknown").strip())
+    ip_cutoff = now - timedelta(days=90)
+
+    # Verificar si ya tuvo alguna suscripción previa (de pago o trial).
+    prior_sub_count = db.execute(
+        select(func.count()).select_from(Subscription).where(Subscription.account_id == account.account_id)
+    ).scalar_one()
+    if prior_sub_count > 0:
+        raise TrialAlreadyUsedError("TRIAL_ALREADY_USED")
+
+    # Verificar uso previo por cuenta, email normalizado, IP (últimos 90 días) o huella de dispositivo.
+    existing = db.execute(
+        select(TrialUsage.id).where(
+            or_(
+                TrialUsage.account_id == account.account_id,
+                TrialUsage.normalized_email == norm_email,
+                (TrialUsage.ip_hash == ip_hash) & (TrialUsage.granted_at >= ip_cutoff),
+                TrialUsage.device_fingerprint_hash == fp_hash,
+            )
+        )
+    ).first()
+    if existing is not None:
+        raise TrialAlreadyUsedError("TRIAL_ALREADY_USED")
+
+    expires_at = now + timedelta(days=7)
+    trial_row = TrialUsage(
+        account_id=account.account_id,
+        normalized_email=norm_email,
+        ip_hash=ip_hash,
+        device_fingerprint_hash=fp_hash,
+        granted_at=now,
+        expires_at=expires_at,
+    )
+    try:
+        with db.begin_nested():
+            db.add(trial_row)
+            db.flush()
+    except IntegrityError:
+        raise TrialAlreadyUsedError("TRIAL_ALREADY_USED") from None
+
+    subscription = grant_subscription_days(
+        db,
+        account.account_id,
+        7,
+        plan_id="trial_7d",
+        approved_by="trial_auto",
+        now=now,
+    )
+    enqueue(
+        db,
+        "trial_activated",
+        {
+            "to": account.email,
+            "plan_id": "trial_7d",
+            "expires_at": subscription.expires_at.isoformat(),
+        },
+        idempotency_key=f"trial_activated:{account.account_id}",
+    )
+    return subscription

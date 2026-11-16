@@ -9,7 +9,7 @@ from app.core.config import get_settings
 UNSAFE_METHODS = frozenset({"POST", "PUT", "PATCH", "DELETE"})
 
 # Rutas de webhook exentas de Origin (se autentican con token/firma propia en el endpoint).
-WEBHOOK_PATHS: frozenset[str] = frozenset({"/api/newsletter/broadcast"})
+WEBHOOK_PATHS: frozenset[str] = frozenset({"/api/newsletter/broadcast", "/api/webhooks/crypto", "/api/webhooks/kofi"})
 
 
 def check_origin(method: str, path: str, origin: str | None, allowed: Collection[str]) -> None:

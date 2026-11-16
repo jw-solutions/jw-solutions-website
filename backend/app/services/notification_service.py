@@ -106,6 +106,38 @@ def render(event_type: str, payload: dict[str, Any], settings: Settings) -> tupl
         )
         return clean(payload["to"], 254), "Suscripción PRO activada", body
 
+    if event_type == "trial_activated":
+        body = "\n".join(
+            [
+                "¡Bienvenido a JW Solutions PRO! Tu prueba gratuita de 7 días está activa.",
+                "",
+                f"Vigente hasta: {_fmt_date(payload['expires_at'])}",
+                "",
+                "Disfruta todos los niveles de la Academia, Tutor IA y documentación ampliada.",
+                "Gracias por utilizar JW Solutions.",
+            ]
+        )
+        return clean(payload["to"], 254), "Tu prueba gratuita PRO de 7 días está activa", body
+
+    if event_type == "order_paid":
+        body = "\n".join(
+            [
+                "Tu orden de pago fue verificada automáticamente y los días fueron acreditados a tu cuenta.",
+                "",
+                f"Orden: {clean(payload.get('order_code'))}",
+                f"Canal: {clean(payload.get('channel'))}",
+                f"Plan: {clean(payload.get('plan_id'))} (+{clean(payload.get('days'))} días)",
+                f"Vigente hasta: {_fmt_date(payload['expires_at'])}",
+                "",
+                "Gracias por utilizar JW Solutions.",
+            ]
+        )
+        return clean(payload["to"], 254), f"Pago confirmado · Orden {clean(payload.get('order_code'))}", body
+
+    if event_type == "order_candidate_alert":
+        lines = [f"{k}: {clean(v)}" for k, v in sorted(payload.items())]
+        return settings.mail_to, f"[JW Payments] Orden pendiente de revisión ({clean(payload.get('order_code'))})", "\n".join(lines)
+
     if event_type == "payment_report_created":
         lines = [f"{k}: {clean(v)}" for k, v in sorted(payload.items())]
         return settings.mail_to, "[JW Payments] Nuevo reporte de pago pendiente de revisión", "\n".join(lines)

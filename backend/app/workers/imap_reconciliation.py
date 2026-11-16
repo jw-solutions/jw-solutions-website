@@ -37,7 +37,7 @@ from app.security.email_authentication import (
     sender_address,
     strip_quote_prefix,
 )
-from app.services.binance_parser import ParsedPayment, extract_text, parse_payment_text
+from app.services.binance_parser import ParsedPayment, extract_text, parse_payment_text, parse_paypal_text
 from app.services.notification_service import enqueue
 from app.services.payment_matching import reconcile_evidence, reconcile_unmatched
 
@@ -116,12 +116,14 @@ def analyze_message(raw: bytes, settings: Settings, now: datetime | None = None)
     except Exception:  # noqa: BLE001 - un correo malformado se registra, no se descarta
         return AnalyzedMessage(UNKNOWN_SENDER, None, sha, AUTH_NONE, "QUARANTINED", now, None, "malformed_message", False, False)
 
-    is_direct = sender in settings.sender_allowlist
+    is_direct_binance = sender in settings.sender_allowlist
+    is_direct_paypal = sender in settings.paypal_sender_allowlist
+    is_direct = is_direct_binance or is_direct_paypal
     is_forwarder = not is_direct and sender in settings.forwarder_allowlist
     if not is_direct and not is_forwarder:
         return AnalyzedMessage(sender[:254], message_id, sha, AUTH_NONE, "QUARANTINED", received_at, None, "sender_not_allowlisted", False, False)
 
-    # Directo: se autentica el From de Binance. Reenviado: se autentica el reenviador (su From) en nuestro servidor receptor.
+    # Directo: se autentica el From de Binance/PayPal. Reenviado: se autentica el reenviador en nuestro servidor receptor.
     auth = evaluate_authentication(msg, settings.trusted_authserv_id)
     if auth.status != AUTH_PASS:
         return AnalyzedMessage(
@@ -130,14 +132,16 @@ def analyze_message(raw: bytes, settings: Settings, now: datetime | None = None)
 
     text = extract_text(msg)
     forward_note = None
+    is_paypal = is_direct_paypal
     if is_forwarder:
         origin = forwarded_origin(msg, text)
-        if origin.sender not in settings.sender_allowlist:
-            # Reenviador autenticado pero el original no es de Binance (u opaco): se registra sin alerta.
+        if origin.sender not in settings.sender_allowlist and origin.sender not in settings.paypal_sender_allowlist:
+            # Reenviador autenticado pero el original no es de Binance ni PayPal: se registra sin alerta.
             return AnalyzedMessage(
                 sender[:254], message_id, sha, auth.status, "QUARANTINED", received_at, None,
                 f"forwarded_origin_not_allowlisted: {origin.sender or 'unknown'}"[:300], True, False,
             )
+        is_paypal = origin.sender in settings.paypal_sender_allowlist
         if origin.inner is not None:
             # Reenvío como adjunto: conserva las cabeceras originales, incluido el Authentication-Results de nuestro servidor.
             inner_auth = evaluate_authentication(origin.inner, settings.trusted_authserv_id)
@@ -151,7 +155,7 @@ def analyze_message(raw: bytes, settings: Settings, now: datetime | None = None)
             forward_note = f"forwarded_inline_via={sender}"
         text = strip_quote_prefix(text)
 
-    parsed = parse_payment_text(text)
+    parsed = parse_paypal_text(text, received_at=received_at) if is_paypal else parse_payment_text(text)
     notes = ",".join([*parsed.problems, *([forward_note] if forward_note else [])]) or None
     return AnalyzedMessage(sender[:254], message_id, sha, auth.status, parsed.status, received_at, parsed, notes, True, False)
 
@@ -170,6 +174,11 @@ def store_evidence(
             (
                 (PaymentEvidence.mailbox_uidvalidity == uidvalidity) & (PaymentEvidence.mailbox_uid == uid)
                 | (PaymentEvidence.raw_message_sha256 == analysis.sha256)
+                | (
+                    (PaymentEvidence.message_id == analysis.message_id)
+                    if analysis.message_id is not None
+                    else False
+                )
             ),
         )
     ).first()
@@ -177,13 +186,14 @@ def store_evidence(
         return None, analysis
 
     parsed = analysis.parsed
+    provider = parsed.provider if parsed else "BINANCE_PAY"
     transaction_id = parsed.transaction_id if parsed else None
     parse_status, notes = analysis.parse_status, analysis.notes
 
     if transaction_id:
         reused = session.execute(
             select(PaymentEvidence.id).where(
-                PaymentEvidence.provider == "BINANCE_PAY", PaymentEvidence.transaction_id == transaction_id
+                PaymentEvidence.provider == provider, PaymentEvidence.transaction_id == transaction_id
             )
         ).first()
         if reused:  # mismo ID de transacción en otro mensaje: reenvío o intento de reutilización
@@ -197,6 +207,7 @@ def store_evidence(
             )
 
     evidence = PaymentEvidence(
+        provider=provider,
         mailbox=mailbox,
         mailbox_uidvalidity=uidvalidity,
         mailbox_uid=uid,
@@ -208,6 +219,7 @@ def store_evidence(
         amount=parsed.amount if parsed and parse_status != "QUARANTINED" else None,
         asset=parsed.asset if parsed and parse_status != "QUARANTINED" else None,
         recipient_id=parsed.recipient_id if parsed and parse_status != "QUARANTINED" else None,
+        reference_code=parsed.reference_code if parsed and parse_status != "QUARANTINED" else None,
         transferred_at=parsed.transferred_at if parsed and parse_status != "QUARANTINED" else None,
         received_at=analysis.received_at,
         parse_status=parse_status,

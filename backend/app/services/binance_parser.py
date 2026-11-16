@@ -20,11 +20,19 @@ _AMOUNT_VALUE = re.compile(
     r"^(?P<amount>\d{1,3}(?:,\d{3})*(?:\.\d{1,8})?|\d+(?:\.\d{1,8})?)\s*(?P<asset>" + "|".join(ASSETS) + r")$"
 )
 _TRANSACTION = re.compile(
-    r"(?im)^\s*(?:Transaction ID|Payment ID|ID de transacci[oó]n)\s*[:：]\s*(?P<tx>[A-Za-z0-9_-]{8,128})\s*$"
+    r"(?im)^\s*(?:Transaction ID|Payment ID|ID de transacci[oó]n)\s*[:：]\s*(?P<tx>(?:0x[A-Fa-f0-9]{64}|[A-Za-z0-9_-]{8,128}))\s*$"
 )
 _DATE_LABEL = re.compile(r"(?im)^\s*(?:Transaction Time|Payment Time|Fecha de transacci[oó]n)\s*[:：]\s*(?P<raw>.+?)\s*$")
 _DATE_AWARE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$")
 _RECIPIENT = re.compile(r"(?im)^\s*(?:Receiver|Recipient|Destinatario)(?:\s+(?:ID|UID))?\s*[:：]\s*(?P<id>\d{4,20})\s*$")
+_JW_ORDER_CODE = re.compile(r"\b(JW-[A-Z0-9]{9})\b")
+
+_PAYPAL_TX = re.compile(
+    r"(?im)(?:Transaction\s*ID|ID\s*de\s*transacci[oó]n|Receipt\s*No\.?)\s*[:：#]?\s*(?P<tx>[A-Z0-9]{10,30})\b"
+)
+_PAYPAL_AMOUNT = re.compile(
+    r"(?im)(?:Amount|Total|You\s+received|Ha\s+recibido|Importe)\s*[:：]?\s*\$?\s*(?P<amount>\d{1,6}(?:[.,]\d{2})?)\s*(?:USD|\$)?\b"
+)
 
 
 @dataclass
@@ -36,6 +44,8 @@ class ParsedPayment:
     recipient_id: str | None = None
     status: str = "PARTIAL"  # PARSED | PARTIAL | INVALID
     problems: list[str] = field(default_factory=list)
+    provider: str = "BINANCE_PAY"
+    reference_code: str | None = None
 
 
 def extract_text(msg: Message) -> str:
@@ -108,9 +118,46 @@ def parse_payment_text(text: str) -> ParsedPayment:
     if recipient:
         result.recipient_id = recipient.group("id")
 
+    code_match = _JW_ORDER_CODE.search(text)
+    if code_match:
+        result.reference_code = code_match.group(1)
+
     if "invalid_amount" in result.problems or "invalid_date" in result.problems:
         result.status = "INVALID"
     elif result.transaction_id and result.amount is not None and result.asset and result.transferred_at:
+        result.status = "PARSED"
+    else:
+        result.status = "PARTIAL"
+    return result
+
+
+def parse_paypal_text(text: str, received_at: datetime | None = None) -> ParsedPayment:
+    """Extrae TxID, monto USD y código JW-XXXXXXXXX de recibos oficiales de PayPal."""
+    result = ParsedPayment(provider="PAYPAL", asset="USD", transferred_at=received_at)
+
+    tx = _PAYPAL_TX.search(text)
+    if tx:
+        result.transaction_id = tx.group("tx").strip()
+
+    amt = _PAYPAL_AMOUNT.search(text)
+    if amt:
+        raw_amt = amt.group("amount").replace(",", ".")
+        try:
+            value = Decimal(raw_amt)
+            if value > 0:
+                result.amount = value
+            else:
+                result.problems.append("invalid_amount")
+        except InvalidOperation:
+            result.problems.append("invalid_amount")
+
+    code_match = _JW_ORDER_CODE.search(text)
+    if code_match:
+        result.reference_code = code_match.group(1)
+
+    if "invalid_amount" in result.problems:
+        result.status = "INVALID"
+    elif result.transaction_id and result.amount is not None and result.reference_code:
         result.status = "PARSED"
     else:
         result.status = "PARTIAL"

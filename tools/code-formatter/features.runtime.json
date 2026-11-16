@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-16T00:31:15+00:00",
+  "generated": "2026-11-16T02:49:47+00:00",
   "features": [
     {
       "id": "editor",
@@ -58,12 +58,17 @@
     },
     {
       "id": "accounts_auth",
-      "tier": "pay",
+      "tier": "free",
       "active": true
     },
     {
       "id": "academy.core",
       "tier": "free",
+      "active": true
+    },
+    {
+      "id": "academy_pro",
+      "tier": "pay",
       "active": true
     }
   ]

@@ -12,9 +12,64 @@ import {
   evaluateAchievements,
 } from './academy-engine.js';
 import { loadAcademyState, saveAcademyState, captureUtmParams, syncAcademyState } from './academy-progress.js';
+import { apiUrl } from './services/api.js';
 
 const TECHS = ['python', 'javascript', 'typescript', 'sql', 'dax', 'java', 'csharp', 'php', 'json', 'yaml'];
 const ACADEMY_BASE = new URL('../../../../content/code-formatter-academy/', import.meta.url);
+const PENDING_ACTION_KEY = 'cf_pending_action';
+const PENDING_ACTION_TTL_MS = 900000;
+
+export const BUILTIN_FALLBACK_DAILY_CHALLENGE = {
+  id: 'daily-python-clean-sum',
+  tech: 'python',
+  tier: 'free',
+  starter_code: 'def total(items):\n s=0\n for x in items:\n  s+=x\n return s',
+  reference_solution: 'def total(items: list[float]) -> float:\n    """Return the arithmetic sum of numeric items."""\n    if not items:\n        return 0.0\n    return float(sum(items))\n',
+  style_rules: ['pep8_indent_4', 'type_hints', 'docstring'],
+  tests: [
+    { id: 't1', name: 'Basic sum', visible: true, type: 'pattern', expected: 'def total(', description: 'Defines total function' },
+    { id: 't2', name: 'Docstring & typing', visible: true, type: 'pattern', expected: '"""', description: 'Includes PEP 257 docstring' },
+    { id: 't3', name: 'Empty list guard', visible: false, type: 'pattern', expected: 'if not items', description: 'Handles empty collection edge case' },
+  ],
+  i18n: {
+    es: { title: 'Clean & Document: Suma segura en Python', prompt: 'Formatea con 4 espacios, añade type hints, docstring y protege el caso de lista vacía.', hint: 'Usa list[float] -> float y verifica `if not items:`.' },
+    en: { title: 'Clean & Document: Safe Python Sum', prompt: 'Format with 4 spaces, add type hints, a docstring, and guard against empty lists.', hint: 'Use list[float] -> float and check `if not items:`.' },
+    'pt-BR': { title: 'Clean & Document: Soma segura em Python', prompt: 'Formate com 4 espaços, adicione type hints, docstring e proteja contra lista vazia.', hint: 'Use list[float] -> float e verifique `if not items:`.' },
+    'pt-PT': { title: 'Clean & Document: Soma segura em Python', prompt: 'Formate com 4 espaços, adicione type hints, docstring e proteja contra lista vazia.', hint: 'Use list[float] -> float e verifique `if not items:`.' },
+    fr: { title: 'Clean & Document : Somme sûre en Python', prompt: 'Formatez avec 4 espaces, ajoutez des annotations de type, une docstring et gérez la liste vide.', hint: 'Utilisez list[float] -> float et testez `if not items:`.' },
+    de: { title: 'Clean & Document: Sichere Summe in Python', prompt: 'Mit 4 Leerzeichen formatieren, Type Hints, Docstring und Schutz für leere Listen ergänzen.', hint: 'Nutze list[float] -> float und prüfe `if not items:`.' },
+    it: { title: 'Clean & Document: Somma sicura in Python', prompt: 'Formatta con 4 spazi, aggiungi type hint, docstring e gestisci la lista vuota.', hint: 'Usa list[float] -> float e controlla `if not items:`.' },
+  },
+};
+
+function utcDayOfYear(now = new Date()) {
+  const start = Date.UTC(now.getUTCFullYear(), 0, 0);
+  const current = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  return Math.floor((current - start) / 86400000);
+}
+
+export function resolveDailyChallenge(data, lang = 'en', now = new Date()) {
+  const rawList = Array.isArray(data) ? data : (Array.isArray(data?.challenges) ? data.challenges : []);
+  const list = rawList.length ? rawList : [BUILTIN_FALLBACK_DAILY_CHALLENGE];
+  const dayIdx = utcDayOfYear(now) % list.length;
+  const ch = list[dayIdx] || BUILTIN_FALLBACK_DAILY_CHALLENGE;
+  const fbCopy = BUILTIN_FALLBACK_DAILY_CHALLENGE.i18n[lang] || BUILTIN_FALLBACK_DAILY_CHALLENGE.i18n.en;
+  const copy = ch.i18n?.[lang] || ch.i18n?.en || ch.i18n?.es || fbCopy;
+  return {
+    id: ch.id || BUILTIN_FALLBACK_DAILY_CHALLENGE.id,
+    tech: ch.tech || BUILTIN_FALLBACK_DAILY_CHALLENGE.tech,
+    tier: ch.tier || 'free',
+    starter_code: ch.starter_code || BUILTIN_FALLBACK_DAILY_CHALLENGE.starter_code,
+    reference_solution: ch.reference_solution || BUILTIN_FALLBACK_DAILY_CHALLENGE.reference_solution,
+    tests: Array.isArray(ch.tests) && ch.tests.length ? ch.tests : BUILTIN_FALLBACK_DAILY_CHALLENGE.tests,
+    style_rules: Array.isArray(ch.style_rules) ? ch.style_rules : BUILTIN_FALLBACK_DAILY_CHALLENGE.style_rules,
+    copy: {
+      title: copy.title || fbCopy.title,
+      prompt: copy.prompt || fbCopy.prompt,
+      hint: copy.hint || fbCopy.hint,
+    },
+  };
+}
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -330,50 +385,94 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     }
   }
 
-  async function openDailyChallenge() {
+  async function loadDailyChallengesData() {
     try {
-      dailyCache ||= await fetchJson('daily-challenges.json');
-      const list = dailyCache.challenges || [];
-      if (!list.length) return;
-      const dayIdx = Math.floor(Date.now() / 86400000) % list.length;
-      const ch = list[dayIdx];
-      const loc = getUiLang();
-      const copy = ch.i18n?.[loc] || ch.i18n?.es || {};
-      currentPath = '';
-      currentTopic = ch.tech;
-      pathsContainer.hidden = true;
-      workspace.hidden = false;
-      backBtn.hidden = false;
-      if (editorCard && academyEditorSlot && editorCard.parentElement !== academyEditorSlot) {
-        academyEditorSlot.append(editorCard);
-      }
-      const pseudoCurriculum = {
-        tech: ch.tech,
-        standard: t('acadDailyBadge'),
-        levels: [
-          {
-            id: ch.id,
-            level: 1,
-            tier: 'free',
-            title: copy.title,
-            concept_capsule: `${copy.prompt} (${copy.hint})`,
-            starter_code: ch.starter_code,
-            reference_solution: ch.reference_solution,
-            tests: ch.tests,
-            style_rules: ch.style_rules,
-          },
-        ],
-      };
-      currentCurriculum = pseudoCurriculum;
-      activeLevel = pseudoCurriculum.levels[0];
-      syncUrlParams({ mode: 'learn', topic: ch.tech, daily: true });
-      renderSkillTree(pseudoCurriculum);
-      renderMission(activeLevel, pseudoCurriculum.standard);
-      if (setLanguage) setLanguage(ch.tech);
-      if (setCode) setCode(ch.starter_code);
+      return await fetchJson('daily-challenges.json');
     } catch {
-      toast(t('acadLoadError'));
+      try {
+        const res = await fetch('/content/code-formatter-academy/daily-challenges.json', { cache: 'no-cache' });
+        if (res.ok) return await res.json();
+      } catch { /* usa respaldo embebido */ }
+      return { challenges: [BUILTIN_FALLBACK_DAILY_CHALLENGE] };
     }
+  }
+
+  async function openDailyChallenge() {
+    dailyCache ||= await loadDailyChallengesData();
+    const loc = getUiLang();
+    const ch = resolveDailyChallenge(dailyCache, loc);
+    const { copy } = ch;
+    currentPath = '';
+    currentTopic = ch.tech;
+    pathsContainer.hidden = true;
+    workspace.hidden = false;
+    backBtn.hidden = false;
+    if (editorCard && academyEditorSlot && editorCard.parentElement !== academyEditorSlot) {
+      academyEditorSlot.append(editorCard);
+    }
+    const pseudoCurriculum = {
+      tech: ch.tech,
+      isDaily: true,
+      standard: t('acadDailyBadge'),
+      levels: [
+        {
+          id: ch.id,
+          level: 1,
+          tier: 'free',
+          title: copy.title,
+          concept_capsule: `${copy.prompt} (${copy.hint})`,
+          starter_code: ch.starter_code,
+          reference_solution: ch.reference_solution,
+          tests: ch.tests,
+          style_rules: ch.style_rules,
+        },
+      ],
+    };
+    currentCurriculum = pseudoCurriculum;
+    activeLevel = pseudoCurriculum.levels[0];
+    syncUrlParams({ mode: 'learn', topic: ch.tech, daily: true });
+    renderSkillTree(pseudoCurriculum);
+    renderMission(activeLevel, pseudoCurriculum.standard);
+    if (setLanguage) setLanguage(ch.tech);
+    if (setCode) setCode(ch.starter_code);
+  }
+
+  async function handleDailyChallengeClick() {
+    let authenticated = false;
+    try {
+      const res = await fetch(apiUrl('/api/me'), { credentials: 'include', cache: 'no-store' });
+      authenticated = res.ok;
+    } catch {
+      authenticated = false;
+    }
+    if (!authenticated) {
+      try {
+        sessionStorage.setItem(PENDING_ACTION_KEY, JSON.stringify({ action: 'daily_challenge', ts: Date.now() }));
+      } catch { /* ignorar */ }
+      document.dispatchEvent(new CustomEvent('cf:open-auth', {
+        detail: { mode: 'register', bannerText: t('acadDailyAuthGate') },
+      }));
+      return;
+    }
+    await openDailyChallenge();
+  }
+
+  async function resumePendingAction() {
+    try {
+      const raw = sessionStorage.getItem(PENDING_ACTION_KEY);
+      if (!raw) return;
+      const pending = JSON.parse(raw);
+      if (!pending || pending.action !== 'daily_challenge') return;
+      if (typeof pending.ts !== 'number' || (Date.now() - pending.ts) >= PENDING_ACTION_TTL_MS) {
+        sessionStorage.removeItem(PENDING_ACTION_KEY);
+        return;
+      }
+      sessionStorage.removeItem(PENDING_ACTION_KEY);
+      if (currentMode !== 'learn') {
+        await setWorkMode('learn');
+      }
+      await openDailyChallenge();
+    } catch { /* ignorar */ }
   }
 
   async function setWorkMode(mode) {
@@ -419,7 +518,8 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     syncUrlParams({ mode: 'learn' });
     renderPathsView(pathsCache);
   });
-  dailyBtn?.addEventListener('click', () => openDailyChallenge());
+  dailyBtn?.addEventListener('click', () => { handleDailyChallengeClick(); });
+  document.addEventListener('cf:auth-success', () => { resumePendingAction(); });
 
   diffBtn?.addEventListener('click', () => {
     if (!activeLevel?.reference_solution || !openDiffWith) return;

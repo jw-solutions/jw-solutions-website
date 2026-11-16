@@ -12,6 +12,7 @@ from app.api.auth import router as auth_router
 from app.api.newsletter import router as newsletter_router
 from app.api.payments import router as payments_router
 from app.api.session import router as session_router
+from app.api.subscriptions import router as subscriptions_router
 from app.core.config import get_settings
 from app.core.database import get_engine
 from app.security.csrf import CSRF_HEADER
@@ -66,6 +67,7 @@ def create_app() -> FastAPI:
     app.include_router(newsletter_router)
     app.include_router(payments_router)
     app.include_router(session_router)
+    app.include_router(subscriptions_router)
     return app
 
 

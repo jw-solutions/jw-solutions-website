@@ -11,6 +11,7 @@
     "tools/code-formatter/index.html",
     "assets/css/tools/code-formatter.css",
     "assets/js/tools/code-formatter/app.js",
+    "assets/js/tools/code-formatter/services/api.js",
     "assets/js/tools/code-formatter/ui-controller.js",
     "assets/js/tools/code-formatter/i18n.js",
     "assets/js/tools/code-formatter/newsletter.js",
@@ -151,7 +152,6 @@
       "files": [
         "assets/js/tools/code-formatter/pro-modal.js",
         "assets/js/tools/code-formatter/pro-messages.js",
-        "assets/js/tools/code-formatter/services/api.js",
         "assets/js/tools/code-formatter/locales-pro/es.js",
         "assets/js/tools/code-formatter/locales-pro/en.js",
         "assets/js/tools/code-formatter/locales-pro/pt-BR.js",
@@ -164,7 +164,7 @@
     {
       "id": "accounts_auth",
       "name": "Cuentas: registro e inicio de sesión (Argon2id)",
-      "tier": "pay",
+      "tier": "free",
       "status": "ready",
       "files": [
         "assets/js/tools/code-formatter/auth-modal.js"

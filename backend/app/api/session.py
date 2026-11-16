@@ -5,13 +5,15 @@ import json
 from collections.abc import AsyncIterator
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import StreamingResponse
+from sqlalchemy.orm import Session
 
-from app.core.database import session_scope
+from app.core.database import get_db, session_scope
 from app.core.config import get_settings
-from app.security.sessions import validate_token
+from app.security.csrf import require_csrf
+from app.security.sessions import SessionInfo, clear_session_cookie, end_session, validate_token
 
 router = APIRouter(prefix="/api")
 
@@ -53,3 +55,14 @@ async def session_events(request: Request) -> StreamingResponse:
         media_type="text/event-stream",
         headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
     )
+
+
+@router.post("/session/logout", status_code=204)
+def session_logout(
+    response: Response,
+    session: SessionInfo = Depends(require_csrf),
+    db: Session = Depends(get_db),
+) -> None:
+    """Cierra la sesión activa y limpia la cookie __Host-jw_session."""
+    end_session(db, session)
+    clear_session_cookie(response)

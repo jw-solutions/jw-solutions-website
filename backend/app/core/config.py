@@ -35,12 +35,26 @@ class Settings(BaseSettings):
     google_refresh_token: SecretStr = SecretStr("")
 
     binance_notification_senders: str = ""
+    paypal_notification_senders: str = "service@paypal.com"
     trusted_forwarders: str = ""  # cuentas propias que reenvían correos de Binance (p. ej. la cuenta que los recibe primero)
     trusted_authserv_id: str = "mx.google.com"
 
     payment_recipient_id: str = "188552430"
     payment_match_window_minutes: int = 15
     payment_review_required: bool = True
+
+    auto_activate_verified_p2p: bool = True
+    binance_p2p_uid: str = "188552430"
+    binance_p2p_holder_name: str = "JW_Sol"
+    binance_p2p_order_ttl_seconds: int = 86400
+
+    nowpayments_api_key: SecretStr = SecretStr("")
+    nowpayments_ipn_secret: SecretStr = SecretStr("")
+    cryptomus_api_key: SecretStr = SecretStr("")
+    cryptomus_merchant_id: str = ""
+    paypal_me_url: str = ""
+    kofi_page_url: str = ""
+    kofi_verification_token: SecretStr = SecretStr("")
 
     business_timezone: str = "America/New_York"
     reminder_days: str = "3,1"
@@ -106,6 +120,10 @@ class Settings(BaseSettings):
     @property
     def sender_allowlist(self) -> frozenset[str]:
         return frozenset(s.lower() for s in _csv(self.binance_notification_senders))
+
+    @property
+    def paypal_sender_allowlist(self) -> frozenset[str]:
+        return frozenset(s.lower() for s in _csv(self.paypal_notification_senders))
 
     @property
     def forwarder_allowlist(self) -> frozenset[str]:
