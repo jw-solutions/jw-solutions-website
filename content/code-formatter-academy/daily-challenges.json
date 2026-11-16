@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "challenges": [
+    {
+      "id": "daily-python-clean-sum",
+      "tech": "python",
+      "tier": "free",
+      "starter_code": "def total(items):\n s=0\n for x in items:\n  s+=x\n return s",
+      "reference_solution": "def total(items: list[float]) -> float:\n    \"\"\"Return the arithmetic sum of numeric items.\"\"\"\n    if not items:\n        return 0.0\n    return float(sum(items))\n",
+      "style_rules": ["pep8_indent_4", "type_hints", "docstring"],
+      "tests": [
+        { "id": "t1", "name": "Basic sum", "visible": true, "type": "pattern", "expected": "def total(", "description": "Defines total function" },
+        { "id": "t2", "name": "Docstring & typing", "visible": true, "type": "pattern", "expected": "\"\"\"", "description": "Includes PEP 257 docstring" },
+        { "id": "t3", "name": "Empty list guard", "visible": false, "type": "pattern", "expected": "if not items", "description": "Handles empty collection edge case" }
+      ],
+      "i18n": {
+        "es": { "title": "Clean & Document: Suma segura en Python", "prompt": "Formatea con 4 espacios, añade type hints, docstring y protege el caso de lista vacía.", "hint": "Usa list[float] -> float y verifica `if not items:`." },
+        "en": { "title": "Clean & Document: Safe Python Sum", "prompt": "Format with 4 spaces, add type hints, a docstring, and guard against empty lists.", "hint": "Use list[float] -> float and check `if not items:`." },
+        "pt-BR": { "title": "Clean & Document: Soma segura em Python", "prompt": "Formate com 4 espaços, adicione type hints, docstring e proteja contra lista vazia.", "hint": "Use list[float] -> float e verifique `if not items:`." },
+        "pt-PT": { "title": "Clean & Document: Soma segura em Python", "prompt": "Formate com 4 espaços, adicione type hints, docstring e proteja contra lista vazia.", "hint": "Use list[float] -> float e verifique `if not items:`." },
+        "fr": { "title": "Clean & Document : Somme sûre en Python", "prompt": "Formatez avec 4 espaces, ajoutez des annotations de type, une docstring et gérez la liste vide.", "hint": "Utilisez list[float] -> float et testez `if not items:`." },
+        "de": { "title": "Clean & Document: Sichere Summe in Python", "prompt": "Mit 4 Leerzeichen formatieren, Type Hints, Docstring und Schutz für leere Listen ergänzen.", "hint": "Nutze list[float] -> float und prüfe `if not items:`." },
+        "it": { "title": "Clean & Document: Somma sicura in Python", "prompt": "Formatta con 4 spazi, aggiungi type hint, docstring e gestisci la lista vuota.", "hint": "Usa list[float] -> float e controlla `if not items:`." }
+      }
+    },
+    {
+      "id": "daily-js-discount",
+      "tech": "javascript",
+      "tier": "free",
+      "starter_code": "function calc(p,d){if(d<0)return p;return p-(p*d/100)}",
+      "reference_solution": "/**\n * Calculate final price after applying a percentage discount.\n * @param {number} price - Base price.\n * @param {number} discountPct - Discount percentage (0-100).\n * @returns {number} Final discounted price.\n */\nexport function calcDiscount(price, discountPct = 0) {\n  if (discountPct <= 0) return price;\n  if (discountPct >= 100) return 0;\n  return Number((price - (price * discountPct) / 100).toFixed(2));\n}\n",
+      "style_rules": ["jsdoc", "strict_bounds", "semicolons"],
+      "tests": [
+        { "id": "t1", "name": "Positive discount", "visible": true, "type": "eval", "input": "calcDiscount(100, 20)", "expected": 80, "description": "100 with 20% discount equals 80" },
+        { "id": "t2", "name": "JSDoc present", "visible": true, "type": "pattern", "expected": "@param", "description": "Includes @param JSDoc tag" },
+        { "id": "t3", "name": "Over 100% clamp", "visible": false, "type": "eval", "input": "calcDiscount(100, 150)", "expected": 0, "description": "Clamps discount >= 100 to 0" }
+      ],
+      "i18n": {
+        "es": { "title": "Clean & Document: Descuento seguro en JS", "prompt": "Renombra parámetros, añade JSDoc y limita el descuento entre 0 y 100.", "hint": "Documenta con @param y @returns, y devuelve 0 si discountPct >= 100." },
+        "en": { "title": "Clean & Document: Safe JS Discount", "prompt": "Use clear parameter names, add JSDoc, and clamp discount between 0 and 100.", "hint": "Document with @param and @returns, returning 0 when discountPct >= 100." },
+        "pt-BR": { "title": "Clean & Document: Desconto seguro em JS", "prompt": "Renomeie parâmetros, adicione JSDoc e limite o desconto entre 0 e 100.", "hint": "Documente com @param e @returns e retorne 0 se discountPct >= 100." },
+        "pt-PT": { "title": "Clean & Document: Desconto seguro em JS", "prompt": "Renomeie parâmetros, adicione JSDoc e limite o desconto entre 0 e 100.", "hint": "Documente com @param e @returns e devolva 0 se discountPct >= 100." },
+        "fr": { "title": "Clean & Document : Remise sûre en JS", "prompt": "Nommez clairement les paramètres, ajoutez JSDoc et bornez la remise entre 0 et 100.", "hint": "Documentez avec @param et @returns, retournez 0 si discountPct >= 100." },
+        "de": { "title": "Clean & Document: Sicherer Rabatt in JS", "prompt": "Klare Parameternamen, JSDoc ergänzen und Rabatt auf 0 bis 100 begrenzen.", "hint": "Mit @param und @returns dokumentieren; bei >= 100 wird 0 zurückgegeben." },
+        "it": { "title": "Clean & Document: Sconto sicuro in JS", "prompt": "Usa nomi chiari, aggiungi JSDoc e limita lo sconto tra 0 e 100.", "hint": "Documenta con @param e @returns e restituisci 0 se discountPct >= 100." }
+      }
+    },
+    {
+      "id": "daily-sql-active-orders",
+      "tech": "sql",
+      "tier": "free",
+      "starter_code": "select id,total from orders where status='paid' order by created_at desc",
+      "reference_solution": "-- Retrieve paid orders ordered from newest to oldest\nSELECT\n  id,\n  total\nFROM orders\nWHERE status = 'paid'\nORDER BY created_at DESC;\n",
+      "style_rules": ["uppercase_keywords", "multiline_clauses", "leading_comment"],
+      "tests": [
+        { "id": "t1", "name": "Uppercase SQL", "visible": true, "type": "pattern", "expected": "SELECT", "description": "Uses uppercase SQL keywords" },
+        { "id": "t2", "name": "Header comment", "visible": true, "type": "pattern", "expected": "-- ", "description": "Includes SQL header comment" },
+        { "id": "t3", "name": "Semicolon terminator", "visible": false, "type": "pattern", "expected": ";", "description": "Ends statement with semicolon" }
+      ],
+      "i18n": {
+        "es": { "title": "Clean & Document: Consulta SQL legible", "prompt": "Formatea palabras clave en mayúsculas, separa cláusulas y añade comentario de propósito.", "hint": "Usa SELECT, FROM, WHERE y ORDER BY en líneas separadas y termina con `;`." },
+        "en": { "title": "Clean & Document: Readable SQL Query", "prompt": "Uppercase SQL keywords, split clauses onto lines, and add a purpose comment.", "hint": "Put SELECT, FROM, WHERE, ORDER BY on separate lines and end with `;`." },
+        "pt-BR": { "title": "Clean & Document: Consulta SQL legível", "prompt": "Use palavras-chave em maiúsculas, separe cláusulas e adicione comentário.", "hint": "Coloque SELECT, FROM, WHERE, ORDER BY em linhas separadas e termine com `;`." },
+        "pt-PT": { "title": "Clean & Document: Consulta SQL legível", "prompt": "Use palavras-chave em maiúsculas, separe cláusulas e adicione comentário.", "hint": "Coloque SELECT, FROM, WHERE, ORDER BY em linhas separadas e termine com `;`." },
+        "fr": { "title": "Clean & Document : Requête SQL lisible", "prompt": "Mettez les mots-clés en majuscules, séparez les clauses et ajoutez un commentaire.", "hint": "Placez SELECT, FROM, WHERE, ORDER BY sur des lignes distinctes et terminez par `;`." },
+        "de": { "title": "Clean & Document: Lesbare SQL-Abfrage", "prompt": "SQL-Schlüsselwörter großschreiben, Klauseln umbrechen und Kommentar ergänzen.", "hint": "SELECT, FROM, WHERE, ORDER BY trennen und mit `;` abschließen." },
+        "it": { "title": "Clean & Document: Query SQL leggibile", "prompt": "Metti in maiuscolo le parole chiave SQL, separa le clausole e aggiungi un commento.", "hint": "Metti SELECT, FROM, WHERE, ORDER BY su righe separate e chiudi con `;`." }
+      }
+    },
+    {
+      "id": "daily-json-config",
+      "tech": "json",
+      "tier": "free",
+      "starter_code": "{\"app\":\"academy\",\"retry\":3,\"features\":[\"lint\",\"format\",],}",
+      "reference_solution": "{\n  \"app\": \"academy\",\n  \"retry\": 3,\n  \"features\": [\n    \"lint\",\n    \"format\"\n  ]\n}\n",
+      "style_rules": ["rfc8259_valid", "indent_2"],
+      "tests": [
+        { "id": "t1", "name": "Valid JSON", "visible": true, "type": "json_valid", "expected": true, "description": "Parses cleanly under RFC 8259" },
+        { "id": "t2", "name": "No trailing commas", "visible": true, "type": "pattern_absent", "expected": ",]", "description": "Removes trailing comma in array" },
+        { "id": "t3", "name": "Two-space indent", "visible": false, "type": "pattern", "expected": "  \"app\":", "description": "Uses 2-space indentation" }
+      ],
+      "i18n": {
+        "es": { "title": "Clean & Document: JSON RFC 8259 estricto", "prompt": "Elimina las comas finales inválidas y formatea con sangría de 2 espacios.", "hint": "JSON no permite comas antes de `]` o `}`." },
+        "en": { "title": "Clean & Document: Strict RFC 8259 JSON", "prompt": "Remove invalid trailing commas and format with 2-space indentation.", "hint": "JSON forbids trailing commas before `]` or `}`." },
+        "pt-BR": { "title": "Clean & Document: JSON RFC 8259 estrito", "prompt": "Remova vírgulas finais inválidas e formate com indentação de 2 espaços.", "hint": "JSON não permite vírgula antes de `]` ou `}`." },
+        "pt-PT": { "title": "Clean & Document: JSON RFC 8259 estrito", "prompt": "Remova vírgulas finais inválidas e formate com indentação de 2 espaços.", "hint": "JSON não permite vírgula antes de `]` ou `}`." },
+        "fr": { "title": "Clean & Document : JSON RFC 8259 strict", "prompt": "Supprimez les virgules finales invalides et formatez sur 2 espaces.", "hint": "JSON interdit les virgules avant `]` ou `}`." },
+        "de": { "title": "Clean & Document: Striktes RFC-8259-JSON", "prompt": "Entferne ungültige nachgestellte Kommas und formatiere mit 2 Leerzeichen.", "hint": "JSON verbietet Kommas vor `]` oder `}`." },
+        "it": { "title": "Clean & Document: JSON RFC 8259 rigoroso", "prompt": "Rimuovi le virgole finali non valide e formatta con 2 spazi.", "hint": "JSON vieta le virgole prima di `]` o `}`." }
+      }
+    },
+    {
+      "id": "daily-yaml-ci",
+      "tech": "yaml",
+      "tier": "free",
+      "starter_code": "name: CI\non:\n\tpush:\n\t\tbranches: [main]\njobs:\n  test:\n    runs-on: ubuntu-latest",
+      "reference_solution": "# Continuous Integration workflow\nname: CI\non:\n  push:\n    branches:\n      - main\njobs:\n  test:\n    runs-on: ubuntu-latest\n",
+      "style_rules": ["no_tabs", "indent_2", "header_comment"],
+      "tests": [
+        { "id": "t1", "name": "No tab characters", "visible": true, "type": "pattern_absent", "expected": "\t", "description": "Replaces forbidden tabs with spaces" },
+        { "id": "t2", "name": "Header comment", "visible": true, "type": "pattern", "expected": "# ", "description": "Includes YAML comment" },
+        { "id": "t3", "name": "Consistent 2-space indent", "visible": false, "type": "pattern", "expected": "  push:", "description": "Indents keys with 2 spaces" }
+      ],
+      "i18n": {
+        "es": { "title": "Clean & Document: Pipeline YAML sin tabuladores", "prompt": "Reemplaza tabuladores por 2 espacios y documenta el workflow.", "hint": "YAML rechaza tabuladores (`\\t`); usa 2 espacios por nivel." },
+        "en": { "title": "Clean & Document: Tab-Free YAML Pipeline", "prompt": "Replace tabs with 2-space indentation and add a workflow comment.", "hint": "YAML forbids tab characters (`\\t`); use 2 spaces per level." },
+        "pt-BR": { "title": "Clean & Document: Pipeline YAML sem tabs", "prompt": "Substitua tabs por 2 espaços e documente o workflow.", "hint": "YAML proíbe tabulações (`\\t`); use 2 espaços por nível." },
+        "pt-PT": { "title": "Clean & Document: Pipeline YAML sem tabs", "prompt": "Substitua tabs por 2 espaços e documente o workflow.", "hint": "YAML proíbe tabulações (`\\t`); use 2 espaços por nível." },
+        "fr": { "title": "Clean & Document : Pipeline YAML sans tabulations", "prompt": "Remplacez les tabulations par 2 espaces et commentez le workflow.", "hint": "YAML interdit les tabulations (`\\t`) ; utilisez 2 espaces." },
+        "de": { "title": "Clean & Document: Tab-freie YAML-Pipeline", "prompt": "Ersetze Tabs durch 2 Leerzeichen und kommentiere den Workflow.", "hint": "YAML verbietet Tabs (`\\t`); nutze 2 Leerzeichen." },
+        "it": { "title": "Clean & Document: Pipeline YAML senza tab", "prompt": "Sostituisci i tab con 2 spazi e commenta il workflow.", "hint": "YAML vieta i caratteri tab (`\\t`); usa 2 spazi." }
+      }
+    }
+  ]
+}

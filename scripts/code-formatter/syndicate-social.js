@@ -350,10 +350,12 @@ async function publishGitHubDiscussion(entry, enMeta, creds, fetchImpl) {
   if (snippet) {
     bodyLines.push(`\`\`\`${progLang}`, snippet, '```', '');
   }
+  const academyUrl = `${BASE_URL}/tools/code-formatter/?mode=learn&topic=${encodeURIComponent(progLang)}&utm_source=github&utm_medium=discussions&utm_campaign=${encodeURIComponent(entry.slug || 'tip')}`;
   bodyLines.push(
     `- **Language:** \`${String(progLang).toUpperCase()}\``,
     `- **Full Guide (EN):** [Read article on jw-solutions.com](${articleUrl})`,
     `- **Try it live:** [Open Code Formatter & Auto-Doc AI](${toolUrl})`,
+    `- **Practice step-by-step:** [Train in Academy Mode (Free & Pro)](${academyUrl})`,
   );
   const body = bodyLines.join('\n');
 

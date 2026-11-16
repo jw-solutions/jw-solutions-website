@@ -104,12 +104,14 @@ function buildDevtoPayload(entry, markdownRaw) {
   const coverImage = `${BASE_URL}/assets/images/og/tips/${encodeURIComponent(slug)}-en.png`;
   const langParam = encodeURIComponent(progLang);
   const interactiveUrl = `${BASE_URL}/tools/code-formatter/?lang=${langParam}&utm_source=devto&utm_medium=syndication&utm_campaign=${encodeURIComponent(slug)}`;
+  const academyUrl = `${BASE_URL}/tools/code-formatter/?mode=learn&topic=${langParam}&utm_source=devto&utm_medium=syndication&utm_campaign=${encodeURIComponent(slug)}`;
 
   const footer = [
     '',
     '---',
     '',
     `> **Try it interactively:** Format, validate, and auto-document your ${entry.language || 'code'} directly in [JW Solutions Code Formatter & Auto-Doc AI](${interactiveUrl}).`,
+    `> **Guided Practice:** Master clean ${entry.language || 'code'} step by step in [Academy Mode (Free & Pro)](${academyUrl}).`,
     `> *Originally published at [jw-solutions.com](${canonicalUrl}).*`,
   ].join('\n');
 

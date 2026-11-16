@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "locale": "pt-PT",
+  "tech": "java",
+  "standard": "Java 21 & Javadoc",
+  "levels": [
+    {
+      "id": "java-1",
+      "level": 1,
+      "tier": "free",
+      "title": "JAVA 1 · Fundamentos e formatação limpa",
+      "estimatedMinutes": 5,
+      "concept_capsule": "Aplique indentação consistente, nomes claros e documentação padrão para que qualquer equipa leia e audite o código rapidamente.",
+      "starter_code": "public class Calc{public static int add(int a,int b){return a+b;}}",
+      "reference_solution": "/**\n * Arithmetic helper utilities.\n */\npublic final class Calc {\n    private Calc() {}\n\n    /**\n     * Adds two integers.\n     *\n     * @param a first operand\n     * @param b second operand\n     * @return sum of a and b\n     */\n    public static int add(int a, int b) {\n        return Math.addExact(a, b);\n    }\n}\n",
+      "tests": [
+        {
+          "id": "java1-t1",
+          "name": "Javadoc present",
+          "visible": true,
+          "type": "pattern",
+          "expected": "@return",
+          "description": "Includes @return Javadoc tag"
+        },
+        {
+          "id": "java1-t2",
+          "name": "Private constructor",
+          "visible": true,
+          "type": "pattern",
+          "expected": "private Calc()",
+          "description": "Hides utility class constructor"
+        },
+        {
+          "id": "java1-t3",
+          "name": "Overflow protection",
+          "visible": false,
+          "type": "pattern",
+          "expected": "Math.addExact",
+          "description": "Prevents silent integer overflow"
+        }
+      ],
+      "style_rules": [
+        "javadoc",
+        "indent_4",
+        "overflow_safe"
+      ],
+      "related_tip_slug": "java/java-21-pattern-matching-records-refactoring",
+      "remedial_drills": [
+        {
+          "id": "java1-d-syntax",
+          "error_type": "syntax",
+          "title": "Reforço de Sintaxe",
+          "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
+          "starter_code": "public int id(int x) { return x }",
+          "expected_pattern": ";",
+          "solution_hint": "End the return statement with a semicolon `;`."
+        },
+        {
+          "id": "java1-d-edge",
+          "error_type": "edge_case",
+          "title": "Reforço de Casos Limite",
+          "prompt": "Adicione a validação defensiva para evitar falhas.",
+          "starter_code": "int len = s.length();",
+          "expected_pattern": "null",
+          "solution_hint": "Check `s == null` before calling `.length()`."
+        },
+        {
+          "id": "java1-d-style",
+          "error_type": "style_doc",
+          "title": "Reforço de Estilo e Doc",
+          "prompt": "Aplique a norma oficial de formatação e documentação.",
+          "starter_code": "public int sum(int a, int b) { return a + b; }",
+          "expected_pattern": "@param",
+          "solution_hint": "Document parameters with `@param` in Javadoc."
+        }
+      ]
+    },
+    {
+      "id": "java-2",
+      "level": 2,
+      "tier": "free",
+      "title": "JAVA 2 · Casos limite e documentação",
+      "estimatedMinutes": 8,
+      "concept_capsule": "Proteja entradas nulas ou vazias antes de processar e documente contratos com a norma oficial da linguagem.",
+      "starter_code": "public class User{private final String email;public User(String email){this.email=email;}public String email(){return email;}}",
+      "reference_solution": "import java.util.Objects;\n\n/**\n * Immutable user value record.\n *\n * @param email validated user email\n */\npublic record User(String email) {\n    public User {\n        Objects.requireNonNull(email, \"email must not be null\");\n    }\n}\n",
+      "tests": [
+        {
+          "id": "java2-t1",
+          "name": "Uses Java record",
+          "visible": true,
+          "type": "pattern",
+          "expected": "public record User",
+          "description": "Refactors boilerplate class into record"
+        },
+        {
+          "id": "java2-t2",
+          "name": "Null validation",
+          "visible": true,
+          "type": "pattern",
+          "expected": "Objects.requireNonNull",
+          "description": "Validates non-null email in compact constructor"
+        },
+        {
+          "id": "java2-t3",
+          "name": "Javadoc @param",
+          "visible": false,
+          "type": "pattern",
+          "expected": "@param email",
+          "description": "Documents record component with @param"
+        }
+      ],
+      "style_rules": [
+        "java_record",
+        "null_guard",
+        "javadoc"
+      ],
+      "related_tip_slug": "java/java-21-pattern-matching-records-refactoring",
+      "remedial_drills": [
+        {
+          "id": "java2-d-syntax",
+          "error_type": "syntax",
+          "title": "Reforço de Sintaxe",
+          "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
+          "starter_code": "public record Point(int x int y) {}",
+          "expected_pattern": "int x, int y",
+          "solution_hint": "Separate record components with a comma."
+        },
+        {
+          "id": "java2-d-edge",
+          "error_type": "edge_case",
+          "title": "Reforço de Casos Limite",
+          "prompt": "Adicione a validação defensiva para evitar falhas.",
+          "starter_code": "public record Tag(String name) {}",
+          "expected_pattern": "requireNonNull",
+          "solution_hint": "Validate null inputs in the compact constructor."
+        },
+        {
+          "id": "java2-d-style",
+          "error_type": "style_doc",
+          "title": "Reforço de Estilo e Doc",
+          "prompt": "Aplique a norma oficial de formatação e documentação.",
+          "starter_code": "public record Tag(String name) {}",
+          "expected_pattern": "/**",
+          "solution_hint": "Add Javadoc above the public record."
+        }
+      ]
+    },
+    {
+      "id": "java-3",
+      "level": 3,
+      "tier": "pay",
+      "title": "JAVA 3 · Refatoração modular (Pro)",
+      "estimatedMinutes": 12
+    },
+    {
+      "id": "java-4",
+      "level": 4,
+      "tier": "pay",
+      "title": "JAVA 4 · Otimização e padrões avançados (Pro)",
+      "estimatedMinutes": 15
+    },
+    {
+      "id": "java-5",
+      "level": 5,
+      "tier": "pay",
+      "title": "JAVA 5 · Auditoria e arquitetura limpa (Pro)",
+      "estimatedMinutes": 18
+    }
+  ]
+}

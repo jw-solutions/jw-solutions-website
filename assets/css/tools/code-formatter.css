@@ -381,3 +381,191 @@
   outline: 2px solid #ffd166;
   outline-offset: 2px;
 }
+
+/* Switch dual Formateador <-> Academia */
+.cf-mode-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  background: #171b22;
+  border: 1px solid var(--cf-border);
+  border-radius: 12px;
+  justify-self: start;
+}
+.cf-mode-switch__btn {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 18px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--cf-muted);
+  font: 600 0.92rem 'Poppins', Arial, sans-serif;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.cf-mode-switch__btn:hover { color: #fff; }
+.cf-mode-switch__btn:focus-visible { outline: 2px solid var(--cf-gold); outline-offset: 2px; }
+.cf-mode-switch__btn.is-active {
+  background: var(--cf-gold);
+  color: #0b0e12;
+}
+
+/* Academia: Contenedor y cabecera */
+.cf-academy-shell { display: grid; gap: 16px; }
+.cf-academy-shell[hidden],
+.cf-academy-workspace[hidden],
+.cf-editor-slot-home[hidden],
+.cf-toolbar[hidden] { display: none; }
+
+.cf-academy-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+}
+.cf-academy-head__title { margin: 0 0 4px; font: 700 1.25rem 'Poppins', Arial, sans-serif; color: #fff; }
+.cf-academy-head__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Guía comparativa de rutas y selector de lenguajes */
+.cf-academy-paths { display: grid; gap: 18px; }
+.cf-academy-section-title { margin: 0; font: 600 1.05rem 'Poppins', Arial, sans-serif; color: #fff; }
+.cf-academy-paths-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+.cf-academy-path-card {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  background: #171b22;
+  border: 1px solid var(--cf-border);
+  border-radius: var(--cf-radius);
+}
+.cf-academy-path-card__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cf-academy-path-card__title { margin: 0; font: 700 1.05rem 'Poppins', Arial, sans-serif; color: #fff; }
+.cf-academy-path-card__meta { margin: 0; font-size: 0.85rem; color: var(--cf-text); }
+.cf-academy-path-card__label { color: var(--cf-gold); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.cf-academy-tech-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.cf-academy-tech-btn {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--cf-border);
+  border-radius: 10px;
+  background: #171b22;
+  color: var(--cf-text);
+  font: 600 0.85rem 'JetBrains Mono', monospace;
+  cursor: pointer;
+}
+.cf-academy-tech-btn:hover { border-color: var(--cf-gold); color: var(--cf-gold); }
+.cf-academy-tech-btn:focus-visible { outline: 2px solid var(--cf-gold); outline-offset: 2px; }
+
+/* Workspace 3 paneles + Skill Tree */
+.cf-academy-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 310px) minmax(0, 1fr) minmax(250px, 300px);
+  gap: 14px;
+  align-items: start;
+}
+.cf-academy-pane { padding: 16px; display: grid; gap: 14px; }
+.cf-academy-editor-pane { padding: 0; }
+.cf-academy-pane__title { margin: 0; font: 600 0.95rem 'Poppins', Arial, sans-serif; color: #fff; }
+.cf-academy-editor-bar { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 4px; }
+
+.cf-skill-tree { display: grid; gap: 8px; }
+.cf-skill-node {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--cf-border);
+  background: #171b22;
+  color: var(--cf-text);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font: inherit;
+}
+.cf-skill-node:focus-visible { outline: 2px solid var(--cf-gold); outline-offset: 2px; }
+.cf-skill-node--completed { border-color: rgba(251, 178, 0, 0.55); background: rgba(251, 178, 0, 0.08); }
+.cf-skill-node--active { border-color: var(--cf-gold); box-shadow: 0 0 0 1px var(--cf-gold); }
+.cf-skill-node--locked { opacity: 0.72; border-style: dashed; }
+.cf-skill-node--remedial { border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+.cf-skill-node__state { font-size: 0.75rem; font-weight: 700; color: var(--cf-gold); white-space: nowrap; }
+
+.cf-academy-capsule {
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(11, 14, 18, 0.75);
+  border: 1px solid rgba(251, 178, 0, 0.16);
+  font-size: 0.88rem;
+}
+.cf-academy-console {
+  padding: 12px;
+  border-radius: 10px;
+  background: #0b0e12;
+  border: 1px solid var(--cf-border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  min-height: 72px;
+}
+.cf-academy-checklist { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.cf-academy-check-item {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(11, 14, 18, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.84rem;
+}
+
+.cf-academy-mobile-tabs { display: none; }
+.cf-academy-funnel-cta { margin-top: 24px; padding: 20px; display: grid; gap: 10px; }
+
+@media (max-width: 960px) {
+  .cf-academy-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .cf-academy-mobile-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    position: sticky;
+    top: 64px;
+    z-index: 30;
+    background: #0b0e12;
+    padding: 6px 0;
+  }
+  .cf-academy-mobile-tab {
+    min-height: 44px;
+    min-width: 44px;
+    border: 1px solid var(--cf-border);
+    border-radius: 10px;
+    background: #171b22;
+    color: var(--cf-text);
+    font: 600 0.85rem 'Poppins', Arial, sans-serif;
+    cursor: pointer;
+  }
+  .cf-academy-mobile-tab.is-active { background: var(--cf-gold); color: #0b0e12; border-color: var(--cf-gold); }
+  .cf-academy-mobile-tab:focus-visible { outline: 2px solid var(--cf-gold); outline-offset: 2px; }
+  .cf-academy-pane { display: none; }
+  .cf-academy-pane.is-active { display: grid; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cf-mode-switch__btn,
+  .cf-skill-node,
+  .cf-academy-tech-btn,
+  .cf-academy-mobile-tab {
+    transition: none !important;
+    animation: none !important;
+  }
+}

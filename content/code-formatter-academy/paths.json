@@ -1,0 +1,177 @@
+{
+  "version": 1,
+  "locales": ["es", "en", "pt-BR", "pt-PT", "fr", "de", "it"],
+  "paths": [
+    {
+      "id": "data-bi",
+      "badge": "DATA",
+      "estimatedHours": 8,
+      "technologies": ["sql", "dax", "python", "json"],
+      "i18n": {
+        "es": {
+          "title": "Data & Business Intelligence",
+          "tagline": "Domina consultas SQL limpias, medidas DAX mantenibles, automatización en Python y payloads JSON.",
+          "industryUse": "Estandariza modelos analíticos en Power BI, pipelines ETL financieros y tableros ejecutivos auditables.",
+          "problemsSolved": "Elimina consultas SQL ilegibles, medidas DAX sin variables VAR/RETURN y scripts Python sin tipado ni docstrings.",
+          "targetRoles": ["Analista BI", "Data Engineer Jr.", "Controller Financiero"]
+        },
+        "en": {
+          "title": "Data & Business Intelligence",
+          "tagline": "Master clean SQL queries, maintainable DAX measures, Python automation, and JSON payloads.",
+          "industryUse": "Standardizes analytical models in Power BI, financial ETL pipelines, and auditable executive dashboards.",
+          "problemsSolved": "Eliminates unreadable SQL queries, DAX measures lacking VAR/RETURN, and untyped Python scripts.",
+          "targetRoles": ["BI Analyst", "Junior Data Engineer", "Financial Controller"]
+        },
+        "pt-BR": {
+          "title": "Data & Business Intelligence",
+          "tagline": "Domine consultas SQL limpas, medidas DAX sustentáveis, automação em Python e payloads JSON.",
+          "industryUse": "Padroniza modelos analíticos no Power BI, pipelines ETL financeiros e painéis executivos auditáveis.",
+          "problemsSolved": "Elimina consultas SQL ilegíveis, medidas DAX sem VAR/RETURN e scripts Python sem tipagem.",
+          "targetRoles": ["Analista de BI", "Engenheiro de Dados Jr.", "Controller Financeiro"]
+        },
+        "pt-PT": {
+          "title": "Data & Business Intelligence",
+          "tagline": "Domine consultas SQL limpas, medidas DAX sustentáveis, automação em Python e payloads JSON.",
+          "industryUse": "Padroniza modelos analíticos no Power BI, pipelines ETL financeiros e painéis executivos auditáveis.",
+          "problemsSolved": "Elimina consultas SQL ilegíveis, medidas DAX sem VAR/RETURN e scripts Python sem tipagem.",
+          "targetRoles": ["Analista de BI", "Engenheiro de Dados Jr.", "Controller Financeiro"]
+        },
+        "fr": {
+          "title": "Data & Business Intelligence",
+          "tagline": "Maîtrisez les requêtes SQL propres, les mesures DAX maintenables, Python et les payloads JSON.",
+          "industryUse": "Standardise les modèles analytiques Power BI, les pipelines ETL financiers et les tableaux de bord auditables.",
+          "problemsSolved": "Élimine les requêtes SQL illisibles, les mesures DAX sans VAR/RETURN et les scripts Python non typés.",
+          "targetRoles": ["Analyste BI", "Data Engineer Jr.", "Contrôleur Financier"]
+        },
+        "de": {
+          "title": "Data & Business Intelligence",
+          "tagline": "Beherrsche saubere SQL-Abfragen, wartbare DAX-Measures, Python-Automatisierung und JSON-Payloads.",
+          "industryUse": "Standardisiert Power-BI-Analysemodelle, finanzielle ETL-Pipelines und prüfbare Management-Dashboards.",
+          "problemsSolved": "Beseitigt unlesbare SQL-Abfragen, DAX-Measures ohne VAR/RETURN und untypisierte Python-Skripte.",
+          "targetRoles": ["BI-Analyst", "Junior Data Engineer", "Finanzcontroller"]
+        },
+        "it": {
+          "title": "Data & Business Intelligence",
+          "tagline": "Padroneggia query SQL pulite, misure DAX manutenibili, automazione Python e payload JSON.",
+          "industryUse": "Standardizza modelli analitici in Power BI, pipeline ETL finanziarie e dashboard esecutive verificabili.",
+          "problemsSolved": "Elimina query SQL illeggibili, misure DAX senza VAR/RETURN e script Python privi di tipi.",
+          "targetRoles": ["Analista BI", "Data Engineer Jr.", "Controller Finanziario"]
+        }
+      }
+    },
+    {
+      "id": "web-apis",
+      "badge": "WEB",
+      "estimatedHours": 8,
+      "technologies": ["javascript", "typescript", "php", "json"],
+      "i18n": {
+        "es": {
+          "title": "Desarrollo Web & APIs",
+          "tagline": "Construye módulos JS/TS modernos, servicios PHP PSR-12 y contratos JSON validados.",
+          "industryUse": "Acelera entregas en aplicaciones web SPA, APIs REST/JSON y backends PHP empresariales sin deuda técnica.",
+          "problemsSolved": "Reduce errores en producción por tipos implícitos, callbacks anidados y falta de JSDoc/TSDoc.",
+          "targetRoles": ["Frontend Developer", "Full-Stack Web", "Backend PHP Engineer"]
+        },
+        "en": {
+          "title": "Web Development & APIs",
+          "tagline": "Build modern JS/TS modules, PSR-12 PHP services, and validated JSON API contracts.",
+          "industryUse": "Speeds up delivery in SPA web apps, REST/JSON APIs, and enterprise PHP backends with zero technical debt.",
+          "problemsSolved": "Reduces production bugs from implicit types, nested callbacks, and missing JSDoc/TSDoc.",
+          "targetRoles": ["Frontend Developer", "Full-Stack Web", "PHP Backend Engineer"]
+        },
+        "pt-BR": {
+          "title": "Desenvolvimento Web & APIs",
+          "tagline": "Construa módulos JS/TS modernos, serviços PHP PSR-12 e contratos JSON validados.",
+          "industryUse": "Acelera entregas em aplicações web SPA, APIs REST/JSON e backends PHP corporativos.",
+          "problemsSolved": "Reduz erros em produção por tipos implícitos, callbacks aninhados e falta de JSDoc/TSDoc.",
+          "targetRoles": ["Desenvolvedor Frontend", "Full-Stack Web", "Engenheiro Backend PHP"]
+        },
+        "pt-PT": {
+          "title": "Desenvolvimento Web & APIs",
+          "tagline": "Construa módulos JS/TS modernos, serviços PHP PSR-12 e contratos JSON validados.",
+          "industryUse": "Acelera entregas em aplicações web SPA, APIs REST/JSON e backends PHP empresariais.",
+          "problemsSolved": "Reduz erros em produção por tipos implícitos, callbacks aninhados e falta de JSDoc/TSDoc.",
+          "targetRoles": ["Programador Frontend", "Full-Stack Web", "Engenheiro Backend PHP"]
+        },
+        "fr": {
+          "title": "Développement Web & APIs",
+          "tagline": "Concevez des modules JS/TS modernes, des services PHP PSR-12 et des contrats JSON validés.",
+          "industryUse": "Accélère la livraison d'applications web SPA, d'API REST/JSON et de backends PHP d'entreprise.",
+          "problemsSolved": "Réduit les bogues en production dus aux types implicites et à l'absence de JSDoc/TSDoc.",
+          "targetRoles": ["Développeur Frontend", "Full-Stack Web", "Ingénieur Backend PHP"]
+        },
+        "de": {
+          "title": "Webentwicklung & APIs",
+          "tagline": "Entwickle moderne JS/TS-Module, PSR-12-PHP-Services und validierte JSON-Verträge.",
+          "industryUse": "Beschleunigt die Auslieferung von SPA-Web-Apps, REST/JSON-APIs und PHP-Backends ohne Altlasten.",
+          "problemsSolved": "Reduziert Produktionsfehler durch implizite Typen und fehlende JSDoc/TSDoc-Dokumentation.",
+          "targetRoles": ["Frontend-Entwickler", "Full-Stack Web", "PHP-Backend-Engineer"]
+        },
+        "it": {
+          "title": "Sviluppo Web & API",
+          "tagline": "Realizza moduli JS/TS moderni, servizi PHP PSR-12 e contratti JSON validati.",
+          "industryUse": "Accelera il rilascio di web app SPA, API REST/JSON e backend PHP aziendali senza debito tecnico.",
+          "problemsSolved": "Riduce i bug in produzione dovuti a tipi impliciti e assenza di JSDoc/TSDoc.",
+          "targetRoles": ["Sviluppatore Frontend", "Full-Stack Web", "Backend PHP Engineer"]
+        }
+      }
+    },
+    {
+      "id": "enterprise-cloud",
+      "badge": "CLOUD",
+      "estimatedHours": 8,
+      "technologies": ["java", "csharp", "yaml", "sql"],
+      "i18n": {
+        "es": {
+          "title": "Software Corporativo & Cloud",
+          "tagline": "Aplica estándares Java 21, C# 12 con XML Docs, manifiestos YAML CI/CD y SQL robusto.",
+          "industryUse": "Prepara código apto para auditorías en banca, microservicios cloud, Kubernetes y pipelines GitHub Actions.",
+          "problemsSolved": "Evita fallos de despliegue por indentación YAML, clases verbosas y ausencia de Javadoc/XML Docs.",
+          "targetRoles": ["Backend Java/.NET", "Cloud DevOps Engineer", "Tech Lead Corporativo"]
+        },
+        "en": {
+          "title": "Enterprise Software & Cloud",
+          "tagline": "Apply Java 21 standards, C# 12 with XML Docs, CI/CD YAML manifests, and robust SQL.",
+          "industryUse": "Prepares audit-ready code for banking systems, cloud microservices, Kubernetes, and GitHub Actions.",
+          "problemsSolved": "Prevents deployment failures from broken YAML indentation, verbose classes, and missing Javadoc/XML Docs.",
+          "targetRoles": ["Java/.NET Backend", "Cloud DevOps Engineer", "Enterprise Tech Lead"]
+        },
+        "pt-BR": {
+          "title": "Software Corporativo & Cloud",
+          "tagline": "Aplique padrões Java 21, C# 12 com XML Docs, manifestos YAML CI/CD e SQL robusto.",
+          "industryUse": "Prepara código pronto para auditoria em bancos, microsserviços cloud, Kubernetes e GitHub Actions.",
+          "problemsSolved": "Evita falhas de deploy por indentação YAML e ausência de Javadoc/XML Docs.",
+          "targetRoles": ["Backend Java/.NET", "Engenheiro Cloud DevOps", "Tech Lead Corporativo"]
+        },
+        "pt-PT": {
+          "title": "Software Corporativo & Cloud",
+          "tagline": "Aplique normas Java 21, C# 12 com XML Docs, manifestos YAML CI/CD e SQL robusto.",
+          "industryUse": "Prepara código pronto para auditoria em banca, microsserviços cloud, Kubernetes e GitHub Actions.",
+          "problemsSolved": "Evita falhas de deploy por indentação YAML e ausência de Javadoc/XML Docs.",
+          "targetRoles": ["Backend Java/.NET", "Engenheiro Cloud DevOps", "Tech Lead Corporativo"]
+        },
+        "fr": {
+          "title": "Logiciel d'Entreprise & Cloud",
+          "tagline": "Appliquez Java 21, C# 12 avec XML Docs, manifestes YAML CI/CD et SQL robuste.",
+          "industryUse": "Prépare du code auditable pour la finance, les microservices cloud, Kubernetes et GitHub Actions.",
+          "problemsSolved": "Évite les échecs de déploiement liés à l'indentation YAML et à l'absence de Javadoc/XML Docs.",
+          "targetRoles": ["Backend Java/.NET", "Ingénieur Cloud DevOps", "Tech Lead Entreprise"]
+        },
+        "de": {
+          "title": "Enterprise-Software & Cloud",
+          "tagline": "Wende Java-21-Standards, C# 12 mit XML Docs, CI/CD-YAML-Manifeste und robustes SQL an.",
+          "industryUse": "Erstellt prüfbaren Code für Bankensysteme, Cloud-Microservices, Kubernetes und GitHub Actions.",
+          "problemsSolved": "Verhindert Deployment-Fehler durch fehlerhafte YAML-Einrückung und fehlende Javadoc/XML Docs.",
+          "targetRoles": ["Java/.NET-Backend", "Cloud DevOps Engineer", "Enterprise Tech Lead"]
+        },
+        "it": {
+          "title": "Software Enterprise & Cloud",
+          "tagline": "Applica standard Java 21, C# 12 con XML Docs, manifest YAML CI/CD e SQL robusto.",
+          "industryUse": "Prepara codice pronto per audit in ambito bancario, microservizi cloud, Kubernetes e GitHub Actions.",
+          "problemsSolved": "Previene errori di deploy dovuti a indentazione YAML errata e assenza di Javadoc/XML Docs.",
+          "targetRoles": ["Backend Java/.NET", "Cloud DevOps Engineer", "Enterprise Tech Lead"]
+        }
+      }
+    }
+  ]
+}

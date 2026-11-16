@@ -96,8 +96,16 @@ const render = (spec) => new Resvg(svg(spec), { fitTo: { mode: 'width', value: 1
 
 function main() {
   fs.mkdirSync(TIPS_OUT, { recursive: true });
+  const CERT_OUT = path.join(OUT, 'cert');
+  fs.mkdirSync(CERT_OUT, { recursive: true });
   const state = fs.existsSync(STATE) ? JSON.parse(fs.readFileSync(STATE, 'utf8')) : {};
-  const jobs = [{ file: path.join(OUT, 'code-formatter-default.png'), key: 'default', spec: { title: 'Code Formatter & Auto-Doc AI', kicker: 'Python · JavaScript · TypeScript · SQL · DAX · Java · C# · PHP · JSON · YAML', langBadge: '', localeBadge: '' } }];
+  const jobs = [
+    { file: path.join(OUT, 'code-formatter-default.png'), key: 'default', spec: { title: 'Code Formatter & Auto-Doc AI', kicker: 'Python · JavaScript · TypeScript · SQL · DAX · Java · C# · PHP · JSON · YAML', langBadge: '', localeBadge: '' } },
+    { file: path.join(CERT_OUT, 'academy-cert-default.png'), key: 'cert/default', spec: { title: 'Verified Clean Code Certificate', kicker: 'HMAC-SHA256 Verified · JW Solutions Academy', langBadge: 'CERT', localeBadge: 'PRO' } },
+    { file: path.join(CERT_OUT, 'academy-data-bi.png'), key: 'cert/data-bi', spec: { title: 'Data & Business Intelligence Track', kicker: 'SQL · DAX · Python · JSON · JW Solutions Academy', langBadge: 'DATA', localeBadge: 'CERT' } },
+    { file: path.join(CERT_OUT, 'academy-web-apis.png'), key: 'cert/web-apis', spec: { title: 'Web Development & APIs Track', kicker: 'JS · TS · PHP · JSON · JW Solutions Academy', langBadge: 'WEB', localeBadge: 'CERT' } },
+    { file: path.join(CERT_OUT, 'academy-enterprise-cloud.png'), key: 'cert/enterprise-cloud', spec: { title: 'Enterprise Software & Cloud Track', kicker: 'Java · C# · YAML · SQL · JW Solutions Academy', langBadge: 'CLOUD', localeBadge: 'CERT' } },
+  ];
   const tips = fs.existsSync(MANIFEST) ? JSON.parse(fs.readFileSync(MANIFEST, 'utf8')).tips || [] : [];
   for (const tip of tips) {
     const variants = [['es', tip.title], ...Object.entries(tip.translations || {}).map(([l, v]) => [l, v.title])];

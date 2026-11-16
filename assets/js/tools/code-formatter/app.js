@@ -340,3 +340,43 @@ try {
     toast(t('sharedReceived'), 6000);
   }
 } catch { /* enlace inválido: se ignora */ }
+
+// Modo Academia (función free "academy.core"): carga bajo demanda sin romper el modo Formateador.
+if (isFeatureOn('academy.core')) {
+  try {
+    const { initAcademyUI } = await import('./academy-ui.js');
+    initAcademyUI({
+      getCode,
+      setCode,
+      setLanguage: (lang) => {
+        if (langSel && [...langSel.options].some((o) => o.value === lang)) {
+          langSel.value = lang;
+          if (detected) detected.hidden = true;
+          setLanguage(lang);
+        }
+      },
+      openDiffWith: (nextDiff) => {
+        diffState = nextDiff;
+        if (diffBtn) diffBtn.disabled = false;
+        openDiff().catch(() => toast(t('copyFail')));
+      },
+    });
+    if (isFeatureOn('academy_pro')) {
+      try {
+        const { initCodeToChallengeButton } = await import('./academy-pro.js');
+        initCodeToChallengeButton({
+          getCode,
+          getLanguage: () => (langSel.value === 'auto' ? resolveLanguage(getCode()) || 'python' : langSel.value),
+          onOpenChallenge: (custom) => {
+            setCode(custom.starter_code);
+            toast(custom.title);
+          },
+        });
+      } catch (err) {
+        console.warn('[code-formatter] Academia Pro no iniciada:', err.message);
+      }
+    }
+  } catch (err) {
+    console.warn('[code-formatter] Academia no iniciada:', err.message);
+  }
+}

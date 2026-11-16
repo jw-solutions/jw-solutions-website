@@ -7,6 +7,7 @@ from fastapi import Depends, FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
+from app.api.academy import router as academy_router
 from app.api.auth import router as auth_router
 from app.api.newsletter import router as newsletter_router
 from app.api.payments import router as payments_router
@@ -60,6 +61,7 @@ def create_app() -> FastAPI:
             conn.execute(text("SELECT 1"))
         return {"status": "ok"}
 
+    app.include_router(academy_router)
     app.include_router(auth_router)
     app.include_router(newsletter_router)
     app.include_router(payments_router)

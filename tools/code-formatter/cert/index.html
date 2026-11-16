@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verificación de Certificado | Code Formatter Academy</title>
+  <meta name="description" content="Verifica la autenticidad criptográfica HMAC-SHA256 de los certificados emitidos por JW Solutions Code Formatter Academy.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com; object-src 'none'; base-uri 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Certificado Verificable | Code Formatter Academy">
+  <meta property="og:image" content="https://jw-solutions.com/assets/images/og/cert/academy-cert-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://jw-solutions.com/assets/images/og/cert/academy-cert-default.png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../../assets/css/tools/code-formatter.css">
+</head>
+<body class="cf-body">
+  <header class="cf-header">
+    <div class="cf-container cf-header__inner">
+      <a class="cf-logo" href="../" aria-label="JW Solutions">
+        <span class="cf-logo__mark">JW</span>
+        <span class="cf-logo__text">SOLUTIONS</span>
+      </a>
+      <nav class="cf-nav">
+        <a class="cf-nav__link" href="../?mode=learn">Academia</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="cf-main">
+    <section class="cf-container cf-hero">
+      <span class="cf-tag">HMAC-SHA256</span>
+      <h1 class="cf-title">Verificación de <span class="cf-gold">Certificado</span></h1>
+    </section>
+
+    <section class="cf-container">
+      <article id="cf-cert-card" class="cf-card cf-academy-pane" aria-live="polite">
+        <h2 id="cf-cert-status" class="cf-academy-head__title">Verificando...</h2>
+        <p id="cf-cert-holder" class="cf-muted"></p>
+        <p id="cf-cert-path" class="cf-muted"></p>
+        <p id="cf-cert-date" class="cf-muted"></p>
+        <code id="cf-cert-sig" class="cf-academy-console"></code>
+        <div class="cf-tip-modal__actions">
+          <a class="cf-btn cf-btn--primary" href="../?mode=learn">Ir a la Academia</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script type="module" src="../../../assets/js/tools/code-formatter/cert-page.js"></script>
+</body>
+</html>

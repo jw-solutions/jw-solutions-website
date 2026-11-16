@@ -62,5 +62,9 @@
   "tips/javascript-es2024-legacy-class-refactoring-jsdoc-fr": "b28938d96be248bd",
   "tips/javascript-es2024-legacy-class-refactoring-jsdoc-it": "47b57973d829eacc",
   "tips/javascript-es2024-legacy-class-refactoring-jsdoc-pt-BR": "d0fd556ce2c87d16",
-  "tips/javascript-es2024-legacy-class-refactoring-jsdoc-pt-PT": "7d6fee119d3dbb4b"
+  "tips/javascript-es2024-legacy-class-refactoring-jsdoc-pt-PT": "7d6fee119d3dbb4b",
+  "cert/default": "aabcae5b9379896c",
+  "cert/data-bi": "7506d45c763caf5f",
+  "cert/web-apis": "556548ac63e731c2",
+  "cert/enterprise-cloud": "04a6aa129ff1d308"
 }

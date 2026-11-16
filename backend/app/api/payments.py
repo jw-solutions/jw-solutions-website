@@ -35,6 +35,16 @@ class PaymentReportBody(BaseModel):
     asset: Literal["USDT", "USDC", "FDUSD", "BNB", "BTC", "ETH"]
     amount: str  # cadena decimal: evita errores de coma flotante
     paid_at: date
+    attribution_utm: dict[str, str] | None = None
+
+    @field_validator("attribution_utm")
+    @classmethod
+    def _attribution_utm(cls, v: dict[str, str] | None) -> dict[str, str] | None:
+        if v is None:
+            return None
+        allowed = {"utm_source", "utm_medium", "utm_campaign"}
+        cleaned = {k: str(val)[:128] for k, val in v.items() if k in allowed and val}
+        return cleaned or None
 
     @field_validator("txid")
     @classmethod
@@ -76,6 +86,7 @@ def report_payment(
         asset=body.asset,
         amount=Decimal(body.amount),
         paid_at=body.paid_at,
+        attribution_utm=body.attribution_utm,
     )
     try:
         # SAVEPOINT: el duplicado (índice único lower(txid)) no invalida la transacción de la petición.

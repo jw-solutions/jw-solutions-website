@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "locale": "pt-BR",
+  "tech": "csharp",
+  "standard": "C# 12 & XML Docs",
+  "levels": [
+    {
+      "id": "csharp-1",
+      "level": 1,
+      "tier": "free",
+      "title": "CSHARP 1 · Fundamentos e formatação limpa",
+      "estimatedMinutes": 5,
+      "concept_capsule": "Aplique indentação consistente, nomes claros e documentação padrão para que qualquer equipe leia e audite o código rapidamente.",
+      "starter_code": "public class Greeter{public string Hello(string name){return \"Hi \"+name;}}",
+      "reference_solution": "/// <summary>\n/// Provides formatted greeting messages.\n/// </summary>\npublic sealed class Greeter\n{\n    /// <summary>\n    /// Returns a greeting for the given user.\n    /// </summary>\n    /// <param name=\"name\">Target user name.</param>\n    /// <returns>Formatted greeting string.</returns>\n    public string Hello(string name)\n    {\n        ArgumentException.ThrowIfNullOrWhiteSpace(name);\n        return $\"Hi {name.Trim()}\";\n    }\n}\n",
+      "tests": [
+        {
+          "id": "cs1-t1",
+          "name": "XML summary",
+          "visible": true,
+          "type": "pattern",
+          "expected": "/// <summary>",
+          "description": "Includes XML documentation summary"
+        },
+        {
+          "id": "cs1-t2",
+          "name": "Null/whitespace guard",
+          "visible": true,
+          "type": "pattern",
+          "expected": "ThrowIfNullOrWhiteSpace",
+          "description": "Validates name input"
+        },
+        {
+          "id": "cs1-t3",
+          "name": "String interpolation",
+          "visible": false,
+          "type": "pattern",
+          "expected": "$\"Hi ",
+          "description": "Uses C# string interpolation"
+        }
+      ],
+      "style_rules": [
+        "xml_docs",
+        "allman_braces",
+        "null_guard"
+      ],
+      "related_tip_slug": "csharp/csharp-12-primary-constructors-xml-doc-refactoring",
+      "remedial_drills": [
+        {
+          "id": "cs1-d-syntax",
+          "error_type": "syntax",
+          "title": "Reforço de Sintaxe",
+          "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
+          "starter_code": "public int Sum(int a, int b) => a + b",
+          "expected_pattern": ";",
+          "solution_hint": "End expression-bodied members with `;`."
+        },
+        {
+          "id": "cs1-d-edge",
+          "error_type": "edge_case",
+          "title": "Reforço de Casos de Borda",
+          "prompt": "Adicione a validação defensiva para evitar falhas.",
+          "starter_code": "public int Len(string s) => s.Length;",
+          "expected_pattern": "??",
+          "solution_hint": "Guard against null strings using `?.Length ?? 0`."
+        },
+        {
+          "id": "cs1-d-style",
+          "error_type": "style_doc",
+          "title": "Reforço de Estilo e Doc",
+          "prompt": "Aplique o padrão oficial de formatação e documentação.",
+          "starter_code": "public class Service {}",
+          "expected_pattern": "/// <summary>",
+          "solution_hint": "Add XML doc comments `/// <summary>`."
+        }
+      ]
+    },
+    {
+      "id": "csharp-2",
+      "level": 2,
+      "tier": "free",
+      "title": "CSHARP 2 · Casos de borda e documentação",
+      "estimatedMinutes": 8,
+      "concept_capsule": "Proteja entradas nulas ou vazias antes de processar e documente contratos com o padrão oficial da linguagem.",
+      "starter_code": "public class OrderService{private readonly ILogger _log;public OrderService(ILogger log){_log=log;}}",
+      "reference_solution": "/// <summary>\n/// Handles order validation using C# 12 primary constructor.\n/// </summary>\n/// <param name=\"log\">Application logger instance.</param>\npublic sealed class OrderService(ILogger log)\n{\n    private readonly ILogger _log = log ?? throw new ArgumentNullException(nameof(log));\n}\n",
+      "tests": [
+        {
+          "id": "cs2-t1",
+          "name": "Primary constructor",
+          "visible": true,
+          "type": "pattern",
+          "expected": "OrderService(ILogger log)",
+          "description": "Uses C# 12 primary constructor syntax"
+        },
+        {
+          "id": "cs2-t2",
+          "name": "ArgumentNullException",
+          "visible": true,
+          "type": "pattern",
+          "expected": "ArgumentNullException",
+          "description": "Guards injected dependency against null"
+        },
+        {
+          "id": "cs2-t3",
+          "name": "XML param doc",
+          "visible": false,
+          "type": "pattern",
+          "expected": "<param name=\"log\">",
+          "description": "Documents primary constructor parameter"
+        }
+      ],
+      "style_rules": [
+        "primary_constructor",
+        "xml_docs",
+        "null_guard"
+      ],
+      "related_tip_slug": "csharp/csharp-12-primary-constructors-xml-doc-refactoring",
+      "remedial_drills": [
+        {
+          "id": "cs2-d-syntax",
+          "error_type": "syntax",
+          "title": "Reforço de Sintaxe",
+          "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
+          "starter_code": "public class Repo(IDb db {}",
+          "expected_pattern": ")",
+          "solution_hint": "Close the primary constructor parameter list."
+        },
+        {
+          "id": "cs2-d-edge",
+          "error_type": "edge_case",
+          "title": "Reforço de Casos de Borda",
+          "prompt": "Adicione a validação defensiva para evitar falhas.",
+          "starter_code": "private readonly IDb _db = db;",
+          "expected_pattern": "ArgumentNullException",
+          "solution_hint": "Throw `ArgumentNullException` if `db` is null."
+        },
+        {
+          "id": "cs2-d-style",
+          "error_type": "style_doc",
+          "title": "Reforço de Estilo e Doc",
+          "prompt": "Aplique o padrão oficial de formatação e documentação.",
+          "starter_code": "public class Repo(IDb db) {}",
+          "expected_pattern": "<summary>",
+          "solution_hint": "Document the class with `<summary>`."
+        }
+      ]
+    },
+    {
+      "id": "csharp-3",
+      "level": 3,
+      "tier": "pay",
+      "title": "CSHARP 3 · Refatoração modular (Pro)",
+      "estimatedMinutes": 12
+    },
+    {
+      "id": "csharp-4",
+      "level": 4,
+      "tier": "pay",
+      "title": "CSHARP 4 · Otimização e padrões avançados (Pro)",
+      "estimatedMinutes": 15
+    },
+    {
+      "id": "csharp-5",
+      "level": 5,
+      "tier": "pay",
+      "title": "CSHARP 5 · Auditoria e arquitetura limpa (Pro)",
+      "estimatedMinutes": 18
+    }
+  ]
+}

@@ -32,6 +32,8 @@
     "assets/js/tools/code-formatter/embed.js",
     "assets/js/tools/code-formatter/fix-page.js",
     "tools/code-formatter/embed/index.html",
+    "tools/code-formatter/cert/index.html",
+    "assets/js/tools/code-formatter/cert-page.js",
     "tools/code-formatter/tips/feed.xml",
     "tools/code-formatter/tips/feed.es.xml",
     "tools/code-formatter/tips/feed.en.xml",
@@ -166,6 +168,27 @@
       "status": "ready",
       "files": [
         "assets/js/tools/code-formatter/auth-modal.js"
+      ]
+    },
+    {
+      "id": "academy.core",
+      "name": "Modo Academia: switch dual, rutas profesionales, Skill Tree y niveles gratuitos 1-2",
+      "tier": "free",
+      "status": "ready",
+      "files": [
+        "assets/js/tools/code-formatter/academy-ui.js",
+        "assets/js/tools/code-formatter/academy-sandbox.js",
+        "assets/js/tools/code-formatter/academy-engine.js",
+        "assets/js/tools/code-formatter/academy-progress.js"
+      ]
+    },
+    {
+      "id": "academy_pro",
+      "name": "Modo Academia Pro: niveles 3-5, Tutor IA Socrático y Convertir mi código en reto",
+      "tier": "pay",
+      "status": "ready",
+      "files": [
+        "assets/js/tools/code-formatter/academy-pro.js"
       ]
     }
   ]

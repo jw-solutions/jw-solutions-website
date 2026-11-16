@@ -43,3 +43,4 @@ def client_ip(request: Request) -> str:
 auth_limiter = RateLimiter(window_seconds=60, max_hits=10)
 payment_limiter = RateLimiter(window_seconds=3600, max_hits=5)
 newsletter_limiter = RateLimiter(window_seconds=60, max_hits=10)
+academy_hint_limiter = RateLimiter(window_seconds=60, max_hits=12)

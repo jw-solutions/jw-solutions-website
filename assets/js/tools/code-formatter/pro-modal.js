@@ -49,7 +49,14 @@ export async function initProModal() {
     submit.textContent = t('rpSending');
     status.textContent = '';
     try {
-      const res = await postJson('/api/payments/report', { txid, asset: form.elements.asset.value, amount, paid_at: paidAt });
+      let attribution_utm = null;
+      try {
+        const rawUtm = sessionStorage.getItem('cf_academy_utm_v1');
+        if (rawUtm) attribution_utm = JSON.parse(rawUtm);
+      } catch { /* sessionStorage opcional */ }
+      const payload = { txid, asset: form.elements.asset.value, amount, paid_at: paidAt };
+      if (attribution_utm) payload.attribution_utm = attribution_utm;
+      const res = await postJson('/api/payments/report', payload);
       if (res.ok) { say('rpOk', true); form.reset(); date.value = today(); }
       else if (res.status === 401) { say('rpErrAuth'); document.dispatchEvent(new CustomEvent('cf:open-auth')); }
       else if (res.status === 409) say('rpErrDup');

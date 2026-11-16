@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "locale": "it",
+  "tech": "dax",
+  "standard": "DAX Formatter (VAR / RETURN)",
+  "levels": [
+    {
+      "id": "dax-1",
+      "level": 1,
+      "tier": "free",
+      "title": "DAX 1 · Fondamenti e formattazione pulita",
+      "estimatedMinutes": 5,
+      "concept_capsule": "Applica indentazione coerente, nomi chiari e documentazione standard per rendere il codice subito verificabile.",
+      "starter_code": "Total Sales:=SUM(Sales[Amount])",
+      "reference_solution": "-- Total net sales measure\nTotal Sales :=\nVAR _TotalAmount = SUM ( Sales[Amount] )\nRETURN\n    COALESCE ( _TotalAmount, 0 )\n",
+      "tests": [
+        {
+          "id": "dax1-t1",
+          "name": "Uses VAR/RETURN",
+          "visible": true,
+          "type": "pattern",
+          "expected": "VAR ",
+          "description": "Structures measure with VAR and RETURN"
+        },
+        {
+          "id": "dax1-t2",
+          "name": "Handles BLANK",
+          "visible": true,
+          "type": "pattern",
+          "expected": "COALESCE",
+          "description": "Uses COALESCE to avoid BLANK output"
+        },
+        {
+          "id": "dax1-t3",
+          "name": "Comment header",
+          "visible": false,
+          "type": "pattern",
+          "expected": "-- ",
+          "description": "Includes DAX comment header"
+        }
+      ],
+      "style_rules": [
+        "var_return",
+        "coalesce_blank",
+        "header_comment"
+      ],
+      "related_tip_slug": "sql-dax/sql-dax-optimization-basics",
+      "remedial_drills": [
+        {
+          "id": "dax1-d-syntax",
+          "error_type": "syntax",
+          "title": "Esercizio Sintassi",
+          "prompt": "Correggi l’errore di sintassi affinché il codice sia valido.",
+          "starter_code": "Margin = VAR _x = SUM(Sales[Amt] RETURN _x",
+          "expected_pattern": ")",
+          "solution_hint": "Close the parenthesis in `SUM ( Sales[Amt] )`."
+        },
+        {
+          "id": "dax1-d-edge",
+          "error_type": "edge_case",
+          "title": "Esercizio Casi Limite",
+          "prompt": "Aggiungi il controllo difensivo per evitare errori.",
+          "starter_code": "Ratio = [A] / [B]",
+          "expected_pattern": "DIVIDE",
+          "solution_hint": "Use `DIVIDE ( [A], [B], 0 )` to prevent division by zero."
+        },
+        {
+          "id": "dax1-d-style",
+          "error_type": "style_doc",
+          "title": "Esercizio Stile e Doc",
+          "prompt": "Applica lo standard ufficiale di formattazione e documentazione.",
+          "starter_code": "SalesTotal := SUM(Sales[Amount])",
+          "expected_pattern": "RETURN",
+          "solution_hint": "Extract intermediate expressions into `VAR` and `RETURN`."
+        }
+      ]
+    },
+    {
+      "id": "dax-2",
+      "level": 2,
+      "tier": "free",
+      "title": "DAX 2 · Casi limite e documentazione",
+      "estimatedMinutes": 8,
+      "concept_capsule": "Proteggi input nulli o vuoti prima dell’elaborazione e documenta i contratti secondo lo standard ufficiale.",
+      "starter_code": "Margin Pct:=([Sales]-[Cost])/[Sales]",
+      "reference_solution": "-- Safe profit margin percentage using DIVIDE\nMargin Pct :=\nVAR _Sales = [Sales]\nVAR _Cost = [Cost]\nRETURN\n    DIVIDE ( _Sales - _Cost, _Sales, 0 )\n",
+      "tests": [
+        {
+          "id": "dax2-t1",
+          "name": "Safe DIVIDE",
+          "visible": true,
+          "type": "pattern",
+          "expected": "DIVIDE",
+          "description": "Replaces `/` operator with DIVIDE"
+        },
+        {
+          "id": "dax2-t2",
+          "name": "VAR caching",
+          "visible": true,
+          "type": "pattern",
+          "expected": "VAR _Sales",
+          "description": "Caches [Sales] in a VAR to avoid double evaluation"
+        },
+        {
+          "id": "dax2-t3",
+          "name": "Zero fallback",
+          "visible": false,
+          "type": "pattern",
+          "expected": ", 0 )",
+          "description": "Provides 0 fallback on zero denominator"
+        }
+      ],
+      "style_rules": [
+        "var_return",
+        "safe_divide",
+        "header_comment"
+      ],
+      "related_tip_slug": "sql-dax/sql-dax-optimization-basics",
+      "remedial_drills": [
+        {
+          "id": "dax2-d-syntax",
+          "error_type": "syntax",
+          "title": "Esercizio Sintassi",
+          "prompt": "Correggi l’errore di sintassi affinché il codice sia valido.",
+          "starter_code": "Pct := DIVIDE ( [A], [B] ",
+          "expected_pattern": ")",
+          "solution_hint": "Close the `DIVIDE` function call."
+        },
+        {
+          "id": "dax2-d-edge",
+          "error_type": "edge_case",
+          "title": "Esercizio Casi Limite",
+          "prompt": "Aggiungi il controllo difensivo per evitare errori.",
+          "starter_code": "Pct := DIVIDE ( [A], [B] )",
+          "expected_pattern": ", 0",
+          "solution_hint": "Pass `0` as the alternate result when `[B]` is zero."
+        },
+        {
+          "id": "dax2-d-style",
+          "error_type": "style_doc",
+          "title": "Esercizio Stile e Doc",
+          "prompt": "Applica lo standard ufficiale di formattazione e documentazione.",
+          "starter_code": "Pct := DIVIDE([A]-[B],[A],0)",
+          "expected_pattern": "VAR ",
+          "solution_hint": "Use `VAR` variables for readability and performance."
+        }
+      ]
+    },
+    {
+      "id": "dax-3",
+      "level": 3,
+      "tier": "pay",
+      "title": "DAX 3 · Refactoring modulare (Pro)",
+      "estimatedMinutes": 12
+    },
+    {
+      "id": "dax-4",
+      "level": 4,
+      "tier": "pay",
+      "title": "DAX 4 · Ottimizzazione e pattern avanzati (Pro)",
+      "estimatedMinutes": 15
+    },
+    {
+      "id": "dax-5",
+      "level": 5,
+      "tier": "pay",
+      "title": "DAX 5 · Audit di architettura pulita (Pro)",
+      "estimatedMinutes": 18
+    }
+  ]
+}

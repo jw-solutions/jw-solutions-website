@@ -70,6 +70,80 @@ SQUAD_LABELS = {
     "de": "Tritt unserem daily.dev Squad bei",
     "it": "Unisciti al nostro Squad su daily.dev",
 }
+ACADEMY_CTA_COPY = {
+    "es": {
+        "tag": "Academia Guiada",
+        "title": "Domina este concepto paso a paso en Modo Academia",
+        "body": "Practica por niveles con validación en vivo y ejercicios guiados. Comienza gratis y explora las modalidades Pro de la plataforma.",
+        "primary": "Practicar en Modo Academia",
+        "secondary": "Ver modalidades",
+    },
+    "en": {
+        "tag": "Guided Academy",
+        "title": "Master this concept step by step in Academy Mode",
+        "body": "Practice by levels with live validation and guided drills. Start free and explore Pro training tracks on the platform.",
+        "primary": "Practice in Academy Mode",
+        "secondary": "Explore plans",
+    },
+    "pt-BR": {
+        "tag": "Academia Guiada",
+        "title": "Domine este conceito passo a passo no Modo Academia",
+        "body": "Pratique por níveis com validação ao vivo e exercícios guiados. Comece grátis e conheça as modalidades Pro.",
+        "primary": "Praticar no Modo Academia",
+        "secondary": "Ver modalidades",
+    },
+    "pt-PT": {
+        "tag": "Academia Guiada",
+        "title": "Domine este conceito passo a passo no Modo Academia",
+        "body": "Pratique por níveis com validação em direto e exercícios guiados. Comece grátis e explore as modalidades Pro.",
+        "primary": "Praticar no Modo Academia",
+        "secondary": "Ver modalidades",
+    },
+    "fr": {
+        "tag": "Académie Guidée",
+        "title": "Maîtrisez ce concept étape par étape en Mode Académie",
+        "body": "Entraînez-vous par niveaux avec validation en direct. Commencez gratuitement et découvrez les parcours Pro.",
+        "primary": "Pratiquer en Mode Académie",
+        "secondary": "Voir les formules",
+    },
+    "de": {
+        "tag": "Geführte Akademie",
+        "title": "Meistere dieses Konzept Schritt für Schritt im Akademie-Modus",
+        "body": "Übe in Levels mit Live-Validierung und geführten Drills. Starte kostenlos und entdecke die Pro-Pfade.",
+        "primary": "Im Akademie-Modus üben",
+        "secondary": "Optionen ansehen",
+    },
+    "it": {
+        "tag": "Accademia Guidata",
+        "title": "Padroneggia questo concetto passo dopo passo in Modalità Accademia",
+        "body": "Esercitati per livelli con validazione dal vivo. Inizia gratis e scopri i percorsi Pro della piattaforma.",
+        "primary": "Pratica in Modalità Accademia",
+        "secondary": "Vedi modalità",
+    },
+}
+
+
+def _academy_cta_block(tool_rel: str, loc: str, topic: str, slug: str, level: int = 1, source: str = "tips_article") -> str:
+    c = ACADEMY_CTA_COPY.get(loc, ACADEMY_CTA_COPY["es"])
+    safe_topic = quote(str(topic or "python").lower())
+    safe_slug = quote(str(slug or "academy"))
+    safe_loc = quote(str(loc or "es"))
+    primary_href = (
+        f"{tool_rel}?mode=learn&amp;lang={safe_loc}&amp;topic={safe_topic}"
+        f"&amp;level={int(level)}&amp;utm_source={escape(source)}&amp;utm_medium=bottom_cta&amp;utm_campaign={safe_slug}"
+    )
+    secondary_href = f"{tool_rel}?mode=learn&amp;lang={safe_loc}&amp;topic={safe_topic}&amp;open_plans=1"
+    return (
+        '      <aside class="cf-card cf-academy-funnel-cta" aria-label="Academy">\n'
+        f'        <span class="cf-tag">{escape(c["tag"])}</span>\n'
+        f'        <h2 class="cf-tip__h">{escape(c["title"])}</h2>\n'
+        f'        <p class="cf-muted">{escape(c["body"])}</p>\n'
+        '        <div class="cf-tip-modal__actions">\n'
+        f'          <a class="cf-btn cf-btn--primary" href="{primary_href}">{escape(c["primary"])}</a>\n'
+        f'          <a class="cf-btn cf-btn--secondary" href="{secondary_href}">{escape(c["secondary"])}</a>\n'
+        '        </div>\n'
+        '      </aside>'
+    )
 FIX_SRC = ROOT / "content" / "code-formatter-tips" / "syntax-fixes.json"
 FIX_REL = "tools/code-formatter/fix"
 OG_DEFAULT = f"{SITE}/assets/images/og/code-formatter-default.png"
@@ -329,13 +403,15 @@ def fix_pages() -> dict[str, str]:
                 for o in errors if o["slug"] != e["slug"]
             )
             related_tips = _related_tips_block(e["language"], lang_code, tips)
+            academy_cta = _academy_cta_block(tool_rel, lang_code, e["language"], e["slug"], level=1, source="fix_landing")
             body = (
                 f'        <div class="cf-fix__pair"><div><p class="cf-fix__label cf-fix__label--bad">{escape(_es("fixBefore"))}</p><pre class="cf-tip__code"><code>{escape(e["before"])}</code></pre></div>'
                 f'<div><p class="cf-fix__label cf-fix__label--good">{escape(_es("fixAfter"))}</p><pre class="cf-tip__code"><code>{escape(e["after"])}</code></pre></div></div>\n'
                 f'        <h2 class="cf-tip__h">{escape(_es("fixSteps"))}</h2>\n        <ol class="cf-fix__steps">{"".join(f"<li>{escape(t)}</li>" for t in steps)}</ol>\n'
                 f'        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="{tool_rel}?sample=1&amp;lang={escape(lang_code)}">{escape(_es("fixCta"))}</a></p>\n'
                 f'{related_tips}\n'
-                f'        <h2 class="cf-tip__h">{escape(_es("fixOthers"))}</h2>\n        <ul class="cf-fix__list">{others}</ul>'
+                f'        <h2 class="cf-tip__h">{escape(_es("fixOthers"))}</h2>\n        <ul class="cf-fix__list">{others}</ul>\n'
+                f'{academy_cta}'
             )
             page_html = _fill(
                 FIX_PAGE, TITLE=escape(loc["title"]), DESC=escape(loc["summary"]), URL=url, ALTERNATES=_alternates(path),
@@ -658,9 +734,11 @@ def tip_pages() -> dict[str, str]:
             fallback_cards = _build_tips_fallback_cards("../../../../", loc)
             showcase_html = _tips_showcase_block("../../../../", loc, fallback_cards)
             unified_footer = _unified_footer_html("../../../../", SQUAD_LABELS.get(loc, SQUAD_LABELS["es"]))
+            academy_level = int(tip.get("academy_level") or 1)
+            academy_cta = _academy_cta_block("../../../../", loc, prog_lang, slug, level=academy_level, source="tips_article")
             html_page = re.sub(
                 r"  <footer class=\"cf-footer\">[\s\S]*?  </footer>",
-                f"{showcase_html}\n\n{unified_footer}\n\n{TIP_DETAIL_MODAL_HTML}",
+                f"{academy_cta}\n\n{showcase_html}\n\n{unified_footer}\n\n{TIP_DETAIL_MODAL_HTML}",
                 html_page,
                 count=1,
             )
@@ -1037,6 +1115,10 @@ def build_public(matrix: dict) -> int:
     tips_dir = ROOT / "content" / "code-formatter-tips"
     to_copy.append("content/code-formatter-tips/code-formatter-manifest.json")
     to_copy += [f"content/code-formatter-tips/published/{m.name}" for m in sorted((tips_dir / "published").glob("*.md"))]
+    # Contenido público de Academia (solo niveles free 1-2 y catálogo ligero de rutas/retos diarios)
+    academy_dir = ROOT / "content" / "code-formatter-academy"
+    if academy_dir.is_dir():
+        to_copy += [m.relative_to(ROOT).as_posix() for m in sorted(academy_dir.rglob("*.json"))]
     inject_tips_fallback(ROOT)
     to_copy += write_fix_pages(ROOT)  # landings /fix/ (se generan en el repo: GitHub Pages sirve la raíz)
     to_copy += write_tip_pages(ROOT)  # páginas estáticas localizadas de tips

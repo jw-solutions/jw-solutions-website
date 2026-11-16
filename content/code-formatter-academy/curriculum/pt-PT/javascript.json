@@ -1,0 +1,175 @@
+{
+  "version": 1,
+  "locale": "pt-PT",
+  "tech": "javascript",
+  "standard": "ES2024 & JSDoc",
+  "levels": [
+    {
+      "id": "javascript-1",
+      "level": 1,
+      "tier": "free",
+      "title": "JAVASCRIPT 1 · Fundamentos e formatação limpa",
+      "estimatedMinutes": 5,
+      "concept_capsule": "Aplique indentação consistente, nomes claros e documentação padrão para que qualquer equipa leia e audite o código rapidamente.",
+      "starter_code": "function sum(a,b){return a+b}",
+      "reference_solution": "/**\n * Add two numbers safely.\n * @param {number} a - First operand.\n * @param {number} b - Second operand.\n * @returns {number} Sum of a and b.\n */\nexport function sum(a, b) {\n  return Number(a) + Number(b);\n}\n",
+      "tests": [
+        {
+          "id": "js1-t1",
+          "name": "Computes sum",
+          "visible": true,
+          "type": "eval",
+          "input": "sum(4, 6)",
+          "expected": 10,
+          "description": "sum(4, 6) returns 10"
+        },
+        {
+          "id": "js1-t2",
+          "name": "JSDoc tags",
+          "visible": true,
+          "type": "pattern",
+          "expected": "@returns",
+          "description": "Includes @returns JSDoc tag"
+        },
+        {
+          "id": "js1-t3",
+          "name": "Numeric coercion",
+          "visible": false,
+          "type": "eval",
+          "input": "sum(\"2\", 3)",
+          "expected": 5,
+          "description": "Coerces numeric strings safely"
+        }
+      ],
+      "style_rules": [
+        "jsdoc",
+        "semicolons",
+        "indent_2"
+      ],
+      "related_tip_slug": "javascript/javascript-es2024-legacy-class-refactoring-jsdoc",
+      "remedial_drills": [
+        {
+          "id": "js1-d-syntax",
+          "error_type": "syntax",
+          "title": "Reforço de Sintaxe",
+          "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
+          "starter_code": "const double = (n) => { return n * 2;",
+          "expected_pattern": "}",
+          "solution_hint": "Close the function block with `}`."
+        },
+        {
+          "id": "js1-d-edge",
+          "error_type": "edge_case",
+          "title": "Reforço de Casos Limite",
+          "prompt": "Adicione a validação defensiva para evitar falhas.",
+          "starter_code": "function len(arr) { return arr.length; }",
+          "expected_pattern": "Array.isArray",
+          "solution_hint": "Validate `Array.isArray(arr)` before reading `.length`."
+        },
+        {
+          "id": "js1-d-style",
+          "error_type": "style_doc",
+          "title": "Reforço de Estilo e Doc",
+          "prompt": "Aplique a norma oficial de formatação e documentação.",
+          "starter_code": "export function ping() { return true; }",
+          "expected_pattern": "/**",
+          "solution_hint": "Add a JSDoc block `/** ... */` above the function."
+        }
+      ]
+    },
+    {
+      "id": "javascript-2",
+      "level": 2,
+      "tier": "free",
+      "title": "JAVASCRIPT 2 · Casos limite e documentação",
+      "estimatedMinutes": 8,
+      "concept_capsule": "Proteja entradas nulas ou vazias antes de processar e documente contratos com a norma oficial da linguagem.",
+      "starter_code": "function getCity(u){return u&&u.address?u.address.city:\"N/A\"}",
+      "reference_solution": "/**\n * Read user city with safe fallback.\n * @param {{ address?: { city?: string } } | null | undefined} user\n * @returns {string} City name or fallback.\n */\nexport function getCity(user) {\n  return user?.address?.city ?? \"N/A\";\n}\n",
+      "tests": [
+        {
+          "id": "js2-t1",
+          "name": "Existing city",
+          "visible": true,
+          "type": "eval",
+          "input": "getCity({ address: { city: \"Lima\" } })",
+          "expected": "Lima",
+          "description": "Returns nested city"
+        },
+        {
+          "id": "js2-t2",
+          "name": "Optional chaining",
+          "visible": true,
+          "type": "pattern",
+          "expected": "?.",
+          "description": "Uses ES2020 optional chaining"
+        },
+        {
+          "id": "js2-t3",
+          "name": "Null user fallback",
+          "visible": false,
+          "type": "eval",
+          "input": "getCity(null)",
+          "expected": "N/A",
+          "description": "Handles null user without throwing"
+        }
+      ],
+      "style_rules": [
+        "optional_chaining",
+        "nullish_coalescing",
+        "jsdoc"
+      ],
+      "related_tip_slug": "javascript/typescript-modern-operators",
+      "remedial_drills": [
+        {
+          "id": "js2-d-syntax",
+          "error_type": "syntax",
+          "title": "Reforço de Sintaxe",
+          "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
+          "starter_code": "const name = user?.profile.name ?? \"Anon\";",
+          "expected_pattern": "profile?.name",
+          "solution_hint": "Use `?.` on every nullable property in the chain."
+        },
+        {
+          "id": "js2-d-edge",
+          "error_type": "edge_case",
+          "title": "Reforço de Casos Limite",
+          "prompt": "Adicione a validação defensiva para evitar falhas.",
+          "starter_code": "const port = cfg.port || 3000;",
+          "expected_pattern": "??",
+          "solution_hint": "Use `??` instead of `||` so `0` is preserved."
+        },
+        {
+          "id": "js2-d-style",
+          "error_type": "style_doc",
+          "title": "Reforço de Estilo e Doc",
+          "prompt": "Aplique a norma oficial de formatação e documentação.",
+          "starter_code": "export const ok = (v) => Boolean(v);",
+          "expected_pattern": "@param",
+          "solution_hint": "Document the parameter with `@param`."
+        }
+      ]
+    },
+    {
+      "id": "javascript-3",
+      "level": 3,
+      "tier": "pay",
+      "title": "JAVASCRIPT 3 · Refatoração modular (Pro)",
+      "estimatedMinutes": 12
+    },
+    {
+      "id": "javascript-4",
+      "level": 4,
+      "tier": "pay",
+      "title": "JAVASCRIPT 4 · Otimização e padrões avançados (Pro)",
+      "estimatedMinutes": 15
+    },
+    {
+      "id": "javascript-5",
+      "level": 5,
+      "tier": "pay",
+      "title": "JAVASCRIPT 5 · Auditoria e arquitetura limpa (Pro)",
+      "estimatedMinutes": 18
+    }
+  ]
+}

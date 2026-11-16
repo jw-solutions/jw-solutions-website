@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "locale": "es",
+  "tech": "yaml",
+  "standard": "YAML 1.2 & GitHub Actions",
+  "levels": [
+    {
+      "id": "yaml-1",
+      "level": 1,
+      "tier": "free",
+      "title": "YAML 1 · Fundamentos y formato limpio",
+      "estimatedMinutes": 5,
+      "concept_capsule": "Aplica sangría consistente, nombres claros y documentación estándar para que cualquier equipo pueda leer y auditar el código en segundos.",
+      "starter_code": "service: api\n\tport: 8000\n\tenv: prod",
+      "reference_solution": "# Service runtime configuration\nservice: api\nport: 8000\nenv: prod\n",
+      "tests": [
+        {
+          "id": "yaml1-t1",
+          "name": "Zero tab characters",
+          "visible": true,
+          "type": "pattern_absent",
+          "expected": "\t",
+          "description": "Removes all tab characters"
+        },
+        {
+          "id": "yaml1-t2",
+          "name": "Document comment",
+          "visible": true,
+          "type": "pattern",
+          "expected": "# ",
+          "description": "Adds descriptive YAML comment"
+        },
+        {
+          "id": "yaml1-t3",
+          "name": "Valid key-value",
+          "visible": false,
+          "type": "pattern",
+          "expected": "port: 8000",
+          "description": "Preserves port mapping"
+        }
+      ],
+      "style_rules": [
+        "no_tabs",
+        "header_comment",
+        "consistent_indent"
+      ],
+      "related_tip_slug": "json-yaml/yaml-ci-cd-indentation",
+      "remedial_drills": [
+        {
+          "id": "yaml1-d-syntax",
+          "error_type": "syntax",
+          "title": "Refuerzo de Sintaxis",
+          "prompt": "Corrige el error de sintaxis para que el código sea válido.",
+          "starter_code": "app:\n\tname: web",
+          "expected_pattern": "  name: web",
+          "solution_hint": "Replace tab indentation with 2 spaces."
+        },
+        {
+          "id": "yaml1-d-edge",
+          "error_type": "edge_case",
+          "title": "Refuerzo de Casos Borde",
+          "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
+          "starter_code": "country: NO",
+          "expected_pattern": "\"NO\"",
+          "solution_hint": "Quote `NO` so YAML 1.1 parsers do not treat it as boolean false."
+        },
+        {
+          "id": "yaml1-d-style",
+          "error_type": "style_doc",
+          "title": "Refuerzo de Estilo y Doc",
+          "prompt": "Aplica el estándar oficial de formato y documentación.",
+          "starter_code": "name: app",
+          "expected_pattern": "# ",
+          "solution_hint": "Add a top-level `#` comment explaining the file."
+        }
+      ]
+    },
+    {
+      "id": "yaml-2",
+      "level": 2,
+      "tier": "free",
+      "title": "YAML 2 · Casos borde y documentación",
+      "estimatedMinutes": 8,
+      "concept_capsule": "Protege entradas nulas o vacías antes de procesarlas y documenta contratos de entrada/salida con el estándar oficial del lenguaje.",
+      "starter_code": "name: Build\non:\n  push:\n   branches: [main]\njobs:\n  lint:\n    runs-on: ubuntu-latest",
+      "reference_solution": "# CI workflow for main branch validation\nname: Build\non:\n  push:\n    branches:\n      - main\njobs:\n  lint:\n    runs-on: ubuntu-latest\n",
+      "tests": [
+        {
+          "id": "yaml2-t1",
+          "name": "2-space alignment",
+          "visible": true,
+          "type": "pattern",
+          "expected": "    branches:",
+          "description": "Aligns branches under push with 2-space step"
+        },
+        {
+          "id": "yaml2-t2",
+          "name": "Block sequence",
+          "visible": true,
+          "type": "pattern",
+          "expected": "      - main",
+          "description": "Formats list items using block dashes"
+        },
+        {
+          "id": "yaml2-t3",
+          "name": "Header comment",
+          "visible": false,
+          "type": "pattern",
+          "expected": "# ",
+          "description": "Includes workflow purpose comment"
+        }
+      ],
+      "style_rules": [
+        "indent_2",
+        "list_dashes",
+        "header_comment"
+      ],
+      "related_tip_slug": "json-yaml/yaml-ci-cd-indentation",
+      "remedial_drills": [
+        {
+          "id": "yaml2-d-syntax",
+          "error_type": "syntax",
+          "title": "Refuerzo de Sintaxis",
+          "prompt": "Corrige el error de sintaxis para que el código sea válido.",
+          "starter_code": "steps:\n- uses: actions/checkout@v4\n   run: npm test",
+          "expected_pattern": "  run:",
+          "solution_hint": "Align sibling keys inside a sequence item."
+        },
+        {
+          "id": "yaml2-d-edge",
+          "error_type": "edge_case",
+          "title": "Refuerzo de Casos Borde",
+          "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
+          "starter_code": "version: 1.0",
+          "expected_pattern": "\"1.0\"",
+          "solution_hint": "Quote version strings like `\"1.0\"` so trailing `.0` is preserved."
+        },
+        {
+          "id": "yaml2-d-style",
+          "error_type": "style_doc",
+          "title": "Refuerzo de Estilo y Doc",
+          "prompt": "Aplica el estándar oficial de formato y documentación.",
+          "starter_code": "jobs:\n  test:\n    runs-on: ubuntu-latest",
+          "expected_pattern": "# ",
+          "solution_hint": "Document the CI job purpose with a comment."
+        }
+      ]
+    },
+    {
+      "id": "yaml-3",
+      "level": 3,
+      "tier": "pay",
+      "title": "YAML 3 · Refactorización modular (Pro)",
+      "estimatedMinutes": 12
+    },
+    {
+      "id": "yaml-4",
+      "level": 4,
+      "tier": "pay",
+      "title": "YAML 4 · Optimización y patrones avanzados (Pro)",
+      "estimatedMinutes": 15
+    },
+    {
+      "id": "yaml-5",
+      "level": 5,
+      "tier": "pay",
+      "title": "YAML 5 · Auditoría y arquitectura limpia (Pro)",
+      "estimatedMinutes": 18
+    }
+  ]
+}

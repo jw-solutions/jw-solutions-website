@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Code Formatter &amp; Auto-Doc AI | JW Solutions</title>
   <meta name="description" content="Formatea y documenta tu código en Python, JavaScript, TypeScript, SQL, DAX, Java, C#, PHP, JSON y YAML. Herramienta de JW Solutions.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ZCh9uLobU/eLEHs011X4CeRT/9JAjSY8bKMuPaZL1pU=' https://esm.sh https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io https://esm.sh; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-ZCh9uLobU/eLEHs011X4CeRT/9JAjSY8bKMuPaZL1pU=' https://esm.sh https://cdnjs.cloudflare.com; worker-src 'self' blob:; frame-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io https://esm.sh; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="canonical" href="https://jw-solutions.com/tools/code-formatter/">
   <link rel="alternate" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/">
@@ -95,7 +95,12 @@
     </section>
 
     <section class="cf-container cf-workspace" data-i18n-aria="editorRegion" aria-label="Editor">
-      <div class="cf-card cf-toolbar" role="group">
+      <div id="cf-mode-switch" class="cf-mode-switch" role="tablist" data-i18n-aria="acadModeSwitchAria" aria-label="Cambiar entre Formateador y Academia">
+        <button type="button" id="cf-mode-formatter" class="cf-mode-switch__btn is-active" role="tab" aria-selected="true" data-cf-work-mode="format" data-i18n="acadModeFormatter">Formateador</button>
+        <button type="button" id="cf-mode-academy" class="cf-mode-switch__btn" role="tab" aria-selected="false" data-cf-work-mode="learn" data-i18n="acadModeAcademy">Academia</button>
+      </div>
+
+      <div id="cf-formatter-toolbar" class="cf-card cf-toolbar" role="group">
         <label class="cf-field">
           <span class="cf-field__label" data-i18n="language">Lenguaje</span>
           <select id="cf-language" class="cf-select">
@@ -129,7 +134,8 @@
         <button type="button" id="cf-format" class="cf-btn cf-btn--primary" data-i18n="format">Formatear</button>
       </div>
 
-      <div class="cf-card cf-editor-card">
+      <div id="cf-editor-slot-home" class="cf-editor-slot-home">
+      <div id="cf-editor-card" class="cf-card cf-editor-card">
         <div class="cf-editor-card__head">
           <span class="cf-editor-card__title" data-i18n="code">Código</span>
           <span id="cf-stats" class="cf-muted">1 línea</span>
@@ -190,6 +196,51 @@
         </div>
         <ul id="cf-history-list" class="cf-history__list"></ul>
       </div>
+      </div>
+
+      <section id="cf-academy-shell" class="cf-academy-shell" data-cf-feature="academy.core" hidden aria-labelledby="cf-academy-heading">
+        <div class="cf-card cf-academy-head">
+          <div>
+            <h2 id="cf-academy-heading" class="cf-academy-head__title" data-i18n="acadTitle">Academia de Código Limpio</h2>
+            <p class="cf-muted" data-i18n="acadSubtitle">Entrenamiento guiado por rutas profesionales, estándares oficiales y retos prácticos.</p>
+          </div>
+          <div class="cf-academy-head__actions">
+            <button type="button" id="cf-academy-back" class="cf-btn cf-btn--small" hidden data-i18n="acadBackPaths">← Cambiar ruta o lenguaje</button>
+            <button type="button" id="cf-academy-daily-btn" class="cf-btn cf-btn--primary cf-btn--small" data-i18n="acadDailyBtn">Practicar Reto Clean &amp; Document</button>
+          </div>
+        </div>
+
+        <div id="cf-academy-paths" class="cf-academy-paths"></div>
+
+        <div id="cf-academy-workspace" class="cf-academy-workspace" hidden>
+          <div id="cf-academy-mobile-tabs" class="cf-academy-mobile-tabs" role="tablist">
+            <button type="button" class="cf-academy-mobile-tab is-active" role="tab" aria-selected="true" data-acad-pane="mission" data-i18n="acadTabMission">Misión</button>
+            <button type="button" class="cf-academy-mobile-tab" role="tab" aria-selected="false" data-acad-pane="editor" data-i18n="acadTabEditor">Editor</button>
+            <button type="button" class="cf-academy-mobile-tab" role="tab" aria-selected="false" data-acad-pane="results" data-i18n="acadTabResults">Resultados</button>
+          </div>
+
+          <div class="cf-academy-grid">
+            <aside id="cf-academy-mission-pane" class="cf-card cf-academy-pane is-active" data-acad-pane-body="mission">
+              <div id="cf-academy-skill-tree" class="cf-academy-skill-tree"></div>
+              <div id="cf-academy-mission-card" class="cf-academy-mission-card"></div>
+            </aside>
+
+            <div id="cf-academy-editor-pane" class="cf-academy-pane cf-academy-editor-pane" data-acad-pane-body="editor">
+              <div id="cf-academy-editor-slot"></div>
+              <div class="cf-academy-editor-bar">
+                <button type="button" id="cf-academy-validate" class="cf-btn cf-btn--primary" data-i18n="acadValidateBtn">Validar nivel</button>
+                <button type="button" id="cf-academy-diff" class="cf-btn" data-i18n="acadDiffBtn">Comparar con solución óptima</button>
+              </div>
+            </div>
+
+            <aside id="cf-academy-results-pane" class="cf-card cf-academy-pane" data-acad-pane-body="results">
+              <h3 class="cf-academy-pane__title" data-i18n="acadConsoleTitle">Consola de validación</h3>
+              <div id="cf-academy-live" class="cf-academy-console" role="status" aria-live="polite" data-i18n="acadConsoleEmpty">Ejecuta la validación para comprobar tus pruebas y estilo.</div>
+              <div id="cf-academy-checklist" class="cf-academy-checklist"></div>
+            </aside>
+          </div>
+        </div>
+      </section>
     </section>
   </main>
 
@@ -336,6 +387,7 @@
     <div class="cf-tip-modal__actions">
       <a id="cf-tip-modal-full" class="cf-btn cf-btn--primary" href="tips/python/" data-i18n="tipsOpenFullPage">Leer guía completa y FAQ</a>
       <button type="button" id="cf-tip-modal-load" class="cf-btn" data-i18n="tipsLoadInEditor">Cargar ejemplo en el editor</button>
+      <a id="cf-tip-modal-academy" class="cf-btn cf-btn--secondary" href="?mode=learn" data-i18n="tipsPracticeAcademy">Practicar en Modo Academia</a>
     </div>
   </dialog>
 

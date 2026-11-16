@@ -23,6 +23,7 @@ _CF_EMAIL_COPY: dict[str, dict[str, str]] = {
         "badge": "CODE FORMATTER · TIP TÉCNICO",
         "cta": "Leer tip completo",
         "try_cta": "Probar fragmento en el editor",
+        "academy_cta": "Practicar en Modo Academia",
         "unsub": "Darme de baja de este boletín",
         "footer": "Recibiste este correo porque te suscribiste a Code Formatter & Auto-Doc AI en jw-solutions.com.",
         "fallback_title": "Nuevo tip de código",
@@ -31,6 +32,7 @@ _CF_EMAIL_COPY: dict[str, dict[str, str]] = {
         "badge": "CODE FORMATTER · TECH TIP",
         "cta": "Read full tip",
         "try_cta": "Try snippet in the editor",
+        "academy_cta": "Practice in Academy Mode",
         "unsub": "Unsubscribe from this newsletter",
         "footer": "You received this email because you subscribed to Code Formatter & Auto-Doc AI at jw-solutions.com.",
         "fallback_title": "New code formatting tip",
@@ -39,6 +41,7 @@ _CF_EMAIL_COPY: dict[str, dict[str, str]] = {
         "badge": "CODE FORMATTER · DICA TÉCNICA",
         "cta": "Ler dica completa",
         "try_cta": "Testar trecho no editor",
+        "academy_cta": "Praticar no Modo Academia",
         "unsub": "Cancelar inscrição nesta newsletter",
         "footer": "Você recebeu este e-mail porque se inscreveu no Code Formatter & Auto-Doc AI em jw-solutions.com.",
         "fallback_title": "Nova dica de código",
@@ -47,6 +50,7 @@ _CF_EMAIL_COPY: dict[str, dict[str, str]] = {
         "badge": "CODE FORMATTER · DICA TÉCNICA",
         "cta": "Ler dica completa",
         "try_cta": "Experimentar excerto no editor",
+        "academy_cta": "Praticar no Modo Academia",
         "unsub": "Cancelar subscrição desta newsletter",
         "footer": "Recebeu este e-mail porque subscreveu o Code Formatter & Auto-Doc AI em jw-solutions.com.",
         "fallback_title": "Nova dica de código",
@@ -55,6 +59,7 @@ _CF_EMAIL_COPY: dict[str, dict[str, str]] = {
         "badge": "CODE FORMATTER · ASTUCE TECH",
         "cta": "Lire l'astuce complète",
         "try_cta": "Tester l'extrait dans l'éditeur",
+        "academy_cta": "Pratiquer en Mode Académie",
         "unsub": "Se désabonner de cette newsletter",
         "footer": "Vous avez reçu cet e-mail car vous êtes abonné à Code Formatter & Auto-Doc AI sur jw-solutions.com.",
         "fallback_title": "Nouvelle astuce de code",
@@ -63,6 +68,7 @@ _CF_EMAIL_COPY: dict[str, dict[str, str]] = {
         "badge": "CODE FORMATTER · TECH-TIPP",
         "cta": "Vollständigen Tipp lesen",
         "try_cta": "Snippet im Editor testen",
+        "academy_cta": "Im Akademie-Modus üben",
         "unsub": "Von diesem Newsletter abmelden",
         "footer": "Sie erhalten diese E-Mail, weil Sie Code Formatter & Auto-Doc AI auf jw-solutions.com abonniert haben.",
         "fallback_title": "Neuer Code-Tipp",
@@ -71,6 +77,7 @@ _CF_EMAIL_COPY: dict[str, dict[str, str]] = {
         "badge": "CODE FORMATTER · SUGGERIMENTO",
         "cta": "Leggi il suggerimento completo",
         "try_cta": "Prova lo snippet nell'editor",
+        "academy_cta": "Pratica in Modalità Accademia",
         "unsub": "Annulla l'iscrizione a questa newsletter",
         "footer": "Hai ricevuto questa e-mail perché ti sei iscritto a Code Formatter & Auto-Doc AI su jw-solutions.com.",
         "fallback_title": "Nuovo suggerimento di codice",
@@ -227,6 +234,9 @@ def _render_code_formatter_email(
         if prog_lang:
             try_url += f"&code_lang={quote(prog_lang)}"
 
+    academy_topic = quote((prog_lang or "python").lower())
+    academy_url = f"{CF_TOOL_URL}?mode=learn&lang={quote(norm_lang)}&topic={academy_topic}&utm_source=newsletter&utm_medium=email"
+
     badge_text = f"{copy['badge']} · {prog_lang.upper()}" if prog_lang else copy["badge"]
     subject = f"[Code Formatter AI] {title}"
 
@@ -241,12 +251,15 @@ def _render_code_formatter_email(
     ]
     if try_url:
         text_lines.append(f"{copy['try_cta']}: {try_url}")
+    text_lines.append(f"{copy['academy_cta']}: {academy_url}")
     text_lines.extend(["", "---", copy["footer"], f"{copy['unsub']}: {unsubscribe_url}"])
     text_body = "\n".join(text_lines)
 
     esc_title = html.escape(title)
     esc_summary = html.escape(summary)
     esc_url = html.escape(url, quote=True)
+    esc_academy_url = html.escape(academy_url, quote=True)
+    esc_academy_cta = html.escape(copy["academy_cta"])
     esc_unsub = html.escape(unsubscribe_url, quote=True)
     esc_badge = html.escape(badge_text)
     esc_cta = html.escape(copy["cta"])
@@ -296,6 +309,9 @@ def _render_code_formatter_email(
                   {secondary_btn}
                 </tr>
               </table>
+              <p style="margin:16px 0 0;font-size:13px;">
+                <a href="{esc_academy_url}" target="_blank" rel="noopener noreferrer" style="color:#D4AF37;text-decoration:underline;font-weight:600;">{esc_academy_cta} &rarr;</a>
+              </p>
             </td>
           </tr>
           <tr>

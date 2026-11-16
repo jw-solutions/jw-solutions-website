@@ -356,6 +356,7 @@ export async function initTipsShowcase({ onLoadSnippet } = {}) {
     const codeNode = document.getElementById('cf-tip-modal-code');
     const fullBtn = document.getElementById('cf-tip-modal-full');
     const loadBtn = document.getElementById('cf-tip-modal-load');
+    const academyBtn = document.getElementById('cf-tip-modal-academy');
 
     if (titleNode) titleNode.textContent = v.title;
     if (langNode) {
@@ -383,6 +384,10 @@ export async function initTipsShowcase({ onLoadSnippet } = {}) {
 
     if (fullBtn) {
       fullBtn.setAttribute('href', tipFullPageUrl(tip, v.locale));
+    }
+    if (academyBtn) {
+      const topic = encodeURIComponent(String(tip.language || 'python').toLowerCase());
+      academyBtn.setAttribute('href', `${TOOL_BASE}?mode=learn&lang=${encodeURIComponent(v.locale)}&topic=${topic}`);
     }
     if (loadBtn) {
       loadBtn.hidden = !parsed.codeSnippet;

@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "locale": "pt-PT",
+  "tech": "json",
+  "standard": "RFC 8259 & JSON Schema",
+  "levels": [
+    {
+      "id": "json-1",
+      "level": 1,
+      "tier": "free",
+      "title": "JSON 1 · Fundamentos e formatação limpa",
+      "estimatedMinutes": 5,
+      "concept_capsule": "Aplique indentação consistente, nomes claros e documentação padrão para que qualquer equipa leia e audite o código rapidamente.",
+      "starter_code": "{'service':'formatter',\"port\":8080,}",
+      "reference_solution": "{\n  \"service\": \"formatter\",\n  \"port\": 8080\n}\n",
+      "tests": [
+        {
+          "id": "json1-t1",
+          "name": "Valid RFC 8259 JSON",
+          "visible": true,
+          "type": "json_valid",
+          "expected": true,
+          "description": "Parses cleanly with JSON.parse"
+        },
+        {
+          "id": "json1-t2",
+          "name": "Double quotes only",
+          "visible": true,
+          "type": "pattern_absent",
+          "expected": "'",
+          "description": "Replaces single quotes with double quotes"
+        },
+        {
+          "id": "json1-t3",
+          "name": "2-space indent",
+          "visible": false,
+          "type": "pattern",
+          "expected": "  \"service\":",
+          "description": "Uses 2-space indentation"
+        }
+      ],
+      "style_rules": [
+        "rfc8259_valid",
+        "double_quotes",
+        "no_trailing_comma"
+      ],
+      "related_tip_slug": "json-yaml/json-rfc8259-formatting",
+      "remedial_drills": [
+        {
+          "id": "json1-d-syntax",
+          "error_type": "syntax",
+          "title": "Reforço de Sintaxe",
+          "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
+          "starter_code": "{\"ok\": true,}",
+          "expected_pattern": "true\n}",
+          "solution_hint": "Remove the trailing comma after `true`."
+        },
+        {
+          "id": "json1-d-edge",
+          "error_type": "edge_case",
+          "title": "Reforço de Casos Limite",
+          "prompt": "Adicione a validação defensiva para evitar falhas.",
+          "starter_code": "{\"ratio\": NaN}",
+          "expected_pattern": "null",
+          "solution_hint": "JSON does not support `NaN`; use `null`."
+        },
+        {
+          "id": "json1-d-style",
+          "error_type": "style_doc",
+          "title": "Reforço de Estilo e Doc",
+          "prompt": "Aplique a norma oficial de formatação e documentação.",
+          "starter_code": "{\"a\":1,\"b\":2}",
+          "expected_pattern": "  \"a\":",
+          "solution_hint": "Pretty-print JSON with 2-space indentation."
+        }
+      ]
+    },
+    {
+      "id": "json-2",
+      "level": 2,
+      "tier": "free",
+      "title": "JSON 2 · Casos limite e documentação",
+      "estimatedMinutes": 8,
+      "concept_capsule": "Proteja entradas nulas ou vazias antes de processar e documente contratos com a norma oficial da linguagem.",
+      "starter_code": "{\"apiVersion\":\"v1\",\"endpoints\":[{\"path\":\"/health\",\"auth\":false,},{\"path\":\"/sync\",\"auth\":true}]}",
+      "reference_solution": "{\n  \"apiVersion\": \"v1\",\n  \"endpoints\": [\n    {\n      \"path\": \"/health\",\n      \"auth\": false\n    },\n    {\n      \"path\": \"/sync\",\n      \"auth\": true\n    }\n  ]\n}\n",
+      "tests": [
+        {
+          "id": "json2-t1",
+          "name": "Valid nested JSON",
+          "visible": true,
+          "type": "json_valid",
+          "expected": true,
+          "description": "Nested array/object parses cleanly"
+        },
+        {
+          "id": "json2-t2",
+          "name": "No trailing comma",
+          "visible": true,
+          "type": "pattern_absent",
+          "expected": ",}",
+          "description": "Removes trailing comma in object"
+        },
+        {
+          "id": "json2-t3",
+          "name": "Formatted array items",
+          "visible": false,
+          "type": "pattern",
+          "expected": "      \"path\":",
+          "description": "Indents nested object properties consistently"
+        }
+      ],
+      "style_rules": [
+        "rfc8259_valid",
+        "indent_2",
+        "no_trailing_comma"
+      ],
+      "related_tip_slug": "json-yaml/json-rfc8259-formatting",
+      "remedial_drills": [
+        {
+          "id": "json2-d-syntax",
+          "error_type": "syntax",
+          "title": "Reforço de Sintaxe",
+          "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
+          "starter_code": "[1, 2, 3,]",
+          "expected_pattern": "[1, 2, 3]",
+          "solution_hint": "Remove the trailing comma inside the array."
+        },
+        {
+          "id": "json2-d-edge",
+          "error_type": "edge_case",
+          "title": "Reforço de Casos Limite",
+          "prompt": "Adicione a validação defensiva para evitar falhas.",
+          "starter_code": "{\"note\": \"line1\nline2\"}",
+          "expected_pattern": "\\n",
+          "solution_hint": "Escape literal newlines inside JSON strings as `\\n`."
+        },
+        {
+          "id": "json2-d-style",
+          "error_type": "style_doc",
+          "title": "Reforço de Estilo e Doc",
+          "prompt": "Aplique a norma oficial de formatação e documentação.",
+          "starter_code": "{\"k\":1}",
+          "expected_pattern": "  \"k\": 1",
+          "solution_hint": "Format with 2 spaces per nesting level."
+        }
+      ]
+    },
+    {
+      "id": "json-3",
+      "level": 3,
+      "tier": "pay",
+      "title": "JSON 3 · Refatoração modular (Pro)",
+      "estimatedMinutes": 12
+    },
+    {
+      "id": "json-4",
+      "level": 4,
+      "tier": "pay",
+      "title": "JSON 4 · Otimização e padrões avançados (Pro)",
+      "estimatedMinutes": 15
+    },
+    {
+      "id": "json-5",
+      "level": 5,
+      "tier": "pay",
+      "title": "JSON 5 · Auditoria e arquitetura limpa (Pro)",
+      "estimatedMinutes": 18
+    }
+  ]
+}

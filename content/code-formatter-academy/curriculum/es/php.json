@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "locale": "es",
+  "tech": "php",
+  "standard": "PHP 8.3 & PSR-12",
+  "levels": [
+    {
+      "id": "php-1",
+      "level": 1,
+      "tier": "free",
+      "title": "PHP 1 · Fundamentos y formato limpio",
+      "estimatedMinutes": 5,
+      "concept_capsule": "Aplica sangría consistente, nombres claros y documentación estándar para que cualquier equipo pueda leer y auditar el código en segundos.",
+      "starter_code": "<?php\nfunction greet($name){return \"Hello \".$name;}",
+      "reference_solution": "<?php\n\ndeclare(strict_types=1);\n\n/**\n * Build a sanitized greeting message.\n */\nfunction greet(string $name): string\n{\n    $clean = trim($name);\n    return $clean === \"\" ? \"Hello!\" : \"Hello, {$clean}!\";\n}\n",
+      "tests": [
+        {
+          "id": "php1-t1",
+          "name": "Strict types",
+          "visible": true,
+          "type": "pattern",
+          "expected": "declare(strict_types=1);",
+          "description": "Enables PHP strict_types"
+        },
+        {
+          "id": "php1-t2",
+          "name": "Typed signature",
+          "visible": true,
+          "type": "pattern",
+          "expected": "string $name): string",
+          "description": "Declares parameter and return types"
+        },
+        {
+          "id": "php1-t3",
+          "name": "Empty string guard",
+          "visible": false,
+          "type": "pattern",
+          "expected": "trim($name)",
+          "description": "Trims whitespace and handles empty input"
+        }
+      ],
+      "style_rules": [
+        "strict_types",
+        "psr12_braces",
+        "type_declarations"
+      ],
+      "related_tip_slug": "php/php-83-typed-properties-enums-psr12-refactoring",
+      "remedial_drills": [
+        {
+          "id": "php1-d-syntax",
+          "error_type": "syntax",
+          "title": "Refuerzo de Sintaxis",
+          "prompt": "Corrige el error de sintaxis para que el código sea válido.",
+          "starter_code": "<?php\n$x = 10\necho $x;",
+          "expected_pattern": ";",
+          "solution_hint": "Add a semicolon `;` after `$x = 10`."
+        },
+        {
+          "id": "php1-d-edge",
+          "error_type": "edge_case",
+          "title": "Refuerzo de Casos Borde",
+          "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
+          "starter_code": "function first(array $a) { return $a[0]; }",
+          "expected_pattern": "empty(",
+          "solution_hint": "Check `empty($a)` before accessing `$a[0]`."
+        },
+        {
+          "id": "php1-d-style",
+          "error_type": "style_doc",
+          "title": "Refuerzo de Estilo y Doc",
+          "prompt": "Aplica el estándar oficial de formato y documentación.",
+          "starter_code": "<?php\nfunction ok(): bool { return true; }",
+          "expected_pattern": "strict_types",
+          "solution_hint": "Add `declare(strict_types=1);` at the top."
+        }
+      ]
+    },
+    {
+      "id": "php-2",
+      "level": 2,
+      "tier": "free",
+      "title": "PHP 2 · Casos borde y documentación",
+      "estimatedMinutes": 8,
+      "concept_capsule": "Protege entradas nulas o vacías antes de procesarlas y documenta contratos de entrada/salida con el estándar oficial del lenguaje.",
+      "starter_code": "<?php\nclass Order{public $status=\"pending\";}",
+      "reference_solution": "<?php\n\ndeclare(strict_types=1);\n\nenum OrderStatus: string\n{\n    case Pending = \"pending\";\n    case Paid = \"paid\";\n}\n\n/**\n * Typed order entity following PSR-12.\n */\nfinal class Order\n{\n    public function __construct(\n        public readonly OrderStatus $status = OrderStatus::Pending,\n    ) {\n    }\n}\n",
+      "tests": [
+        {
+          "id": "php2-t1",
+          "name": "Backed Enum",
+          "visible": true,
+          "type": "pattern",
+          "expected": "enum OrderStatus: string",
+          "description": "Replaces magic string with backed Enum"
+        },
+        {
+          "id": "php2-t2",
+          "name": "Readonly promotion",
+          "visible": true,
+          "type": "pattern",
+          "expected": "public readonly",
+          "description": "Uses constructor property promotion with readonly"
+        },
+        {
+          "id": "php2-t3",
+          "name": "PHPDoc comment",
+          "visible": false,
+          "type": "pattern",
+          "expected": "/**",
+          "description": "Includes PHPDoc block"
+        }
+      ],
+      "style_rules": [
+        "php83_enum",
+        "readonly_property",
+        "psr12_braces"
+      ],
+      "related_tip_slug": "php/php-83-typed-properties-enums-psr12-refactoring",
+      "remedial_drills": [
+        {
+          "id": "php2-d-syntax",
+          "error_type": "syntax",
+          "title": "Refuerzo de Sintaxis",
+          "prompt": "Corrige el error de sintaxis para que el código sea válido.",
+          "starter_code": "enum Role: string { case Admin = \"admin\" }",
+          "expected_pattern": ";",
+          "solution_hint": "End enum cases with `;`."
+        },
+        {
+          "id": "php2-d-edge",
+          "error_type": "edge_case",
+          "title": "Refuerzo de Casos Borde",
+          "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
+          "starter_code": "OrderStatus::from($raw)",
+          "expected_pattern": "tryFrom",
+          "solution_hint": "Use `tryFrom()` to safely handle unknown string values."
+        },
+        {
+          "id": "php2-d-style",
+          "error_type": "style_doc",
+          "title": "Refuerzo de Estilo y Doc",
+          "prompt": "Aplica el estándar oficial de formato y documentación.",
+          "starter_code": "class Item { public $id; }",
+          "expected_pattern": "int $id",
+          "solution_hint": "Add explicit property type declarations."
+        }
+      ]
+    },
+    {
+      "id": "php-3",
+      "level": 3,
+      "tier": "pay",
+      "title": "PHP 3 · Refactorización modular (Pro)",
+      "estimatedMinutes": 12
+    },
+    {
+      "id": "php-4",
+      "level": 4,
+      "tier": "pay",
+      "title": "PHP 4 · Optimización y patrones avanzados (Pro)",
+      "estimatedMinutes": 15
+    },
+    {
+      "id": "php-5",
+      "level": 5,
+      "tier": "pay",
+      "title": "PHP 5 · Auditoría y arquitectura limpia (Pro)",
+      "estimatedMinutes": 18
+    }
+  ]
+}

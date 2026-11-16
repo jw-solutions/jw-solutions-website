@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "locale": "es",
+  "tech": "typescript",
+  "standard": "TSDoc & Strict Mode",
+  "levels": [
+    {
+      "id": "typescript-1",
+      "level": 1,
+      "tier": "free",
+      "title": "TYPESCRIPT 1 · Fundamentos y formato limpio",
+      "estimatedMinutes": 5,
+      "concept_capsule": "Aplica sangría consistente, nombres claros y documentación estándar para que cualquier equipo pueda leer y auditar el código en segundos.",
+      "starter_code": "function formatPrice(v:any){return \"$\"+v.toFixed(2)}",
+      "reference_solution": "/**\n * Format a numeric price into USD currency string.\n * @param amount - Monetary value.\n * @returns Formatted USD string.\n */\nexport function formatPrice(amount: number): string {\n  if (!Number.isFinite(amount)) return \"$0.00\";\n  return `$${amount.toFixed(2)}`;\n}\n",
+      "tests": [
+        {
+          "id": "ts1-t1",
+          "name": "No any type",
+          "visible": true,
+          "type": "pattern_absent",
+          "expected": ": any",
+          "description": "Eliminates explicit any"
+        },
+        {
+          "id": "ts1-t2",
+          "name": "Explicit return type",
+          "visible": true,
+          "type": "pattern",
+          "expected": ": string",
+          "description": "Declares explicit : string return type"
+        },
+        {
+          "id": "ts1-t3",
+          "name": "Finite number guard",
+          "visible": false,
+          "type": "pattern",
+          "expected": "Number.isFinite",
+          "description": "Guards against NaN/Infinity"
+        }
+      ],
+      "style_rules": [
+        "no_explicit_any",
+        "tsdoc",
+        "return_type"
+      ],
+      "related_tip_slug": "javascript/typescript-modern-operators",
+      "remedial_drills": [
+        {
+          "id": "ts1-d-syntax",
+          "error_type": "syntax",
+          "title": "Refuerzo de Sintaxis",
+          "prompt": "Corrige el error de sintaxis para que el código sea válido.",
+          "starter_code": "interface User { id: number name: string }",
+          "expected_pattern": ";",
+          "solution_hint": "Separate interface members with `;` or newlines."
+        },
+        {
+          "id": "ts1-d-edge",
+          "error_type": "edge_case",
+          "title": "Refuerzo de Casos Borde",
+          "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
+          "starter_code": "function parse(x: unknown) { return x.toString(); }",
+          "expected_pattern": "typeof x",
+          "solution_hint": "Narrow `unknown` with `typeof` before calling methods."
+        },
+        {
+          "id": "ts1-d-style",
+          "error_type": "style_doc",
+          "title": "Refuerzo de Estilo y Doc",
+          "prompt": "Aplica el estándar oficial de formato y documentación.",
+          "starter_code": "export function id(n: number) { return n; }",
+          "expected_pattern": ": number",
+          "solution_hint": "Add explicit return type annotation."
+        }
+      ]
+    },
+    {
+      "id": "typescript-2",
+      "level": 2,
+      "tier": "free",
+      "title": "TYPESCRIPT 2 · Casos borde y documentación",
+      "estimatedMinutes": 8,
+      "concept_capsule": "Protege entradas nulas o vacías antes de procesarlas y documenta contratos de entrada/salida con el estándar oficial del lenguaje.",
+      "starter_code": "function isUser(x:any){return x&&typeof x.email==\"string\"}",
+      "reference_solution": "export interface User {\n  email: string;\n}\n\n/**\n * Type guard verifying an unknown payload is a User.\n */\nexport function isUser(value: unknown): value is User {\n  return (\n    typeof value === \"object\" &&\n    value !== null &&\n    \"email\" in value &&\n    typeof (value as { email: unknown }).email === \"string\"\n  );\n}\n",
+      "tests": [
+        {
+          "id": "ts2-t1",
+          "name": "Type predicate",
+          "visible": true,
+          "type": "pattern",
+          "expected": "value is User",
+          "description": "Uses TypeScript type predicate"
+        },
+        {
+          "id": "ts2-t2",
+          "name": "Unknown parameter",
+          "visible": true,
+          "type": "pattern",
+          "expected": "unknown",
+          "description": "Accepts unknown instead of any"
+        },
+        {
+          "id": "ts2-t3",
+          "name": "Null check",
+          "visible": false,
+          "type": "pattern",
+          "expected": "!== null",
+          "description": "Safely excludes null values"
+        }
+      ],
+      "style_rules": [
+        "type_guard",
+        "no_explicit_any",
+        "tsdoc"
+      ],
+      "related_tip_slug": "javascript/typescript-refactoring-legacy-any-type-guards-tsdoc",
+      "remedial_drills": [
+        {
+          "id": "ts2-d-syntax",
+          "error_type": "syntax",
+          "title": "Refuerzo de Sintaxis",
+          "prompt": "Corrige el error de sintaxis para que el código sea válido.",
+          "starter_code": "function isStr(v: unknown): v is string (return typeof v === \"string\";)",
+          "expected_pattern": "{",
+          "solution_hint": "Use curly braces `{ ... }` for the function body."
+        },
+        {
+          "id": "ts2-d-edge",
+          "error_type": "edge_case",
+          "title": "Refuerzo de Casos Borde",
+          "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
+          "starter_code": "const ok = typeof v === \"object\";",
+          "expected_pattern": "v !== null",
+          "solution_hint": "Remember `typeof null === \"object\"` in JS/TS."
+        },
+        {
+          "id": "ts2-d-style",
+          "error_type": "style_doc",
+          "title": "Refuerzo de Estilo y Doc",
+          "prompt": "Aplica el estándar oficial de formato y documentación.",
+          "starter_code": "export type ID = string;",
+          "expected_pattern": "/**",
+          "solution_hint": "Add a TSDoc comment above exported types."
+        }
+      ]
+    },
+    {
+      "id": "typescript-3",
+      "level": 3,
+      "tier": "pay",
+      "title": "TYPESCRIPT 3 · Refactorización modular (Pro)",
+      "estimatedMinutes": 12
+    },
+    {
+      "id": "typescript-4",
+      "level": 4,
+      "tier": "pay",
+      "title": "TYPESCRIPT 4 · Optimización y patrones avanzados (Pro)",
+      "estimatedMinutes": 15
+    },
+    {
+      "id": "typescript-5",
+      "level": 5,
+      "tier": "pay",
+      "title": "TYPESCRIPT 5 · Auditoría y arquitectura limpia (Pro)",
+      "estimatedMinutes": 18
+    }
+  ]
+}

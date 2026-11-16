@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "achievements": [
+    {
+      "id": "first_level",
+      "icon": "★",
+      "tier": "free",
+      "criteria": { "type": "levels_completed", "count": 1 },
+      "i18n": {
+        "es": { "title": "Primer Código Limpio", "description": "Completa tu primer nivel en la Academia." },
+        "en": { "title": "First Clean Code", "description": "Complete your first Academy level." },
+        "pt-BR": { "title": "Primeiro Código Limpo", "description": "Conclua seu primeiro nível na Academia." },
+        "pt-PT": { "title": "Primeiro Código Limpo", "description": "Conclua o seu primeiro nível na Academia." },
+        "fr": { "title": "Premier Code Propre", "description": "Terminez votre premier niveau à l'Académie." },
+        "de": { "title": "Erster Sauberer Code", "description": "Schließe dein erstes Academy-Level ab." },
+        "it": { "title": "Primo Codice Pulito", "description": "Completa il tuo primo livello in Accademia." }
+      }
+    },
+    {
+      "id": "streak_3",
+      "icon": "◆",
+      "tier": "free",
+      "criteria": { "type": "daily_streak", "days": 3 },
+      "i18n": {
+        "es": { "title": "Racha de 3 Días", "description": "Resuelve el reto diario Clean & Document 3 días seguidos." },
+        "en": { "title": "3-Day Streak", "description": "Solve the Clean & Document daily challenge 3 days in a row." },
+        "pt-BR": { "title": "Sequência de 3 Dias", "description": "Resolva o desafio diário Clean & Document por 3 dias seguidos." },
+        "pt-PT": { "title": "Série de 3 Dias", "description": "Resolva o desafio diário Clean & Document 3 dias seguidos." },
+        "fr": { "title": "Série de 3 Jours", "description": "Résolvez le défi quotidien Clean & Document 3 jours de suite." },
+        "de": { "title": "3-Tage-Serie", "description": "Löse die tägliche Clean-&-Document-Aufgabe 3 Tage in Folge." },
+        "it": { "title": "Serie di 3 Giorni", "description": "Risolvi la sfida giornaliera Clean & Document per 3 giorni di fila." }
+      }
+    },
+    {
+      "id": "remedial_master",
+      "icon": "✦",
+      "tier": "free",
+      "criteria": { "type": "remedials_completed", "count": 2 },
+      "i18n": {
+        "es": { "title": "Precisión Quirúrgica", "description": "Supera 2 ejercicios de entrenamiento remedial." },
+        "en": { "title": "Surgical Precision", "description": "Complete 2 remedial training drills." },
+        "pt-BR": { "title": "Precisão Cirúrgica", "description": "Conclua 2 exercícios de treinamento corretivo." },
+        "pt-PT": { "title": "Precisão Cirúrgica", "description": "Conclua 2 exercícios de treino corretivo." },
+        "fr": { "title": "Précision Chirurgicale", "description": "Réussissez 2 exercices d'entraînement ciblé." },
+        "de": { "title": "Chirurgische Präzision", "description": "Schließe 2 gezielte Förderübungen ab." },
+        "it": { "title": "Precisione Chirurgica", "description": "Completa 2 esercizi di allenamento mirato." }
+      }
+    },
+    {
+      "id": "polyglot_foundation",
+      "icon": "◈",
+      "tier": "free",
+      "criteria": { "type": "free_techs_completed", "count": 3 },
+      "i18n": {
+        "es": { "title": "Base Políglota", "description": "Completa los niveles gratuitos en 3 lenguajes distintos." },
+        "en": { "title": "Polyglot Foundation", "description": "Complete the free levels across 3 different languages." },
+        "pt-BR": { "title": "Base Poliglota", "description": "Conclua os níveis gratuitos em 3 linguagens diferentes." },
+        "pt-PT": { "title": "Base Poliglota", "description": "Conclua os níveis gratuitos em 3 linguagens diferentes." },
+        "fr": { "title": "Base Polyglotte", "description": "Terminez les niveaux gratuits dans 3 langages différents." },
+        "de": { "title": "Polyglotte Basis", "description": "Schließe die kostenlosen Level in 3 verschiedenen Sprachen ab." },
+        "it": { "title": "Base Poliglotta", "description": "Completa i livelli gratuiti in 3 linguaggi diversi." }
+      }
+    },
+    {
+      "id": "path_data_bi",
+      "icon": "♛",
+      "tier": "pay",
+      "criteria": { "type": "path_completed", "path": "data-bi" },
+      "i18n": {
+        "es": { "title": "Arquitecto Data & BI", "description": "Completa toda la ruta Data & Business Intelligence." },
+        "en": { "title": "Data & BI Architect", "description": "Complete the entire Data & Business Intelligence path." },
+        "pt-BR": { "title": "Arquiteto Data & BI", "description": "Conclua toda a trilha Data & Business Intelligence." },
+        "pt-PT": { "title": "Arquiteto Data & BI", "description": "Conclua todo o percurso Data & Business Intelligence." },
+        "fr": { "title": "Architecte Data & BI", "description": "Terminez l'ensemble du parcours Data & Business Intelligence." },
+        "de": { "title": "Data-&-BI-Architekt", "description": "Schließe den gesamten Data-&-BI-Pfad ab." },
+        "it": { "title": "Architetto Data & BI", "description": "Completa l'intero percorso Data & Business Intelligence." }
+      }
+    },
+    {
+      "id": "path_web_apis",
+      "icon": "♛",
+      "tier": "pay",
+      "criteria": { "type": "path_completed", "path": "web-apis" },
+      "i18n": {
+        "es": { "title": "Maestro Web & APIs", "description": "Completa toda la ruta Desarrollo Web & APIs." },
+        "en": { "title": "Web & APIs Master", "description": "Complete the entire Web Development & APIs path." },
+        "pt-BR": { "title": "Mestre Web & APIs", "description": "Conclua toda a trilha Desenvolvimento Web & APIs." },
+        "pt-PT": { "title": "Mestre Web & APIs", "description": "Conclua todo o percurso Desenvolvimento Web & APIs." },
+        "fr": { "title": "Maître Web & APIs", "description": "Terminez l'ensemble du parcours Développement Web & APIs." },
+        "de": { "title": "Web-&-APIs-Meister", "description": "Schließe den gesamten Web-&-APIs-Pfad ab." },
+        "it": { "title": "Maestro Web & API", "description": "Completa l'intero percorso Sviluppo Web & API." }
+      }
+    },
+    {
+      "id": "path_enterprise_cloud",
+      "icon": "♛",
+      "tier": "pay",
+      "criteria": { "type": "path_completed", "path": "enterprise-cloud" },
+      "i18n": {
+        "es": { "title": "Líder Enterprise & Cloud", "description": "Completa toda la ruta Software Corporativo & Cloud." },
+        "en": { "title": "Enterprise & Cloud Lead", "description": "Complete the entire Enterprise Software & Cloud path." },
+        "pt-BR": { "title": "Líder Enterprise & Cloud", "description": "Conclua toda a trilha Software Corporativo & Cloud." },
+        "pt-PT": { "title": "Líder Enterprise & Cloud", "description": "Conclua todo o percurso Software Corporativo & Cloud." },
+        "fr": { "title": "Leader Enterprise & Cloud", "description": "Terminez l'ensemble du parcours Logiciel d'Entreprise & Cloud." },
+        "de": { "title": "Enterprise-&-Cloud-Lead", "description": "Schließe den gesamten Enterprise-&-Cloud-Pfad ab." },
+        "it": { "title": "Lead Enterprise & Cloud", "description": "Completa l'intero percorso Software Enterprise & Cloud." }
+      }
+    }
+  ]
+}

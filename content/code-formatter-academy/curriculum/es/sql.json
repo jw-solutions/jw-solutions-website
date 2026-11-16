@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "locale": "es",
+  "tech": "sql",
+  "standard": "SQLFluff & ANSI SQL",
+  "levels": [
+    {
+      "id": "sql-1",
+      "level": 1,
+      "tier": "free",
+      "title": "SQL 1 · Fundamentos y formato limpio",
+      "estimatedMinutes": 5,
+      "concept_capsule": "Aplica sangría consistente, nombres claros y documentación estándar para que cualquier equipo pueda leer y auditar el código en segundos.",
+      "starter_code": "select id,email from users where active=1 order by id desc",
+      "reference_solution": "-- Fetch active user accounts ordered by latest ID\nSELECT\n  id,\n  email\nFROM users\nWHERE active = 1\nORDER BY id DESC;\n",
+      "tests": [
+        {
+          "id": "sql1-t1",
+          "name": "Uppercase keywords",
+          "visible": true,
+          "type": "pattern",
+          "expected": "SELECT",
+          "description": "Uses uppercase SQL keywords"
+        },
+        {
+          "id": "sql1-t2",
+          "name": "Purpose comment",
+          "visible": true,
+          "type": "pattern",
+          "expected": "-- ",
+          "description": "Starts with descriptive SQL comment"
+        },
+        {
+          "id": "sql1-t3",
+          "name": "Semicolon terminator",
+          "visible": false,
+          "type": "pattern",
+          "expected": ";",
+          "description": "Terminates query with semicolon"
+        }
+      ],
+      "style_rules": [
+        "uppercase_keywords",
+        "multiline_select",
+        "header_comment"
+      ],
+      "related_tip_slug": "sql-dax/sql-dax-optimization-basics",
+      "remedial_drills": [
+        {
+          "id": "sql1-d-syntax",
+          "error_type": "syntax",
+          "title": "Refuerzo de Sintaxis",
+          "prompt": "Corrige el error de sintaxis para que el código sea válido.",
+          "starter_code": "SELECT id email FROM users;",
+          "expected_pattern": "id, email",
+          "solution_hint": "Separate projected columns with a comma."
+        },
+        {
+          "id": "sql1-d-edge",
+          "error_type": "edge_case",
+          "title": "Refuerzo de Casos Borde",
+          "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
+          "starter_code": "SELECT * FROM users WHERE deleted_at = NULL;",
+          "expected_pattern": "IS NULL",
+          "solution_hint": "Use `IS NULL` instead of `= NULL` in SQL."
+        },
+        {
+          "id": "sql1-d-style",
+          "error_type": "style_doc",
+          "title": "Refuerzo de Estilo y Doc",
+          "prompt": "Aplica el estándar oficial de formato y documentación.",
+          "starter_code": "select id from users;",
+          "expected_pattern": "SELECT",
+          "solution_hint": "Uppercase SQL keywords like SELECT and FROM."
+        }
+      ]
+    },
+    {
+      "id": "sql-2",
+      "level": 2,
+      "tier": "free",
+      "title": "SQL 2 · Casos borde y documentación",
+      "estimatedMinutes": 8,
+      "concept_capsule": "Protege entradas nulas o vacías antes de procesarlas y documenta contratos de entrada/salida con el estándar oficial del lenguaje.",
+      "starter_code": "select u.id,count(o.id) from users u left join orders o on u.id=o.user_id group by u.id",
+      "reference_solution": "-- Count orders per user including users with zero orders\nSELECT\n  u.id,\n  COUNT(o.id) AS order_count\nFROM users AS u\nLEFT JOIN orders AS o\n  ON u.id = o.user_id\nGROUP BY u.id;\n",
+      "tests": [
+        {
+          "id": "sql2-t1",
+          "name": "Explicit AS alias",
+          "visible": true,
+          "type": "pattern",
+          "expected": "AS order_count",
+          "description": "Names aggregated column with AS"
+        },
+        {
+          "id": "sql2-t2",
+          "name": "LEFT JOIN preserved",
+          "visible": true,
+          "type": "pattern",
+          "expected": "LEFT JOIN",
+          "description": "Keeps LEFT JOIN for zero-order users"
+        },
+        {
+          "id": "sql2-t3",
+          "name": "GROUP BY clause",
+          "visible": false,
+          "type": "pattern",
+          "expected": "GROUP BY u.id",
+          "description": "Groups by non-aggregated column"
+        }
+      ],
+      "style_rules": [
+        "explicit_alias_as",
+        "uppercase_keywords",
+        "header_comment"
+      ],
+      "related_tip_slug": "sql-dax/sql-dax-optimization-basics",
+      "remedial_drills": [
+        {
+          "id": "sql2-d-syntax",
+          "error_type": "syntax",
+          "title": "Refuerzo de Sintaxis",
+          "prompt": "Corrige el error de sintaxis para que el código sea válido.",
+          "starter_code": "SELECT u.id, COUNT(o.id) FROM users u JOIN orders o u.id = o.user_id;",
+          "expected_pattern": "ON ",
+          "solution_hint": "Add the `ON` keyword before the join condition."
+        },
+        {
+          "id": "sql2-d-edge",
+          "error_type": "edge_case",
+          "title": "Refuerzo de Casos Borde",
+          "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
+          "starter_code": "SELECT COALESCE(total) FROM orders;",
+          "expected_pattern": ", 0",
+          "solution_hint": "Provide a fallback value as the second argument to `COALESCE`."
+        },
+        {
+          "id": "sql2-d-style",
+          "error_type": "style_doc",
+          "title": "Refuerzo de Estilo y Doc",
+          "prompt": "Aplica el estándar oficial de formato y documentación.",
+          "starter_code": "SELECT COUNT(id) FROM orders;",
+          "expected_pattern": " AS ",
+          "solution_hint": "Always alias aggregate expressions with `AS`."
+        }
+      ]
+    },
+    {
+      "id": "sql-3",
+      "level": 3,
+      "tier": "pay",
+      "title": "SQL 3 · Refactorización modular (Pro)",
+      "estimatedMinutes": 12
+    },
+    {
+      "id": "sql-4",
+      "level": 4,
+      "tier": "pay",
+      "title": "SQL 4 · Optimización y patrones avanzados (Pro)",
+      "estimatedMinutes": 15
+    },
+    {
+      "id": "sql-5",
+      "level": 5,
+      "tier": "pay",
+      "title": "SQL 5 · Auditoría y arquitectura limpia (Pro)",
+      "estimatedMinutes": 18
+    }
+  ]
+}

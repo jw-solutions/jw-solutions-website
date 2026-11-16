@@ -1,0 +1,172 @@
+{
+  "version": 1,
+  "locale": "es",
+  "tech": "python",
+  "standard": "PEP 8 & PEP 257",
+  "levels": [
+    {
+      "id": "python-1",
+      "level": 1,
+      "tier": "free",
+      "title": "PYTHON 1 · Fundamentos y formato limpio",
+      "estimatedMinutes": 5,
+      "concept_capsule": "Aplica sangría consistente, nombres claros y documentación estándar para que cualquier equipo pueda leer y auditar el código en segundos.",
+      "starter_code": "def calc_tax(price,rate):\n if price<0:\n  return 0\n return price*rate",
+      "reference_solution": "def calc_tax(price: float, rate: float) -> float:\n    \"\"\"Calculate tax amount for a non-negative price.\"\"\"\n    if price <= 0:\n        return 0.0\n    return round(price * rate, 2)\n",
+      "tests": [
+        {
+          "id": "py1-t1",
+          "name": "PEP 8 4-space indent",
+          "visible": true,
+          "type": "pattern",
+          "expected": "    if price <= 0:",
+          "description": "Uses 4-space indentation"
+        },
+        {
+          "id": "py1-t2",
+          "name": "Type hints & docstring",
+          "visible": true,
+          "type": "pattern",
+          "expected": "-> float:",
+          "description": "Includes return type annotation"
+        },
+        {
+          "id": "py1-t3",
+          "name": "Docstring present",
+          "visible": false,
+          "type": "pattern",
+          "expected": "\"\"\"",
+          "description": "Documents function with PEP 257 docstring"
+        }
+      ],
+      "style_rules": [
+        "pep8_indent_4",
+        "type_hints",
+        "docstring_pep257"
+      ],
+      "related_tip_slug": "python/python-312-pep8-tips",
+      "remedial_drills": [
+        {
+          "id": "py1-d-syntax",
+          "error_type": "syntax",
+          "title": "Refuerzo de Sintaxis",
+          "prompt": "Corrige el error de sintaxis para que el código sea válido.",
+          "starter_code": "def greet(name)\n    return f\"Hi {name}\"",
+          "expected_pattern": "def greet(name):",
+          "solution_hint": "Add the missing colon `:` after the parameter list."
+        },
+        {
+          "id": "py1-d-edge",
+          "error_type": "edge_case",
+          "title": "Refuerzo de Casos Borde",
+          "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
+          "starter_code": "def safe_div(a, b):\n    return a / b",
+          "expected_pattern": "if b == 0",
+          "solution_hint": "Guard against division by zero before dividing."
+        },
+        {
+          "id": "py1-d-style",
+          "error_type": "style_doc",
+          "title": "Refuerzo de Estilo y Doc",
+          "prompt": "Aplica el estándar oficial de formato y documentación.",
+          "starter_code": "def add(a, b):\n    return a + b",
+          "expected_pattern": "\"\"\"",
+          "solution_hint": "Add a concise PEP 257 docstring inside the function."
+        }
+      ]
+    },
+    {
+      "id": "python-2",
+      "level": 2,
+      "tier": "free",
+      "title": "PYTHON 2 · Casos borde y documentación",
+      "estimatedMinutes": 8,
+      "concept_capsule": "Protege entradas nulas o vacías antes de procesarlas y documenta contratos de entrada/salida con el estándar oficial del lenguaje.",
+      "starter_code": "def parse_users(rows):\n res=[]\n for r in rows:\n  if r.get(\"active\"):\n   res.append(r[\"email\"].strip().lower())\n return res",
+      "reference_solution": "def parse_users(rows: list[dict[str, object]]) -> list[str]:\n    \"\"\"Extract normalized active user emails.\"\"\"\n    if not rows:\n        return []\n    return [\n        str(row[\"email\"]).strip().lower()\n        for row in rows\n        if row.get(\"active\") and row.get(\"email\")\n    ]\n",
+      "tests": [
+        {
+          "id": "py2-t1",
+          "name": "Empty input guard",
+          "visible": true,
+          "type": "pattern",
+          "expected": "if not rows:",
+          "description": "Returns [] when rows is empty"
+        },
+        {
+          "id": "py2-t2",
+          "name": "Email normalization",
+          "visible": true,
+          "type": "pattern",
+          "expected": ".strip().lower()",
+          "description": "Normalizes email casing and whitespace"
+        },
+        {
+          "id": "py2-t3",
+          "name": "Missing email guard",
+          "visible": false,
+          "type": "pattern",
+          "expected": "row.get(\"email\")",
+          "description": "Skips rows without email key"
+        }
+      ],
+      "style_rules": [
+        "pep8_indent_4",
+        "type_hints",
+        "empty_guard",
+        "docstring_pep257"
+      ],
+      "related_tip_slug": "python/python-312-match-case-formatting-pep8",
+      "remedial_drills": [
+        {
+          "id": "py2-d-syntax",
+          "error_type": "syntax",
+          "title": "Refuerzo de Sintaxis",
+          "prompt": "Corrige el error de sintaxis para que el código sea válido.",
+          "starter_code": "items = [x for x in data if x > 0",
+          "expected_pattern": "]",
+          "solution_hint": "Close the list comprehension bracket `]`."
+        },
+        {
+          "id": "py2-d-edge",
+          "error_type": "edge_case",
+          "title": "Refuerzo de Casos Borde",
+          "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
+          "starter_code": "def first_item(items):\n    return items[0]",
+          "expected_pattern": "if not items",
+          "solution_hint": "Check `if not items:` before indexing `items[0]`."
+        },
+        {
+          "id": "py2-d-style",
+          "error_type": "style_doc",
+          "title": "Refuerzo de Estilo y Doc",
+          "prompt": "Aplica el estándar oficial de formato y documentación.",
+          "starter_code": "def clean(s):\n    return s.strip()",
+          "expected_pattern": "-> str:",
+          "solution_hint": "Annotate parameter and return type `-> str:`."
+        }
+      ]
+    },
+    {
+      "id": "python-3",
+      "level": 3,
+      "tier": "pay",
+      "title": "PYTHON 3 · Refactorización modular (Pro)",
+      "estimatedMinutes": 12
+    },
+    {
+      "id": "python-4",
+      "level": 4,
+      "tier": "pay",
+      "title": "PYTHON 4 · Optimización y patrones avanzados (Pro)",
+      "estimatedMinutes": 15
+    },
+    {
+      "id": "python-5",
+      "level": 5,
+      "tier": "pay",
+      "title": "PYTHON 5 · Auditoría y arquitectura limpia (Pro)",
+      "estimatedMinutes": 18
+    }
+  ]
+}
