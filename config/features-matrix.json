@@ -190,6 +190,27 @@
       "files": [
         "assets/js/tools/code-formatter/academy-pro.js"
       ]
+    },
+    {
+      "id": "certificates_issue_30d",
+      "name": "Emisión de certificados por lenguaje (máx. 2/ciclo)",
+      "tier": "pay",
+      "status": "ready",
+      "files": []
+    },
+    {
+      "id": "certificates_paths_90d",
+      "name": "Certificados de Rutas Profesionales, 7 idiomas y LinkedIn",
+      "tier": "pay",
+      "status": "ready",
+      "files": []
+    },
+    {
+      "id": "certificates_unlimited_365d",
+      "name": "Certificados ilimitados, bilingües y portafolio público",
+      "tier": "pay",
+      "status": "ready",
+      "files": []
     }
   ]
 }

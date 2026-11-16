@@ -12,7 +12,7 @@ import {
   evaluateAchievements,
 } from './academy-engine.js';
 import { loadAcademyState, saveAcademyState, captureUtmParams, syncAcademyState } from './academy-progress.js';
-import { apiUrl } from './services/api.js';
+import { apiUrl, postJson } from './services/api.js';
 
 const TECHS = ['python', 'javascript', 'typescript', 'sql', 'dax', 'java', 'csharp', 'php', 'json', 'yaml'];
 const ACADEMY_BASE = new URL('../../../../content/code-formatter-academy/', import.meta.url);
@@ -530,6 +530,122 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     });
   });
 
+  async function renderCertificateAction(tech) {
+    const existingBox = document.getElementById('cf-academy-cert-box');
+    if (existingBox) existingBox.remove();
+    const box = el('div', 'cf-academy-capsule');
+    box.id = 'cf-academy-cert-box';
+
+    let quota = null;
+    try {
+      const res = await fetch(apiUrl('/api/academy/certificates/quota'), { credentials: 'include', cache: 'no-store' });
+      if (res.ok) quota = await res.json();
+    } catch { /* modo invitado o sin conexión */ }
+
+    if (!quota || !quota.has_active_subscription || quota.is_trial) {
+      const previewLink = el('a', 'cf-btn cf-btn--secondary cf-btn--small', t('certPreviewBtn'));
+      previewLink.href = `cert/?preview=1&tech=${encodeURIComponent(tech)}`;
+      previewLink.target = '_blank';
+      previewLink.rel = 'noopener noreferrer';
+      box.append(previewLink);
+      if (quota?.is_trial) {
+        box.append(el('p', 'cf-muted', t('certErrTrialOnly')));
+      }
+      if (isFeatureOn('pro_billing')) {
+        const upg = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('certPreviewUpgradeCta'));
+        upg.type = 'button';
+        upg.addEventListener('click', openProOrExplain);
+        box.append(upg);
+      }
+      missionEl.append(box);
+      return;
+    }
+
+    const quotaText = quota.limit === null
+      ? t('certQuotaUnlimited')
+      : t('certQuotaLabel', { used: quota.used, limit: quota.limit });
+    box.append(el('p', 'cf-muted', quotaText));
+
+    const issueBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('certIssueBtn'));
+    issueBtn.type = 'button';
+    const statusP = el('p', 'cf-form__status');
+    statusP.setAttribute('role', 'status');
+
+    const doIssue = async (holderFullName) => {
+      issueBtn.disabled = true;
+      try {
+        const res = await postJson('/api/academy/certificates/issue', {
+          cert_type: currentPath ? 'path' : 'language',
+          target_slug: currentPath || tech,
+          language_code: getUiLang(),
+          ui_locale: getUiLang(),
+          ...(holderFullName ? { holder_full_name: holderFullName } : {}),
+        });
+        if (res.ok && res.data?.cert_code) {
+          const link = el('a', 'cf-btn cf-btn--primary cf-btn--small', `${res.data.cert_code} →`);
+          link.href = `cert/?id=${encodeURIComponent(res.data.cert_code)}`;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          box.append(link);
+          statusP.textContent = '';
+        } else {
+          const code = res.data?.detail?.code || res.data?.detail || '';
+          const map = {
+            TRIAL_PREVIEW_ONLY: 'certErrTrialOnly',
+            QUOTA_EXCEEDED: 'certErrQuota',
+            PLAN_TIER_REQUIRED: 'certErrPlanTier',
+            PLAN_LANGUAGE_RESTRICTED: 'certErrLanguage',
+            NAME_LOCKED: 'certErrNameLocked',
+          };
+          statusP.textContent = t(map[code] || 'acadProPreviewMsg');
+        }
+      } catch {
+        statusP.textContent = t('acadProPreviewMsg');
+      } finally {
+        issueBtn.disabled = false;
+      }
+    };
+
+    issueBtn.addEventListener('click', () => {
+      if (quota.holder_full_name) {
+        doIssue(quota.holder_full_name);
+        return;
+      }
+      const dlg = document.createElement('dialog');
+      dlg.className = 'cf-dialog';
+      const title = el('h3', 'cf-dialog__title', t('certConfirmTitle'));
+      const warn = el('p', 'cf-muted', t('certConfirmWarn'));
+      const label = el('label', 'cf-field');
+      label.append(el('span', 'cf-field__label', t('certHolderLabel')));
+      const input = document.createElement('input');
+      input.className = 'cf-input';
+      input.type = 'text';
+      input.required = true;
+      input.minLength = 3;
+      input.maxLength = 140;
+      label.append(input);
+      const actions = el('div', 'cf-tip-modal__actions');
+      const okBtn = el('button', 'cf-btn cf-btn--primary', t('certConfirmBtn'));
+      okBtn.type = 'button';
+      const cancelBtn = el('button', 'cf-btn', t('certCancelBtn'));
+      cancelBtn.type = 'button';
+      cancelBtn.addEventListener('click', () => { dlg.close(); dlg.remove(); });
+      okBtn.addEventListener('click', async () => {
+        if (input.value.trim().length < 3) return;
+        dlg.close();
+        dlg.remove();
+        await doIssue(input.value.trim());
+      });
+      actions.append(okBtn, cancelBtn);
+      dlg.append(title, warn, label, actions);
+      document.body.append(dlg);
+      dlg.showModal();
+    });
+
+    box.append(issueBtn, statusP);
+    missionEl.append(box);
+  }
+
   validateBtn?.addEventListener('click', async () => {
     if (!activeLevel) return;
     const tech = currentCurriculum?.tech || 'python';
@@ -566,6 +682,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
         tipLink.href = `tips/${activeLevel.related_tip_slug}/${getUiLang()}/`;
         missionEl.append(tipLink);
       }
+      renderCertificateAction(tech);
       for (const ach of achRes.newlyUnlocked) {
         const copy = ach.i18n?.[getUiLang()] || ach.i18n?.es || {};
         toast(`${ach.icon} ${copy.title || ach.id}`);

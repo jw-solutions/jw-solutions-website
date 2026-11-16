@@ -616,3 +616,63 @@
   margin-bottom: 12px;
   background: rgba(63, 185, 80, 0.12);
 }
+
+.cf-diploma {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--cf-gold);
+  padding: 28px;
+  display: grid;
+  gap: 12px;
+}
+.cf-diploma__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.cf-diploma__title { margin: 0; font-size: 1.45rem; }
+.cf-diploma__holder { font-size: 1.35rem; font-weight: 700; color: var(--cf-gold); margin: 4px 0; }
+.cf-diploma__target { font-size: 1.05rem; margin: 0; }
+.cf-diploma__footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.cf-diploma__qr {
+  padding: 6px;
+  background: #ffffff;
+  border-radius: 8px;
+  display: inline-flex;
+}
+.cf-diploma__watermark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-22deg);
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  color: rgba(212, 175, 55, 0.25);
+  pointer-events: none;
+  text-align: center;
+}
+.cf-cert-revoked {
+  border: 2px solid #f85149;
+  background: rgba(248, 81, 73, 0.15);
+  color: #ffb4ae;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+@media print {
+  @page { size: landscape; margin: 12mm; }
+  .cf-no-print { display: none !important; }
+  body.cf-body { background: #ffffff !important; color: #111111 !important; }
+  .cf-diploma { border: 3px solid #b8860b; box-shadow: none !important; page-break-inside: avoid; }
+}

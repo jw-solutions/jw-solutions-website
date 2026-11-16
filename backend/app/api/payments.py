@@ -24,9 +24,11 @@ from app.models.payment_order import (
     ORDER_STATUS_PENDING,
     PaymentOrder,
 )
+from app.models.subscription import Subscription
 from app.security.csrf import require_csrf
 from app.security.rate_limit import payment_limiter
 from app.security.sessions import SessionInfo
+from app.services.certificate_service import revoke_certificates_for_subscription
 from app.services.notification_service import enqueue
 from app.services.order_service import (
     AmountMismatchError,
@@ -318,6 +320,17 @@ async def crypto_webhook(request: Request, db: Session = Depends(get_db)) -> dic
         raise HTTPException(status_code=401, detail="Invalid webhook signature")
 
     payment_status = str(payload.get("payment_status") or payload.get("status") or "").lower()
+    if payment_status in ("refunded", "chargeback", "reversed"):
+        order_code = str(payload.get("order_id") or "").strip().upper()
+        if order_code:
+            rev_order = db.execute(select(PaymentOrder).where(PaymentOrder.order_code == order_code)).scalar_one_or_none()
+            if rev_order is not None:
+                sub = db.execute(select(Subscription).where(Subscription.payment_order_id == rev_order.id)).scalar_one_or_none()
+                if sub is not None:
+                    sub.status = "REVOKED"
+                    revoke_certificates_for_subscription(db, sub.subscription_id, f"Payment {payment_status}")
+        return {"ok": True, "revoked": True, "status": payment_status}
+
     if payment_status not in ("finished", "confirmed", "paid", "paid_over"):
         return {"ok": True, "ignored": True, "status": payment_status}
 

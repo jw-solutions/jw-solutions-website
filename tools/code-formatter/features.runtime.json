@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-16T02:49:47+00:00",
+  "generated": "2026-11-16T12:22:16+00:00",
   "features": [
     {
       "id": "editor",
@@ -68,6 +68,21 @@
     },
     {
       "id": "academy_pro",
+      "tier": "pay",
+      "active": true
+    },
+    {
+      "id": "certificates_issue_30d",
+      "tier": "pay",
+      "active": true
+    },
+    {
+      "id": "certificates_paths_90d",
+      "tier": "pay",
+      "active": true
+    },
+    {
+      "id": "certificates_unlimited_365d",
       "tier": "pay",
       "active": true
     }

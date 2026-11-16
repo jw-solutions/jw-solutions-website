@@ -150,19 +150,28 @@ def test_pro_level_and_hint_semantic_cache(academy_db):
 
 
 def test_certificate_issue_and_hmac_verification(academy_db):
+    from fastapi import Response
     db, free_id, pro_id, make_session = academy_db
     free_sess = make_session(free_id)
     pro_sess = make_session(pro_id)
 
     with pytest.raises(HTTPException) as exc_free:
-        issue_certificate(CertificateIssueBody(path_id="data-bi", holder_name="Alumno Test"), session=free_sess, db=db)
+        issue_certificate(CertificateIssueBody(cert_type="language", target_slug="python", holder_name="Alumno Test"), response=Response(), session=free_sess, db=db)
     assert exc_free.value.status_code == 403
 
-    issued = issue_certificate(CertificateIssueBody(path_id="data-bi", holder_name="Alumno Test"), session=pro_sess, db=db)
-    db.commit()
-    assert issued["cert_id"].startswith("JW-")
+    from app.models.academy import UserLearningProgress
+    from app.models.subscription import Subscription
+    from datetime import datetime, timedelta, timezone
+    now = datetime.now(timezone.utc)
+    db.add(UserLearningProgress(account_id=pro_id, completed=["python-1", "python-2"], remedial_completed=[], daily_streak=0))
+    db.add(Subscription(account_id=pro_id, plan_id="pro_30d", status="ACTIVE", starts_at=now, expires_at=now + timedelta(days=30), approved_by="test"))
+    db.flush()
 
-    verified = verify_certificate(issued["cert_id"], db=db)
+    issued = issue_certificate(CertificateIssueBody(cert_type="language", target_slug="python", holder_name="Alumno Test"), response=Response(), session=pro_sess, db=db)
+    db.commit()
+    assert issued["cert_id"].startswith("JWS-CERT-")
+
+    verified = verify_certificate(issued["cert_id"], response=Response(), db=db)
     assert verified["valid"] is True
     assert verified["holder_name"] == "Alumno Test"
 

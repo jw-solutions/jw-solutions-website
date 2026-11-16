@@ -92,12 +92,24 @@ class AcademyLevelTelemetry(Base):
 
 class AcademyCertificate(Base):
     __tablename__ = "academy_certificates"
+    __table_args__ = (UniqueConstraint("account_id", "cert_type", "target_slug", name="uq_academy_cert_account_type_target"),)
 
     cert_id: Mapped[str] = mapped_column(String(32), primary_key=True)
     account_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("accounts.account_id", ondelete="CASCADE"), nullable=False
     )
+    subscription_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("subscriptions.subscription_id", ondelete="SET NULL"), nullable=True, index=True
+    )
     path_id: Mapped[str] = mapped_column(String(64), nullable=False)
     holder_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    holder_full_name: Mapped[str] = mapped_column(String(140), nullable=False)
+    cert_type: Mapped[str] = mapped_column(String(32), nullable=False, default="language", server_default="language")
+    target_slug: Mapped[str] = mapped_column(String(80), nullable=False)
+    language_code: Mapped[str] = mapped_column(String(16), nullable=False, default="es", server_default="es")
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="valid", server_default="valid")
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    revoked_reason: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    verified_views_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     signature: Mapped[str] = mapped_column(String(64), nullable=False)
     issued_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

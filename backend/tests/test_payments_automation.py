@@ -61,7 +61,11 @@ def db_session() -> Session:
                 password_hash TEXT NOT NULL,
                 plan TEXT NOT NULL DEFAULT 'free',
                 status TEXT NOT NULL DEFAULT 'active',
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                certificate_holder_name TEXT,
+                certificate_name_locked_at TEXT,
+                certificate_name_edited INTEGER NOT NULL DEFAULT 0,
+                portfolio_slug TEXT UNIQUE
             )
         """))
         conn.execute(text("""
@@ -299,7 +303,7 @@ def test_cumulative_subscription_days_and_trial_anti_abuse(db_session: Session):
 
 def test_imap_dual_binance_forwarded_paypal_and_dkim_rejection(db_session: Session):
     settings = _test_settings()
-    now = datetime(2026, 11, 15, 12, 0, tzinfo=timezone.utc)
+    now = datetime.now(timezone.utc)
     acc = _create_account(db_session, "global@example.com")
 
     # 1) Orden PayPal con código JW-XXXXXXXXX

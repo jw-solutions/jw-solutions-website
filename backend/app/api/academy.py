@@ -9,7 +9,7 @@ import urllib.request
 from datetime import date, datetime, timezone
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -28,6 +28,16 @@ from app.models.subscription import Subscription
 from app.security.csrf import require_csrf
 from app.security.rate_limit import academy_hint_limiter
 from app.security.sessions import SessionInfo, current_session
+from app.services.certificate_service import (
+    CertificateError,
+    check_requirements_met,
+    get_portfolio_public,
+    get_quota_status,
+    issue_certificate_tx,
+    sanitize_holder_name,
+    update_holder_name_tx,
+    verify_certificate_public,
+)
 
 router = APIRouter(prefix="/api/academy", tags=["academy"])
 
@@ -249,62 +259,137 @@ def get_socratic_hint(
 class CertificateIssueBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    path_id: str = Field(min_length=2, max_length=64)
-    holder_name: str = Field(min_length=2, max_length=120)
+    cert_type: str = Field(default="language", max_length=32)
+    target_slug: str | None = Field(default=None, min_length=2, max_length=80)
+    path_id: str | None = Field(default=None, min_length=2, max_length=64)
+    holder_full_name: str | None = Field(default=None, max_length=140)
+    holder_name: str | None = Field(default=None, max_length=120)
+    language_code: str = Field(default="es", max_length=16)
+    ui_locale: str = Field(default="es", max_length=16)
 
 
-def _sign_certificate(cert_id: str, account_id: str, path_id: str, issued_iso: str) -> str:
-    secret = get_settings().session_secret.get_secret_value().encode("utf-8")
-    msg = f"cert:{cert_id}:{account_id}:{path_id}:{issued_iso}".encode("utf-8")
-    return hmac.new(secret, msg, hashlib.sha256).hexdigest()
+class CertificatePreviewBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    cert_type: str = Field(default="language", max_length=32)
+    target_slug: str = Field(min_length=2, max_length=80)
+    holder_full_name: str = Field(default="Preview Developer", max_length=140)
+    language_code: str = Field(default="es", max_length=16)
+
+
+class HolderNamePatchBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    holder_full_name: str = Field(min_length=3, max_length=140)
+
+
+@router.get("/certificates/quota")
+def certificate_quota(
+    session: Annotated[SessionInfo, Depends(current_session)],
+    db: Annotated[Session, Depends(get_db)],
+) -> dict:
+    account = _require_active_account(db, session)
+    return get_quota_status(db, account)
+
+
+@router.post("/certificates/preview")
+def preview_certificate(
+    body: CertificatePreviewBody,
+    session: Annotated[SessionInfo, Depends(require_csrf)],
+    db: Annotated[Session, Depends(get_db)],
+) -> dict:
+    account = _require_active_account(db, session)
+    met = check_requirements_met(db, account.account_id, cert_type=body.cert_type.lower(), target_slug=body.target_slug.lower())
+    return {
+        "is_preview": True,
+        "requirements_met": met,
+        "cert_type": body.cert_type.lower(),
+        "target_slug": body.target_slug.lower(),
+        "holder_full_name": sanitize_holder_name(body.holder_full_name) or account.certificate_holder_name or "Preview Developer",
+        "language_code": body.language_code,
+        "cert_code": "PREVIEW-WATERMARK",
+        "status": "preview",
+    }
 
 
 @router.post("/certificates/issue", status_code=201)
 def issue_certificate(
     body: CertificateIssueBody,
+    response: Response,
     session: Annotated[SessionInfo, Depends(require_csrf)],
     db: Annotated[Session, Depends(get_db)],
 ) -> dict:
     account = _require_active_account(db, session)
-    if not _has_active_pro(db, account):
-        raise HTTPException(status_code=403, detail="Pro subscription required")
+    slug = (body.target_slug or body.path_id or "").strip()
+    if not slug:
+        raise HTTPException(status_code=422, detail={"code": "TARGET_REQUIRED", "detail": "target_slug is required"})
+    name = body.holder_full_name or body.holder_name
+    try:
+        data, status_code = issue_certificate_tx(
+            db,
+            get_settings(),
+            account,
+            cert_type=body.cert_type,
+            target_slug=slug,
+            language_code=body.language_code,
+            holder_full_name=name,
+            ui_locale=body.ui_locale,
+        )
+    except CertificateError as exc:
+        raise HTTPException(status_code=exc.status_code, detail={"code": exc.code, "detail": exc.detail, **exc.extra}) from None
+    if response is not None:
+        response.status_code = status_code
+    return data
 
-    cert_id = f"JW-{secrets.token_hex(6).upper()}"
-    issued_at = datetime.now(timezone.utc).replace(microsecond=0)
-    sig = _sign_certificate(cert_id, str(account.account_id), body.path_id, issued_at.isoformat())
-    cert = AcademyCertificate(
-        cert_id=cert_id,
-        account_id=account.account_id,
-        path_id=body.path_id,
-        holder_name=body.holder_name.strip(),
-        signature=sig,
-        issued_at=issued_at,
-    )
-    db.add(cert)
-    db.flush()
-    return {
-        "cert_id": cert.cert_id,
-        "path_id": cert.path_id,
-        "holder_name": cert.holder_name,
-        "signature": cert.signature,
-        "issued_at": issued_at.isoformat(),
-        "verify_url": f"https://jw-solutions.com/tools/code-formatter/cert/?id={cert.cert_id}",
-    }
+
+@router.patch("/certificates/holder-name")
+def patch_holder_name(
+    body: HolderNamePatchBody,
+    session: Annotated[SessionInfo, Depends(require_csrf)],
+    db: Annotated[Session, Depends(get_db)],
+) -> dict:
+    account = _require_active_account(db, session)
+    try:
+        updated = update_holder_name_tx(db, account, body.holder_full_name)
+    except CertificateError as exc:
+        raise HTTPException(status_code=exc.status_code, detail={"code": exc.code, "detail": exc.detail}) from None
+    return {"ok": True, "holder_full_name": updated}
+
+
+@router.get("/certificates/verify/{cert_code}")
+def verify_certificate_v2(
+    cert_code: str,
+    response: Response,
+    db: Annotated[Session, Depends(get_db)],
+) -> dict:
+    data = verify_certificate_public(db, get_settings(), cert_code, increment_views=True)
+    if data is None:
+        raise HTTPException(status_code=404, detail="Certificate not found")
+    if data.get("status") == "revoked":
+        response.headers["Cache-Control"] = "public, max-age=300, s-maxage=300"
+    else:
+        response.headers["Cache-Control"] = "public, max-age=3600, s-maxage=86400"
+    return data
+
+
+@router.get("/certificates/portfolio/{portfolio_slug}")
+def get_public_portfolio(
+    portfolio_slug: str,
+    response: Response,
+    db: Annotated[Session, Depends(get_db)],
+) -> dict:
+    data = get_portfolio_public(db, portfolio_slug)
+    if data is None:
+        raise HTTPException(status_code=404, detail="Portfolio not found")
+    response.headers["Cache-Control"] = "public, max-age=1800, s-maxage=43200"
+    return data
 
 
 @router.get("/certificates/{cert_id}")
-def verify_certificate(cert_id: str, db: Annotated[Session, Depends(get_db)]) -> dict:
-    cert = db.get(AcademyCertificate, cert_id.strip())
-    if cert is None:
+def verify_certificate(cert_id: str, response: Response, db: Annotated[Session, Depends(get_db)]) -> dict:
+    data = verify_certificate_public(db, get_settings(), cert_id, increment_views=False)
+    if data is None:
         raise HTTPException(status_code=404, detail="Certificate not found")
-    issued_iso = cert.issued_at.replace(tzinfo=timezone.utc, microsecond=0).isoformat() if cert.issued_at.tzinfo is None else cert.issued_at.replace(microsecond=0).isoformat()
-    expected = _sign_certificate(cert.cert_id, str(cert.account_id), cert.path_id, issued_iso)
-    valid = hmac.compare_digest(expected, cert.signature)
-    return {
-        "valid": valid,
-        "cert_id": cert.cert_id,
-        "path_id": cert.path_id,
-        "holder_name": cert.holder_name,
-        "issued_at": issued_iso,
-        "signature": cert.signature,
-    }
+    if response is not None:
+        response.headers["Cache-Control"] = "public, max-age=3600, s-maxage=86400"
+    return data
