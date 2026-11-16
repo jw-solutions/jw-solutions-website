@@ -1,6 +1,7 @@
 // Interfaz del Modo Academia (Switch Dual, Rutas Profesionales, Skill Tree y Workspace).
 // Seguridad: renderizado 100% vía document.createElement + textContent (cero innerHTML).
-import { t, lang as getUiLang } from './i18n.js';
+import { t, lang as uiLang } from './i18n.js';
+const getUiLang = () => (typeof uiLang === 'function' ? uiLang() : (uiLang || 'es'));
 import { isFeatureOn } from './ui-controller.js';
 import { toast } from './actions.js';
 import { evaluateChallenge } from './academy-sandbox.js';
@@ -402,8 +403,16 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     const loc = getUiLang();
     const ch = resolveDailyChallenge(dailyCache, loc);
     const { copy } = ch;
+    currentMode = 'learn';
     currentPath = '';
     currentTopic = ch.tech;
+    if (toolbar) toolbar.hidden = true;
+    if (editorHome) editorHome.hidden = true;
+    shell.hidden = false;
+    btnFormat.classList.remove('is-active');
+    btnFormat.setAttribute('aria-selected', 'false');
+    btnAcademy.classList.add('is-active');
+    btnAcademy.setAttribute('aria-selected', 'true');
     pathsContainer.hidden = true;
     workspace.hidden = false;
     backBtn.hidden = false;
@@ -435,26 +444,43 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     renderMission(activeLevel, pseudoCurriculum.standard);
     if (setLanguage) setLanguage(ch.tech);
     if (setCode) setCode(ch.starter_code);
+    setMobilePane('mission');
+    if (typeof workspace.scrollIntoView === 'function') {
+      workspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   async function handleDailyChallengeClick() {
-    let authenticated = false;
+    if (dailyBtn) {
+      dailyBtn.disabled = true;
+      dailyBtn.setAttribute('aria-busy', 'true');
+    }
     try {
-      const res = await fetch(apiUrl('/api/me'), { credentials: 'include', cache: 'no-store' });
-      authenticated = res.ok;
-    } catch {
-      authenticated = false;
-    }
-    if (!authenticated) {
+      let authenticated = false;
       try {
-        sessionStorage.setItem(PENDING_ACTION_KEY, JSON.stringify({ action: 'daily_challenge', ts: Date.now() }));
-      } catch { /* ignorar */ }
-      document.dispatchEvent(new CustomEvent('cf:open-auth', {
-        detail: { mode: 'register', bannerText: t('acadDailyAuthGate') },
-      }));
-      return;
+        const res = await fetch(apiUrl('/api/me'), { credentials: 'include', cache: 'no-store' });
+        authenticated = res.ok;
+      } catch {
+        authenticated = false;
+      }
+      if (!authenticated) {
+        try {
+          sessionStorage.setItem(PENDING_ACTION_KEY, JSON.stringify({ action: 'daily_challenge', ts: Date.now() }));
+        } catch { /* ignorar */ }
+        document.dispatchEvent(new CustomEvent('cf:open-auth', {
+          detail: { mode: 'register', bannerText: t('acadDailyAuthGate') },
+        }));
+        return;
+      }
+      await openDailyChallenge();
+    } catch {
+      toast(t('acadLoadError'));
+    } finally {
+      if (dailyBtn) {
+        dailyBtn.disabled = false;
+        dailyBtn.removeAttribute('aria-busy');
+      }
     }
-    await openDailyChallenge();
   }
 
   async function resumePendingAction() {

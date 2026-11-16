@@ -109,3 +109,141 @@ test('dist-public/: CTA Academia en /tips/ y /fix/ encima del footer, 0 pay y 0 
   assert.ok(sampleFix.indexOf('cf-academy-funnel-cta') < sampleFix.indexOf('<footer class="cf-footer">'), 'CTA /fix/ debe ir encima del footer');
   assert.equal(sampleFix.includes('data-cf-commercial'), false);
 });
+
+test('Click autenticado en #cf-academy-daily-btn en móvil (375px) despliega workspace, misión y código en editor', async () => {
+  const makeNode = (id, extra = {}) => {
+    const classes = new Set();
+    const attrs = new Map();
+    const listeners = new Map();
+    const children = [];
+    const node = {
+      id,
+      hidden: true,
+      disabled: false,
+      textContent: '',
+      children,
+      dataset: extra.dataset || {},
+      parentElement: null,
+      classList: {
+        toggle: (c, force) => (force === undefined ? (classes.has(c) ? classes.delete(c) : classes.add(c)) : (force ? classes.add(c) : classes.delete(c))),
+        add: (c) => classes.add(c),
+        remove: (c) => classes.delete(c),
+        contains: (c) => classes.has(c),
+      },
+      setAttribute: (k, v) => attrs.set(k, String(v)),
+      getAttribute: (k) => attrs.get(k) ?? null,
+      removeAttribute: (k) => attrs.delete(k),
+      addEventListener: (ev, fn) => {
+        if (!listeners.has(ev)) listeners.set(ev, []);
+        listeners.get(ev).push(fn);
+      },
+      dispatchClick: async () => {
+        for (const fn of listeners.get('click') || []) await fn({ preventDefault() {} });
+      },
+      append: (...items) => items.forEach((it) => { if (it && typeof it === 'object') it.parentElement = node; children.push(it); }),
+      prepend: (...items) => items.forEach((it) => { if (it && typeof it === 'object') it.parentElement = node; children.unshift(it); }),
+      replaceChildren: (...items) => { children.length = 0; node.append(...items); },
+      scrollIntoView: () => { node._scrolled = true; },
+    };
+    return node;
+  };
+
+  const nodes = {
+    'cf-academy-shell': makeNode('cf-academy-shell'),
+    'cf-mode-formatter': makeNode('cf-mode-formatter'),
+    'cf-mode-academy': makeNode('cf-mode-academy'),
+    'cf-formatter-toolbar': makeNode('cf-formatter-toolbar'),
+    'cf-editor-slot-home': makeNode('cf-editor-slot-home'),
+    'cf-editor-card': makeNode('cf-editor-card'),
+    'cf-academy-editor-slot': makeNode('cf-academy-editor-slot'),
+    'cf-academy-paths': makeNode('cf-academy-paths'),
+    'cf-academy-workspace': makeNode('cf-academy-workspace'),
+    'cf-academy-back': makeNode('cf-academy-back'),
+    'cf-academy-daily-btn': makeNode('cf-academy-daily-btn'),
+    'cf-academy-skill-tree': makeNode('cf-academy-skill-tree'),
+    'cf-academy-mission-card': makeNode('cf-academy-mission-card'),
+    'cf-academy-checklist': makeNode('cf-academy-checklist'),
+    'cf-academy-live': makeNode('cf-academy-live'),
+    'cf-academy-validate': makeNode('cf-academy-validate'),
+    'cf-academy-diff': makeNode('cf-academy-diff'),
+  };
+
+  const tabMission = makeNode('tab-mission', { dataset: { acadPane: 'mission' } });
+  const paneMission = makeNode('cf-academy-mission-pane', { dataset: { acadPaneBody: 'mission' } });
+  const paneEditor = makeNode('cf-academy-editor-pane', { dataset: { acadPaneBody: 'editor' } });
+
+  const prevFetch = globalThis.fetch;
+  const prevWin = globalThis.window;
+  const prevDoc = globalThis.document;
+  const prevLoc = globalThis.location;
+  const prevStorage = globalThis.localStorage;
+  const prevSessionStorage = globalThis.sessionStorage;
+
+  globalThis.location = { pathname: '/tools/code-formatter/', search: '?mode=learn&lang=es' };
+  globalThis.window = {
+    innerWidth: 375,
+    location: { href: 'https://jw-solutions.com/tools/code-formatter/?mode=learn&lang=es', search: '?mode=learn&lang=es' },
+    history: { replaceState() {} },
+  };
+  globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+  globalThis.sessionStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+  globalThis.document = {
+    baseURI: 'https://jw-solutions.com/tools/code-formatter/',
+    documentElement: { lang: 'es', dataset: {} },
+    head: { append() {} },
+    body: { append() {} },
+    getElementById: (id) => nodes[id] || null,
+    querySelector: () => null,
+    querySelectorAll: (sel) => (sel === '.cf-academy-mobile-tab' ? [tabMission] : sel === '[data-acad-pane-body]' ? [paneMission, paneEditor] : []),
+    createElement: (tag) => makeNode(tag),
+    createTextNode: (txt) => ({ textContent: txt }),
+    addEventListener: () => {},
+    dispatchEvent: () => {},
+  };
+
+  globalThis.fetch = async (url) => {
+    const u = String(url);
+    if (u.includes('/api/me')) {
+      return { ok: true, status: 200, json: async () => ({ email: 'user@example.com', plan: 'free' }) };
+    }
+    if (u.includes('paths.json')) {
+      return { ok: true, status: 200, json: async () => ({ paths: [] }) };
+    }
+    if (u.includes('daily-challenges.json')) {
+      const daily = JSON.parse(readFileSync(join(ROOT, 'content/code-formatter-academy/daily-challenges.json'), 'utf8'));
+      return { ok: true, status: 200, json: async () => daily };
+    }
+    return { ok: false, status: 404, json: async () => ({}) };
+  };
+
+  let loadedCode = '';
+  let loadedLang = '';
+  try {
+    const { initAcademyUI } = await import(`../../assets/js/tools/code-formatter/academy-ui.js?t=${Date.now()}`);
+    const api = initAcademyUI({
+      getCode: () => loadedCode,
+      setCode: (c) => { loadedCode = c; },
+      setLanguage: (l) => { loadedLang = l; },
+    });
+    assert.ok(api, 'initAcademyUI debe inicializarse');
+
+    await nodes['cf-academy-daily-btn'].dispatchClick();
+    // Esperar microtasks asíncronos de fetch(/api/me) y fetch(daily-challenges.json)
+    await new Promise((r) => setTimeout(r, 80));
+
+    assert.equal(nodes['cf-academy-shell'].hidden, false);
+    assert.equal(nodes['cf-academy-workspace'].hidden, false);
+    assert.equal(nodes['cf-academy-workspace']._scrolled, true);
+    assert.equal(paneMission.classList.contains('is-active'), true);
+    assert.ok(nodes['cf-academy-mission-card'].children.length >= 3, 'El panel de Misión debe renderizar título, descripción y cápsula');
+    assert.ok(loadedCode.length > 10, 'El código inicial del reto debe cargarse en el editor');
+    assert.ok(loadedLang.length > 0, 'El lenguaje del reto debe seleccionarse');
+  } finally {
+    globalThis.fetch = prevFetch;
+    globalThis.window = prevWin;
+    globalThis.document = prevDoc;
+    globalThis.location = prevLoc;
+    globalThis.localStorage = prevStorage;
+    globalThis.sessionStorage = prevSessionStorage;
+  }
+});
