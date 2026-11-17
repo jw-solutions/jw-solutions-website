@@ -215,6 +215,7 @@
         <div id="cf-academy-paths" class="cf-academy-paths"></div>
 
         <div id="cf-academy-workspace" class="cf-academy-workspace" hidden>
+          <div id="cf-academy-progress-bar" class="cf-academy-progress-bar" aria-live="polite"></div>
           <div id="cf-academy-mobile-tabs" class="cf-academy-mobile-tabs" role="tablist">
             <button type="button" class="cf-academy-mobile-tab is-active" role="tab" aria-selected="true" data-acad-pane="mission" data-i18n="acadTabMission">Misión</button>
             <button type="button" class="cf-academy-mobile-tab" role="tab" aria-selected="false" data-acad-pane="editor" data-i18n="acadTabEditor">Editor</button>
@@ -228,6 +229,10 @@
             </aside>
 
             <div id="cf-academy-editor-pane" class="cf-academy-pane cf-academy-editor-pane" data-acad-pane-body="editor">
+              <details id="cf-academy-mini-brief" class="cf-academy-mini-brief" open hidden>
+                <summary id="cf-academy-mini-brief-title" class="cf-academy-mini-brief__title"></summary>
+                <p id="cf-academy-mini-brief-body" class="cf-academy-mini-brief__body"></p>
+              </details>
               <div id="cf-academy-editor-slot"></div>
               <div class="cf-academy-editor-bar">
                 <button type="button" id="cf-academy-validate" class="cf-btn cf-btn--primary" data-i18n="acadValidateBtn">Validar nivel</button>

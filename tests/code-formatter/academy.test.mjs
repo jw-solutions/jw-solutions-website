@@ -247,3 +247,40 @@ test('Click autenticado en #cf-academy-daily-btn en móvil (375px) despliega wor
     globalThis.sessionStorage = prevSessionStorage;
   }
 });
+
+test('Flujo encadenado Duolingo/Brilliant: pistas progresivas, pre-carga N+1, remedial x2 y paridad i18n 7 locales', async () => {
+  const newKeys = [
+    'trialAutoWelcome',
+    'acadStartLevelBtn',
+    'acadGoToEditorBtn',
+    'acadStickyBriefLabel',
+    'acadLockedPrevMsg',
+    'acadGoActiveLevelBtn',
+    'acadHintBtn',
+    'acadHintConcept',
+    'acadHintSyntax',
+    'acadProgressBar',
+    'acadNextBadgeProgress',
+    'acadNextLevelBtn',
+    'acadFixInEditorBtn',
+    'acadRemedialMastered',
+  ];
+  for (const loc of LOCALES) {
+    const dict = (await import(`../../assets/js/tools/code-formatter/locales/${loc}.js`)).default;
+    for (const k of newKeys) {
+      assert.ok(typeof dict[k] === 'string' && dict[k].trim().length > 0, `Falta ${k} en ${loc}`);
+    }
+  }
+
+  const indexHtml = readFileSync(join(ROOT, 'tools/code-formatter/index.html'), 'utf8');
+  assert.match(indexHtml, /id="cf-academy-progress-bar"/);
+  assert.match(indexHtml, /id="cf-academy-mini-brief"/);
+
+  const acadJs = readFileSync(join(ROOT, 'assets/js/tools/code-formatter/academy-ui.js'), 'utf8');
+  assert.match(acadJs, /cf-skill-node--pulse/);
+  assert.match(acadJs, /preloadedNextLevel/);
+  assert.match(acadJs, /cf-academy-next-level-btn/);
+  assert.match(acadJs, /cf-academy-fix-editor-btn/);
+  assert.match(acadJs, /cf-academy-remedial-box/);
+  assert.match(acadJs, /acadHintBtn/);
+});

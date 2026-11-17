@@ -188,3 +188,72 @@ def test_newsletter_academy_cta_in_all_7_languages():
         _, text_body, html_body = _render_code_formatter_email(article, loc, "https://api.jw-solutions.com/unsub?t=1")
         assert "mode=learn" in text_body
         assert "utm_source=newsletter" in html_body
+
+
+def test_register_auto_activates_trial_7d_and_falls_back_on_abuse(academy_db):
+    from fastapi import Request, Response
+    from sqlalchemy import text
+    from app.api.auth import RegisterBody, register
+    from app.models.subscription import Subscription
+    from app.services.subscription_service import TrialAlreadyUsedError, activate_trial_7d
+
+    db, _, _, _ = academy_db
+    # Crear tablas trial_usage y notification_outbox mínimas en SQLite
+    db.execute(text("""
+        CREATE TABLE IF NOT EXISTS trial_usage (
+            id TEXT PRIMARY KEY,
+            account_id TEXT NOT NULL UNIQUE,
+            normalized_email TEXT NOT NULL UNIQUE,
+            ip_hash TEXT NOT NULL,
+            device_fingerprint_hash TEXT NOT NULL,
+            granted_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            expires_at TEXT NOT NULL
+        )
+    """))
+    db.execute(text("""
+        CREATE TABLE IF NOT EXISTS sessions (
+            session_id TEXT PRIMARY KEY,
+            account_id TEXT NOT NULL,
+            token_hash TEXT NOT NULL,
+            user_agent TEXT,
+            generation INTEGER NOT NULL DEFAULT 1,
+            expires_at TEXT NOT NULL,
+            revoked_at TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    """))
+    db.execute(text("""
+        CREATE TABLE IF NOT EXISTS notification_outbox (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_type TEXT NOT NULL,
+            payload TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'queued',
+            idempotency_key TEXT UNIQUE
+        )
+    """))
+    import app.services.notification_service as ns
+    import app.services.subscription_service as ss
+    orig_enqueue = ss.enqueue
+    ss.enqueue = lambda s, et, p, idempotency_key=None: 1
+
+    try:
+        from app.models.account import Account
+        import uuid
+        acc1 = Account(account_id=uuid.uuid4(), email="newdev@gmail.com", password_hash="h", plan="free", status="active")
+        db.add(acc1)
+        db.flush()
+
+        from app.core.config import get_settings
+        sub = activate_trial_7d(db, get_settings(), account=acc1, client_ip_addr="198.51.100.10", device_fingerprint="fp-new-1")
+        assert sub.plan_id == "trial_7d"
+        assert acc1.plan == "pro"
+
+        # Segundo registro desde la misma IP/dispositivo: lanza TrialAlreadyUsedError pero permite fallback a free
+        acc2 = Account(account_id=uuid.uuid4(), email="otherdev@gmail.com", password_hash="h", plan="free", status="active")
+        db.add(acc2)
+        db.flush()
+        with pytest.raises(TrialAlreadyUsedError):
+            activate_trial_7d(db, get_settings(), account=acc2, client_ip_addr="198.51.100.10", device_fingerprint="fp-new-1")
+        assert acc2.plan == "free"
+    finally:
+        ss.enqueue = orig_enqueue

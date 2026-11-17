@@ -31,4 +31,12 @@ function applyUI() {
   document.documentElement.dataset.cfMode = hasPay ? 'full' : 'public-free';
 }
 
+export async function refreshRuntimeFeatures() {
+  await load();
+  if (typeof document !== 'undefined') {
+    document.dispatchEvent(new CustomEvent('cf:features-refreshed', { detail: { active: [...active.keys()] } }));
+  }
+  return active;
+}
+
 export const featuresReady = load();

@@ -3,11 +3,27 @@
 import { t, applyI18n } from './i18n.js';
 import { toast } from './actions.js';
 import { apiUrl, postJson } from './services/api.js';
-import { isFeatureOn } from './ui-controller.js';
+import { isFeatureOn, refreshRuntimeFeatures } from './ui-controller.js';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const SESSION_HINT_KEY = 'cf.session_hint';
 export const PENDING_ACTION_KEY = 'cf_pending_action';
+
+async function computeAuthFingerprint() {
+  const parts = [
+    navigator.userAgent || '',
+    navigator.language || '',
+    `${screen?.width || 0}x${screen?.height || 0}`,
+    Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+  ].join('|');
+  try {
+    if (globalThis.crypto?.subtle) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(parts));
+      return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+    }
+  } catch { /* fallback */ }
+  return parts.slice(0, 64);
+}
 
 async function tryStartSessionMonitor() {
   if (!isFeatureOn('single_session')) return;
@@ -108,16 +124,32 @@ export async function initAuthModal() {
     submit.disabled = true;
     submit.textContent = t('authSending');
     try {
-      const res = await postJson(mode === 'register' ? '/api/auth/register' : '/api/auth/login', { email, password });
+      const payload = mode === 'register'
+        ? { email, password, device_fingerprint: await computeAuthFingerprint() }
+        : { email, password };
+      const res = await postJson(mode === 'register' ? '/api/auth/register' : '/api/auth/login', payload);
       if (res.ok) {
         form.reset();
         if (banner) { banner.textContent = ''; banner.hidden = true; }
         try { localStorage.setItem(SESSION_HINT_KEY, '1'); } catch { /* ignorar */ }
         await tryStartSessionMonitor();
-        setAuthUiState({ authenticated: true, email, plan: res.data?.plan || 'free' });
-        toast(t('authOk'));
+        const isPro = res.data?.plan === 'pro' || Boolean(res.data?.trial_auto_activated);
+        setAuthUiState({ authenticated: true, email, plan: isPro ? 'pro' : (res.data?.plan || 'free') });
+        await refreshRuntimeFeatures();
+        if (res.data?.trial_auto_activated) {
+          toast(t('trialAutoWelcome'), 7000);
+        } else {
+          toast(t('authOk'));
+        }
         dialog.close();
-        document.dispatchEvent(new CustomEvent('cf:auth-success', { detail: { email, plan: res.data?.plan || 'free' } }));
+        document.dispatchEvent(new CustomEvent('cf:auth-success', {
+          detail: {
+            email,
+            plan: isPro ? 'pro' : (res.data?.plan || 'free'),
+            trial_auto_activated: Boolean(res.data?.trial_auto_activated),
+            plan_id: res.data?.plan_id || 'free',
+          },
+        }));
       } else if (res.status === 401) say('authErrInvalid');
       else if (res.status === 409) say('authErrExists');
       else if (res.status === 400 || res.status === 422) say('authErrWeak');

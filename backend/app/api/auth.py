@@ -21,7 +21,8 @@ from app.security.sessions import (
     end_session,
     set_session_cookie,
 )
-from app.services.subscription_service import has_active_pro
+from app.services.certificate_service import get_active_subscription, is_trial_subscription
+from app.services.subscription_service import TrialAlreadyUsedError, activate_trial_7d, has_active_pro
 from security.passwords import hash_password, verify_password  # backend/security/passwords.py (Argon2id compartido)
 
 router = APIRouter(prefix="/api")
@@ -40,6 +41,7 @@ class RegisterBody(BaseModel):
 
     email: EmailStr
     password: str = Field(min_length=MIN_PASSWORD, max_length=MAX_PASSWORD)
+    device_fingerprint: str = Field(default="unknown", max_length=256)
 
     @model_validator(mode="after")
     def _password_not_email(self) -> "RegisterBody":
@@ -53,23 +55,34 @@ def _dummy_hash() -> str:
     return hash_password("dummy-password-for-timing-equalization")
 
 
-def _start_session(account: Account, request: Request, response: Response, db: Session, status_code: int = 200) -> dict:
+def _start_session(
+    account: Account,
+    request: Request,
+    response: Response,
+    db: Session,
+    status_code: int = 200,
+    extra: dict | None = None,
+) -> dict:
     settings = get_settings()
     token, session = create_session(db, account.account_id, request.headers.get("user-agent"), settings.session_ttl)
     set_session_cookie(response, token, settings.session_ttl)
     response.status_code = status_code
     response.headers["Cache-Control"] = "no-store"
-    return {
+    payload = {
         "ok": True,
         "csrf_token": csrf_token_for(session, settings.session_secret.get_secret_value()),
         "expires_at": session.expires_at.isoformat(),
         "plan": account.plan,
     }
+    if extra:
+        payload.update(extra)
+    return payload
 
 
 @router.post("/auth/register", status_code=201)
 def register(body: RegisterBody, request: Request, response: Response, db: Annotated[Session, Depends(get_db)]) -> dict:
-    auth_limiter.check(f"register:{client_ip(request)}")
+    ip = client_ip(request)
+    auth_limiter.check(f"register:{ip}")
     email = str(body.email).strip().lower()
     password_hash = hash_password(body.password)  # Argon2id (backend/security/passwords.py)
     try:
@@ -80,7 +93,36 @@ def register(body: RegisterBody, request: Request, response: Response, db: Annot
             db.flush()
     except IntegrityError:
         raise HTTPException(status_code=409, detail="Account already exists") from None
-    return _start_session(account, request, response, db, status_code=201)
+
+    trial_auto_activated = False
+    plan_id = "free"
+    trial_expires_at: str | None = None
+    try:
+        sub = activate_trial_7d(
+            db,
+            get_settings(),
+            account=account,
+            client_ip_addr=ip,
+            device_fingerprint=body.device_fingerprint,
+        )
+        trial_auto_activated = True
+        plan_id = sub.plan_id
+        trial_expires_at = sub.expires_at.isoformat()
+    except TrialAlreadyUsedError:
+        trial_auto_activated = False
+
+    return _start_session(
+        account,
+        request,
+        response,
+        db,
+        status_code=201,
+        extra={
+            "trial_auto_activated": trial_auto_activated,
+            "plan_id": plan_id,
+            "trial_expires_at": trial_expires_at,
+        },
+    )
 
 
 @router.post("/auth/login")
@@ -107,7 +149,17 @@ def me(session: Annotated[SessionInfo, Depends(require_csrf)], db: Annotated[Ses
     account = db.get(Account, session.account_id)
     if account is None or account.status != "active":
         raise HTTPException(status_code=401, detail="Not authenticated")
-    return {"email": account.email, "plan": account.plan, "pro_active": has_active_pro(db, account.account_id)}
+    sub = get_active_subscription(db, account.account_id)
+    is_trial = is_trial_subscription(sub)
+    pro_active = sub is not None or has_active_pro(db, account.account_id)
+    return {
+        "email": account.email,
+        "plan": "pro" if pro_active else account.plan,
+        "pro_active": pro_active,
+        "plan_id": sub.plan_id if sub else "free",
+        "trial_auto_activated": is_trial,
+        "expires_at": sub.expires_at.isoformat() if sub else None,
+    }
 
 
 @router.post("/auth/logout", status_code=204)

@@ -172,6 +172,10 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
   const liveEl = document.getElementById('cf-academy-live');
   const validateBtn = document.getElementById('cf-academy-validate');
   const diffBtn = document.getElementById('cf-academy-diff');
+  const progressBarEl = document.getElementById('cf-academy-progress-bar');
+  const miniBriefEl = document.getElementById('cf-academy-mini-brief');
+  const miniBriefTitleEl = document.getElementById('cf-academy-mini-brief-title');
+  const miniBriefBodyEl = document.getElementById('cf-academy-mini-brief-body');
 
   if (!shell || !btnFormat || !btnAcademy) return null;
 
@@ -187,6 +191,20 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
   let activeLevel = null;
   let pathsCache = null;
   let dailyCache = null;
+  let hintStep = 0;
+  let preloadedNextLevel = null;
+  let isRemedialActive = false;
+  let mainLevelSnapshot = null;
+
+  function goToEditorPane() {
+    setMobilePane('editor');
+    const target = academyEditorSlot || editorCard;
+    if (target && typeof target.scrollIntoView === 'function') {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    const cm = target?.querySelector?.('.cm-content');
+    if (cm && typeof cm.focus === 'function') cm.focus();
+  }
 
   function setMobilePane(paneName) {
     document.querySelectorAll('.cf-academy-mobile-tab').forEach((btn) => {
@@ -278,7 +296,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     const completedSet = new Set(state.completed || []);
     const remedialSet = new Set(state.remedial || []);
     if (completedSet.has(lvl.id)) return 'completed';
-    if (lvl.tier === 'pay') return 'locked';
+    if (lvl.tier === 'pay' && !state.isPro) return 'locked';
     if (remedialSet.has(lvl.id)) return 'remedial';
     return isLevelUnlocked(lvl, idx, levels, state) ? 'active' : 'locked';
   }
@@ -289,18 +307,21 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     const list = el('div', 'cf-skill-tree');
     list.setAttribute('role', 'list');
     const state = readLocalState();
+    let firstActiveFound = false;
 
     (curriculum.levels || []).forEach((lvl, idx) => {
       const nodeState = resolveNodeState(lvl, idx, curriculum.levels, state);
       const isSelected = activeLevel && activeLevel.id === lvl.id;
-      const node = el('div', `cf-skill-node cf-skill-node--${nodeState}${isSelected ? ' is-selected' : ''}`);
+      const isFirstPending = !firstActiveFound && (nodeState === 'active' || nodeState === 'remedial');
+      if (isFirstPending) firstActiveFound = true;
+      const node = el('div', `cf-skill-node cf-skill-node--${nodeState}${isSelected ? ' is-selected' : ''}${isFirstPending ? ' cf-skill-node--pulse' : ''}`);
       node.setAttribute('tabindex', '0');
       node.setAttribute('role', 'button');
-      node.setAttribute('aria-label', `${lvl.title} (${lvl.tier === 'pay' ? 'Pro' : t(`acadState${nodeState.charAt(0).toUpperCase() + nodeState.slice(1)}`)})`);
+      node.setAttribute('aria-label', `${lvl.title} (${lvl.tier === 'pay' && !state.isPro ? 'Pro' : t(`acadState${nodeState.charAt(0).toUpperCase() + nodeState.slice(1)}`)})`);
 
       const left = el('span', null, lvl.title);
       const stateLabel =
-        lvl.tier === 'pay'
+        lvl.tier === 'pay' && !state.isPro
           ? 'PRO'
           : nodeState === 'completed'
             ? `✓ ${t('acadStateCompleted')}`
@@ -313,8 +334,15 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
       node.append(left, right);
 
       const activate = () => {
-        if (lvl.tier === 'pay') {
+        if (lvl.tier === 'pay' && !readLocalState().isPro) {
           openProOrExplain();
+          return;
+        }
+        if (nodeState === 'locked') {
+          const prevTitle = curriculum.levels[idx - 1]?.title || `Nivel ${idx}`;
+          toast(t('acadLockedPrevMsg', { prev: prevTitle }));
+          const activeIdx = curriculum.levels.findIndex((l, i) => resolveNodeState(l, i, curriculum.levels, readLocalState()) === 'active');
+          if (activeIdx >= 0) selectLevel(curriculum, curriculum.levels[activeIdx].level);
           return;
         }
         selectLevel(curriculum, lvl.level);
@@ -334,6 +362,22 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
   function renderMission(lvl, standard) {
     missionEl.replaceChildren();
     checklistEl.replaceChildren();
+    hintStep = 0;
+
+    if (progressBarEl) {
+      const total = currentCurriculum?.levels?.length || 1;
+      progressBarEl.textContent = t('acadProgressBar', {
+        path: currentPath ? currentPath.toUpperCase() : standard,
+        tech: (currentCurriculum?.tech || currentTopic || 'python').toUpperCase(),
+        level: lvl.level || 1,
+        total,
+      });
+    }
+    if (miniBriefEl && miniBriefTitleEl && miniBriefBodyEl) {
+      miniBriefTitleEl.textContent = `${t('acadStickyBriefLabel')}: ${lvl.title}`;
+      miniBriefBodyEl.textContent = String(lvl.concept_capsule || '').slice(0, 140);
+      miniBriefEl.hidden = false;
+    }
 
     missionEl.append(el('h3', 'cf-academy-pane__title', t('acadMissionTitle')));
     missionEl.append(el('p', 'cf-muted', `${standard} · ${lvl.title}`));
@@ -341,6 +385,35 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     const cap = el('div', 'cf-academy-capsule');
     cap.append(el('strong', null, `${t('acadCapsuleTitle')}: `), document.createTextNode(lvl.concept_capsule || ''));
     missionEl.append(cap);
+
+    const navBar = el('div', 'cf-tip-modal__actions');
+    const goEditorBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadGoToEditorBtn'));
+    goEditorBtn.type = 'button';
+    goEditorBtn.id = 'cf-academy-go-editor';
+    goEditorBtn.addEventListener('click', goToEditorPane);
+
+    const hintBtn = el('button', 'cf-btn cf-btn--small', t('acadHintBtn', { step: 1 }));
+    hintBtn.type = 'button';
+    hintBtn.id = 'cf-academy-hint-btn';
+    const hintBox = el('p', 'cf-muted');
+    hintBox.id = 'cf-academy-hint-box';
+    hintBox.hidden = true;
+    hintBtn.addEventListener('click', () => {
+      hintStep = Math.min(2, hintStep + 1);
+      if (hintStep === 1) {
+        const rulesText = (lvl.style_rules || []).join(', ') || lvl.concept_capsule || '';
+        hintBox.textContent = t('acadHintConcept', { text: rulesText });
+        hintBtn.textContent = t('acadHintBtn', { step: 2 });
+      } else {
+        const firstTest = (lvl.tests || [])[0];
+        const syntax = firstTest?.expected ? String(firstTest.expected) : String(lvl.reference_solution || '').split('\n')[0];
+        hintBox.textContent = t('acadHintSyntax', { text: syntax });
+        hintBtn.disabled = true;
+      }
+      hintBox.hidden = false;
+    });
+    navBar.append(goEditorBtn, hintBtn);
+    missionEl.append(navBar, hintBox);
 
     checklistEl.append(el('h4', 'cf-academy-pane__title', t('acadChecklistTitle')));
     const ul = el('ul', 'cf-academy-checklist');
@@ -353,10 +426,13 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
 
   function selectLevel(curriculum, levelNum) {
     const lvl = (curriculum.levels || []).find((l) => l.level === levelNum) || curriculum.levels[0];
-    if (!lvl || lvl.tier === 'pay') {
+    if (!lvl || (lvl.tier === 'pay' && !readLocalState().isPro)) {
       openProOrExplain();
       return;
     }
+    isRemedialActive = false;
+    mainLevelSnapshot = null;
+    preloadedNextLevel = (curriculum.levels || []).find((l) => l.level === (lvl.level + 1)) || null;
     activeLevel = lvl;
     currentLevelNum = lvl.level;
     syncUrlParams({ mode: 'learn', path: currentPath, topic: currentTopic, level: currentLevelNum });
@@ -365,6 +441,10 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     if (setLanguage) setLanguage(curriculum.tech);
     if (setCode && lvl.starter_code) setCode(lvl.starter_code);
     if (liveEl) liveEl.textContent = t('acadConsoleEmpty');
+    setMobilePane('mission');
+    if (typeof workspace.scrollIntoView === 'function') {
+      workspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   async function openTopic(tech, levelNum = 1, pathId = '') {
@@ -545,7 +625,22 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     renderPathsView(pathsCache);
   });
   dailyBtn?.addEventListener('click', () => { handleDailyChallengeClick(); });
-  document.addEventListener('cf:auth-success', () => { resumePendingAction(); });
+  document.addEventListener('cf:auth-success', async (ev) => {
+    const isPro = Boolean(ev?.detail?.plan === 'pro' || ev?.detail?.trial_auto_activated);
+    if (isPro) {
+      academyState = saveAcademyState({ ...readLocalState(), isPro: true });
+      if (currentCurriculum) renderSkillTree(currentCurriculum);
+    }
+    await resumePendingAction();
+    if (currentMode === 'learn' && pathsContainer && !pathsContainer.hidden) {
+      const firstStart = pathsContainer.querySelector('.cf-academy-path-card .cf-btn--primary');
+      if (firstStart && typeof firstStart.focus === 'function') firstStart.focus();
+    }
+  });
+  document.addEventListener('cf:pro-activated', () => {
+    academyState = saveAcademyState({ ...readLocalState(), isPro: true });
+    if (currentCurriculum) renderSkillTree(currentCurriculum);
+  });
 
   diffBtn?.addEventListener('click', () => {
     if (!activeLevel?.reference_solution || !openDiffWith) return;
@@ -674,72 +769,124 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
 
   validateBtn?.addEventListener('click', async () => {
     if (!activeLevel) return;
-    const tech = currentCurriculum?.tech || 'python';
-    const code = getCode ? getCode() : '';
-    const evaluation = await evaluateChallenge(tech, code, activeLevel);
+    validateBtn.disabled = true;
+    validateBtn.setAttribute('aria-busy', 'true');
+    try {
+      const tech = currentCurriculum?.tech || 'python';
+      const code = getCode ? getCode() : '';
+      const evaluation = await evaluateChallenge(tech, code, activeLevel);
 
-    const passedCount = evaluation.results.filter((r) => r.ok).length;
-    const totalCount = evaluation.results.length;
+      const passedCount = evaluation.results.filter((r) => r.ok).length;
+      const totalCount = evaluation.results.length;
 
-    const attempt = recordAttempt(academyState, activeLevel, evaluation);
-    academyState = attempt.state;
-    if (evaluation.passed && currentCurriculum?.isDaily) {
-      academyState = recordDailyCompletion(academyState);
-    }
-
-    if (!achievementsCache) {
-      try {
-        achievementsCache = (await fetchJson('achievements.json')).achievements || [];
-      } catch {
-        achievementsCache = [];
+      const attempt = recordAttempt(academyState, activeLevel, evaluation);
+      academyState = attempt.state;
+      if (evaluation.passed && currentCurriculum?.isDaily) {
+        academyState = recordDailyCompletion(academyState);
       }
-    }
-    const achRes = evaluateAchievements(academyState, achievementsCache);
-    academyState = saveAcademyState(achRes.state);
-    if (isFeatureOn('accounts_auth') && localStorage.getItem('cf_session_hint') === '1') {
-      syncAcademyState(academyState).then((merged) => { academyState = merged; });
-    }
 
-    if (evaluation.passed) {
-      liveEl.textContent = `OK ${passedCount}/${totalCount} · ${activeLevel.title}`;
-      renderSkillTree(currentCurriculum);
-      if (activeLevel.related_tip_slug) {
-        const tipLink = el('a', 'cf-btn cf-btn--secondary cf-btn--small', t('tipsOpenFullPage'));
-        tipLink.href = `tips/${activeLevel.related_tip_slug}/${getUiLang()}/`;
-        missionEl.append(tipLink);
-      }
-      renderCertificateAction(tech);
-      for (const ach of achRes.newlyUnlocked) {
-        const copy = ach.i18n?.[getUiLang()] || ach.i18n?.es || {};
-        toast(`${ach.icon} ${copy.title || ach.id}`);
-      }
-    } else {
-      const firstIssue = evaluation.runtimeError || evaluation.styleViolations[0] || evaluation.errorType || 'failed';
-      liveEl.textContent = `${passedCount}/${totalCount} · ${firstIssue}`;
-      if (attempt.triggerRemedial && attempt.recommendedDrill) {
-        const box = el('div', 'cf-academy-capsule');
-        box.append(el('strong', null, `${attempt.recommendedDrill.title}: `));
-        box.append(document.createTextNode(attempt.recommendedDrill.prompt));
-        const applyDrill = el('button', 'cf-btn cf-btn--small', attempt.recommendedDrill.solution_hint);
-        applyDrill.type = 'button';
-        applyDrill.addEventListener('click', () => {
-          if (setCode) setCode(attempt.recommendedDrill.starter_code);
-          academyState = saveAcademyState(completeRemedialDrill(academyState, activeLevel.id, attempt.recommendedDrill.id));
-          renderSkillTree(currentCurriculum);
-        });
-        box.append(applyDrill);
-
-        if (isFeatureOn('pro_billing')) {
-          const teaser = el('p', 'cf-muted', `${firstIssue} — Desbloquea el diagnóstico completo con Tutor IA Pro.`);
-          const proBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadProOpenPlans'));
-          proBtn.type = 'button';
-          proBtn.addEventListener('click', openProOrExplain);
-          box.append(teaser, proBtn);
+      if (!achievementsCache) {
+        try {
+          achievementsCache = (await fetchJson('achievements.json')).achievements || [];
+        } catch {
+          achievementsCache = [];
         }
-        missionEl.append(box);
       }
+      const achRes = evaluateAchievements(academyState, achievementsCache);
+      academyState = saveAcademyState(achRes.state);
+      if (isFeatureOn('accounts_auth') && (localStorage.getItem('cf.session_hint') === '1' || localStorage.getItem('cf_session_hint') === '1')) {
+        syncAcademyState(academyState).then((merged) => { academyState = merged; });
+      }
+
+      if (evaluation.passed) {
+        liveEl.textContent = `OK ${passedCount}/${totalCount} · ${activeLevel.title}`;
+        renderSkillTree(currentCurriculum);
+
+        const feedbackCard = el('div', 'cf-academy-achievement-card');
+        if (isRemedialActive && mainLevelSnapshot) {
+          const returnBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadRemedialMastered'));
+          returnBtn.type = 'button';
+          returnBtn.addEventListener('click', () => {
+            const snap = mainLevelSnapshot;
+            isRemedialActive = false;
+            mainLevelSnapshot = null;
+            selectLevel(currentCurriculum, snap.level);
+          });
+          feedbackCard.append(returnBtn);
+        } else {
+          const remaining = Math.max(0, (currentCurriculum?.levels?.length || 1) - (academyState.completed || []).filter((id) => id.startsWith(tech)).length);
+          feedbackCard.append(el('p', 'cf-muted', t('acadNextBadgeProgress', { remaining })));
+          if (preloadedNextLevel && (preloadedNextLevel.tier !== 'pay' || readLocalState().isPro)) {
+            const nextBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadNextLevelBtn', { n: preloadedNextLevel.level }));
+            nextBtn.type = 'button';
+            nextBtn.id = 'cf-academy-next-level-btn';
+            nextBtn.addEventListener('click', () => {
+              selectLevel(currentCurriculum, preloadedNextLevel.level);
+            });
+            feedbackCard.append(nextBtn);
+            if (typeof nextBtn.focus === 'function') nextBtn.focus();
+          }
+        }
+        checklistEl.append(feedbackCard);
+
+        if (activeLevel.related_tip_slug) {
+          const tipLink = el('a', 'cf-btn cf-btn--secondary cf-btn--small', t('tipsOpenFullPage'));
+          tipLink.href = `tips/${activeLevel.related_tip_slug}/${getUiLang()}/`;
+          missionEl.append(tipLink);
+        }
+        renderCertificateAction(tech);
+        for (const ach of achRes.newlyUnlocked) {
+          const copy = ach.i18n?.[getUiLang()] || ach.i18n?.es || {};
+          toast(`${ach.icon} ${copy.title || ach.id}`);
+        }
+      } else {
+        const firstIssue = evaluation.runtimeError || evaluation.styleViolations[0] || evaluation.errorType || 'failed';
+        liveEl.textContent = `${passedCount}/${totalCount} · ${firstIssue}`;
+
+        const fixBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadFixInEditorBtn'));
+        fixBtn.type = 'button';
+        fixBtn.id = 'cf-academy-fix-editor-btn';
+        fixBtn.addEventListener('click', goToEditorPane);
+        checklistEl.append(fixBtn);
+
+        if (attempt.triggerRemedial && attempt.recommendedDrill) {
+          isRemedialActive = true;
+          mainLevelSnapshot = activeLevel;
+          if (setCode) setCode(attempt.recommendedDrill.starter_code);
+
+          const box = el('div', 'cf-academy-capsule');
+          box.id = 'cf-academy-remedial-box';
+          box.append(el('strong', null, `${attempt.recommendedDrill.title}: `));
+          box.append(document.createTextNode(attempt.recommendedDrill.prompt));
+          const applyDrill = el('button', 'cf-btn cf-btn--small', t('acadRemedialMastered'));
+          applyDrill.type = 'button';
+          applyDrill.addEventListener('click', () => {
+            academyState = saveAcademyState(completeRemedialDrill(academyState, activeLevel.id, attempt.recommendedDrill.id));
+            const snap = mainLevelSnapshot;
+            isRemedialActive = false;
+            mainLevelSnapshot = null;
+            if (snap) selectLevel(currentCurriculum, snap.level);
+          });
+          box.append(applyDrill);
+
+          if (isFeatureOn('pro_billing')) {
+            const teaser = el('p', 'cf-muted', `${firstIssue} — Desbloquea el diagnóstico completo con Tutor IA Pro.`);
+            const proBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadProOpenPlans'));
+            proBtn.type = 'button';
+            proBtn.addEventListener('click', openProOrExplain);
+            box.append(teaser, proBtn);
+          }
+          missionEl.append(box);
+          if (typeof box.scrollIntoView === 'function') {
+            box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      }
+      setMobilePane('results');
+    } finally {
+      validateBtn.disabled = false;
+      validateBtn.removeAttribute('aria-busy');
     }
-    setMobilePane('results');
   });
 
   document.addEventListener('cf:lang', () => {
