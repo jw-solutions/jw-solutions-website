@@ -201,13 +201,12 @@
       </div>
 
       <section id="cf-academy-shell" class="cf-academy-shell" data-cf-feature="academy.core" hidden aria-labelledby="cf-academy-heading">
-        <div class="cf-card cf-academy-head">
+        <div id="cf-academy-head" class="cf-card cf-academy-head">
           <div>
             <h2 id="cf-academy-heading" class="cf-academy-head__title" data-i18n="acadTitle">Academia de Código Limpio</h2>
             <p class="cf-muted" data-i18n="acadSubtitle">Entrenamiento guiado por rutas profesionales, estándares oficiales y retos prácticos.</p>
           </div>
           <div class="cf-academy-head__actions">
-            <button type="button" id="cf-academy-back" class="cf-btn cf-btn--small" hidden data-i18n="acadBackPaths">← Cambiar ruta o lenguaje</button>
             <button type="button" id="cf-academy-daily-btn" class="cf-btn cf-btn--primary cf-btn--small" data-i18n="acadDailyBtn">Practicar Reto Clean &amp; Document</button>
           </div>
         </div>
@@ -215,8 +214,11 @@
         <div id="cf-academy-paths" class="cf-academy-paths"></div>
 
         <div id="cf-academy-workspace" class="cf-academy-workspace" hidden>
-          <div id="cf-academy-progress-bar" class="cf-academy-progress-bar" aria-live="polite"></div>
-          <div id="cf-academy-mobile-tabs" class="cf-academy-mobile-tabs" role="tablist">
+          <div class="cf-academy-topbar">
+            <button type="button" id="cf-academy-back" class="cf-btn cf-btn--small" hidden data-i18n="acadBackPaths">← Cambiar ruta o lenguaje</button>
+            <div id="cf-academy-progress-bar" class="cf-academy-progress-bar" aria-live="polite"></div>
+          </div>
+          <div id="cf-academy-mobile-tabs" class="cf-academy-mobile-tabs cf-academy-stepper" role="tablist" data-i18n-aria="acadStepperAria" aria-label="Pasos de la Academia">
             <button type="button" class="cf-academy-mobile-tab is-active" role="tab" aria-selected="true" data-acad-pane="mission" data-i18n="acadTabMission">Misión</button>
             <button type="button" class="cf-academy-mobile-tab" role="tab" aria-selected="false" data-acad-pane="editor" data-i18n="acadTabEditor">Editor</button>
             <button type="button" class="cf-academy-mobile-tab" role="tab" aria-selected="false" data-acad-pane="results" data-i18n="acadTabResults">Resultados</button>
@@ -224,23 +226,24 @@
 
           <div class="cf-academy-grid">
             <aside id="cf-academy-mission-pane" class="cf-card cf-academy-pane is-active" data-acad-pane-body="mission">
-              <div id="cf-academy-skill-tree" class="cf-academy-skill-tree"></div>
               <div id="cf-academy-mission-card" class="cf-academy-mission-card"></div>
+              <div id="cf-academy-skill-tree" class="cf-academy-skill-tree"></div>
             </aside>
 
-            <div id="cf-academy-editor-pane" class="cf-academy-pane cf-academy-editor-pane" data-acad-pane-body="editor">
+            <div id="cf-academy-editor-pane" class="cf-academy-pane cf-academy-editor-pane" data-acad-pane-body="editor" hidden>
               <details id="cf-academy-mini-brief" class="cf-academy-mini-brief" open hidden>
                 <summary id="cf-academy-mini-brief-title" class="cf-academy-mini-brief__title"></summary>
                 <p id="cf-academy-mini-brief-body" class="cf-academy-mini-brief__body"></p>
               </details>
               <div id="cf-academy-editor-slot"></div>
               <div class="cf-academy-editor-bar">
-                <button type="button" id="cf-academy-validate" class="cf-btn cf-btn--primary" data-i18n="acadValidateBtn">Validar nivel</button>
                 <button type="button" id="cf-academy-diff" class="cf-btn" data-i18n="acadDiffBtn">Comparar con solución óptima</button>
+                <button type="button" id="cf-academy-validate" class="cf-btn cf-btn--primary" data-i18n="acadValidateBtn">Validar nivel</button>
               </div>
+              <div id="cf-academy-diff-slot" class="cf-academy-diff-slot"></div>
             </div>
 
-            <aside id="cf-academy-results-pane" class="cf-card cf-academy-pane" data-acad-pane-body="results">
+            <aside id="cf-academy-results-pane" class="cf-card cf-academy-pane" data-acad-pane-body="results" hidden>
               <h3 class="cf-academy-pane__title" data-i18n="acadConsoleTitle">Consola de validación</h3>
               <div id="cf-academy-live" class="cf-academy-console" role="status" aria-live="polite" data-i18n="acadConsoleEmpty">Ejecuta la validación para comprobar tus pruebas y estilo.</div>
               <div id="cf-academy-checklist" class="cf-academy-checklist"></div>

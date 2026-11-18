@@ -110,7 +110,7 @@ test('dist-public/: CTA Academia en /tips/ y /fix/ encima del footer, 0 pay y 0 
   assert.equal(sampleFix.includes('data-cf-commercial'), false);
 });
 
-test('Click autenticado en #cf-academy-daily-btn en móvil (375px) despliega workspace, misión y código en editor', async () => {
+test('Flujo de vista única en móvil (375px): paths → tree → editor → results, una sola vista visible y cf:lang conserva el paso', async () => {
   const makeNode = (id, extra = {}) => {
     const classes = new Set();
     const attrs = new Map();
@@ -150,6 +150,7 @@ test('Click autenticado en #cf-academy-daily-btn en móvil (375px) despliega wor
 
   const nodes = {
     'cf-academy-shell': makeNode('cf-academy-shell'),
+    'cf-academy-head': makeNode('cf-academy-head'),
     'cf-mode-formatter': makeNode('cf-mode-formatter'),
     'cf-mode-academy': makeNode('cf-mode-academy'),
     'cf-formatter-toolbar': makeNode('cf-formatter-toolbar'),
@@ -169,8 +170,12 @@ test('Click autenticado en #cf-academy-daily-btn en móvil (375px) despliega wor
   };
 
   const tabMission = makeNode('tab-mission', { dataset: { acadPane: 'mission' } });
+  const tabEditor = makeNode('tab-editor', { dataset: { acadPane: 'editor' } });
+  const tabResults = makeNode('tab-results', { dataset: { acadPane: 'results' } });
   const paneMission = makeNode('cf-academy-mission-pane', { dataset: { acadPaneBody: 'mission' } });
   const paneEditor = makeNode('cf-academy-editor-pane', { dataset: { acadPaneBody: 'editor' } });
+  const paneResults = makeNode('cf-academy-results-pane', { dataset: { acadPaneBody: 'results' } });
+  const docListeners = new Map();
 
   const prevFetch = globalThis.fetch;
   const prevWin = globalThis.window;
@@ -194,10 +199,13 @@ test('Click autenticado en #cf-academy-daily-btn en móvil (375px) despliega wor
     body: { append() {} },
     getElementById: (id) => nodes[id] || null,
     querySelector: () => null,
-    querySelectorAll: (sel) => (sel === '.cf-academy-mobile-tab' ? [tabMission] : sel === '[data-acad-pane-body]' ? [paneMission, paneEditor] : []),
+    querySelectorAll: (sel) => (sel === '.cf-academy-mobile-tab' ? [tabMission, tabEditor, tabResults] : sel === '[data-acad-pane-body]' ? [paneMission, paneEditor, paneResults] : []),
     createElement: (tag) => makeNode(tag),
     createTextNode: (txt) => ({ textContent: txt }),
-    addEventListener: () => {},
+    addEventListener: (ev, fn) => {
+      if (!docListeners.has(ev)) docListeners.set(ev, []);
+      docListeners.get(ev).push(fn);
+    },
     dispatchEvent: () => {},
   };
 
@@ -213,6 +221,19 @@ test('Click autenticado en #cf-academy-daily-btn en móvil (375px) despliega wor
       const daily = JSON.parse(readFileSync(join(ROOT, 'content/code-formatter-academy/daily-challenges.json'), 'utf8'));
       return { ok: true, status: 200, json: async () => daily };
     }
+    if (u.includes('curriculum/') && u.endsWith('/python.json')) {
+      const curriculum = {
+        tech: 'python',
+        standard: 'PEP 8',
+        levels: [{
+          id: 'python-1', level: 1, tier: 'free', title: 'Nivel remedial', concept_capsule: 'Cápsula',
+          starter_code: 'pass', reference_solution: 'def total(items):\n    return 0\n', style_rules: [],
+          tests: [{ id: 't1', name: 'Define total', visible: true, type: 'pattern', expected: 'def total(', description: 'Define la función' }],
+          remedial_drills: [{ id: 'drill-edge', error_type: 'edge_case', title: 'Guardia vacía', prompt: 'Protege la lista vacía', starter_code: '# drill start', expected_pattern: 'if not items', solution_hint: 'hint' }],
+        }],
+      };
+      return { ok: true, status: 200, json: async () => curriculum };
+    }
     return { ok: false, status: 404, json: async () => ({}) };
   };
 
@@ -227,17 +248,116 @@ test('Click autenticado en #cf-academy-daily-btn en móvil (375px) despliega wor
     });
     assert.ok(api, 'initAcademyUI debe inicializarse');
 
-    await nodes['cf-academy-daily-btn'].dispatchClick();
-    // Esperar microtasks asíncronos de fetch(/api/me) y fetch(daily-challenges.json)
-    await new Promise((r) => setTimeout(r, 80));
+    const visiblePanes = () => [paneMission, paneEditor, paneResults].filter((p) => p.hidden === false).length;
 
+    // Vista 1 · paths: solo cabecera + rutas; workspace oculto
+    await new Promise((r) => setTimeout(r, 80));
+    assert.equal(nodes['cf-academy-head'].hidden, false);
+    assert.equal(nodes['cf-academy-paths'].hidden, false);
+    assert.equal(nodes['cf-academy-workspace'].hidden, true);
+
+    // Vista 2 · tree (Reto Diario): cabecera y rutas ocultas, solo la misión visible
+    await nodes['cf-academy-daily-btn'].dispatchClick();
+    await new Promise((r) => setTimeout(r, 80));
     assert.equal(nodes['cf-academy-shell'].hidden, false);
+    assert.equal(nodes['cf-academy-head'].hidden, true);
+    assert.equal(nodes['cf-academy-paths'].hidden, true);
     assert.equal(nodes['cf-academy-workspace'].hidden, false);
     assert.equal(nodes['cf-academy-workspace']._scrolled, true);
-    assert.equal(paneMission.classList.contains('is-active'), true);
+    assert.equal(paneMission.hidden, false);
+    assert.equal(paneEditor.hidden, true);
+    assert.equal(paneResults.hidden, true);
+    assert.equal(visiblePanes(), 1);
     assert.ok(nodes['cf-academy-mission-card'].children.length >= 3, 'El panel de Misión debe renderizar título, descripción y cápsula');
     assert.ok(loadedCode.length > 10, 'El código inicial del reto debe cargarse en el editor');
     assert.ok(loadedLang.length > 0, 'El lenguaje del reto debe seleccionarse');
+    assert.equal(tabResults.disabled, true, 'Resultados bloqueado hasta validar');
+
+    // Vista 3 · editor
+    const findById = (node, id) => {
+      for (const c of node.children || []) {
+        if (c && c.id === id) return c;
+        const deep = c && c.children ? findById(c, id) : null;
+        if (deep) return deep;
+      }
+      return null;
+    };
+    const goEditor = findById(nodes['cf-academy-mission-card'], 'cf-academy-go-editor');
+    assert.ok(goEditor, 'Debe existir #cf-academy-go-editor en la misión');
+    await goEditor.dispatchClick();
+    assert.equal(paneEditor.hidden, false);
+    assert.equal(paneMission.hidden, true);
+    assert.equal(paneResults.hidden, true);
+    assert.equal(visiblePanes(), 1);
+
+    // cf:lang conserva paso, nivel y el código del usuario
+    loadedCode = 'def total(items):\n    return 0\n';
+    for (const fn of docListeners.get('cf:lang') || []) await fn({});
+    await new Promise((r) => setTimeout(r, 120));
+    assert.equal(paneEditor.hidden, false, 'cf:lang debe conservar el paso editor');
+    assert.equal(paneMission.hidden, true);
+    assert.equal(loadedCode, 'def total(items):\n    return 0\n', 'cf:lang no debe resetear el código');
+
+    // Vista 4 · results
+    await nodes['cf-academy-validate'].dispatchClick();
+    await new Promise((r) => setTimeout(r, 400));
+    assert.equal(paneResults.hidden, false);
+    assert.equal(paneMission.hidden, true);
+    assert.equal(paneEditor.hidden, true);
+    assert.equal(visiblePanes(), 1);
+
+    // Volver: results → editor → tree
+    await nodes['cf-academy-back'].dispatchClick();
+    assert.equal(paneEditor.hidden, false);
+    assert.equal(paneResults.hidden, true);
+    await nodes['cf-academy-back'].dispatchClick();
+    assert.equal(paneMission.hidden, false);
+    assert.equal(paneEditor.hidden, true);
+
+    // Volver a Rutas desde el reto diario
+    await nodes['cf-academy-back'].dispatchClick();
+    await new Promise((r) => setTimeout(r, 40));
+    assert.equal(nodes['cf-academy-head'].hidden, false);
+    assert.equal(nodes['cf-academy-paths'].hidden, false);
+    assert.equal(nodes['cf-academy-workspace'].hidden, true);
+
+    // Flujo remedial: 2 fallos → remedial → aprobar contra SUS criterios → retorno al reto principal
+    await api.openTopic('python', 1, '');
+    await new Promise((r) => setTimeout(r, 60));
+    assert.equal(paneMission.hidden, false);
+    await findById(nodes['cf-academy-mission-card'], 'cf-academy-go-editor').dispatchClick();
+    assert.equal(paneEditor.hidden, false);
+
+    loadedCode = 'x = 1';
+    await nodes['cf-academy-validate'].dispatchClick();
+    assert.equal(paneResults.hidden, false);
+    assert.equal(findById(nodes['cf-academy-checklist'], 'cf-academy-remedial-box'), null, '1.er fallo no abre remedial');
+    await nodes['cf-academy-back'].dispatchClick();
+    await nodes['cf-academy-validate'].dispatchClick();
+    const practiceBtn = findById(nodes['cf-academy-checklist'], 'cf-academy-remedial-practice-btn');
+    assert.ok(findById(nodes['cf-academy-checklist'], 'cf-academy-remedial-box'), '2.º fallo abre #cf-academy-remedial-box');
+    assert.ok(practiceBtn, 'Botón de práctica remedial');
+
+    await practiceBtn.dispatchClick();
+    assert.equal(paneEditor.hidden, false);
+    assert.equal(paneResults.hidden, true);
+    assert.equal(loadedCode, '# drill start', 'El editor carga el micro-ejercicio');
+
+    // Código que cumple el drill pero NO las pruebas del nivel principal ('def total(')
+    loadedCode = 'if not items:\n    pass';
+    await nodes['cf-academy-validate'].dispatchClick();
+    await new Promise((r) => setTimeout(r, 40));
+    assert.equal(paneResults.hidden, false);
+    assert.ok(nodes['cf-academy-live'].textContent.includes('Guardia vacía'), 'Confirmación de refuerzo superado en #cf-academy-live');
+    assert.equal(findById(nodes['cf-academy-checklist'], 'cf-academy-next-level-btn'), null, 'El remedial no libera el siguiente nivel');
+    const returnBtn = findById(nodes['cf-academy-checklist'], 'cf-academy-remedial-return-btn');
+    assert.ok(returnBtn, 'Botón para volver al reto principal');
+
+    await returnBtn.dispatchClick();
+    assert.equal(paneEditor.hidden, false);
+    assert.equal(paneResults.hidden, true);
+    assert.equal(loadedCode, 'x = 1', 'Se restaura el código del reto principal');
+    assert.equal(findById(nodes['cf-academy-checklist'], 'cf-academy-remedial-box'), null, 'Remedial cerrado');
   } finally {
     globalThis.fetch = prevFetch;
     globalThis.window = prevWin;
@@ -283,4 +403,27 @@ test('Flujo encadenado Duolingo/Brilliant: pistas progresivas, pre-carga N+1, re
   assert.match(acadJs, /cf-academy-fix-editor-btn/);
   assert.match(acadJs, /cf-academy-remedial-box/);
   assert.match(acadJs, /acadHintBtn/);
+});
+
+test('Vista única: HTML/CSS/JS exponen la máquina de estados y respetan selectores protegidos', () => {
+  const html = readFileSync(join(ROOT, 'tools/code-formatter/index.html'), 'utf8');
+  for (const id of ['cf-academy-shell', 'cf-academy-head', 'cf-academy-paths', 'cf-academy-workspace', 'cf-academy-progress-bar',
+    'cf-academy-mini-brief', 'cf-academy-skill-tree', 'cf-academy-mission-card', 'cf-academy-editor-slot', 'cf-academy-diff-slot',
+    'cf-academy-live', 'cf-academy-checklist', 'cf-academy-validate', 'cf-academy-diff', 'cf-academy-back', 'cf-academy-daily-btn']) {
+    assert.equal((html.match(new RegExp(`id="${id}"`, 'g')) || []).length, 1, `id único: ${id}`);
+  }
+  assert.match(html, /data-acad-pane-body="editor"[^>]*hidden/);
+  assert.match(html, /data-acad-pane-body="results"[^>]*hidden/);
+
+  const js = readFileSync(join(ROOT, 'assets/js/tools/code-formatter/academy-ui.js'), 'utf8');
+  for (const needle of ['setAcademyView', 'ACADEMY_VIEWS', 'requestMeasure', 'cf-academy-checklist-list', 'step', 'restoreDiffPanelHome']) {
+    assert.ok(js.includes(needle), `academy-ui.js debe contener ${needle}`);
+  }
+  assert.doesNotMatch(js, /\.innerHTML\s*=|insertAdjacentHTML/);
+
+  const css = readFileSync(join(ROOT, 'assets/css/tools/code-formatter.css'), 'utf8');
+  assert.match(css, /\.cf-academy-pane\[hidden\]/);
+  assert.match(css, /\.cf-academy-head\[hidden\]/);
+  assert.doesNotMatch(css, /grid-template-columns:\s*minmax\(260px/);
+  assert.match(css, /prefers-reduced-motion[\s\S]*cf-academy-pane/);
 });

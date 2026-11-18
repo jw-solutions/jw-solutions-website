@@ -17,6 +17,8 @@ import { apiUrl, postJson } from './services/api.js';
 
 const TECHS = ['python', 'javascript', 'typescript', 'sql', 'dax', 'java', 'csharp', 'php', 'json', 'yaml'];
 const ACADEMY_BASE = new URL('../../../../content/code-formatter-academy/', import.meta.url);
+// Vistas exclusivas del flujo secuencial (una sola visible a la vez).
+export const ACADEMY_VIEWS = ['paths', 'tree', 'editor', 'results'];
 const PENDING_ACTION_KEY = 'cf_pending_action';
 const PENDING_ACTION_TTL_MS = 900000;
 
@@ -91,6 +93,7 @@ function getAcademyParams() {
     topic: p.get('topic') || '',
     level: Number(p.get('level') || 0) || 1,
     daily: p.get('daily') === '1',
+    step: ACADEMY_VIEWS.includes(p.get('step')) ? p.get('step') : '',
     challenge: p.get('challenge') || '',
     openPlans: p.get('open_plans') === '1',
   };
@@ -138,7 +141,9 @@ function syncUrlParams(next) {
     if (next.topic) url.searchParams.set('topic', next.topic); else url.searchParams.delete('topic');
     if (next.level) url.searchParams.set('level', String(next.level)); else url.searchParams.delete('level');
     if (next.daily) url.searchParams.set('daily', '1'); else url.searchParams.delete('daily');
+    if (next.step && next.step !== 'paths') url.searchParams.set('step', next.step); else url.searchParams.delete('step');
   } else {
+    url.searchParams.delete('step');
     url.searchParams.delete('mode');
     url.searchParams.delete('path');
     url.searchParams.delete('topic');
@@ -154,8 +159,10 @@ async function fetchJson(relPath) {
   return res.json();
 }
 
-export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = {}) {
+export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, getEditorView } = {}) {
   const shell = document.getElementById('cf-academy-shell');
+  const headCard = document.getElementById('cf-academy-head');
+  const diffSlot = document.getElementById('cf-academy-diff-slot');
   const btnFormat = document.getElementById('cf-mode-formatter');
   const btnAcademy = document.getElementById('cf-mode-academy');
   const toolbar = document.getElementById('cf-formatter-toolbar');
@@ -195,30 +202,95 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
   let preloadedNextLevel = null;
   let isRemedialActive = false;
   let mainLevelSnapshot = null;
+  let activeDrill = null;
+  let mainCodeSnapshot = null;
+  let academyView = 'paths';
+  let resultsReady = false;
+  let primaryFocus = null;
 
-  function goToEditorPane() {
-    setMobilePane('editor');
-    const target = academyEditorSlot || editorCard;
-    if (target && typeof target.scrollIntoView === 'function') {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const PANE_BY_VIEW = { tree: 'mission', editor: 'editor', results: 'results' };
+  const nextFrame = (fn) => (typeof requestAnimationFrame === 'function' ? requestAnimationFrame(fn) : setTimeout(fn, 0));
+
+  function mountEditorInAcademy() {
+    if (editorCard && academyEditorSlot && editorCard.parentElement !== academyEditorSlot) {
+      academyEditorSlot.append(editorCard);
     }
-    const cm = target?.querySelector?.('.cm-content');
-    if (cm && typeof cm.focus === 'function') cm.focus();
   }
 
-  function setMobilePane(paneName) {
+  function restoreDiffPanelHome() {
+    const diffPanel = document.getElementById('cf-diff-panel');
+    if (diffPanel && editorHome && diffPanel.parentElement !== editorHome) {
+      editorHome.insertBefore(diffPanel, editorCard ? editorCard.nextSibling : null);
+    }
+  }
+
+  function backLabelKey() {
+    if (academyView === 'results') return 'acadBackToEditor';
+    if (academyView === 'editor') return 'acadBackToMission';
+    return currentCurriculum?.isDaily ? 'acadBackToPaths' : 'acadBackPaths';
+  }
+
+  function updateStepper() {
     document.querySelectorAll('.cf-academy-mobile-tab').forEach((btn) => {
-      const active = btn.dataset.acadPane === paneName;
+      const step = btn.dataset.acadPane;
+      const active = PANE_BY_VIEW[academyView] === step;
       btn.classList.toggle('is-active', active);
       btn.setAttribute('aria-selected', String(active));
+      if (active) btn.setAttribute('aria-current', 'step'); else btn.removeAttribute('aria-current');
+      btn.disabled = (step === 'results' && !resultsReady) || (step !== 'mission' && !activeLevel);
     });
+  }
+
+  /** Única vía para cambiar de paso: solo la vista activa queda visible en el DOM. */
+  function setAcademyView(next, { scroll = true, focus = true } = {}) {
+    let view = ACADEMY_VIEWS.includes(next) ? next : 'paths';
+    if (view !== 'paths' && !activeLevel) view = 'paths';
+    academyView = view;
+    const isPaths = view === 'paths';
+
+    if (headCard) headCard.hidden = !isPaths;
+    pathsContainer.hidden = !isPaths;
+    workspace.hidden = isPaths;
     document.querySelectorAll('[data-acad-pane-body]').forEach((pane) => {
-      pane.classList.toggle('is-active', pane.dataset.acadPaneBody === paneName);
+      const on = pane.dataset.acadPaneBody === PANE_BY_VIEW[view];
+      pane.hidden = !on;
+      pane.classList.toggle('is-active', on);
     });
+    if (backBtn) {
+      backBtn.hidden = isPaths;
+      if (!isPaths) backBtn.textContent = t(backLabelKey());
+    }
+    updateStepper();
+
+    syncUrlParams(isPaths
+      ? { mode: 'learn' }
+      : { mode: 'learn', path: currentPath, topic: currentTopic, level: currentLevelNum, daily: Boolean(currentCurriculum?.isDaily), step: view });
+
+    if (view === 'editor') {
+      mountEditorInAcademy();
+      // CM6 mide gutters y líneas al ser visible: se recalcula tras el primer frame.
+      nextFrame(() => {
+        const ev = typeof getEditorView === 'function' ? getEditorView() : null;
+        if (ev && typeof ev.requestMeasure === 'function') ev.requestMeasure();
+        if (focus && ev && typeof ev.focus === 'function') ev.focus();
+      });
+    }
+    if (!isPaths && scroll && typeof workspace.scrollIntoView === 'function') {
+      const reduce = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches);
+      workspace.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    }
+    if (focus) {
+      if (view === 'tree') document.getElementById('cf-academy-go-editor')?.focus?.();
+      if (view === 'results') primaryFocus?.focus?.();
+    }
   }
 
   document.querySelectorAll('.cf-academy-mobile-tab').forEach((btn) => {
-    btn.addEventListener('click', () => setMobilePane(btn.dataset.acadPane));
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+      const step = btn.dataset.acadPane;
+      setAcademyView(step === 'mission' ? 'tree' : step);
+    });
   });
 
   function openProOrExplain() {
@@ -235,9 +307,6 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
 
   function renderPathsView(pathsData) {
     pathsContainer.replaceChildren();
-    workspace.hidden = true;
-    pathsContainer.hidden = false;
-    backBtn.hidden = true;
 
     const loc = getUiLang();
     const hPaths = el('h3', 'cf-academy-section-title', t('acadByPath'));
@@ -290,6 +359,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
 
     pathsContainer.append(hPaths, grid, hTech, techPills);
     injectAcademyJsonLd(pathsData, loc);
+    setAcademyView('paths', { scroll: false });
   }
 
   function resolveNodeState(lvl, idx, levels, state) {
@@ -387,10 +457,10 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     missionEl.append(cap);
 
     const navBar = el('div', 'cf-tip-modal__actions');
-    const goEditorBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadGoToEditorBtn'));
+    const goEditorBtn = el('button', 'cf-btn cf-btn--primary', t('acadStartChallengeBtn'));
     goEditorBtn.type = 'button';
     goEditorBtn.id = 'cf-academy-go-editor';
-    goEditorBtn.addEventListener('click', goToEditorPane);
+    goEditorBtn.addEventListener('click', () => setAcademyView('editor'));
 
     const hintBtn = el('button', 'cf-btn cf-btn--small', t('acadHintBtn', { step: 1 }));
     hintBtn.type = 'button';
@@ -415,16 +485,30 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     navBar.append(goEditorBtn, hintBtn);
     missionEl.append(navBar, hintBox);
 
+    renderChecklist(lvl);
+  }
+
+  /** Checklist de pruebas; con `evaluation` marca cada prueba como aprobada/fallida. */
+  function renderChecklist(lvl, evaluation = null) {
+    checklistEl.replaceChildren();
     checklistEl.append(el('h4', 'cf-academy-pane__title', t('acadChecklistTitle')));
-    const ul = el('ul', 'cf-academy-checklist');
+    const byId = new Map((evaluation?.results || []).map((r) => [r.id, r.ok]));
+    const ul = el('ul', 'cf-academy-checklist-list');
     for (const test of lvl.tests || []) {
       const label = test.visible ? `${test.name}: ${test.description}` : `${test.name} (Hidden edge case)`;
-      ul.append(el('li', 'cf-academy-check-item', label));
+      let mark = '';
+      let cls = 'cf-academy-check-item';
+      if (byId.has(test.id)) {
+        const ok = byId.get(test.id);
+        mark = ok ? '✓ ' : '✗ ';
+        cls += ok ? ' cf-academy-check-item--ok' : ' cf-academy-check-item--fail';
+      }
+      ul.append(el('li', cls, `${mark}${label}`));
     }
     checklistEl.append(ul);
   }
 
-  function selectLevel(curriculum, levelNum) {
+  function selectLevel(curriculum, levelNum, { view = 'tree' } = {}) {
     const lvl = (curriculum.levels || []).find((l) => l.level === levelNum) || curriculum.levels[0];
     if (!lvl || (lvl.tier === 'pay' && !readLocalState().isPro)) {
       openProOrExplain();
@@ -432,34 +516,30 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     }
     isRemedialActive = false;
     mainLevelSnapshot = null;
+    activeDrill = null;
+    mainCodeSnapshot = null;
+    resultsReady = false;
+    primaryFocus = null;
     preloadedNextLevel = (curriculum.levels || []).find((l) => l.level === (lvl.level + 1)) || null;
     activeLevel = lvl;
     currentLevelNum = lvl.level;
-    syncUrlParams({ mode: 'learn', path: currentPath, topic: currentTopic, level: currentLevelNum });
     renderSkillTree(curriculum);
     renderMission(lvl, curriculum.standard);
     if (setLanguage) setLanguage(curriculum.tech);
     if (setCode && lvl.starter_code) setCode(lvl.starter_code);
     if (liveEl) liveEl.textContent = t('acadConsoleEmpty');
-    setMobilePane('mission');
-    if (typeof workspace.scrollIntoView === 'function') {
-      workspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    setAcademyView(view);
   }
 
-  async function openTopic(tech, levelNum = 1, pathId = '') {
-    currentPath = pathId;
-    currentTopic = tech;
-    pathsContainer.hidden = true;
-    workspace.hidden = false;
-    backBtn.hidden = false;
-    if (editorCard && academyEditorSlot && editorCard.parentElement !== academyEditorSlot) {
-      academyEditorSlot.append(editorCard);
-    }
+  async function openTopic(tech, levelNum = 1, pathId = '', view = 'tree') {
     try {
       const loc = getUiLang();
-      currentCurriculum = await fetchJson(`curriculum/${loc}/${tech}.json`);
-      selectLevel(currentCurriculum, levelNum);
+      const curriculum = await fetchJson(`curriculum/${loc}/${tech}.json`);
+      currentPath = pathId;
+      currentTopic = tech;
+      currentCurriculum = curriculum;
+      mountEditorInAcademy();
+      selectLevel(curriculum, levelNum, { view });
     } catch {
       if (liveEl) liveEl.textContent = t('acadLoadError');
       toast(t('acadLoadError'));
@@ -478,28 +558,9 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     }
   }
 
-  async function openDailyChallenge() {
-    dailyCache ||= await loadDailyChallengesData();
-    const loc = getUiLang();
-    const ch = resolveDailyChallenge(dailyCache, loc);
+  function buildDailyCurriculum(ch) {
     const { copy } = ch;
-    currentMode = 'learn';
-    currentPath = '';
-    currentTopic = ch.tech;
-    if (toolbar) toolbar.hidden = true;
-    if (editorHome) editorHome.hidden = true;
-    shell.hidden = false;
-    btnFormat.classList.remove('is-active');
-    btnFormat.setAttribute('aria-selected', 'false');
-    btnAcademy.classList.add('is-active');
-    btnAcademy.setAttribute('aria-selected', 'true');
-    pathsContainer.hidden = true;
-    workspace.hidden = false;
-    backBtn.hidden = false;
-    if (editorCard && academyEditorSlot && editorCard.parentElement !== academyEditorSlot) {
-      academyEditorSlot.append(editorCard);
-    }
-    const pseudoCurriculum = {
+    return {
       tech: ch.tech,
       isDaily: true,
       standard: t('acadDailyBadge'),
@@ -517,17 +578,38 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
         },
       ],
     };
+  }
+
+  async function openDailyChallenge(view = 'tree') {
+    dailyCache ||= await loadDailyChallengesData();
+    const ch = resolveDailyChallenge(dailyCache, getUiLang());
+    currentMode = 'learn';
+    currentPath = '';
+    currentTopic = ch.tech;
+    currentLevelNum = 1;
+    if (toolbar) toolbar.hidden = true;
+    if (editorHome) editorHome.hidden = true;
+    shell.hidden = false;
+    btnFormat.classList.remove('is-active');
+    btnFormat.setAttribute('aria-selected', 'false');
+    btnAcademy.classList.add('is-active');
+    btnAcademy.setAttribute('aria-selected', 'true');
+    mountEditorInAcademy();
+    const pseudoCurriculum = buildDailyCurriculum(ch);
     currentCurriculum = pseudoCurriculum;
     activeLevel = pseudoCurriculum.levels[0];
-    syncUrlParams({ mode: 'learn', topic: ch.tech, daily: true });
+    preloadedNextLevel = null;
+    isRemedialActive = false;
+    mainLevelSnapshot = null;
+    activeDrill = null;
+    resultsReady = false;
+    primaryFocus = null;
     renderSkillTree(pseudoCurriculum);
     renderMission(activeLevel, pseudoCurriculum.standard);
     if (setLanguage) setLanguage(ch.tech);
     if (setCode) setCode(ch.starter_code);
-    setMobilePane('mission');
-    if (typeof workspace.scrollIntoView === 'function') {
-      workspace.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    if (liveEl) liveEl.textContent = t('acadConsoleEmpty');
+    setAcademyView(view);
   }
 
   async function handleDailyChallengeClick() {
@@ -597,19 +679,23 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
       if (editorCard && editorHome && editorCard.parentElement !== editorHome) {
         editorHome.prepend(editorCard);
       }
+      restoreDiffPanelHome();
       syncUrlParams({ mode: 'format' });
       return;
     }
 
     const params = getAcademyParams();
+    // 'results' no se puede restaurar tras recargar (no hay evaluación en memoria): se entra por el editor.
+    const startView = params.step === 'editor' || params.step === 'results' ? 'editor' : 'tree';
     try {
       pathsCache ||= await fetchJson('paths.json');
-      if (params.daily) {
-        await openDailyChallenge();
+      if (params.step === 'paths') {
+        renderPathsView(pathsCache);
+      } else if (params.daily) {
+        await openDailyChallenge(startView);
       } else if (params.topic && TECHS.includes(params.topic)) {
-        await openTopic(params.topic, params.level || 1, params.path || '');
+        await openTopic(params.topic, params.level || 1, params.path || '', startView);
       } else {
-        syncUrlParams({ mode: 'learn' });
         renderPathsView(pathsCache);
       }
     } catch {
@@ -620,9 +706,14 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
   btnFormat.addEventListener('click', () => setWorkMode('format'));
   btnAcademy.addEventListener('click', () => setWorkMode('learn'));
   backBtn?.addEventListener('click', async () => {
-    pathsCache ||= await fetchJson('paths.json');
-    syncUrlParams({ mode: 'learn' });
-    renderPathsView(pathsCache);
+    if (academyView === 'results') { setAcademyView('editor'); return; }
+    if (academyView === 'editor') { setAcademyView('tree'); return; }
+    try {
+      pathsCache ||= await fetchJson('paths.json');
+      renderPathsView(pathsCache);
+    } catch {
+      toast(t('acadLoadError'));
+    }
   });
   dailyBtn?.addEventListener('click', () => { handleDailyChallengeClick(); });
   document.addEventListener('cf:auth-success', async (ev) => {
@@ -632,7 +723,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
       if (currentCurriculum) renderSkillTree(currentCurriculum);
     }
     await resumePendingAction();
-    if (currentMode === 'learn' && pathsContainer && !pathsContainer.hidden) {
+    if (currentMode === 'learn' && academyView === 'paths' && pathsContainer && !pathsContainer.hidden) {
       const firstStart = pathsContainer.querySelector('.cf-academy-path-card .cf-btn--primary');
       if (firstStart && typeof firstStart.focus === 'function') firstStart.focus();
     }
@@ -644,6 +735,9 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
 
   diffBtn?.addEventListener('click', () => {
     if (!activeLevel?.reference_solution || !openDiffWith) return;
+    // El panel de diff vive en el slot del Formateador (oculto en Academia): se reubica en el workspace visible.
+    const diffPanel = document.getElementById('cf-diff-panel');
+    if (diffPanel && diffSlot && diffPanel.parentElement !== diffSlot) diffSlot.append(diffPanel);
     openDiffWith({
       original: getCode ? getCode() : '',
       result: activeLevel.reference_solution,
@@ -678,7 +772,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
         upg.addEventListener('click', openProOrExplain);
         box.append(upg);
       }
-      missionEl.append(box);
+      checklistEl.append(box);
       return;
     }
 
@@ -764,7 +858,72 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     });
 
     box.append(issueBtn, statusP);
-    missionEl.append(box);
+    checklistEl.append(box);
+  }
+
+  /** Nivel sintético con las pruebas propias del micro-ejercicio remedial. */
+  function buildDrillLevel(drill) {
+    return {
+      id: drill.id,
+      level: 0,
+      title: drill.title,
+      style_rules: [],
+      tests: [{
+        id: `${drill.id}-expected`,
+        name: drill.title,
+        visible: true,
+        type: 'pattern',
+        expected: String(drill.expected_pattern || ''),
+        description: drill.prompt || '',
+      }],
+    };
+  }
+
+  /** Restaura el reto principal (nivel + código previo del usuario) y vuelve al editor. */
+  function returnToMainChallenge() {
+    const snap = mainLevelSnapshot;
+    const keptCode = mainCodeSnapshot;
+    isRemedialActive = false;
+    mainLevelSnapshot = null;
+    activeDrill = null;
+    mainCodeSnapshot = null;
+    if (!snap) return;
+    selectLevel(currentCurriculum, snap.level, { view: 'editor' });
+    if (keptCode !== null && setCode) setCode(keptCode);
+  }
+
+  async function validateRemedial(tech, code) {
+    const drill = activeDrill;
+    const drillLevel = buildDrillLevel(drill);
+    const evaluation = await evaluateChallenge(tech, code, drillLevel);
+    const passedCount = evaluation.results.filter((r) => r.ok).length;
+    const totalCount = evaluation.results.length;
+    resultsReady = true;
+    primaryFocus = null;
+    renderChecklist(drillLevel, evaluation);
+
+    if (evaluation.passed) {
+      academyState = saveAcademyState(completeRemedialDrill(academyState, mainLevelSnapshot.id, drill.id));
+      liveEl.textContent = t('acadRemedialPassedMsg', { title: drill.title });
+      const card = el('div', 'cf-academy-achievement-card');
+      const returnBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadRemedialMastered'));
+      returnBtn.type = 'button';
+      returnBtn.id = 'cf-academy-remedial-return-btn';
+      returnBtn.addEventListener('click', returnToMainChallenge);
+      card.append(returnBtn);
+      checklistEl.append(card);
+      primaryFocus = returnBtn;
+    } else {
+      const firstIssue = evaluation.runtimeError || evaluation.styleViolations[0] || evaluation.errorType || 'failed';
+      liveEl.textContent = `${passedCount}/${totalCount} · ${firstIssue}`;
+      const fixBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadFixInEditorBtn'));
+      fixBtn.type = 'button';
+      fixBtn.id = 'cf-academy-fix-editor-btn';
+      fixBtn.addEventListener('click', () => setAcademyView('editor'));
+      checklistEl.append(fixBtn);
+      primaryFocus = fixBtn;
+    }
+    setAcademyView('results');
   }
 
   validateBtn?.addEventListener('click', async () => {
@@ -774,10 +933,20 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
     try {
       const tech = currentCurriculum?.tech || 'python';
       const code = getCode ? getCode() : '';
+
+      // Micro-ejercicio remedial: se evalúa contra SUS criterios, sin tocar contadores del nivel principal.
+      if (isRemedialActive && mainLevelSnapshot && activeDrill) {
+        await validateRemedial(tech, code);
+        return;
+      }
+
       const evaluation = await evaluateChallenge(tech, code, activeLevel);
 
       const passedCount = evaluation.results.filter((r) => r.ok).length;
       const totalCount = evaluation.results.length;
+      resultsReady = true;
+      primaryFocus = null;
+      renderChecklist(activeLevel, evaluation);
 
       const attempt = recordAttempt(academyState, activeLevel, evaluation);
       academyState = attempt.state;
@@ -803,17 +972,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
         renderSkillTree(currentCurriculum);
 
         const feedbackCard = el('div', 'cf-academy-achievement-card');
-        if (isRemedialActive && mainLevelSnapshot) {
-          const returnBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadRemedialMastered'));
-          returnBtn.type = 'button';
-          returnBtn.addEventListener('click', () => {
-            const snap = mainLevelSnapshot;
-            isRemedialActive = false;
-            mainLevelSnapshot = null;
-            selectLevel(currentCurriculum, snap.level);
-          });
-          feedbackCard.append(returnBtn);
-        } else {
+        {
           const remaining = Math.max(0, (currentCurriculum?.levels?.length || 1) - (academyState.completed || []).filter((id) => id.startsWith(tech)).length);
           feedbackCard.append(el('p', 'cf-muted', t('acadNextBadgeProgress', { remaining })));
           if (preloadedNextLevel && (preloadedNextLevel.tier !== 'pay' || readLocalState().isPro)) {
@@ -824,7 +983,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
               selectLevel(currentCurriculum, preloadedNextLevel.level);
             });
             feedbackCard.append(nextBtn);
-            if (typeof nextBtn.focus === 'function') nextBtn.focus();
+            primaryFocus = nextBtn;
           }
         }
         checklistEl.append(feedbackCard);
@@ -832,7 +991,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
         if (activeLevel.related_tip_slug) {
           const tipLink = el('a', 'cf-btn cf-btn--secondary cf-btn--small', t('tipsOpenFullPage'));
           tipLink.href = `tips/${activeLevel.related_tip_slug}/${getUiLang()}/`;
-          missionEl.append(tipLink);
+          checklistEl.append(tipLink);
         }
         renderCertificateAction(tech);
         for (const ach of achRes.newlyUnlocked) {
@@ -846,28 +1005,29 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
         const fixBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadFixInEditorBtn'));
         fixBtn.type = 'button';
         fixBtn.id = 'cf-academy-fix-editor-btn';
-        fixBtn.addEventListener('click', goToEditorPane);
+        fixBtn.addEventListener('click', () => setAcademyView('editor'));
         checklistEl.append(fixBtn);
+        primaryFocus = fixBtn;
 
         if (attempt.triggerRemedial && attempt.recommendedDrill) {
-          isRemedialActive = true;
-          mainLevelSnapshot = activeLevel;
-          if (setCode) setCode(attempt.recommendedDrill.starter_code);
-
+          const drill = attempt.recommendedDrill;
           const box = el('div', 'cf-academy-capsule');
           box.id = 'cf-academy-remedial-box';
-          box.append(el('strong', null, `${attempt.recommendedDrill.title}: `));
-          box.append(document.createTextNode(attempt.recommendedDrill.prompt));
-          const applyDrill = el('button', 'cf-btn cf-btn--small', t('acadRemedialMastered'));
-          applyDrill.type = 'button';
-          applyDrill.addEventListener('click', () => {
-            academyState = saveAcademyState(completeRemedialDrill(academyState, activeLevel.id, attempt.recommendedDrill.id));
-            const snap = mainLevelSnapshot;
-            isRemedialActive = false;
-            mainLevelSnapshot = null;
-            if (snap) selectLevel(currentCurriculum, snap.level);
+          box.append(el('strong', null, `${drill.title}: `));
+          box.append(document.createTextNode(drill.prompt));
+          const practiceBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadRemedialPracticeBtn'));
+          practiceBtn.type = 'button';
+          practiceBtn.id = 'cf-academy-remedial-practice-btn';
+          practiceBtn.addEventListener('click', () => {
+            isRemedialActive = true;
+            mainLevelSnapshot = activeLevel;
+            mainCodeSnapshot = getCode ? getCode() : null;
+            activeDrill = drill;
+            if (setCode) setCode(drill.starter_code);
+            setAcademyView('editor');
           });
-          box.append(applyDrill);
+          box.append(practiceBtn);
+          primaryFocus = practiceBtn;
 
           if (isFeatureOn('pro_billing')) {
             const teaser = el('p', 'cf-muted', `${firstIssue} — Desbloquea el diagnóstico completo con Tutor IA Pro.`);
@@ -876,22 +1036,47 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith } = 
             proBtn.addEventListener('click', openProOrExplain);
             box.append(teaser, proBtn);
           }
-          missionEl.append(box);
-          if (typeof box.scrollIntoView === 'function') {
-            box.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
+          checklistEl.append(box);
         }
       }
-      setMobilePane('results');
+      updateStepper();
+      setAcademyView('results');
     } finally {
       validateBtn.disabled = false;
       validateBtn.removeAttribute('aria-busy');
     }
   });
 
-  document.addEventListener('cf:lang', () => {
-    if (currentMode === 'learn') setWorkMode('learn');
-  });
+  // Cambio de idioma: reconstruye la vista exacta (ruta, tema, nivel y paso) sin tocar el código del editor.
+  async function rebuildForLang() {
+    if (currentMode !== 'learn') return;
+    try {
+      pathsCache ||= await fetchJson('paths.json');
+      if (academyView === 'paths' || !currentCurriculum || !activeLevel) {
+        renderPathsView(pathsCache);
+        return;
+      }
+      const view = academyView;
+      const keepLive = liveEl ? liveEl.textContent : '';
+      const keepResults = view === 'results' ? Array.from(checklistEl.children || []) : null;
+      if (currentCurriculum.isDaily) {
+        dailyCache ||= await loadDailyChallengesData();
+        currentCurriculum = buildDailyCurriculum(resolveDailyChallenge(dailyCache, getUiLang()));
+      } else {
+        currentCurriculum = await fetchJson(`curriculum/${getUiLang()}/${currentTopic}.json`);
+      }
+      activeLevel = (currentCurriculum.levels || []).find((l) => l.level === currentLevelNum) || currentCurriculum.levels[0];
+      preloadedNextLevel = (currentCurriculum.levels || []).find((l) => l.level === (activeLevel.level + 1)) || null;
+      renderSkillTree(currentCurriculum);
+      renderMission(activeLevel, currentCurriculum.standard);
+      if (keepResults) checklistEl.replaceChildren(...keepResults);
+      if (liveEl && view !== 'tree') liveEl.textContent = keepLive;
+      setAcademyView(view, { scroll: false, focus: false });
+    } catch {
+      toast(t('acadLoadError'));
+    }
+  }
+  document.addEventListener('cf:lang', () => { rebuildForLang(); });
 
   ensureNoindexForDynamicParams();
   const initial = getAcademyParams();

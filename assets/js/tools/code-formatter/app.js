@@ -348,6 +348,7 @@ if (isFeatureOn('academy.core')) {
     initAcademyUI({
       getCode,
       setCode,
+      getEditorView: () => view,
       setLanguage: (lang) => {
         if (langSel && [...langSel.options].some((o) => o.value === lang)) {
           langSel.value = lang;
