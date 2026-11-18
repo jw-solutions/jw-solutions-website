@@ -13,3 +13,6 @@ node_modules/
 # Perfiles persistentes de navegador (cookies/sesiones locales)
 .pw-profile/
 .cache/pw-syndicate-profile/
+
+# Respaldos de gobernanza
+*.bak_*
