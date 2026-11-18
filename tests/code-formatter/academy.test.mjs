@@ -110,7 +110,7 @@ test('dist-public/: CTA Academia en /tips/ y /fix/ encima del footer, 0 pay y 0 
   assert.equal(sampleFix.includes('data-cf-commercial'), false);
 });
 
-test('Flujo de vista única en móvil (375px): paths → tree → editor → results, una sola vista visible y cf:lang conserva el paso', async () => {
+test('Flujo de vista única (375px) + Gate de usuario: paths → tree → editor → results, remedial, 401 → modal y reanudación', async () => {
   const makeNode = (id, extra = {}) => {
     const classes = new Set();
     const attrs = new Map();
@@ -144,6 +144,7 @@ test('Flujo de vista única en móvil (375px): paths → tree → editor → res
       prepend: (...items) => items.forEach((it) => { if (it && typeof it === 'object') it.parentElement = node; children.unshift(it); }),
       replaceChildren: (...items) => { children.length = 0; node.append(...items); },
       scrollIntoView: () => { node._scrolled = true; },
+      querySelector: () => null,
     };
     return node;
   };
@@ -176,6 +177,12 @@ test('Flujo de vista única en móvil (375px): paths → tree → editor → res
   const paneEditor = makeNode('cf-academy-editor-pane', { dataset: { acadPaneBody: 'editor' } });
   const paneResults = makeNode('cf-academy-results-pane', { dataset: { acadPaneBody: 'results' } });
   const docListeners = new Map();
+  const dispatched = [];
+  let meState = 'free'; // anon | free | pro
+  const memStore = () => {
+    const m = new Map();
+    return { getItem: (k) => (m.has(k) ? m.get(k) : null), setItem: (k, v) => { m.set(k, String(v)); }, removeItem: (k) => { m.delete(k); } };
+  };
 
   const prevFetch = globalThis.fetch;
   const prevWin = globalThis.window;
@@ -190,8 +197,8 @@ test('Flujo de vista única en móvil (375px): paths → tree → editor → res
     location: { href: 'https://jw-solutions.com/tools/code-formatter/?mode=learn&lang=es', search: '?mode=learn&lang=es' },
     history: { replaceState() {} },
   };
-  globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
-  globalThis.sessionStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+  globalThis.localStorage = memStore();
+  globalThis.sessionStorage = memStore();
   globalThis.document = {
     baseURI: 'https://jw-solutions.com/tools/code-formatter/',
     documentElement: { lang: 'es', dataset: {} },
@@ -206,13 +213,18 @@ test('Flujo de vista única en móvil (375px): paths → tree → editor → res
       if (!docListeners.has(ev)) docListeners.set(ev, []);
       docListeners.get(ev).push(fn);
     },
-    dispatchEvent: () => {},
+    dispatchEvent: (ev) => { dispatched.push(ev); },
   };
 
   globalThis.fetch = async (url) => {
     const u = String(url);
+    if (u.includes('features.runtime.json')) {
+      return { ok: true, status: 200, json: async () => ({ features: [{ id: 'accounts_auth', tier: 'free', active: true }] }) };
+    }
     if (u.includes('/api/me')) {
-      return { ok: true, status: 200, json: async () => ({ email: 'user@example.com', plan: 'free' }) };
+      if (meState === 'anon') return { ok: false, status: 401, json: async () => ({}) };
+      const user = meState === 'pro' ? { email: 'user@example.com', plan: 'pro', pro_active: true } : { email: 'user@example.com', plan: 'free' };
+      return { ok: true, status: 200, json: async () => user };
     }
     if (u.includes('paths.json')) {
       return { ok: true, status: 200, json: async () => ({ paths: [] }) };
@@ -230,6 +242,10 @@ test('Flujo de vista única en móvil (375px): paths → tree → editor → res
           starter_code: 'pass', reference_solution: 'def total(items):\n    return 0\n', style_rules: [],
           tests: [{ id: 't1', name: 'Define total', visible: true, type: 'pattern', expected: 'def total(', description: 'Define la función' }],
           remedial_drills: [{ id: 'drill-edge', error_type: 'edge_case', title: 'Guardia vacía', prompt: 'Protege la lista vacía', starter_code: '# drill start', expected_pattern: 'if not items', solution_hint: 'hint' }],
+        }, {
+          id: 'python-2', level: 2, tier: 'pay', title: 'Nivel Pro', concept_capsule: 'Cápsula Pro',
+          starter_code: 'pass', reference_solution: 'pass', style_rules: [],
+          tests: [{ id: 't2', name: 'Pro', visible: true, type: 'pattern', expected: 'pass', description: 'Pro' }],
         }],
       };
       return { ok: true, status: 200, json: async () => curriculum };
@@ -240,6 +256,8 @@ test('Flujo de vista única en móvil (375px): paths → tree → editor → res
   let loadedCode = '';
   let loadedLang = '';
   try {
+    const { featuresReady } = await import('../../assets/js/tools/code-formatter/ui-controller.js');
+    await featuresReady; // accounts_auth activo: el Gate de usuario se aplica
     const { initAcademyUI } = await import(`../../assets/js/tools/code-formatter/academy-ui.js?t=${Date.now()}`);
     const api = initAcademyUI({
       getCode: () => loadedCode,
@@ -358,6 +376,98 @@ test('Flujo de vista única en móvil (375px): paths → tree → editor → res
     assert.equal(paneResults.hidden, true);
     assert.equal(loadedCode, 'x = 1', 'Se restaura el código del reto principal');
     assert.equal(findById(nodes['cf-academy-checklist'], 'cf-academy-remedial-box'), null, 'Remedial cerrado');
+
+    // ===== Gate de usuario =====
+    const collect = (node, pred, acc = []) => {
+      for (const c of node.children || []) {
+        if (!c) continue;
+        if (pred(c)) acc.push(c);
+        if (c.children) collect(c, pred, acc);
+      }
+      return acc;
+    };
+    const authEvents = () => dispatched.filter((e) => e && e.type === 'cf:open-auth');
+    const pending = () => JSON.parse(globalThis.sessionStorage.getItem('cf_pending_action') || 'null');
+    const fireAuthSuccess = async (detail) => {
+      for (const fn of docListeners.get('cf:auth-success') || []) await fn({ detail });
+      await new Promise((r) => setTimeout(r, 80));
+    };
+
+    // Volver al Formateador (sin sesión no se puede reentrar a Academia)
+    await nodes['cf-mode-formatter'].dispatchClick();
+    assert.equal(nodes['cf-academy-shell'].hidden, true);
+
+    // 1) Sin sesión (401): pestaña Academia → modal + pending open_academy, workspace NO visible
+    meState = 'anon';
+    const before = authEvents().length;
+    await nodes['cf-mode-academy'].dispatchClick();
+    assert.equal(authEvents().length, before + 1, 'Debe dispararse cf:open-auth');
+    const ev1 = authEvents().at(-1);
+    assert.equal(ev1.detail.mode, 'register');
+    assert.ok(ev1.detail.bannerText.length > 20, 'Banner explicativo');
+    assert.equal(pending()?.action, 'open_academy');
+    assert.equal(nodes['cf-academy-shell'].hidden, true, 'Academia no se abre sin sesión');
+
+    // Reanudación open_academy tras cf:auth-success
+    meState = 'free';
+    await fireAuthSuccess({ plan: 'free', trial_auto_activated: false });
+    assert.equal(nodes['cf-academy-shell'].hidden, false);
+    assert.equal(nodes['cf-academy-head'].hidden, false);
+    assert.equal(nodes['cf-academy-paths'].hidden, false);
+    assert.equal(nodes['cf-academy-workspace'].hidden, true);
+    assert.equal(pending(), null, 'pending consumido');
+
+    // 2) Reto Diario sin sesión → pending daily_challenge; con sesión reanuda en 'tree'
+    meState = 'anon';
+    await nodes['cf-academy-daily-btn'].dispatchClick();
+    await new Promise((r) => setTimeout(r, 80));
+    assert.equal(pending()?.action, 'daily_challenge');
+    assert.equal(nodes['cf-academy-workspace'].hidden, true);
+    meState = 'free';
+    await fireAuthSuccess({ plan: 'free' });
+    assert.equal(nodes['cf-academy-workspace'].hidden, false);
+    assert.equal(paneMission.hidden, false);
+    assert.equal(nodes['cf-academy-head'].hidden, true);
+
+    // 3) Tecnología sin sesión → pending open_topic; con sesión reanuda el tema exacto
+    await nodes['cf-academy-back'].dispatchClick();
+    await new Promise((r) => setTimeout(r, 40));
+    assert.equal(nodes['cf-academy-paths'].hidden, false);
+    const pill = () => collect(nodes['cf-academy-paths'], (c) => c.textContent === 'PYTHON' && String(c.className).includes('cf-academy-tech-btn'))[0];
+    assert.ok(pill(), 'Píldora de tecnología PYTHON');
+    meState = 'anon';
+    loadedLang = '';
+    await pill().dispatchClick();
+    await new Promise((r) => setTimeout(r, 80));
+    const pt = pending();
+    assert.equal(pt?.action, 'open_topic');
+    assert.equal(pt.tech, 'python');
+    assert.equal(nodes['cf-academy-workspace'].hidden, true, 'Sin sesión no abre el tema');
+    meState = 'free';
+    await fireAuthSuccess({ plan: 'free' });
+    assert.equal(nodes['cf-academy-workspace'].hidden, false);
+    assert.equal(paneMission.hidden, false);
+    assert.equal(loadedLang, 'python');
+    const proLabels = (arr) => arr.filter((c) => String(c.className).includes('cf-skill-node__state') && c.textContent === 'PRO').length;
+    assert.equal(proLabels(collect(nodes['cf-academy-skill-tree'], () => true)), 1, 'Usuario free: nivel Pro marcado PRO');
+
+    // 4) Usuario autenticado Pro (pro_active): entra sin fricción y desbloquea niveles Pro
+    await nodes['cf-academy-back'].dispatchClick();
+    await new Promise((r) => setTimeout(r, 40));
+    meState = 'pro';
+    const authBefore = authEvents().length;
+    await pill().dispatchClick();
+    await new Promise((r) => setTimeout(r, 60));
+    assert.equal(authEvents().length, authBefore, 'Autenticado: sin modal');
+    assert.equal(paneMission.hidden, false);
+    assert.equal(JSON.parse(globalThis.localStorage.getItem('cf_academy_state_v1')).isPro, true);
+    assert.equal(proLabels(collect(nodes['cf-academy-skill-tree'], () => true)), 0, 'Pro: sin etiqueta PRO en niveles 3-5');
+
+    // 5) Logout: isPro se limpia y Academia vuelve al Formateador
+    for (const fn of docListeners.get('cf:auth-logout') || []) await fn({});
+    await new Promise((r) => setTimeout(r, 40));
+    assert.equal(JSON.parse(globalThis.localStorage.getItem('cf_academy_state_v1')).isPro, false);
+    assert.equal(nodes['cf-academy-shell'].hidden, true);
   } finally {
     globalThis.fetch = prevFetch;
     globalThis.window = prevWin;
@@ -426,4 +536,23 @@ test('Vista única: HTML/CSS/JS exponen la máquina de estados y respetan select
   assert.match(css, /\.cf-academy-head\[hidden\]/);
   assert.doesNotMatch(css, /grid-template-columns:\s*minmax\(260px/);
   assert.match(css, /prefers-reduced-motion[\s\S]*cf-academy-pane/);
+});
+
+test('Header: #cf-btn-login visible sin data-cf-commercial y ensureAuthenticated exportado', () => {
+  const html = readFileSync(join(ROOT, 'tools/code-formatter/index.html'), 'utf8');
+  const tag = html.match(/<button[^>]*id="cf-btn-login"[^>]*>/);
+  assert.ok(tag, 'Debe existir #cf-btn-login');
+  assert.match(tag[0], /data-cf-open-auth/);
+  assert.doesNotMatch(tag[0], /data-cf-commercial/);
+  assert.match(html, /id="cf-auth-modal"/);
+  const auth = readFileSync(join(ROOT, 'assets/js/tools/code-formatter/auth-modal.js'), 'utf8');
+  assert.match(auth, /export async function ensureAuthenticated/);
+  assert.match(auth, /loginBtn\.hidden = Boolean\(authenticated\)/);
+  const dist = join(ROOT, 'dist-public/tools/code-formatter/index.html');
+  if (existsSync(dist)) {
+    const d = readFileSync(dist, 'utf8');
+    assert.ok(d.includes('id="cf-btn-login"'), 'dist-public debe conservar #cf-btn-login');
+    assert.ok(d.includes('id="cf-auth-modal"'), 'dist-public debe conservar #cf-auth-modal');
+    assert.equal(d.includes('data-cf-commercial'), false);
+  }
 });

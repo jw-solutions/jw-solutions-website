@@ -305,6 +305,32 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     toast(t('acadProPreviewMsg'));
   }
 
+  /**
+   * Gate de usuario: sin cuentas habilitadas permite invitado; con cuentas exige sesión válida y,
+   * si falta, guarda la acción pendiente y abre #cf-auth-modal con el banner explicativo.
+   */
+  async function requireAcademyAuth(pendingAction, bannerKey = 'acadAuthGateBanner') {
+    if (!isFeatureOn('accounts_auth')) return true;
+    let mod;
+    try {
+      mod = await import('./auth-modal.js');
+    } catch {
+      return true;
+    }
+    const res = await mod.ensureAuthenticated({ mode: 'register', bannerText: t(bannerKey), pendingAction });
+    if (!res.authenticated) return false;
+    const isPro = Boolean(res.user?.pro_active || res.user?.plan === 'pro');
+    academyState = saveAcademyState({ ...readLocalState(), isPro });
+    if (currentCurriculum) renderSkillTree(currentCurriculum);
+    return true;
+  }
+
+  async function gatedOpenTopic(tech, level, pathId) {
+    const ok = await requireAcademyAuth({ action: 'open_topic', tech, level, pathId });
+    if (!ok) return;
+    await openTopic(tech, level, pathId);
+  }
+
   function renderPathsView(pathsData) {
     pathsContainer.replaceChildren();
 
@@ -342,7 +368,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
 
       const startBtn = el('button', 'cf-btn cf-btn--primary', t('acadStartPath'));
       startBtn.type = 'button';
-      startBtn.addEventListener('click', () => openTopic(p.technologies[0], 1, p.id));
+      startBtn.addEventListener('click', () => { gatedOpenTopic(p.technologies[0], 1, p.id); });
       card.append(startBtn);
 
       grid.append(card);
@@ -353,7 +379,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     for (const tech of TECHS) {
       const btn = el('button', 'cf-academy-tech-btn', tech.toUpperCase());
       btn.type = 'button';
-      btn.addEventListener('click', () => openTopic(tech, 1, ''));
+      btn.addEventListener('click', () => { gatedOpenTopic(tech, 1, ''); });
       techPills.append(btn);
     }
 
@@ -618,22 +644,8 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       dailyBtn.setAttribute('aria-busy', 'true');
     }
     try {
-      let authenticated = false;
-      try {
-        const res = await fetch(apiUrl('/api/me'), { credentials: 'include', cache: 'no-store' });
-        authenticated = res.ok;
-      } catch {
-        authenticated = false;
-      }
-      if (!authenticated) {
-        try {
-          sessionStorage.setItem(PENDING_ACTION_KEY, JSON.stringify({ action: 'daily_challenge', ts: Date.now() }));
-        } catch { /* ignorar */ }
-        document.dispatchEvent(new CustomEvent('cf:open-auth', {
-          detail: { mode: 'register', bannerText: t('acadDailyAuthGate') },
-        }));
-        return;
-      }
+      const ok = await requireAcademyAuth({ action: 'daily_challenge' }, 'acadDailyAuthGate');
+      if (!ok) return;
       await openDailyChallenge();
     } catch {
       toast(t('acadLoadError'));
@@ -645,25 +657,54 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     }
   }
 
+  /** Parámetros guardados en sessionStorage: se validan antes de usarlos. */
+  function sanitizePendingParams(p) {
+    if (!p || typeof p !== 'object') return null;
+    const level = Math.floor(Number(p.level));
+    return {
+      mode: 'learn',
+      path: typeof p.path === 'string' ? p.path.slice(0, 60) : '',
+      topic: TECHS.includes(p.topic) ? p.topic : '',
+      level: level > 0 && level < 100 ? level : 1,
+      daily: p.daily === true,
+      step: ACADEMY_VIEWS.includes(p.step) ? p.step : '',
+      challenge: '',
+      openPlans: false,
+    };
+  }
+
+  const PENDING_ACTIONS = ['daily_challenge', 'open_topic', 'open_academy'];
+
   async function resumePendingAction() {
     try {
       const raw = sessionStorage.getItem(PENDING_ACTION_KEY);
       if (!raw) return;
       const pending = JSON.parse(raw);
-      if (!pending || pending.action !== 'daily_challenge') return;
-      if (typeof pending.ts !== 'number' || (Date.now() - pending.ts) >= PENDING_ACTION_TTL_MS) {
-        sessionStorage.removeItem(PENDING_ACTION_KEY);
+      if (!pending || !PENDING_ACTIONS.includes(pending.action)) return;
+      sessionStorage.removeItem(PENDING_ACTION_KEY);
+      if (typeof pending.ts !== 'number' || (Date.now() - pending.ts) >= PENDING_ACTION_TTL_MS) return;
+
+      if (pending.action === 'open_academy') {
+        await setWorkMode('learn', { skipGate: true, params: sanitizePendingParams(pending.params) });
         return;
       }
-      sessionStorage.removeItem(PENDING_ACTION_KEY);
       if (currentMode !== 'learn') {
-        await setWorkMode('learn');
+        await setWorkMode('learn', { skipGate: true, params: sanitizePendingParams({}) });
       }
-      await openDailyChallenge();
+      if (pending.action === 'daily_challenge') {
+        await openDailyChallenge('tree');
+      } else if (TECHS.includes(pending.tech)) {
+        const level = Math.floor(Number(pending.level));
+        await openTopic(pending.tech, level > 0 && level < 100 ? level : 1, typeof pending.pathId === 'string' ? pending.pathId.slice(0, 60) : '', 'tree');
+      }
     } catch { /* ignorar */ }
   }
 
-  async function setWorkMode(mode) {
+  async function setWorkMode(mode, { skipGate = false, params: paramsOverride = null } = {}) {
+    if (mode === 'learn' && !skipGate) {
+      const ok = await requireAcademyAuth({ action: 'open_academy', params: paramsOverride || getAcademyParams() });
+      if (!ok) return;
+    }
     currentMode = mode === 'learn' ? 'learn' : 'format';
     const isLearn = currentMode === 'learn';
     btnFormat.classList.toggle('is-active', !isLearn);
@@ -684,7 +725,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       return;
     }
 
-    const params = getAcademyParams();
+    const params = paramsOverride || getAcademyParams();
     // 'results' no se puede restaurar tras recargar (no hay evaluación en memoria): se entra por el editor.
     const startView = params.step === 'editor' || params.step === 'results' ? 'editor' : 'tree';
     try {
@@ -722,11 +763,21 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       academyState = saveAcademyState({ ...readLocalState(), isPro: true });
       if (currentCurriculum) renderSkillTree(currentCurriculum);
     }
+    if (ev?.detail?.trial_auto_activated) {
+      const proDialog = document.getElementById('cf-pro-modal');
+      if (proDialog && proDialog.open && typeof proDialog.close === 'function') proDialog.close();
+    }
     await resumePendingAction();
     if (currentMode === 'learn' && academyView === 'paths' && pathsContainer && !pathsContainer.hidden) {
       const firstStart = pathsContainer.querySelector('.cf-academy-path-card .cf-btn--primary');
       if (firstStart && typeof firstStart.focus === 'function') firstStart.focus();
     }
+  });
+  // Cierre de sesión: se retira el flag Pro y se protege el workspace saliendo de Academia.
+  document.addEventListener('cf:auth-logout', () => {
+    academyState = saveAcademyState({ ...readLocalState(), isPro: false });
+    if (currentCurriculum) renderSkillTree(currentCurriculum);
+    if (currentMode === 'learn') setWorkMode('format');
   });
   document.addEventListener('cf:pro-activated', () => {
     academyState = saveAcademyState({ ...readLocalState(), isPro: true });

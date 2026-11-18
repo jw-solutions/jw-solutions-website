@@ -227,6 +227,7 @@ export default {
   acadStepperAria: "Academy steps",
   acadStartChallengeBtn: "Start Challenge in the Editor →",
   acadRemedialPassedMsg: "Reinforcement passed: {title}! Return to the main challenge.",
+  acadAuthGateBanner: "Create a free account or sign in to access the Clean Code Academy and unlock your 7-day Pro trial.",
   acadLockedPrevMsg: "Complete {prev} first to unlock this level.",
   acadGoActiveLevelBtn: "Go to active level",
   acadHintBtn: "Hint ({step}/2)",

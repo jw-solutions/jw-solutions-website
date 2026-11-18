@@ -227,6 +227,7 @@ export default {
   acadStepperAria: "Schritte der Akademie",
   acadStartChallengeBtn: "Challenge im Editor starten →",
   acadRemedialPassedMsg: "Vertiefung bestanden: {title}! Zurück zur Hauptaufgabe.",
+  acadAuthGateBanner: "Erstelle ein kostenloses Konto oder melde dich an, um die Clean-Code-Akademie zu nutzen und deine 7-tägige Pro-Testphase freizuschalten.",
   acadLockedPrevMsg: "Schließe zuerst {prev} ab, um dieses Level freizuschalten.",
   acadGoActiveLevelBtn: "Zum aktiven Level",
   acadHintBtn: "Hinweis ({step}/2)",

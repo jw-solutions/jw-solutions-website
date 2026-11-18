@@ -227,6 +227,7 @@ export default {
   acadStepperAria: "Étapes de l'Académie",
   acadStartChallengeBtn: "Commencer le défi dans l'éditeur →",
   acadRemedialPassedMsg: "Renforcement réussi : {title} ! Retournez au défi principal.",
+  acadAuthGateBanner: "Créez votre compte gratuit ou connectez-vous pour accéder à l'Académie du Code Propre et activer votre essai Pro de 7 jours.",
   acadLockedPrevMsg: "Terminez d'abord {prev} pour débloquer ce niveau.",
   acadGoActiveLevelBtn: "Aller au niveau actif",
   acadHintBtn: "Indice ({step}/2)",

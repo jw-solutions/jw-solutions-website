@@ -227,6 +227,7 @@ export default {
   acadStepperAria: "Passi dell'Accademia",
   acadStartChallengeBtn: "Inizia la sfida nell'editor →",
   acadRemedialPassedMsg: "Rinforzo superato: {title}! Torna alla sfida principale.",
+  acadAuthGateBanner: "Crea un account gratuito o accedi per entrare nell'Accademia del Codice Pulito e attivare la tua prova Pro di 7 giorni.",
   acadLockedPrevMsg: "Completa prima {prev} per sbloccare questo livello.",
   acadGoActiveLevelBtn: "Vai al livello attivo",
   acadHintBtn: "Suggerimento ({step}/2)",

@@ -36,8 +36,10 @@ async function tryStartSessionMonitor() {
 }
 
 export function setAuthUiState({ authenticated, email = '', plan = 'free' } = {}) {
+  const loginBtn = document.getElementById('cf-btn-login');
   const logoutBtn = document.getElementById('cf-btn-logout');
   const userBadge = document.getElementById('cf-user-badge');
+  if (loginBtn) loginBtn.hidden = Boolean(authenticated);
   if (logoutBtn) logoutBtn.hidden = !authenticated;
   if (userBadge) {
     if (authenticated && email) {
@@ -64,6 +66,31 @@ export async function checkActiveSession() {
   } catch {
     return null;
   }
+}
+
+/**
+ * Gate de sesión reutilizable: verifica GET /api/me; si no hay sesión guarda la acción pendiente
+ * (para reanudarla tras el login/registro) y abre el modal de cuenta.
+ * @returns {Promise<{authenticated: boolean, user: object|null}>}
+ */
+export async function ensureAuthenticated({ mode = 'register', bannerText = '', pendingAction = null } = {}) {
+  const data = await checkActiveSession();
+  if (data && data.email) return { authenticated: true, user: data };
+  if (pendingAction) {
+    try {
+      sessionStorage.setItem(PENDING_ACTION_KEY, JSON.stringify({ ...pendingAction, ts: Date.now() }));
+    } catch { /* ignorar */ }
+  }
+  document.dispatchEvent(new CustomEvent('cf:open-auth', { detail: { mode, bannerText } }));
+  return { authenticated: false, user: null };
+}
+
+/** Limpia el flag Pro local de Academia (al cerrar sesión o revocarla). */
+async function clearAcademyProFlag() {
+  try {
+    const mod = await import('./academy-progress.js');
+    mod.saveAcademyState({ ...mod.loadAcademyState(), isPro: false });
+  } catch { /* academy-progress.js ausente: nada que limpiar */ }
 }
 
 export async function initAuthModal() {
@@ -171,6 +198,7 @@ export async function initAuthModal() {
     } catch { /* limpiar estado local aunque la red falle */ }
     try { localStorage.removeItem(SESSION_HINT_KEY); } catch { /* ignorar */ }
     try { sessionStorage.removeItem(PENDING_ACTION_KEY); } catch { /* ignorar */ }
+    await clearAcademyProFlag();
     setAuthUiState({ authenticated: false });
     logoutBtn.disabled = false;
     toast(t('authLogoutOk'));
