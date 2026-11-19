@@ -66,5 +66,12 @@
   "cert/default": "aabcae5b9379896c",
   "cert/data-bi": "7506d45c763caf5f",
   "cert/web-apis": "556548ac63e731c2",
-  "cert/enterprise-cloud": "04a6aa129ff1d308"
+  "cert/enterprise-cloud": "04a6aa129ff1d308",
+  "tips/dax-var-return-calculate-auto-doc-formatting-es": "9d1120fa23b134a1",
+  "tips/dax-var-return-calculate-auto-doc-formatting-de": "54ad3104481ba2e4",
+  "tips/dax-var-return-calculate-auto-doc-formatting-en": "28c688d13e272e3b",
+  "tips/dax-var-return-calculate-auto-doc-formatting-fr": "e5dd964351697a37",
+  "tips/dax-var-return-calculate-auto-doc-formatting-it": "a3b72412ca61fb8f",
+  "tips/dax-var-return-calculate-auto-doc-formatting-pt-BR": "5cfb91684714e943",
+  "tips/dax-var-return-calculate-auto-doc-formatting-pt-PT": "cdf1517f3e6a2890"
 }
