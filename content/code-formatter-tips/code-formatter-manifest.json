@@ -1142,7 +1142,7 @@
       ],
       "date": "2026-11-19",
       "published_at": "2026-11-19",
-      "status": "COMPILED",
+      "status": "DEPLOYED",
       "locales": [
         "es",
         "de",
@@ -1262,6 +1262,41 @@
           ],
           "file": "published/dax-var-return-calculate-auto-doc-formatting.pt-PT.md",
           "sha256": "67c99ace77b56743718d2860ed047b3665102535925cbc37fef5d39d6a5205fb"
+        }
+      },
+      "deployed_at": "2026-11-19T22:02:09.229Z",
+      "indexnow_pinged_at": "2026-11-19T22:02:10.441Z",
+      "syndication": {
+        "devto": {
+          "status": "published",
+          "id": 5077176,
+          "url": "https://dev.to/jwsolutions/modern-dax-clean-varreturn-structuring-and-ai-auto-documentation-jc",
+          "publishedAt": "2026-11-19T22:02:10.835Z"
+        },
+        "social": {
+          "bluesky": {
+            "status": "published",
+            "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2p35u5way2l",
+            "cid": "bafyreigxbpw3tolxc46hhilb2ukvxpfsfo4hx43xc6uya4qlsp3znyrjyu",
+            "publishedAt": "2026-11-19T22:02:13.575Z"
+          },
+          "telegram": {
+            "status": "published",
+            "messageId": 12,
+            "publishedAt": "2026-11-19T22:02:16.769Z"
+          },
+          "discord": {
+            "status": "published",
+            "messageId": "1573096107985080413",
+            "publishedAt": "2026-11-19T22:02:19.515Z"
+          },
+          "github_discussions": {
+            "status": "published",
+            "id": "D_kwDOSheTeM4ArUtq",
+            "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/25",
+            "number": 25,
+            "publishedAt": "2026-11-19T22:02:22.784Z"
+          }
         }
       }
     }
