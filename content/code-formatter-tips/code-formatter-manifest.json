@@ -1119,6 +1119,187 @@
         }
       },
       "notified_at": "2026-11-15T19:19:11.692Z"
+    },
+    {
+      "slug": "dax-var-return-calculate-auto-doc-formatting",
+      "title": "DAX Moderno: Formato con VAR/RETURN y Auto-Documentación Asistida por IA",
+      "language": "dax",
+      "programming_language": "dax",
+      "category": "Auto-Doc AI",
+      "meta_description": "Aprende a estructurar medidas DAX con variables VAR/RETURN, CALCULATE legible y metadatos listos para motores de Auto-Documentación por IA.",
+      "summary": "Mejora drásticamente el rendimiento y la legibilidad de tu modelo semántico estructurando medidas DAX con VAR/RETURN y esquemas de comentarios parseables por IA.",
+      "related_fix_slug": "dax-unbalanced-parentheses",
+      "interactive_snippet": "Total Margin % :=\nVAR CurrentSales =\n    [Total Sales]\nVAR CurrentCost =\n    [Total Product Cost]\nVAR MarginAmount =\n    CurrentSales - CurrentCost\nRETURN\n    DIVIDE (\n        MarginAmount,\n        CurrentSales,\n        BLANK ()\n    )",
+      "faq": [
+        {
+          "q": "¿Por qué las variables VAR retienen el contexto de evaluación en DAX?",
+          "a": "En DAX, las variables son constantes evaluadas perezosamente en el momento de su definición. No conservan una fórmula dinámica, sino el valor escalar o tabular exacto resultante dentro del contexto de filtro vigente al declararlas."
+        },
+        {
+          "q": "¿Cómo ayuda el formato con saltos de línea a los motores de Auto-Documentación?",
+          "a": "Los analizadores sintácticos de IA mapean tokens individuales por línea. La sangría estándar de 4 espacios permite distinguir argumentos de filtros en CALCULATE frente a expresiones agregadas, generando diagramas de linaje de datos automáticos y precisos."
+        }
+      ],
+      "date": "2026-11-19",
+      "published_at": "2026-11-19",
+      "status": "NOTIFIED",
+      "locales": [
+        "es",
+        "de",
+        "en",
+        "fr",
+        "it",
+        "pt-BR",
+        "pt-PT"
+      ],
+      "file": "published/dax-var-return-calculate-auto-doc-formatting.md",
+      "sha256": "503730a9243fc1bf6be0ebc9a64bac6b3f3099e96f41e7031856c2d495fe6b13",
+      "translations": {
+        "de": {
+          "title": "Modernes DAX: VAR/RETURN-Formatierung und KI-Auto-Dokumentation",
+          "category": "Auto-Doc AI",
+          "meta_description": "Strukturieren Sie DAX-Measures mit VAR/RETURN, optimiertem CALCULATE und semantischen Kommentaren für automatisierte KI-Dokumentation.",
+          "summary": "Steigern Sie Performance und Lesbarkeit komplexer semantischer Modelle mit DAX VAR/RETURN und KI-fähigen Dokumentations-Standards.",
+          "faq": [
+            {
+              "q": "Wird ein DAX VAR-Ausdruck bei jedem Aufruf im RETURN-Block neu berechnet?",
+              "a": "Nein. In DAX sind Variablen Konstanten, die zum Zeitpunkt ihrer Deklaration im jeweiligen Filterkontext ausgewertet werden. Bei späteren Aufrufen wird lediglich das gespeicherte Ergebnis abgerufen."
+            },
+            {
+              "q": "Warum ist vertikale Einrückung für KI-Dokumentationstools entscheidend?",
+              "a": "Strukturierte Zeilenumbrüche und Einrückungen trennen Berechnungslogik von Filtermodifikatoren. Dies verhindert Mehrdeutigkeiten beim Parsen und erzeugt präzise Datenabstammungsdiagramme (Data Lineage)."
+            }
+          ],
+          "file": "published/dax-var-return-calculate-auto-doc-formatting.de.md",
+          "sha256": "89e5fcf371a7ad6c3c1ddc747dc08ab5c6867badad3e8ff0f63ea65082defe3f"
+        },
+        "en": {
+          "title": "Modern DAX: Clean VAR/RETURN Structuring and AI Auto-Documentation",
+          "category": "Auto-Doc AI",
+          "meta_description": "Learn to format DAX measures using VAR/RETURN variables, clean CALCULATE modifiers, and structured annotations ready for AI auto-documentation.",
+          "summary": "Boost semantic model performance and readability by structuring DAX measures with VAR/RETURN blocks and AI-ready metadata documentation patterns.",
+          "faq": [
+            {
+              "q": "Do VAR variables behave as dynamic functions in DAX?",
+              "a": "No. In DAX, variables are lazily evaluated constants. They hold the exact scalar or table value computed at declaration time within that specific filter context, preventing re-execution inside subsequent expressions."
+            },
+            {
+              "q": "How does DAX line formatting improve AI metadata generation?",
+              "a": "AI parsers identify syntactic boundaries via tokens and indents. Multi-line measures cleanly segregate filter parameters from computational expressions, enabling bots to build accurate measure lineage graphs."
+            }
+          ],
+          "file": "published/dax-var-return-calculate-auto-doc-formatting.en.md",
+          "sha256": "3723da97f4c233b4f99508877c1cb42303bb7ca9415a72b0aeaafdb6696e08e0"
+        },
+        "fr": {
+          "title": "DAX Moderne : Formatage VAR/RETURN et Auto-Documentation par IA",
+          "category": "Auto-Doc AI",
+          "meta_description": "Structurez vos mesures DAX avec VAR/RETURN, optimisez CALCULATE et intégrez des métadonnées pour les flux d'Auto-Documentation IA.",
+          "summary": "Optimisez les performances et la clarté de vos modèles DAX grâce au pattern VAR/RETURN et aux balises documentaires compatibles Auto-Doc AI.",
+          "faq": [
+            {
+              "q": "Une variable VAR en DAX est-elle recalculée lors de chaque référence dans RETURN ?",
+              "a": "Non. En DAX, une variable est une constante scalaire ou tabulaire calculée paresseusement lors de sa déclaration. Elle conserve son résultat statique tout au long du bloc RETURN sans recalcul supplémentaire."
+            },
+            {
+              "q": "En quoi l'indentation DAX aide-t-elle les modèles de documentation automatique ?",
+              "a": "Une indentation cohérente à 4 espaces permet aux parseurs AST de séparer clairement les contextes de filtre des expressions arithmétiques, générant ainsi un graphe de dépendance précis."
+            }
+          ],
+          "file": "published/dax-var-return-calculate-auto-doc-formatting.fr.md",
+          "sha256": "82d141d16c369763f8462a07728071909c6e9ae47f2e4d934ee4bf3f802ee0b6"
+        },
+        "it": {
+          "title": "DAX Moderno: Formattazione VAR/RETURN e Auto-Documentazione con IA",
+          "category": "Auto-Doc AI",
+          "meta_description": "Ottimizza le misure DAX con variabili VAR/RETURN, CALCULATE strutturato e metadati pronti per i motori di Auto-Documentazione basati su IA.",
+          "summary": "Migliora prestazioni e chiarezza nei modelli semantici DAX adottando la struttura VAR/RETURN e commenti semantici per l'Auto-Doc AI.",
+          "faq": [
+            {
+              "q": "Le variabili VAR in DAX possono causare ricalcoli non necessari?",
+              "a": "No. In DAX, le variabili vengono valutate una sola volta al momento della dichiarazione e mantengono un valore costante. Non comportano alcun ricalcolo dinamico all'interno dell'istruzione RETURN."
+            },
+            {
+              "q": "Per quale motivo l'indentazione DAX semplifica l'analisi dell'IA?",
+              "a": "Un'indentazione standardizzata a 4 spazi definisce confini chiari tra espressioni numeriche e tabelle filtro, permettendo ai parser IA di estrarre la corretta genealogia dei dati senza ambiguità sintattiche."
+            }
+          ],
+          "file": "published/dax-var-return-calculate-auto-doc-formatting.it.md",
+          "sha256": "0a3807784092542089e3cafc5ad18fa68f0fd5a404b6c0c2ad3da191a53e4890"
+        },
+        "pt-BR": {
+          "title": "DAX Moderno: Formatação com VAR/RETURN e Auto-Documentação com IA",
+          "category": "Auto-Doc AI",
+          "meta_description": "Aprenda a estruturar medidas DAX utilizando VAR/RETURN, CALCULATE legível e anotações semânticas prontas para pipelines de Auto-Doc com IA.",
+          "summary": "Eleve a performance e mantenibilidade de modelos semânticos no Power BI aplicando o padrão VAR/RETURN com metadados para documentação automatizada.",
+          "faq": [
+            {
+              "q": "Variáveis declaradas em VAR alteram seu valor durante a execução?",
+              "a": "Não. No DAX, variáveis comportam-se como constantes imutáveis avaliadas no contexto em que foram definidas. Elas não recalculam dinamicamente dentro da cláusula RETURN."
+            },
+            {
+              "q": "Qual a vantagem de padronizar quebras de linha para a IA?",
+              "a": "Quebras de linha padronizadas permitem que parsers léxicos de IA identifiquem a assinatura das medidas e mapeiem dependências entre colunas e tabelas com precisão determinística."
+            }
+          ],
+          "file": "published/dax-var-return-calculate-auto-doc-formatting.pt-BR.md",
+          "sha256": "3f8795fab4f35d3d7037cbfeddd58ed1efa788d9547980201fd6dfd05df237d5"
+        },
+        "pt-PT": {
+          "title": "DAX Avançado: Estruturação com VAR/RETURN e Auto-Documentação com IA",
+          "category": "Auto-Doc AI",
+          "meta_description": "Estruture medidas DAX através de variáveis VAR/RETURN, CALCULATE modular e metadados preparados para motores de documentação automática com IA.",
+          "summary": "Garanta máxima performance e inteligibilidade no seu modelo de dados estruturando medidas DAX com VAR/RETURN e anotações para Auto-Doc AI.",
+          "faq": [
+            {
+              "q": "As variáveis em DAX preservam a transição de contexto ao serem lidas?",
+              "a": "Não. Uma variável em DAX é calculada imediatamente na sua definição sob o contexto de filtro então ativo. Ao ser referenciada no bloco RETURN, ela comporta-se como um valor constante já materializado."
+            },
+            {
+              "q": "De que forma as quebras de linha auxiliam a documentação gerada por IA?",
+              "a": "Uma estrutura vertical com indentação uniforme permite aos analisadores semânticos isolar modificadores de filtro e dependências de colunas sem cometer erros de associação entre blocos aninhados."
+            }
+          ],
+          "file": "published/dax-var-return-calculate-auto-doc-formatting.pt-PT.md",
+          "sha256": "67c99ace77b56743718d2860ed047b3665102535925cbc37fef5d39d6a5205fb"
+        }
+      },
+      "deployed_at": "2026-11-19T22:02:09.229Z",
+      "indexnow_pinged_at": "2026-11-19T22:02:10.441Z",
+      "syndication": {
+        "devto": {
+          "status": "published",
+          "id": 5077176,
+          "url": "https://dev.to/jwsolutions/modern-dax-clean-varreturn-structuring-and-ai-auto-documentation-jc",
+          "publishedAt": "2026-11-19T22:02:10.835Z"
+        },
+        "social": {
+          "bluesky": {
+            "status": "published",
+            "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n2p35u5way2l",
+            "cid": "bafyreigxbpw3tolxc46hhilb2ukvxpfsfo4hx43xc6uya4qlsp3znyrjyu",
+            "publishedAt": "2026-11-19T22:02:13.575Z"
+          },
+          "telegram": {
+            "status": "published",
+            "messageId": 12,
+            "publishedAt": "2026-11-19T22:02:16.769Z"
+          },
+          "discord": {
+            "status": "published",
+            "messageId": "1573096107985080413",
+            "publishedAt": "2026-11-19T22:02:19.515Z"
+          },
+          "github_discussions": {
+            "status": "published",
+            "id": "D_kwDOSheTeM4ArUtq",
+            "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/25",
+            "number": 25,
+            "publishedAt": "2026-11-19T22:02:22.784Z"
+          }
+        }
+      },
+      "notified_at": "2026-11-19T22:02:42.998Z"
     }
   ]
 }

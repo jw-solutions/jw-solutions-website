@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>de</language>
-    <lastBuildDate>Mon, 23 Nov 2026 04:48:06 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Nov 2026 04:52:08 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -19,6 +19,18 @@
     <atom:link rel="alternate" type="application/rss+xml" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/feed.fr.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/feed.de.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/feed.it.xml"/>
+    <item>
+      <title>Modernes DAX: VAR/RETURN-Formatierung und KI-Auto-Dokumentation</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/de/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/de/</guid>
+      <pubDate>Thu, 19 Nov 2026 14:00:00 +0000</pubDate>
+      <category>DAX</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/dax-var-return-calculate-auto-doc-formatting-de.png" medium="image" />
+      <description>Steigern Sie Performance und Lesbarkeit komplexer semantischer Modelle mit DAX VAR/RETURN und KI-fähigen Dokumentations-Standards.</description>
+      <content:encoded><![CDATA[<p>Steigern Sie Performance und Lesbarkeit komplexer semantischer Modelle mit DAX VAR/RETURN und KI-fähigen Dokumentations-Standards.</p><pre><code>-- Vorher: Keine Variablen, redundante Rechenschritte und unlesbar für KI-Parser
+Sales YTD Growth % := 
+IF([Total Sales] &gt; 0, (TOTALYTD([Total Sales], &#x27;Date&#x27;[Date]) - CALCULATE(TOTALYTD([Total Sales], &#x27;Date&#x27;[Date]), SAMEPERIODLASTYEAR(&#x27;Date&#x27;[Date]))) / CALCULATE(TOTALYTD([Total Sales], &#x27;Date&#x27;[Date]), SAMEPERIODLASTYEAR(&#x27;Date&#x27;[Date])), BLANK())</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/de/">Modernes DAX: VAR/RETURN-Formatierung und KI-Auto-Dokumentation</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Python 3.12 Match Case Formatting und PEP 8: Fortgeschrittener Leitfaden</title>
       <link>https://jw-solutions.com/tools/code-formatter/tips/python/python-312-match-case-formatting-pep8/de/</link>

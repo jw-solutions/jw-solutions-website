@@ -1,0 +1,91 @@
+{
+  "slug": "dax-var-return-calculate-auto-doc-formatting",
+  "language": "dax",
+  "generated_at": "2026-11-19T22:02:22.828Z",
+  "daily_dev_squad": {
+    "squad_url": "https://dly.to/nmdN9vQObOU",
+    "en": {
+      "title": "Modern DAX: Clean VAR/RETURN Structuring and AI Auto-Documentation",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=dax-var-return-calculate-auto-doc-formatting",
+      "post_markdown": "Learn to format DAX measures using VAR/RETURN variables, clean CALCULATE modifiers, and structured annotations ready for AI auto-documentation.\n\n```dax\n-- Before: No variables, repeated evaluations, unreadable for documentation engines\nSales YTD Growth % := \nIF([Total Sales] > 0, (TOTALYTD([Total Sales], 'Date'[Date]) - CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date]))) / CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date])), BLANK())\n```\n```dax\n-- /// @measure Sales YTD Growth %\n-- /// @description Calculates year-to-date sales growth rate against the previous annual period.\n-- /// @grain Fiscal calendar date hierarchy\n-- /// @safety Uses DIVIDE to handle zero/null denominators gracefully\nSales YTD Growth % :=\nVAR CurrentSales =\n    [Total Sales]\nVAR SalesYTD =\n    TOTALYTD ( CurrentSales, 'Date'[Date] )\nVAR PreviousSalesYTD =\n    CALCULATE (\n        SalesYTD,\n        SAMEPERIODLASTYEAR ( 'Date'[Date] )\n    )\nVAR GrowthAmount =\n    SalesYTD - PreviousSalesYTD\nRETURN\n    IF (\n        CurrentSales > 0,\n        DIVIDE ( GrowthAmount, PreviousSalesYTD, BLANK () ),\n        BLANK ()\n    )\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=dax-var-return-calculate-auto-doc-formatting\n#dax #CleanCode #DevTools"
+    },
+    "es": {
+      "title": "DAX Moderno: Formato con VAR/RETURN y Auto-Documentación Asistida por IA",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=dax-var-return-calculate-auto-doc-formatting",
+      "post_markdown": "Aprende a estructurar medidas DAX con variables VAR/RETURN, CALCULATE legible y metadatos listos para motores de Auto-Documentación por IA.\n\n```dax\n-- Antes: Sin variables, dependencias duplicadas y difícil de documentar\nSales YTD Growth % := \nIF([Total Sales] > 0, (TOTALYTD([Total Sales], 'Date'[Date]) - CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date]))) / CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date])), BLANK())\n```\n```dax\n-- /// @measure Sales YTD Growth %\n-- /// @description Calcula la tasa de crecimiento año a la fecha contra el ejercicio anterior.\n-- /// @grain Fecha a nivel de calendario fiscal\n-- /// @safety Maneja denominadores nulos con DIVIDE\nSales YTD Growth % :=\nVAR CurrentSales =\n    [Total Sales]\nVAR SalesYTD =\n    TOTALYTD ( CurrentSales, 'Date'[Date] )\nVAR PreviousSalesYTD =\n    CALCULATE (\n        SalesYTD,\n        SAMEPERIODLASTYEAR ( 'Date'[Date] )\n    )\nVAR GrowthAmount =\n    SalesYTD - PreviousSalesYTD\nRETURN\n    IF (\n        CurrentSales > 0,\n        DIVIDE ( GrowthAmount, PreviousSalesYTD, BLANK () ),\n        BLANK ()\n    )\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=dax-var-return-calculate-auto-doc-formatting\n#dax #Programación #CódigoLimpio"
+    }
+  },
+  "locales": {
+    "en": {
+      "title": "Modern DAX: Clean VAR/RETURN Structuring and AI Auto-Documentation",
+      "communities": [
+        "Reddit: r/PowerBI",
+        "Reddit: r/BusinessIntelligence",
+        "Reddit: r/SQL",
+        "Medium (Importar URL canónica)"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/en/?utm_source=reddit&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting",
+      "hashtags": "#dax #CleanCode #DevTools",
+      "post_markdown": "Learn to format DAX measures using VAR/RETURN variables, clean CALCULATE modifiers, and structured annotations ready for AI auto-documentation.\n\n```dax\n-- Before: No variables, repeated evaluations, unreadable for documentation engines\nSales YTD Growth % := \nIF([Total Sales] > 0, (TOTALYTD([Total Sales], 'Date'[Date]) - CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date]))) / CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date])), BLANK())\n```\n```dax\n-- /// @measure Sales YTD Growth %\n-- /// @description Calculates year-to-date sales growth rate against the previous annual period.\n-- /// @grain Fiscal calendar date hierarchy\n-- /// @safety Uses DIVIDE to handle zero/null denominators gracefully\nSales YTD Growth % :=\nVAR CurrentSales =\n    [Total Sales]\nVAR SalesYTD =\n    TOTALYTD ( CurrentSales, 'Date'[Date] )\nVAR PreviousSalesYTD =\n    CALCULATE (\n        SalesYTD,\n        SAMEPERIODLASTYEAR ( 'Date'[Date] )\n    )\nVAR GrowthAmount =\n    SalesYTD - PreviousSalesYTD\nRETURN\n    IF (\n        CurrentSales > 0,\n        DIVIDE ( GrowthAmount, PreviousSalesYTD, BLANK () ),\n        BLANK ()\n    )\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/en/?utm_source=reddit&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting\n#dax #CleanCode #DevTools"
+    },
+    "es": {
+      "title": "DAX Moderno: Formato con VAR/RETURN y Auto-Documentación Asistida por IA",
+      "communities": [
+        "Reddit: r/programacion",
+        "Reddit: r/chileIT"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/es/?utm_source=reddit&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting",
+      "hashtags": "#dax #Programación #CódigoLimpio",
+      "post_markdown": "Aprende a estructurar medidas DAX con variables VAR/RETURN, CALCULATE legible y metadatos listos para motores de Auto-Documentación por IA.\n\n```dax\n-- Antes: Sin variables, dependencias duplicadas y difícil de documentar\nSales YTD Growth % := \nIF([Total Sales] > 0, (TOTALYTD([Total Sales], 'Date'[Date]) - CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date]))) / CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date])), BLANK())\n```\n```dax\n-- /// @measure Sales YTD Growth %\n-- /// @description Calcula la tasa de crecimiento año a la fecha contra el ejercicio anterior.\n-- /// @grain Fecha a nivel de calendario fiscal\n-- /// @safety Maneja denominadores nulos con DIVIDE\nSales YTD Growth % :=\nVAR CurrentSales =\n    [Total Sales]\nVAR SalesYTD =\n    TOTALYTD ( CurrentSales, 'Date'[Date] )\nVAR PreviousSalesYTD =\n    CALCULATE (\n        SalesYTD,\n        SAMEPERIODLASTYEAR ( 'Date'[Date] )\n    )\nVAR GrowthAmount =\n    SalesYTD - PreviousSalesYTD\nRETURN\n    IF (\n        CurrentSales > 0,\n        DIVIDE ( GrowthAmount, PreviousSalesYTD, BLANK () ),\n        BLANK ()\n    )\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/es/?utm_source=reddit&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting\n#dax #Programación #CódigoLimpio"
+    },
+    "pt-BR": {
+      "title": "DAX Moderno: Formatação com VAR/RETURN e Auto-Documentação com IA",
+      "communities": [
+        "TabNews (tabnews.com.br)",
+        "Reddit: r/brdev"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting",
+      "hashtags": "#dax #Programação #CódigoLimpo",
+      "post_markdown": "Aprenda a estruturar medidas DAX utilizando VAR/RETURN, CALCULATE legível e anotações semânticas prontas para pipelines de Auto-Doc com IA.\n\n```dax\n-- Antes: Sem variáveis, múltiplas avaliações e ilegível para ferramentas de IA\nSales YTD Growth % := \nIF([Total Sales] > 0, (TOTALYTD([Total Sales], 'Date'[Date]) - CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date]))) / CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date])), BLANK())\n```\n```dax\n-- /// @measure Sales YTD Growth %\n-- /// @description Calcula a taxa de crescimento YTD contra o período homólogo anterior.\n-- /// @grain Granularidade diária baseada no calendário fiscal\n-- /// @safety Tratamento de denominadores nulos via função DIVIDE\nSales YTD Growth % :=\nVAR CurrentSales =\n    [Total Sales]\nVAR SalesYTD =\n    TOTALYTD ( CurrentSales, 'Date'[Date] )\nVAR PreviousSalesYTD =\n    CALCULATE (\n        SalesYTD,\n        SAMEPERIODLASTYEAR ( 'Date'[Date] )\n    )\nVAR GrowthAmount =\n    SalesYTD - PreviousSalesYTD\nRETURN\n    IF (\n        CurrentSales > 0,\n        DIVIDE ( GrowthAmount, PreviousSalesYTD, BLANK () ),\n        BLANK ()\n    )\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting\n#dax #Programação #CódigoLimpo"
+    },
+    "pt-PT": {
+      "title": "DAX Avançado: Estruturação com VAR/RETURN e Auto-Documentação com IA",
+      "communities": [
+        "Reddit: r/devpt"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting",
+      "hashtags": "#dax #Programação #CódigoLimpo",
+      "post_markdown": "Estruture medidas DAX através de variáveis VAR/RETURN, CALCULATE modular e metadados preparados para motores de documentação automática com IA.\n\n```dax\n-- Antes: Ausência de variáveis, processamento duplicado e documentação difícil\nSales YTD Growth % := \nIF([Total Sales] > 0, (TOTALYTD([Total Sales], 'Date'[Date]) - CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date]))) / CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date])), BLANK())\n```\n```dax\n-- /// @measure Sales YTD Growth %\n-- /// @description Mede o crescimento percentual YTD face ao período homólogo transacto.\n-- /// @grain Eixo cronológico fiscal diário\n-- /// @safety Recorre a DIVIDE para proteção contra divisões por zero\nSales YTD Growth % :=\nVAR CurrentSales =\n    [Total Sales]\nVAR SalesYTD =\n    TOTALYTD ( CurrentSales, 'Date'[Date] )\nVAR PreviousSalesYTD =\n    CALCULATE (\n        SalesYTD,\n        SAMEPERIODLASTYEAR ( 'Date'[Date] )\n    )\nVAR GrowthAmount =\n    SalesYTD - PreviousSalesYTD\nRETURN\n    IF (\n        CurrentSales > 0,\n        DIVIDE ( GrowthAmount, PreviousSalesYTD, BLANK () ),\n        BLANK ()\n    )\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting\n#dax #Programação #CódigoLimpo"
+    },
+    "fr": {
+      "title": "DAX Moderne : Formatage VAR/RETURN et Auto-Documentation par IA",
+      "communities": [
+        "Developpez.com",
+        "Reddit: r/developpeurs"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/fr/?utm_source=reddit&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting",
+      "hashtags": "#dax #Développement #CleanCode",
+      "post_markdown": "Structurez vos mesures DAX avec VAR/RETURN, optimisez CALCULATE et intégrez des métadonnées pour les flux d'Auto-Documentation IA.\n\n```dax\n-- Avant : Absence de variables, exécutions répétitives et documentation impossible\nSales YTD Growth % := \nIF([Total Sales] > 0, (TOTALYTD([Total Sales], 'Date'[Date]) - CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date]))) / CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date])), BLANK())\n```\n```dax\n-- /// @measure Sales YTD Growth %\n-- /// @description Calcule le taux de croissance cumulé annuel par rapport à l'exercice précédent.\n-- /// @grain Granularité calendaire journalière\n-- /// @safety Gestion des dénominateurs nuls via DIVIDE\nSales YTD Growth % :=\nVAR CurrentSales =\n    [Total Sales]\nVAR SalesYTD =\n    TOTALYTD ( CurrentSales, 'Date'[Date] )\nVAR PreviousSalesYTD =\n    CALCULATE (\n        SalesYTD,\n        SAMEPERIODLASTYEAR ( 'Date'[Date] )\n    )\nVAR GrowthAmount =\n    SalesYTD - PreviousSalesYTD\nRETURN\n    IF (\n        CurrentSales > 0,\n        DIVIDE ( GrowthAmount, PreviousSalesYTD, BLANK () ),\n        BLANK ()\n    )\n```\n\nGuide complet et bac à sable interactif: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/fr/?utm_source=reddit&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting\n#dax #Développement #CleanCode"
+    },
+    "de": {
+      "title": "Modernes DAX: VAR/RETURN-Formatierung und KI-Auto-Dokumentation",
+      "communities": [
+        "Heise Developer / iX",
+        "Reddit: r/de_EDV"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/de/?utm_source=reddit&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting",
+      "hashtags": "#dax #CleanCode #Entwicklung",
+      "post_markdown": "Strukturieren Sie DAX-Measures mit VAR/RETURN, optimiertem CALCULATE und semantischen Kommentaren für automatisierte KI-Dokumentation.\n\n```dax\n-- Vorher: Keine Variablen, redundante Rechenschritte und unlesbar für KI-Parser\nSales YTD Growth % := \nIF([Total Sales] > 0, (TOTALYTD([Total Sales], 'Date'[Date]) - CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date]))) / CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date])), BLANK())\n```\n```dax\n-- /// @measure Sales YTD Growth %\n-- /// @description Berechnet das YTD-Umsatzwachstum im Vergleich zur Vorjahresperiode.\n-- /// @grain Tag auf Ebene des Finanzkalenders\n-- /// @safety Fehlerfreie Nullwertbehandlung über DIVIDE-Funktion\nSales YTD Growth % :=\nVAR CurrentSales =\n    [Total Sales]\nVAR SalesYTD =\n    TOTALYTD ( CurrentSales, 'Date'[Date] )\nVAR PreviousSalesYTD =\n    CALCULATE (\n        SalesYTD,\n        SAMEPERIODLASTYEAR ( 'Date'[Date] )\n    )\nVAR GrowthAmount =\n    SalesYTD - PreviousSalesYTD\nRETURN\n    IF (\n        CurrentSales > 0,\n        DIVIDE ( GrowthAmount, PreviousSalesYTD, BLANK () ),\n        BLANK ()\n    )\n```\n\nVollständiger Leitfaden & interaktive Sandbox: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/de/?utm_source=reddit&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting\n#dax #CleanCode #Entwicklung"
+    },
+    "it": {
+      "title": "DAX Moderno: Formattazione VAR/RETURN e Auto-Documentazione con IA",
+      "communities": [
+        "HTML.it",
+        "Reddit: r/ItalyInformatica"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/it/?utm_source=reddit&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting",
+      "hashtags": "#dax #Sviluppo #CleanCode",
+      "post_markdown": "Ottimizza le misure DAX con variabili VAR/RETURN, CALCULATE strutturato e metadati pronti per i motori di Auto-Documentazione basati su IA.\n\n```dax\n-- Prima: Nessuna variabile, calcoli ripetuti e scarsa leggibilità per i tool IA\nSales YTD Growth % := \nIF([Total Sales] > 0, (TOTALYTD([Total Sales], 'Date'[Date]) - CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date]))) / CALCULATE(TOTALYTD([Total Sales], 'Date'[Date]), SAMEPERIODLASTYEAR('Date'[Date])), BLANK())\n```\n```dax\n-- /// @measure Sales YTD Growth %\n-- /// @description Calcola il tasso di crescita YTD rispetto all'esercizio precedente.\n-- /// @grain Calendario fiscale giornaliero\n-- /// @safety Gestione sicura dei denominatori nulli con funzione DIVIDE\nSales YTD Growth % :=\nVAR CurrentSales =\n    [Total Sales]\nVAR SalesYTD =\n    TOTALYTD ( CurrentSales, 'Date'[Date] )\nVAR PreviousSalesYTD =\n    CALCULATE (\n        SalesYTD,\n        SAMEPERIODLASTYEAR ( 'Date'[Date] )\n    )\nVAR GrowthAmount =\n    SalesYTD - PreviousSalesYTD\nRETURN\n    IF (\n        CurrentSales > 0,\n        DIVIDE ( GrowthAmount, PreviousSalesYTD, BLANK () ),\n        BLANK ()\n    )\n```\n\nGuida completa e sandbox interattivo: https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/it/?utm_source=reddit&utm_medium=community&utm_campaign=dax-var-return-calculate-auto-doc-formatting\n#dax #Sviluppo #CleanCode"
+    }
+  }
+}
