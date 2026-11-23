@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "YAML 1 · Fundamentos y formato limpio",
       "estimatedMinutes": 5,
-      "concept_capsule": "Aplica sangría consistente, nombres claros y documentación estándar para que cualquier equipo pueda leer y auditar el código en segundos.",
+      "concept_capsule": "La especificación YAML 1.2 prohíbe el carácter tabulador (\\t) para sangrar: todas las claves hermanas de un mismo mapeo deben alinearse con espacios y documentarse con #.",
       "starter_code": "service: api\n\tport: 8000\n\tenv: prod",
       "reference_solution": "# Service runtime configuration\nservice: api\nport: 8000\nenv: prod\n",
       "tests": [
@@ -73,7 +73,35 @@
           "expected_pattern": "# ",
           "solution_hint": "Agrega un comentario `#` al inicio explicando el archivo."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "# Comentario de cabecera",
+          "role": "Explica el propósito del archivo de configuración o manifiesto antes de las claves raíz.",
+          "example_inline": "# Service runtime configuration"
+        },
+        {
+          "term": "clave: valor",
+          "role": "Mapeo escalar en YAML; exige un espacio exacto tras los dos puntos (: ).",
+          "example_inline": "port: 8000"
+        },
+        {
+          "term": "Cero tabuladores (\\t)",
+          "role": "Los parsers YAML rechazan tabuladores en la indentación; las claves raíz hermanas van en la columna 0.",
+          "example_inline": "service: api"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "0 espacios para claves hermanas de nivel raíz; prohibido usar tabuladores (\\t).",
+        "line_breaks": "Un par clave: valor por línea.",
+        "punctuation": "Dos puntos seguidos de un espacio (: ) entre cada clave y su valor.",
+        "documentation_standard": "Comentario descriptivo con # en la primera línea del documento."
+      },
+      "analogous_example": {
+        "title": "Configuración YAML limpia para servicio de caché Redis",
+        "code": "# Cache service runtime configuration\ncache: redis\nport: 6379\nmode: cluster\n",
+        "why_it_works": "Incluye comentario # inicial, alinea las claves raíz sin tabuladores y separa cada clave: valor."
+      }
     },
     {
       "id": "yaml-2",
@@ -81,7 +109,7 @@
       "tier": "free",
       "title": "YAML 2 · Casos borde y documentación",
       "estimatedMinutes": 8,
-      "concept_capsule": "Protege entradas nulas o vacías antes de procesarlas y documenta contratos de entrada/salida con el estándar oficial del lenguaje.",
+      "concept_capsule": "En workflows de GitHub Actions cada nivel jerárquico se sangra estrictamente con múltiplos de 2 espacios (2, 4, 6) y las listas de ramas se escriben en bloque con guiones (- item).",
       "starter_code": "name: Build\non:\n  push:\n   branches: [main]\njobs:\n  lint:\n    runs-on: ubuntu-latest",
       "reference_solution": "# CI workflow for main branch validation\nname: Build\non:\n  push:\n    branches:\n      - main\njobs:\n  lint:\n    runs-on: ubuntu-latest\n",
       "tests": [
@@ -144,7 +172,35 @@
           "expected_pattern": "# ",
           "solution_hint": "Documenta el propósito del job de CI con un comentario."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "on -> push -> branches",
+          "role": "Jerarquía de disparadores del workflow: cada subclave avanza exactamente 2 espacios respecto a su padre.",
+          "example_inline": "    branches:"
+        },
+        {
+          "term": "- main (Secuencia en bloque)",
+          "role": "Representa listas en líneas separadas con guion y espacio, facilitando diffs limpios en Git.",
+          "example_inline": "      - main"
+        },
+        {
+          "term": "jobs -> lint -> runs-on",
+          "role": "Define el runner donde se ejecuta el job con sangría escalonada de 2 y 4 espacios.",
+          "example_inline": "    runs-on: ubuntu-latest"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Múltiplos exactos de 2 espacios por nivel (0 raíz, 2 push/lint, 4 branches/runs-on, 6 - main).",
+        "line_breaks": "Reemplazar listas inline [main] por secuencias en bloque debajo de la clave padre.",
+        "punctuation": "Guion seguido de un espacio (- main) en cada ítem de secuencia.",
+        "documentation_standard": "Comentario # en la primera línea describiendo el objetivo del workflow CI."
+      },
+      "analogous_example": {
+        "title": "Workflow YAML de auditoría nocturna con secuencias en bloque",
+        "code": "# Nightly security scan workflow\nname: Security\non:\n  schedule:\n    branches:\n      - develop\njobs:\n  audit:\n    runs-on: ubuntu-latest\n",
+        "why_it_works": "Aplica pasos estrictos de 2 espacios, lista de ramas con - develop y comentario de cabecera."
+      }
     },
     {
       "id": "yaml-3",

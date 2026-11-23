@@ -854,11 +854,12 @@ body.cf-no-scroll { overflow: hidden; }
   gap: 8px;
   margin-top: 8px;
 }
+.cf-academy-editor-pane .cf-editor-card > .cf-actions {
+  display: none !important;
+}
 @media (max-width: 640px) {
   .cf-academy-mini-brief {
-    position: sticky;
-    top: 112px;
-    z-index: 25;
+    position: static;
   }
 }
 

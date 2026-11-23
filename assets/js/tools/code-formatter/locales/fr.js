@@ -372,4 +372,8 @@ export default {
   acadOwnCompareReady: "Comparaison Avant / Après prête ci-dessous avec suggestions de style.",
   acadOwnCompareTips: "Améliorations suggérées",
   acadOwnFormatError: "Impossible de formater cet extrait ; vérifiez la syntaxe avant de comparer.",
+  acadConvertCodeBtn: "Convertir mon code en défi",
+  acadCustomChallengeTitle: "Défi personnalisé ({lang})",
+  acadCustomChallengeCapsule: "Refactorisez et documentez votre propre extrait selon les règles du langage.",
+  acadCustomChallengeTestName: "Code non vide",
 };

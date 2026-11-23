@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "YAML 1 · Fundamentos e formatação limpa",
       "estimatedMinutes": 5,
-      "concept_capsule": "Aplique indentação consistente, nomes claros e documentação padrão para que qualquer equipe leia e audite o código rapidamente.",
+      "concept_capsule": "A especificação YAML 1.2 proíbe tabulações (\\t) no recuo: chaves irmãs de um mesmo mapeamento devem alinhar-se com espaços e iniciar com comentário #.",
       "starter_code": "service: api\n\tport: 8000\n\tenv: prod",
       "reference_solution": "# Service runtime configuration\nservice: api\nport: 8000\nenv: prod\n",
       "tests": [
@@ -73,7 +73,35 @@
           "expected_pattern": "# ",
           "solution_hint": "Adicione um comentário `#` no topo explicando o arquivo."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "# Comentário de cabeçalho",
+          "role": "Documenta a finalidade do arquivo de configuração logo na primeira linha.",
+          "example_inline": "# Service runtime configuration"
+        },
+        {
+          "term": "chave: valor",
+          "role": "Mapeamento escalar YAML que exige um espaço após os dois-pontos (: ).",
+          "example_inline": "port: 8000"
+        },
+        {
+          "term": "Zero tabulações (\\t)",
+          "role": "Parsers YAML rejeitam tabs; chaves irmãs de nível raiz ficam na coluna 0.",
+          "example_inline": "service: api"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "0 espaços para chaves irmãs na raiz; proibido usar tabulações (\\t).",
+        "line_breaks": "Um par chave: valor por linha.",
+        "punctuation": "Dois-pontos seguidos de espaço (: ) entre chave e valor.",
+        "documentation_standard": "Comentário descritivo com # na primeira linha."
+      },
+      "analogous_example": {
+        "title": "Configuração YAML limpa para serviço de cache Redis",
+        "code": "# Cache service runtime configuration\ncache: redis\nport: 6379\nmode: cluster\n",
+        "why_it_works": "Inclui comentário # inicial, alinha chaves sem tabs e separa cada chave: valor."
+      }
     },
     {
       "id": "yaml-2",
@@ -81,7 +109,7 @@
       "tier": "free",
       "title": "YAML 2 · Casos de borda e documentação",
       "estimatedMinutes": 8,
-      "concept_capsule": "Proteja entradas nulas ou vazias antes de processar e documente contratos com o padrão oficial da linguagem.",
+      "concept_capsule": "Em workflows do GitHub Actions cada nível hierárquico usa múltiplos estritos de 2 espaços (2, 4, 6) e listas de branches são escritas em bloco com hifens (- item).",
       "starter_code": "name: Build\non:\n  push:\n   branches: [main]\njobs:\n  lint:\n    runs-on: ubuntu-latest",
       "reference_solution": "# CI workflow for main branch validation\nname: Build\non:\n  push:\n    branches:\n      - main\njobs:\n  lint:\n    runs-on: ubuntu-latest\n",
       "tests": [
@@ -144,7 +172,35 @@
           "expected_pattern": "# ",
           "solution_hint": "Documente o propósito do job de CI com um comentário."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "on -> push -> branches",
+          "role": "Hierarquia de gatilhos do workflow onde cada subchave avança exatos 2 espaços.",
+          "example_inline": "    branches:"
+        },
+        {
+          "term": "- main (Sequência em bloco)",
+          "role": "Formata listas em linhas próprias com hífen e espaço, facilitando diffs no Git.",
+          "example_inline": "      - main"
+        },
+        {
+          "term": "jobs -> lint -> runs-on",
+          "role": "Define o ambiente do runner com recuo escalonado de 2 e 4 espaços.",
+          "example_inline": "    runs-on: ubuntu-latest"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Múltiplos exatos de 2 espaços por nível (0 raiz, 2 push/lint, 4 branches/runs-on, 6 - main).",
+        "line_breaks": "Substituir listas inline [main] por sequências em bloco.",
+        "punctuation": "Hífen seguido de um espaço (- main) em cada item da lista.",
+        "documentation_standard": "Comentário # na primeira linha descrevendo o objetivo do workflow CI."
+      },
+      "analogous_example": {
+        "title": "Workflow YAML de auditoria com sequências em bloco",
+        "code": "# Nightly security scan workflow\nname: Security\non:\n  schedule:\n    branches:\n      - develop\njobs:\n  audit:\n    runs-on: ubuntu-latest\n",
+        "why_it_works": "Aplica passos estritos de 2 espaços, lista com - develop e comentário inicial #."
+      }
     },
     {
       "id": "yaml-3",

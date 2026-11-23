@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "JAVA 1 · Clean Syntax & Formatting Basics",
       "estimatedMinutes": 5,
-      "concept_capsule": "Apply consistent indentation, clear naming, and official documentation so any team can read and audit the code in seconds.",
+      "concept_capsule": "Java 21 utility classes should be declared final with a private constructor, 4-space indentation, complete Javadoc (@param/@return), and Math.addExact() against overflow.",
       "starter_code": "public class Calc{public static int add(int a,int b){return a+b;}}",
       "reference_solution": "/**\n * Arithmetic helper utilities.\n */\npublic final class Calc {\n    private Calc() {}\n\n    /**\n     * Adds two integers.\n     *\n     * @param a first operand\n     * @param b second operand\n     * @return sum of a and b\n     */\n    public static int add(int a, int b) {\n        return Math.addExact(a, b);\n    }\n}\n",
       "tests": [
@@ -73,7 +73,35 @@
           "expected_pattern": "@param",
           "solution_hint": "Document parameters with `@param` in Javadoc."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "public final class + private Calc()",
+          "role": "Prevents subclassing and accidental instantiation of static utility classes.",
+          "example_inline": "private Calc() {}"
+        },
+        {
+          "term": "Math.addExact(a, b)",
+          "role": "Throws ArithmeticException on integer overflow instead of silently wrapping to a negative number.",
+          "example_inline": "return Math.addExact(a, b);"
+        },
+        {
+          "term": "Javadoc @param / @return",
+          "role": "Documents parameters and return contract using official Javadoc tags.",
+          "example_inline": "* @return sum of a and b"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "4 spaces for class members and 8 spaces inside method bodies.",
+        "line_breaks": "Compact private constructor first, blank line, then Javadoc above the static method.",
+        "punctuation": "Same-line opening braces (Java K&R) and semicolons terminating statements.",
+        "documentation_standard": "Javadoc /** ... */ on both the class and the public method with @param and @return."
+      },
+      "analogous_example": {
+        "title": "Overflow-safe multiplication utility class with Math.multiplyExact",
+        "code": "/**\n * Numeric multiplication utilities.\n */\npublic final class Multiplier {\n    private Multiplier() {}\n\n    /**\n     * Multiplies two integers with overflow protection.\n     *\n     * @param x first factor\n     * @param y second factor\n     * @return exact product of x and y\n     */\n    public static int multiply(int x, int y) {\n        return Math.multiplyExact(x, y);\n    }\n}\n",
+        "why_it_works": "Uses a final class, private constructor, 4-space indentation, and exact arithmetic."
+      }
     },
     {
       "id": "java-2",
@@ -81,7 +109,7 @@
       "tier": "free",
       "title": "JAVA 2 · Edge Cases & Documentation",
       "estimatedMinutes": 8,
-      "concept_capsule": "Guard null or empty inputs before processing and document input/output contracts using the language standard.",
+      "concept_capsule": "Java 21 records eliminate immutable class boilerplate and enforce non-null invariants inside a compact constructor via Objects.requireNonNull().",
       "starter_code": "public class User{private final String email;public User(String email){this.email=email;}public String email(){return email;}}",
       "reference_solution": "import java.util.Objects;\n\n/**\n * Immutable user value record.\n *\n * @param email validated user email\n */\npublic record User(String email) {\n    public User {\n        Objects.requireNonNull(email, \"email must not be null\");\n    }\n}\n",
       "tests": [
@@ -144,7 +172,35 @@
           "expected_pattern": "/**",
           "solution_hint": "Add Javadoc above the public record."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "public record User(String email)",
+          "role": "Automatically synthesizes final fields, canonical constructor, email() accessor, equals, hashCode, and toString.",
+          "example_inline": "public record User(String email) {"
+        },
+        {
+          "term": "public User { ... } (Compact constructor)",
+          "role": "Validates record components without repeating parameter lists or manual field assignments.",
+          "example_inline": "public User {"
+        },
+        {
+          "term": "Objects.requireNonNull(email, ...)",
+          "role": "Fails fast with a clear NullPointerException message when null is passed.",
+          "example_inline": "Objects.requireNonNull(email, \"email must not be null\");"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "4 spaces for the compact constructor and 8 spaces for Objects.requireNonNull.",
+        "line_breaks": "import java.util.Objects at top, blank line, Javadoc with @param, then the record body.",
+        "punctuation": "No parameter parentheses on the compact constructor header public User { ... }.",
+        "documentation_standard": "Javadoc /** ... */ above the record documenting each component via @param."
+      },
+      "analogous_example": {
+        "title": "Immutable Sku record with compact constructor validation",
+        "code": "import java.util.Objects;\n\n/**\n * Immutable invoice SKU record.\n *\n * @param code validated SKU identifier\n */\npublic record Sku(String code) {\n    public Sku {\n        Objects.requireNonNull(code, \"code must not be null\");\n    }\n}\n",
+        "why_it_works": "Replaces verbose POJO boilerplate with a record and guards against null via Objects.requireNonNull."
+      }
     },
     {
       "id": "java-3",

@@ -1395,3 +1395,325 @@ test('Ventana flotante temporal móvil (375px) para #cf-diff-panel: apertura, Es
     globalThis.document = prevDoc;
   }
 });
+
+test('Auditoría Doble Mirada · Tareas 1-3: API getJson/postJson, syncAcademyState, academy-pro i18n, CSP sandbox/WASM, cf:lang Pro, java vs javascript, buffer Formateador, trampa de foco y v2 en 10 tecnologías', async () => {
+  const prevWin = globalThis.window;
+  const prevDoc = globalThis.document;
+  const prevLoc = globalThis.location;
+  const prevStorage = globalThis.localStorage;
+  const prevFetch = globalThis.fetch;
+
+  const mem = new Map();
+  globalThis.localStorage = {
+    getItem: (k) => mem.get(k) ?? null,
+    setItem: (k, v) => mem.set(k, String(v)),
+    removeItem: (k) => mem.delete(k),
+  };
+
+  try {
+    // 1. Contrato services/api.js (getJson + postJson) con academy-pro.js y academy-progress.js
+    globalThis.document = {
+      querySelector: (sel) => (sel === 'meta[name="cf-api-base"]' ? { content: 'https://api.jw-solutions.com' } : null),
+    };
+    globalThis.fetch = async (url, opts = {}) => {
+      const u = String(url);
+      if (u.endsWith('/api/csrf')) {
+        return { ok: true, status: 200, json: async () => ({ csrf_token: 'csrf-ok' }) };
+      }
+      if (u.includes('/api/academy/levels/sql/3')) {
+        assert.equal(opts.method, 'GET');
+        assert.equal(opts.credentials, 'include');
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ id: 'sql-3', level: 3, tier: 'pay', title: 'SQL 3 Pro', tests: [{ id: 't1', expected: 'WITH' }] }),
+        };
+      }
+      if (u.endsWith('/api/academy/hint')) {
+        assert.equal(opts.method, 'POST');
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ hint: 'Usa una CTE modular con WITH.', cached: false }),
+        };
+      }
+      if (u.endsWith('/api/academy/sync')) {
+        const body = JSON.parse(opts.body || '{}');
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            completed: [...new Set([...(body.completed || []), 'sql-2'])],
+            remedial_completed: ['sql1-d-syntax'],
+            achievements: ['first_level'],
+            daily_streak: 4,
+            last_daily_date: '2026-11-23',
+          }),
+        };
+      }
+      return { ok: false, status: 404, json: async () => ({}) };
+    };
+
+    const { getJson, postJson } = await import('../../assets/js/tools/code-formatter/services/api.js');
+    assert.equal(typeof getJson, 'function', 'services/api.js debe exportar getJson');
+    assert.equal(typeof postJson, 'function', 'services/api.js debe exportar postJson');
+
+    const { fetchProLevel, requestSocraticHint, initCodeToChallengeButton } = await import('../../assets/js/tools/code-formatter/academy-pro.js');
+    const proLvl = await fetchProLevel('sql', 3, 'es');
+    assert.equal(proLvl.id, 'sql-3');
+    assert.equal(proLvl.tests.length, 1);
+
+    const hintRes = await requestSocraticHint({
+      challengeId: 'sql-3',
+      errorCode: 'style_doc',
+      astSignature: 'missing_cte',
+      codeSnippet: 'SELECT 1;',
+      locale: 'es',
+    });
+    assert.equal(hintRes.hint, 'Usa una CTE modular con WITH.');
+
+    const { syncAcademyState } = await import('../../assets/js/tools/code-formatter/academy-progress.js');
+    const syncedState = await syncAcademyState({
+      completed: ['sql-1'],
+      remedialCompleted: [],
+      achievements: [],
+      dailyStreak: 1,
+      lastDailyDate: '2026-11-22',
+    });
+    assert.deepEqual(syncedState.completed, ['sql-1', 'sql-2'], 'syncAcademyState debe fusionar res.data del backend');
+    assert.deepEqual(syncedState.remedialCompleted, ['sql1-d-syntax']);
+    assert.equal(syncedState.dailyStreak, 4);
+
+    // 2. Cero textos hardcodeados en academy-pro.js + paridad de claves en 7 locales
+    const proSrc = readFileSync(join(ROOT, 'assets/js/tools/code-formatter/academy-pro.js'), 'utf8');
+    assert.doesNotMatch(proSrc, /Convertir mi código en reto|Custom Challenge|Non-empty code/);
+    for (const loc of LOCALES) {
+      const dict = (await import(`../../assets/js/tools/code-formatter/locales/${loc}.js`)).default;
+      for (const k of ['acadConvertCodeBtn', 'acadCustomChallengeTitle', 'acadCustomChallengeCapsule', 'acadCustomChallengeTestName']) {
+        assert.ok(typeof dict[k] === 'string' && dict[k].trim().length > 0, `Falta ${k} en ${loc}`);
+      }
+    }
+
+    // 3. Sandbox CSP (hash estático, 0 new Function/eval) y separación WASM_LOAD_TIMEOUT_MS vs SANDBOX_TIMEOUT_MS
+    const {
+      SANDBOX_TIMEOUT_MS,
+      WASM_LOAD_TIMEOUT_MS,
+      SANDBOX_SCRIPT_HASH,
+      buildIsolatedWorkerSource,
+      runPythonEvalTests,
+    } = await import('../../assets/js/tools/code-formatter/academy-sandbox.js');
+    assert.equal(SANDBOX_TIMEOUT_MS, 3000);
+    assert.equal(WASM_LOAD_TIMEOUT_MS, 20000);
+    const sbSrc = readFileSync(join(ROOT, 'assets/js/tools/code-formatter/academy-sandbox.js'), 'utf8');
+    assert.doesNotMatch(sbSrc, /new Function\s*\(/, 'academy-sandbox.js no debe usar new Function bloqueado por CSP');
+    const workerSrc = buildIsolatedWorkerSource('export function add(a, b) { return a + b; }', [
+      { id: 't1', name: 'Add', type: 'eval', input: 'add(2, 3)', expected: 5 },
+    ]);
+    assert.doesNotMatch(workerSrc, /new Function|eval\(/);
+    assert.match(workerSrc, /actual === 5/);
+    for (const f of ['_headers', 'tools/code-formatter/index.html']) {
+      const txt = readFileSync(join(ROOT, f), 'utf8');
+      assert.ok(txt.includes(SANDBOX_SCRIPT_HASH), `${f} debe incluir SANDBOX_SCRIPT_HASH en script-src`);
+    }
+    // Loader lento (ej. 50ms) con execution timeout corto (10ms) pero loadTimeout amplio (500ms) debe aprobar
+    const slowLoadRes = await runPythonEvalTests(
+      'x = 1',
+      [{ id: 'p1', name: 'x', visible: true, type: 'py_eval', input: 'x', expected: 1 }],
+      15,
+      async () => {
+        await new Promise((r) => setTimeout(r, 45));
+        return { toPy: () => ({ destroy() {} }), runPythonAsync: async () => 1 };
+      },
+      500,
+    );
+    assert.equal(slowLoadRes.ok, true, 'La carga WASM debe usar loadTimeoutMs independiente del timeoutMs de ejecución');
+
+    // 4. countCompletedForTech: java vs javascript sin colisión de prefijo
+    const { countCompletedForTech, initAcademyUI } = await import(`../../assets/js/tools/code-formatter/academy-ui.js?audit=${Date.now()}`);
+    assert.equal(countCompletedForTech(['javascript-1', 'javascript-2', 'java-1'], 'java'), 1);
+    assert.equal(countCompletedForTech(['javascript-1', 'javascript-2', 'java-1'], 'javascript'), 2);
+
+    // 5. Trampa de foco (Tab / Shift+Tab) y retorno de foco en #cf-diff-panel flotante móvil
+    const { setDiffFloatingMode } = await import(`../../assets/js/tools/code-formatter/diff-view.js?trap=${Date.now()}`);
+    let focusedId = 'trigger-btn';
+    const mkBtn = (id) => ({
+      id,
+      tagName: 'BUTTON',
+      hidden: false,
+      disabled: false,
+      isConnected: true,
+      focus() { focusedId = id; globalThis.document.activeElement = this; },
+    });
+    const triggerBtn = mkBtn('trigger-btn');
+    const btnRestore = mkBtn('cf-diff-restore');
+    const btnClose = mkBtn('cf-diff-close');
+    const docKeyListeners = new Set();
+    const floatPanel = {
+      id: 'cf-diff-panel',
+      hidden: false,
+      children: [{ children: [btnRestore, btnClose] }],
+      classList: { add() {}, remove() {} },
+      setAttribute() {},
+      removeAttribute() {},
+      querySelectorAll: () => [btnRestore, btnClose],
+    };
+    globalThis.window = { innerWidth: 375, matchMedia: () => ({ matches: true }) };
+    globalThis.document = {
+      activeElement: triggerBtn,
+      body: { classList: { add() {}, remove() {} }, append() {} },
+      getElementById: () => null,
+      createElement: () => ({ setAttribute() {}, addEventListener() {}, removeEventListener() {} }),
+      addEventListener: (ev, fn) => { if (ev === 'keydown') docKeyListeners.add(fn); },
+      removeEventListener: (ev, fn) => { if (ev === 'keydown') docKeyListeners.delete(fn); },
+    };
+    setDiffFloatingMode(floatPanel, { active: true, returnFocusEl: triggerBtn });
+    btnClose.focus();
+    for (const fn of docKeyListeners) fn({ key: 'Tab', shiftKey: false, preventDefault() {} });
+    assert.equal(focusedId, 'cf-diff-restore', 'Tab en el último botón debe ciclar al primero');
+    for (const fn of docKeyListeners) fn({ key: 'Tab', shiftKey: true, preventDefault() {} });
+    assert.equal(focusedId, 'cf-diff-close', 'Shift+Tab en el primer botón debe ciclar al último');
+    setDiffFloatingMode(floatPanel, { active: false });
+    assert.equal(focusedId, 'trigger-btn', 'Al cerrar el diff flotante debe restaurar el foco al botón disparador');
+
+    // 6. Preservación de buffer Formateador, ocultación de .cf-actions, role="listitem", mini-brief 375px y cf:lang en nivel Pro
+    const makeNode = (id, extra = {}) => {
+      const classes = new Set();
+      const attrs = new Map();
+      const listeners = new Map();
+      const children = [];
+      const node = {
+        id, hidden: true, disabled: false, open: true, value: extra.value || '', textContent: '', children,
+        dataset: extra.dataset || {}, parentElement: null,
+        classList: {
+          toggle: (c, f) => (f === undefined ? (classes.has(c) ? classes.delete(c) : classes.add(c)) : (f ? classes.add(c) : classes.delete(c))),
+          add: (c) => classes.add(c), remove: (c) => classes.delete(c), contains: (c) => classes.has(c),
+        },
+        setAttribute: (k, v) => attrs.set(k, String(v)),
+        getAttribute: (k) => attrs.get(k) ?? null,
+        removeAttribute: (k) => attrs.delete(k),
+        addEventListener: (ev, fn) => { if (!listeners.has(ev)) listeners.set(ev, []); listeners.get(ev).push(fn); },
+        append: (...items) => items.forEach((it) => { if (it && typeof it === 'object') it.parentElement = node; children.push(it); }),
+        prepend: (...items) => items.forEach((it) => { if (it && typeof it === 'object') it.parentElement = node; children.unshift(it); }),
+        replaceChildren: (...items) => { children.length = 0; node.append(...items); },
+        scrollIntoView: () => {},
+        querySelector: (sel) => (sel === '.cf-actions' ? formatterActions : null),
+        querySelectorAll: () => [],
+      };
+      return node;
+    };
+    const formatterActions = makeNode('cf-formatter-actions');
+    formatterActions.hidden = false;
+    const nodes = {
+      'cf-language': makeNode('cf-language', { value: 'sql' }),
+      'cf-academy-shell': makeNode('cf-academy-shell'),
+      'cf-academy-head': makeNode('cf-academy-head'),
+      'cf-mode-formatter': makeNode('cf-mode-formatter'),
+      'cf-mode-academy': makeNode('cf-mode-academy'),
+      'cf-formatter-toolbar': makeNode('cf-formatter-toolbar'),
+      'cf-editor-slot-home': makeNode('cf-editor-slot-home'),
+      'cf-editor-card': makeNode('cf-editor-card'),
+      'cf-academy-editor-slot': makeNode('cf-academy-editor-slot'),
+      'cf-academy-paths': makeNode('cf-academy-paths'),
+      'cf-academy-workspace': makeNode('cf-academy-workspace'),
+      'cf-academy-back': makeNode('cf-academy-back'),
+      'cf-academy-daily-btn': makeNode('cf-academy-daily-btn'),
+      'cf-academy-skill-tree': makeNode('cf-academy-skill-tree'),
+      'cf-academy-mission-card': makeNode('cf-academy-mission-card'),
+      'cf-academy-checklist': makeNode('cf-academy-checklist'),
+      'cf-academy-live': makeNode('cf-academy-live'),
+      'cf-academy-validate': makeNode('cf-academy-validate'),
+      'cf-academy-diff': makeNode('cf-academy-diff'),
+      'cf-academy-mini-brief': makeNode('cf-academy-mini-brief'),
+      'cf-academy-mini-brief-title': makeNode('cf-academy-mini-brief-title'),
+      'cf-academy-mini-brief-body': makeNode('cf-academy-mini-brief-body'),
+    };
+    const paneEditor = makeNode('cf-academy-editor-pane', { dataset: { acadPaneBody: 'editor' } });
+    const uiDocListeners = new Map();
+    mem.set('cf_academy_state_v1', JSON.stringify({ completed: ['sql-1', 'sql-2'], isPro: true }));
+    globalThis.location = { pathname: '/tools/code-formatter/', search: '' };
+    globalThis.window = { innerWidth: 375, location: { href: 'https://jw-solutions.com/tools/code-formatter/', search: '' }, history: { replaceState() {} } };
+    globalThis.document = {
+      baseURI: 'https://jw-solutions.com/tools/code-formatter/',
+      documentElement: { lang: 'es', dataset: {} },
+      head: { append() {} }, body: { append() {} },
+      getElementById: (id) => nodes[id] || null,
+      querySelector: () => null,
+      querySelectorAll: (sel) => (sel === '[data-acad-pane-body]' ? [paneEditor] : []),
+      createElement: (tag) => makeNode(tag),
+      createTextNode: (txt) => ({ textContent: txt }),
+      addEventListener: (ev, fn) => { if (!uiDocListeners.has(ev)) uiDocListeners.set(ev, []); uiDocListeners.get(ev).push(fn); },
+      removeEventListener: () => {},
+    };
+    globalThis.fetch = async (url) => {
+      if (String(url).includes('/sql.json')) {
+        const doc = JSON.parse(readFileSync(join(ROOT, 'content/code-formatter-academy/curriculum/es/sql.json'), 'utf8'));
+        return { ok: true, status: 200, json: async () => doc };
+      }
+      return { ok: false, status: 404, json: async () => ({}) };
+    };
+
+    let editorBuffer = 'SELECT * FROM my_precious_formatter_query;';
+    let editorLang = 'sql';
+    let proLoadCalls = 0;
+    const ui = initAcademyUI({
+      getCode: () => editorBuffer,
+      setCode: (c) => { editorBuffer = c; },
+      setLanguage: (l) => { editorLang = l; },
+      loadProLevel: async (tech, lvl, loc) => {
+        proLoadCalls += 1;
+        return {
+          id: 'sql-3',
+          tier: 'pay',
+          title: `SQL 3 Pro (${loc})`,
+          concept_capsule: `Cápsula Pro (${loc})`,
+          starter_code: 'with cte as (select 1) select * from cte',
+          reference_solution: '-- ok\nWITH cte AS (SELECT 1)\nSELECT * FROM cte;\n',
+          style_rules: ['uppercase_keywords'],
+          tests: [{ id: 'sql3-t1', name: 'CTE', visible: true, type: 'pattern', expected: 'WITH ', description: 'CTE' }],
+        };
+      },
+    });
+
+    await ui.openTopic('sql', 3, 'data-bi', 'editor');
+    await new Promise((r) => setTimeout(r, 40));
+    assert.equal(proLoadCalls, 1);
+    assert.equal(editorBuffer, 'with cte as (select 1) select * from cte');
+    assert.equal(formatterActions.hidden, true, '.cf-actions del Formateador debe ocultarse al montar el editor en Academia');
+    assert.equal(nodes['cf-academy-mini-brief'].open, false, 'En móvil 375px el mini-brief debe iniciar colapsado para ahorrar espacio vertical');
+    const treeList = nodes['cf-academy-skill-tree'].children[1];
+    assert.equal(treeList.getAttribute('role'), 'list');
+    assert.equal(treeList.children[0].getAttribute('role'), 'listitem', 'Los hijos directos de role="list" deben tener role="listitem"');
+
+    // Disparo de cf:lang en nivel Pro debe rehidratar el nivel Pro sin perder tests
+    for (const fn of uiDocListeners.get('cf:lang') || []) await fn({});
+    await new Promise((r) => setTimeout(r, 50));
+    assert.equal(proLoadCalls, 2, 'cf:lang en un nivel Pro debe rehidratar el payload localizado');
+
+    // Al volver al modo Formateador se restaura el código original del usuario y se muestran .cf-actions
+    await ui.setWorkMode('format');
+    assert.equal(editorBuffer, 'SELECT * FROM my_precious_formatter_query;', 'Debe restaurar el código previo del Formateador');
+    assert.equal(formatterActions.hidden, false, '.cf-actions debe volver a mostrarse en el Formateador');
+    ui.destroy();
+
+    // 7. Pedagogía v2 completa en las 10 tecnologías × 7 locales (140 niveles gratuitos)
+    const allTechs = ['sql', 'python', 'dax', 'json', 'javascript', 'typescript', 'java', 'csharp', 'php', 'yaml'];
+    const norm = (s) => String(s || '').replace(/\r\n/g, '\n').replace(/[ \t]+/g, ' ').trim();
+    for (const tech of allTechs) {
+      for (const loc of LOCALES) {
+        const doc = JSON.parse(readFileSync(join(ROOT, `content/code-formatter-academy/curriculum/${loc}/${tech}.json`), 'utf8'));
+        for (const lvl of doc.levels) {
+          if (lvl.tier !== 'free') continue;
+          assert.ok(Array.isArray(lvl.keywords_glossary) && lvl.keywords_glossary.length >= 3, `Falta keywords_glossary en ${loc}/${tech}#${lvl.id}`);
+          assert.ok(lvl.formatting_mechanics?.indentation && lvl.formatting_mechanics?.documentation_standard, `Falta formatting_mechanics en ${loc}/${tech}#${lvl.id}`);
+          assert.ok(lvl.analogous_example?.code && norm(lvl.analogous_example.code) !== norm(lvl.reference_solution), `analogous_example inválido en ${loc}/${tech}#${lvl.id}`);
+        }
+      }
+    }
+  } finally {
+    globalThis.window = prevWin;
+    globalThis.document = prevDoc;
+    globalThis.location = prevLoc;
+    globalThis.localStorage = prevStorage;
+    globalThis.fetch = prevFetch;
+  }
+});

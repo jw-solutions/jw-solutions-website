@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "CSHARP 1 · Fondamenti e formattazione pulita",
       "estimatedMinutes": 5,
-      "concept_capsule": "Applica indentazione coerente, nomi chiari e documentazione standard per rendere il codice subito verificabile.",
+      "concept_capsule": "In C# 12 si usano parentesi Allman (a capo con 4 spazi), XML Docs (/// <summary>), ArgumentException.ThrowIfNullOrWhiteSpace e interpolazione ($\"...\").",
       "starter_code": "public class Greeter{public string Hello(string name){return \"Hi \"+name;}}",
       "reference_solution": "/// <summary>\n/// Provides formatted greeting messages.\n/// </summary>\npublic sealed class Greeter\n{\n    /// <summary>\n    /// Returns a greeting for the given user.\n    /// </summary>\n    /// <param name=\"name\">Target user name.</param>\n    /// <returns>Formatted greeting string.</returns>\n    public string Hello(string name)\n    {\n        ArgumentException.ThrowIfNullOrWhiteSpace(name);\n        return $\"Hi {name.Trim()}\";\n    }\n}\n",
       "tests": [
@@ -73,7 +73,35 @@
           "expected_pattern": "/// <summary>",
           "solution_hint": "Aggiungi commenti XML `/// <summary>`."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "/// <summary> / <param> / <returns>",
+          "role": "Commenti XML ufficiali per IntelliSense e documentazione .NET.",
+          "example_inline": "/// <param name=\"name\">Target user name.</param>"
+        },
+        {
+          "term": "ArgumentException.ThrowIfNullOrWhiteSpace",
+          "role": "Guardia nativa .NET 8/C# 12 contro null, stringhe vuote o soli spazi.",
+          "example_inline": "ArgumentException.ThrowIfNullOrWhiteSpace(name);"
+        },
+        {
+          "term": "$\"Hi {name.Trim()}\"",
+          "role": "Interpolazione di stringhe pulita con Trim().",
+          "example_inline": "return $\"Hi {name.Trim()}\";"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "4 spazi per i membri della classe e 8 spazi nel corpo del metodo.",
+        "line_breaks": "Stile Allman: graffe { e } sempre su riga dedicata.",
+        "punctuation": "Punto e virgola a fine istruzione.",
+        "documentation_standard": "Blocchi XML /// <summary> su classe e metodo con <param> e <returns>."
+      },
+      "analogous_example": {
+        "title": "Formattatore di badge C# 12 con guardia e interpolazione",
+        "code": "/// <summary>\n/// Formats normalized tag labels.\n/// </summary>\npublic sealed class TagFormatter\n{\n    /// <summary>\n    /// Builds a uppercase badge label for a valid tag.\n    /// </summary>\n    /// <param name=\"tag\">Target tag text.</param>\n    /// <returns>Formatted badge string.</returns>\n    public string FormatBadge(string tag)\n    {\n        ArgumentException.ThrowIfNullOrWhiteSpace(tag);\n        return $\"[{tag.Trim()}]\";\n    }\n}\n",
+        "why_it_works": "Applica stile Allman, XML Docs, ThrowIfNullOrWhiteSpace e interpolazione $\"...\"."
+      }
     },
     {
       "id": "csharp-2",
@@ -81,7 +109,7 @@
       "tier": "free",
       "title": "CSHARP 2 · Casi limite e documentazione",
       "estimatedMinutes": 8,
-      "concept_capsule": "Proteggi input nulli o vuoti prima dell’elaborazione e documenta i contratti secondo lo standard ufficiale.",
+      "concept_capsule": "I costruttori primari di C# 12 dichiarano le dipendenze nell’intestazione della classe e le proteggono con ?? throw new ArgumentNullException(nameof(...)).",
       "starter_code": "public class OrderService{private readonly ILogger _log;public OrderService(ILogger log){_log=log;}}",
       "reference_solution": "/// <summary>\n/// Handles order validation using C# 12 primary constructor.\n/// </summary>\n/// <param name=\"log\">Application logger instance.</param>\npublic sealed class OrderService(ILogger log)\n{\n    private readonly ILogger _log = log ?? throw new ArgumentNullException(nameof(log));\n}\n",
       "tests": [
@@ -144,7 +172,35 @@
           "expected_pattern": "<summary>",
           "solution_hint": "Documenta la classe con `<summary>`."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "class OrderService(ILogger log)",
+          "role": "Costruttore primario C# 12 che elimina il costruttore separato.",
+          "example_inline": "public sealed class OrderService(ILogger log)"
+        },
+        {
+          "term": "?? throw new ArgumentNullException(nameof(log))",
+          "role": "Valida contro null la dipendenza iniettata nell’inizializzazione del campo readonly.",
+          "example_inline": "private readonly ILogger _log = log ?? throw new ArgumentNullException(nameof(log));"
+        },
+        {
+          "term": "/// <param name=\"log\">",
+          "role": "Documenta il parametro del costruttore primario nel blocco XML della classe.",
+          "example_inline": "/// <param name=\"log\">Application logger instance.</param>"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "4 spazi per il campo private readonly.",
+        "line_breaks": "Parentesi graffe Allman su righe dedicate.",
+        "punctuation": "Uso di nameof(...) dentro ArgumentNullException.",
+        "documentation_standard": "Blocco XML /// <summary> e /// <param> sopra la classe."
+      },
+      "analogous_example": {
+        "title": "Servizio di notifica con costruttore primario C# 12",
+        "code": "/// <summary>\n/// Dispatches billing notifications using C# 12 primary constructor.\n/// </summary>\n/// <param name=\"mailer\">Configured mail sender.</param>\npublic sealed class BillingNotifier(IMailer mailer)\n{\n    private readonly IMailer _mailer = mailer ?? throw new ArgumentNullException(nameof(mailer));\n}\n",
+        "why_it_works": "Inietta IMailer nell’intestazione, valida null con ?? throw e documenta con <param>."
+      }
     },
     {
       "id": "csharp-3",

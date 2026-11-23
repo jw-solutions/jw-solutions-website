@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "PHP 1 · Fondamenti e formattazione pulita",
       "estimatedMinutes": 5,
-      "concept_capsule": "Applica indentazione coerente, nomi chiari e documentazione standard per rendere il codice subito verificabile.",
+      "concept_capsule": "PHP 8.3 e PSR-12 richiedono declare(strict_types=1); dopo <?php, tipi espliciti per parametri e ritorno, graffa di funzione a capo e pulizia con trim().",
       "starter_code": "<?php\nfunction greet($name){return \"Hello \".$name;}",
       "reference_solution": "<?php\n\ndeclare(strict_types=1);\n\n/**\n * Build a sanitized greeting message.\n */\nfunction greet(string $name): string\n{\n    $clean = trim($name);\n    return $clean === \"\" ? \"Hello!\" : \"Hello, {$clean}!\";\n}\n",
       "tests": [
@@ -73,7 +73,35 @@
           "expected_pattern": "strict_types",
           "solution_hint": "Aggiungi `declare(strict_types=1);` all'inizio del file."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "declare(strict_types=1);",
+          "role": "Disattiva la coercizione debole dei tipi scalari in PHP.",
+          "example_inline": "declare(strict_types=1);"
+        },
+        {
+          "term": "function greet(string $name): string",
+          "role": "Firma tipizzata che garantisce input e output di tipo string.",
+          "example_inline": "function greet(string $name): string"
+        },
+        {
+          "term": "trim($name)",
+          "role": "Rimuove gli spazi laterali prima del controllo su stringa vuota (=== \"\").",
+          "example_inline": "$clean = trim($name);"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "4 spazi nel corpo della funzione (nessuna tabulazione).",
+        "line_breaks": "Riga vuota dopo <?php e declare(strict_types=1);; graffa { su nuova riga (PSR-12).",
+        "punctuation": "Punto e virgola finale e confronto stretto ===.",
+        "documentation_standard": "Blocco PHPDoc /** ... */ sopra la funzione."
+      },
+      "analogous_example": {
+        "title": "Formattatore SKU in PHP 8.3 con strict_types e PSR-12",
+        "code": "<?php\n\ndeclare(strict_types=1);\n\n/**\n * Format a normalized SKU label.\n */\nfunction formatSku(string $code): string\n{\n    $clean = trim($code);\n    return $clean === \"\" ? \"N/A\" : \"SKU-{$clean}\";\n}\n",
+        "why_it_works": "Attiva strict_types=1, tipizza parametro e ritorno, mette { a capo e usa trim()."
+      }
     },
     {
       "id": "php-2",
@@ -81,7 +109,7 @@
       "tier": "free",
       "title": "PHP 2 · Casi limite e documentazione",
       "estimatedMinutes": 8,
-      "concept_capsule": "Proteggi input nulli o vuoti prima dell’elaborazione e documenta i contratti secondo lo standard ufficiale.",
+      "concept_capsule": "In PHP 8.3 gli stati di dominio si modellano con Backed Enums (enum OrderStatus: string) e promozione di proprietà immutabili (public readonly) secondo PSR-12.",
       "starter_code": "<?php\nclass Order{public $status=\"pending\";}",
       "reference_solution": "<?php\n\ndeclare(strict_types=1);\n\nenum OrderStatus: string\n{\n    case Pending = \"pending\";\n    case Paid = \"paid\";\n}\n\n/**\n * Typed order entity following PSR-12.\n */\nfinal class Order\n{\n    public function __construct(\n        public readonly OrderStatus $status = OrderStatus::Pending,\n    ) {\n    }\n}\n",
       "tests": [
@@ -144,7 +172,35 @@
           "expected_pattern": "int $id",
           "solution_hint": "Aggiungi dichiarazioni di tipo esplicite alle proprietà."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "enum OrderStatus: string",
+          "role": "Sostituisce le stringhe magiche con un insieme chiuso di casi tipizzati.",
+          "example_inline": "case Pending = \"pending\";"
+        },
+        {
+          "term": "public readonly OrderStatus $status",
+          "role": "Promozione di proprietà nel costruttore che dichiara un campo tipizzato e immutabile.",
+          "example_inline": "public readonly OrderStatus $status = OrderStatus::Pending,"
+        },
+        {
+          "term": "final class Order",
+          "role": "Impedisce estensioni fragili dell’entità.",
+          "example_inline": "final class Order"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "4 spazi per i casi dell’enum, i metodi e i parametri multilinea del costruttore.",
+        "line_breaks": "Graffe di apertura di enum e class su nuova riga (PSR-12).",
+        "punctuation": "Virgola finale nella lista multilinea dei parametri.",
+        "documentation_standard": "Blocco PHPDoc /** ... */ sopra la classe final."
+      },
+      "analogous_example": {
+        "title": "Entità Invoice con Backed Enum e proprietà readonly in PHP 8.3",
+        "code": "<?php\n\ndeclare(strict_types=1);\n\nenum InvoiceState: string\n{\n    case Draft = \"draft\";\n    case Issued = \"issued\";\n}\n\n/**\n * Immutable invoice header following PSR-12.\n */\nfinal class Invoice\n{\n    public function __construct(\n        public readonly InvoiceState $state = InvoiceState::Draft,\n    ) {\n    }\n}\n",
+        "why_it_works": "Dichiara enum InvoiceState: string e promuove public readonly $state seguendo PSR-12."
+      }
     },
     {
       "id": "php-3",

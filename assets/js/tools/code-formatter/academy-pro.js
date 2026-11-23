@@ -1,5 +1,6 @@
 // Funciones exclusivas Pro de la Academia (tier: "pay", excluidas de dist-public/).
 import { postJson, getJson } from './services/api.js';
+import { t } from './i18n.js';
 
 export async function fetchProLevel(tech, level, locale = 'es') {
   const qs = `?locale=${encodeURIComponent(locale || 'es')}`;
@@ -9,7 +10,7 @@ export async function fetchProLevel(tech, level, locale = 'es') {
     err.status = res.status;
     throw err;
   }
-  return res.json();
+  return res.data !== undefined ? res.data : (typeof res.json === 'function' ? await res.json() : null);
 }
 
 export async function requestSocraticHint({ challengeId, errorCode, astSignature, codeSnippet, locale }) {
@@ -25,13 +26,13 @@ export async function requestSocraticHint({ challengeId, errorCode, astSignature
     err.status = res.status;
     throw err;
   }
-  return res.json();
+  return res.data !== undefined ? res.data : (typeof res.json === 'function' ? await res.json() : null);
 }
 
 /**
- * Crea un botón "Convertir mi código en reto" en el Modo Formateador (solo Pro).
+ * Crea el botón localizado de reto personalizado en el Modo Formateador (solo Pro).
  */
-export function initCodeToChallengeButton({ getCode, getLanguage, onOpenChallenge }) {
+export function initCodeToChallengeButton({ getCode, getLanguage, onOpenChallenge, translate = t }) {
   const actionsBar = document.querySelector('#cf-editor-card .cf-actions');
   if (!actionsBar || document.getElementById('cf-convert-challenge')) return;
 
@@ -40,7 +41,8 @@ export function initCodeToChallengeButton({ getCode, getLanguage, onOpenChalleng
   btn.id = 'cf-convert-challenge';
   btn.className = 'cf-btn';
   btn.dataset.cfCommercial = '';
-  btn.textContent = 'Convertir mi código en reto';
+  btn.dataset.i18n = 'acadConvertCodeBtn';
+  btn.textContent = translate('acadConvertCodeBtn');
   btn.addEventListener('click', () => {
     const code = getCode ? getCode() : '';
     const lang = getLanguage ? getLanguage() : 'python';
@@ -50,11 +52,11 @@ export function initCodeToChallengeButton({ getCode, getLanguage, onOpenChalleng
       level: 1,
       tier: 'free',
       tech: lang,
-      title: `Custom Challenge (${lang.toUpperCase()})`,
-      concept_capsule: 'Refactoriza y documenta tu propio fragmento aplicando las reglas del lenguaje.',
+      title: translate('acadCustomChallengeTitle', { lang: lang.toUpperCase() }),
+      concept_capsule: translate('acadCustomChallengeCapsule'),
       starter_code: code,
       reference_solution: code,
-      tests: [{ id: 'custom-len', name: 'Non-empty code', visible: true, type: 'pattern', expected: code.trim().slice(0, 4) }],
+      tests: [{ id: 'custom-len', name: translate('acadCustomChallengeTestName'), visible: true, type: 'pattern', expected: code.trim().slice(0, 4) }],
       style_rules: [],
     });
   });

@@ -19,6 +19,8 @@
 - [x] ✅ Bloque C: Ejecución WASM en Cliente (`sql.js`/`Pyodide` bajo demanda + SRI real + `_headers`/`index.html` CSP), conexión `fetchProLevel()` en `selectLevel()`, `seed_academy_pro.py` en 7 locales (210 niveles) y `MemoryHigh=512M`/`MemoryMax=768M` en `deploy/jw-api.service` — 2026-11-23
 - [x] ✅ Fix `#cf-academy-diff` en Academia y móvil 375px (panel visible antes de `MergeView`, `measureDiff()`, fallback DOM seguro, manejo `isRemedialActive` y CSS móvil `min-height`) — 2026-11-23
 - [x] ✅ Ventana flotante temporal móvil (`<=640px`) para `#cf-diff-panel` con backdrop Dark Glass Gold, `Escape` y cierre automático al elegir opción — 2026-11-23
+- [x] ✅ Corrección de hallazgos críticos de Auditoría Doble Mirada (API `getJson`/sync/Pro `cf:lang`, Sandbox CSP + timeouts WASM, preservación buffer Formateador, móvil 375px + foco diff + ARIA árbol y pedagogía v2 en 12 niveles restantes × 7 locales) — 2026-11-23
+- [x] ✅ Auditoría Pre-Lanzamiento, Commit/Push a `origin/main` y Despliegue en VPS (`107.172.159.114`, `seed_academy_pro.py` 7 locales y verificación HTTP live) — 2026-11-23
 
 ## Pendientes Técnicos
 

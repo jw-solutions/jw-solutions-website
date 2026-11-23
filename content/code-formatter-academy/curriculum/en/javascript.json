@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "JAVASCRIPT 1 · Clean Syntax & Formatting Basics",
       "estimatedMinutes": 5,
-      "concept_capsule": "Apply consistent indentation, clear naming, and official documentation so any team can read and audit the code in seconds.",
+      "concept_capsule": "ES2024 and JSDoc require 2-space indentation, explicit semicolons, safe numeric coercion via Number(), and @param/@returns tags to prevent accidental string concatenation.",
       "starter_code": "function sum(a,b){return a+b}",
       "reference_solution": "/**\n * Add two numbers safely.\n * @param {number} a - First operand.\n * @param {number} b - Second operand.\n * @returns {number} Sum of a and b.\n */\nexport function sum(a, b) {\n  return Number(a) + Number(b);\n}\n",
       "tests": [
@@ -75,7 +75,35 @@
           "expected_pattern": "/**",
           "solution_hint": "Add a JSDoc block `/** ... */` above the function."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "/** @param / @returns */",
+          "role": "Documents input and return types in JSDoc. In production it powers IDE autocomplete and type checking without a build step.",
+          "example_inline": "@returns {number} Sum of a and b."
+        },
+        {
+          "term": "export function",
+          "role": "Exposes a named ESM function, enabling tree-shaking and isolated unit tests.",
+          "example_inline": "export function sum(a, b) {"
+        },
+        {
+          "term": "Number(x)",
+          "role": "Explicitly converts operands to numbers before addition so \"2\" + 3 never turns into \"23\".",
+          "example_inline": "return Number(a) + Number(b);"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "2 spaces per block inside the function body (no tabs).",
+        "line_breaks": "Multi-line JSDoc block above the signature and body on its own line.",
+        "punctuation": "Space after parameter commas (a, b), spaces around +, and trailing semicolon (;).",
+        "documentation_standard": "JSDoc /** ... */ block with summary, @param {number}, and @returns {number}."
+      },
+      "analogous_example": {
+        "title": "Line-total calculation with JSDoc and numeric coercion",
+        "code": "/**\n * Multiply two values safely.\n * @param {number} price - Unit price.\n * @param {number} qty - Quantity ordered.\n * @returns {number} Line total.\n */\nexport function calcLineTotal(price, qty) {\n  return Number(price) * Number(qty);\n}\n",
+        "why_it_works": "Documents the contract with @param/@returns, uses 2-space indentation, and coerces inputs via Number()."
+      }
     },
     {
       "id": "javascript-2",
@@ -83,7 +111,7 @@
       "tier": "free",
       "title": "JAVASCRIPT 2 · Edge Cases & Documentation",
       "estimatedMinutes": 8,
-      "concept_capsule": "Guard null or empty inputs before processing and document input/output contracts using the language standard.",
+      "concept_capsule": "Combine optional chaining (?.) and nullish coalescing (??) with JSDoc to read nested properties without throwing TypeError on null or undefined inputs.",
       "starter_code": "function getCity(u){return u&&u.address?u.address.city:\"N/A\"}",
       "reference_solution": "/**\n * Read user city with safe fallback.\n * @param {{ address?: { city?: string } } | null | undefined} user\n * @returns {string} City name or fallback.\n */\nexport function getCity(user) {\n  return user?.address?.city ?? \"N/A\";\n}\n",
       "tests": [
@@ -148,7 +176,35 @@
           "expected_pattern": "@param",
           "solution_hint": "Document the parameter with `@param`."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "?. (Optional Chaining)",
+          "role": "Short-circuits property access when an intermediate reference is null or undefined, returning undefined instead of throwing.",
+          "example_inline": "user?.address?.city"
+        },
+        {
+          "term": "?? (Nullish Coalescing)",
+          "role": "Returns the fallback only when the left side is null or undefined (preserving empty strings or 0).",
+          "example_inline": "user?.address?.city ?? \"N/A\""
+        },
+        {
+          "term": "@param {{ address?: ... }}",
+          "role": "Expresses optional and nullable object contracts in JSDoc for callers.",
+          "example_inline": "@param {{ address?: { city?: string } } | null | undefined} user"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "2 spaces inside the exported function body.",
+        "line_breaks": "JSDoc block above export function and single clear return statement.",
+        "punctuation": "Spaces around ?? and trailing semicolon on the return statement.",
+        "documentation_standard": "JSDoc /** ... */ documenting optional properties (?) and null | undefined unions."
+      },
+      "analogous_example": {
+        "title": "Safe customer country lookup with ?. and ??",
+        "code": "/**\n * Read customer country code with fallback.\n * @param {{ profile?: { country?: string } } | null | undefined} customer\n * @returns {string} ISO country code or fallback.\n */\nexport function getCountry(customer) {\n  return customer?.profile?.country ?? \"US\";\n}\n",
+        "why_it_works": "Traverses optional nested objects via ?. and provides a deterministic fallback with ??."
+      }
     },
     {
       "id": "javascript-3",

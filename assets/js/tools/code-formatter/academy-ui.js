@@ -55,6 +55,17 @@ function normCode(code) {
   return String(code || '').replace(/\r\n/g, '\n').replace(/[ \t]+/g, ' ').trim();
 }
 
+/** Cuenta niveles completados para una tecnología exacta evitando colisión de prefijo (ej. java vs javascript). */
+export function countCompletedForTech(completed = [], tech = '') {
+  const cleanTech = String(tech || '').trim().toLowerCase();
+  if (!cleanTech || !Array.isArray(completed)) return 0;
+  const prefix = `${cleanTech}-`;
+  return completed.filter((id) => {
+    const s = String(id || '').toLowerCase();
+    return s === cleanTech || s.startsWith(prefix);
+  }).length;
+}
+
 /** Reglas por defecto para evaluar código propio según lenguaje. */
 const OWN_CODE_STYLE_RULES = {
   sql: ['uppercase_keywords', 'multiline_select', 'header_comment'],
@@ -355,10 +366,33 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   let tutorialIndex = 0;
   let isOwnCodeActive = false;
   let ownCodeBefore = null;
+  let formatterCodeSnapshot = null;
+  let formatterLangSnapshot = null;
   let assistEnabled = (() => {
     try { return localStorage.getItem(ASSIST_PREF_KEY) !== '0'; } catch { return true; }
   })();
   let idleTimer = null;
+
+  function captureFormatterBuffer() {
+    if (formatterCodeSnapshot !== null) return;
+    formatterCodeSnapshot = typeof getCode === 'function' ? getCode() : '';
+    const langSelEl = typeof document !== 'undefined' ? document.getElementById('cf-language') : null;
+    formatterLangSnapshot = langSelEl && typeof langSelEl.value === 'string' ? langSelEl.value : '';
+  }
+
+  function restoreFormatterBuffer() {
+    if (formatterCodeSnapshot === null) return;
+    const savedCode = formatterCodeSnapshot;
+    const savedLang = formatterLangSnapshot;
+    formatterCodeSnapshot = null;
+    formatterLangSnapshot = null;
+    if (savedLang && typeof setLanguage === 'function') {
+      setLanguage(savedLang);
+    }
+    if (typeof setCode === 'function') {
+      setCode(savedCode);
+    }
+  }
 
   function renderTutorialRich(tab) {
     if (!tutRichEl) return;
@@ -499,7 +533,14 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   const PANE_BY_VIEW = { tree: 'mission', editor: 'editor', results: 'results' };
   const nextFrame = (fn) => (typeof requestAnimationFrame === 'function' ? requestAnimationFrame(fn) : setTimeout(fn, 0));
 
+  function setFormatterActionsHidden(hidden) {
+    const actionsEl = editorCard?.querySelector?.('.cf-actions')
+      || (Array.isArray(editorCard?.children) ? editorCard.children.find((c) => String(c?.className || '').includes('cf-actions')) : null);
+    if (actionsEl) actionsEl.hidden = Boolean(hidden);
+  }
+
   function mountEditorInAcademy() {
+    setFormatterActionsHidden(true);
     if (editorCard && academyEditorSlot && editorCard.parentElement !== academyEditorSlot) {
       academyEditorSlot.append(editorCard);
     }
@@ -711,7 +752,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
         const st = readLocalState();
         const completed = new Set(st.completed || []);
         const targetTech = (p.technologies || []).find((tech) => {
-          const doneCount = [...completed].filter((id) => id.startsWith(`${tech}-`)).length;
+          const doneCount = countCompletedForTech([...completed], tech);
           return doneCount < 5;
         }) || p.technologies[0];
         gatedOpenTopic(targetTech, null, p.id);
@@ -779,6 +820,8 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       const isSelected = activeLevel && activeLevel.id === lvl.id;
       const isFirstPending = !firstActiveFound && (nodeState === 'active' || nodeState === 'remedial');
       if (isFirstPending) firstActiveFound = true;
+      const itemWrap = el('div', 'cf-skill-tree__item');
+      itemWrap.setAttribute('role', 'listitem');
       const node = el('div', `cf-skill-node cf-skill-node--${nodeState}${isSelected ? ' is-selected' : ''}${isFirstPending ? ' cf-skill-node--pulse' : ''}`);
       node.setAttribute('tabindex', '0');
       node.setAttribute('role', 'button');
@@ -823,7 +866,8 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
           activate();
         }
       });
-      list.append(node);
+      itemWrap.append(node);
+      list.append(itemWrap);
     });
     skillTreeEl.append(list);
   }
@@ -874,6 +918,14 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       miniBriefTitleEl.textContent = `${t('acadStickyBriefLabel')}: ${title}`;
       miniBriefBodyEl.textContent = String(body || '').slice(0, 180);
       miniBriefEl.hidden = false;
+      const isNarrow = typeof window !== 'undefined' && Number(window.innerWidth || 0) > 0 && Number(window.innerWidth) <= 640;
+      if (isNarrow) {
+        miniBriefEl.open = false;
+        miniBriefEl.removeAttribute?.('open');
+      } else {
+        miniBriefEl.open = true;
+        miniBriefEl.setAttribute?.('open', '');
+      }
     }
   }
 
@@ -968,6 +1020,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     currentLevelNum = lvl.level;
     renderSkillTree(curriculum);
     renderMission(lvl, curriculum.standard);
+    captureFormatterBuffer();
     if (setLanguage) setLanguage(curriculum.tech);
     if (setCode && lvl.starter_code) setCode(lvl.starter_code);
     if (liveEl) liveEl.textContent = t('acadConsoleEmpty');
@@ -1041,6 +1094,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     try {
       const loc = getUiLang();
       const curriculum = await fetchJson(`curriculum/${loc}/${tech}.json`);
+      currentMode = 'learn';
       currentPath = pathId;
       currentTopic = tech;
       currentCurriculum = curriculum;
@@ -1119,6 +1173,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     lastEvaluation = null;
     renderSkillTree(pseudoCurriculum);
     renderMission(activeLevel, pseudoCurriculum.standard);
+    captureFormatterBuffer();
     if (setLanguage) setLanguage(ch.tech);
     if (setCode) setCode(ch.starter_code);
     if (liveEl) liveEl.textContent = t('acadConsoleEmpty');
@@ -1207,10 +1262,12 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     if (!isLearn) {
       clearIdleNudge();
       exitOwnCodeMode();
+      setFormatterActionsHidden(false);
       if (editorCard && editorHome && editorCard.parentElement !== editorHome) {
         editorHome.prepend(editorCard);
       }
       restoreDiffPanelHome();
+      restoreFormatterBuffer();
       syncUrlParams({ mode: 'format' });
       return;
     }
@@ -1682,7 +1739,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
 
       const feedbackCard = el('div', 'cf-academy-achievement-card');
       {
-        const remaining = Math.max(0, (currentCurriculum?.levels?.length || 1) - (academyState.completed || []).filter((id) => id.startsWith(tech)).length);
+        const remaining = Math.max(0, (currentCurriculum?.levels?.length || 1) - countCompletedForTech(academyState.completed || [], tech));
         feedbackCard.append(el('p', 'cf-muted', t('acadNextBadgeProgress', { remaining })));
         if (preloadedNextLevel && (preloadedNextLevel.tier !== 'pay' || readLocalState().isPro)) {
           const nextBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadNextLevelBtn', { n: preloadedNextLevel.level }));
@@ -1821,13 +1878,14 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   async function rebuildForLang() {
     if (currentMode !== 'learn') return;
     try {
-      pathsCache ||= await fetchJson('paths.json');
       if (academyView === 'paths' || !currentCurriculum || !activeLevel) {
+        pathsCache ||= await fetchJson('paths.json');
         renderPathsView(pathsCache);
         return;
       }
       const view = academyView;
       const keepLive = liveEl ? liveEl.textContent : '';
+      const prevLevel = activeLevel;
       if (currentCurriculum.isOwnCode) {
         currentCurriculum = buildOwnCodeCurriculum(currentTopic);
       } else if (currentCurriculum.isDaily) {
@@ -1836,8 +1894,28 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       } else {
         currentCurriculum = await fetchJson(`curriculum/${getUiLang()}/${currentTopic}.json`);
       }
-      activeLevel = (currentCurriculum.levels || []).find((l) => l.level === currentLevelNum) || currentCurriculum.levels[0];
-      preloadedNextLevel = (currentCurriculum.levels || []).find((l) => l.level === (activeLevel.level + 1)) || null;
+      const levels = currentCurriculum.levels || [];
+      const idx = levels.findIndex((l) => l.level === currentLevelNum);
+      const resolvedIdx = idx >= 0 ? idx : 0;
+      let candidate = levels[resolvedIdx] || levels[0];
+      if (candidate && candidate.tier === 'pay' && (!candidate.starter_code || !Array.isArray(candidate.tests) || candidate.tests.length === 0)) {
+        const loader = readLocalState().isPro ? await resolveProLoader() : null;
+        if (loader) {
+          try {
+            const proPayload = await loader(currentCurriculum.tech, candidate.level, getUiLang());
+            if (proPayload && typeof proPayload === 'object') {
+              candidate = { ...candidate, ...proPayload, tier: 'pay', level: candidate.level };
+              levels[resolvedIdx] = candidate;
+            }
+          } catch { /* fallback a nivel previamente hidratado */ }
+        }
+        if ((!Array.isArray(candidate.tests) || candidate.tests.length === 0) && prevLevel && prevLevel.level === candidate.level) {
+          candidate = { ...prevLevel, ...candidate, title: candidate.title || prevLevel.title };
+          levels[resolvedIdx] = candidate;
+        }
+      }
+      activeLevel = candidate;
+      preloadedNextLevel = levels.find((l) => l.level === (activeLevel.level + 1)) || null;
       renderSkillTree(currentCurriculum);
       renderMission(activeLevel, currentCurriculum.standard);
       if (isRemedialActive && activeDrill) {

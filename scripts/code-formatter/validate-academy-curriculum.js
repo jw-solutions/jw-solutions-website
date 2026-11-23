@@ -258,7 +258,7 @@ for (const tech of TECHS) {
         assertNonEmpty(lvl.style_rules, `${lctx}.style_rules`);
         assertNonEmpty(lvl.tests, `${lctx}.tests`);
         assertNonEmpty(lvl.remedial_drills, `${lctx}.remedial_drills`);
-        validatePedagogicalFields(lvl, lctx, DATA_BI_TECHS.has(tech));
+        validatePedagogicalFields(lvl, lctx, true);
 
         for (const t of lvl.tests || []) {
           runTestCase(lvl.reference_solution, t, lctx);

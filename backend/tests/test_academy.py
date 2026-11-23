@@ -276,3 +276,57 @@ def test_seed_academy_pro_covers_7_locales_without_placeholders():
         assert len(payload["tests"]) >= 1
         assert payload["tests"][0]["expected"] in payload["reference_solution"]
         assert payload["tests"][0]["expected"] != "Pro"
+
+
+def test_pro_level_locale_resolution_and_sync_merge_contract(academy_db):
+    db, _, pro_id, make_session = academy_db
+    pro_sess = make_session(pro_id)
+
+    db.add(
+        AcademyProLevel(
+            tech="python",
+            level=3,
+            locale="fr",
+            title="PYTHON 3 · Refactorisation modulaire (Pro)",
+            payload={
+                "id": "python-3",
+                "tier": "pay",
+                "concept_capsule": "Capsule Pro FR",
+                "starter_code": "def run():\n    pass\n",
+                "reference_solution": "def run() -> None:\n    \"\"\"Run.\"\"\"\n    pass\n",
+                "style_rules": ["pep8_indent_4"],
+                "tests": [{"id": "py3-t1", "name": "Run", "visible": True, "type": "pattern", "expected": "def run("}],
+            },
+        )
+    )
+    db.commit()
+
+    # 1. Locale exacto (fr)
+    lvl_fr = get_pro_level(tech="python", level=3, session=pro_sess, db=db, locale="fr")
+    assert lvl_fr["locale"] == "fr"
+    assert lvl_fr["concept_capsule"] == "Capsule Pro FR"
+    assert isinstance(lvl_fr["tests"], list) and len(lvl_fr["tests"]) == 1
+
+    # 2. Fallback a 'es' cuando un locale no existe en DB
+    lvl_fb = get_pro_level(tech="python", level=3, session=pro_sess, db=db, locale="de")
+    assert lvl_fb["locale"] == "es"
+    assert lvl_fb["id"] == "python-3"
+
+    # 3. Sync acumulativo idempotente (contrato con syncAcademyState front-end)
+    s1 = sync_progress(
+        AcademySyncBody(completed=["java-1"], remedial_completed=["j1-d1"], achievements=["a1"], daily_streak=3),
+        session=pro_sess,
+        db=db,
+    )
+    s2 = sync_progress(
+        AcademySyncBody(completed=["javascript-1", "java-2"], remedial_completed=["js1-d1"], achievements=["a2"], daily_streak=2),
+        session=pro_sess,
+        db=db,
+    )
+    db.commit()
+    assert s1["completed"] == ["java-1"]
+    assert s2["completed"] == ["java-1", "javascript-1", "java-2"]
+    assert s2["remedial_completed"] == ["j1-d1", "js1-d1"]
+    assert s2["achievements"] == ["a1", "a2"]
+    assert s2["daily_streak"] == 3
+

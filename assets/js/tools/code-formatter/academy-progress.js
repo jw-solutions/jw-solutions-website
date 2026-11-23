@@ -80,7 +80,8 @@ export async function syncAcademyState(localState) {
       last_daily_date: localState.lastDailyDate || null,
     });
     if (!res.ok) return localState;
-    const remote = await res.json();
+    const remote = res.data !== undefined ? res.data : (typeof res.json === 'function' ? await res.json() : null);
+    if (!remote || typeof remote !== 'object') return localState;
     const merged = mergeStates(localState, {
       completed: remote.completed,
       remedialCompleted: remote.remedial_completed,

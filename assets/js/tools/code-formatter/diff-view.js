@@ -4,6 +4,7 @@
 let current = null;
 let lastContainer = null;
 let floatingCleanup = null;
+let floatingReturnFocus = null;
 
 export function isMobileDiffViewport() {
   if (typeof window === 'undefined') return false;
@@ -14,11 +15,32 @@ export function isMobileDiffViewport() {
   return Number(window.innerWidth || 0) > 0 && Number(window.innerWidth) <= 640;
 }
 
+function getFocusableElements(panel) {
+  if (!panel) return [];
+  if (typeof panel.querySelectorAll === 'function') {
+    const found = [...panel.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+      .filter((el) => !el.hidden);
+    if (found.length) return found;
+  }
+  const out = [];
+  const walk = (nodes) => {
+    for (const n of nodes || []) {
+      if (!n || n.hidden || n.disabled) continue;
+      if (typeof n.focus === 'function' && (n.tagName === 'BUTTON' || String(n.id || '').startsWith('cf-diff-'))) {
+        out.push(n);
+      }
+      if (Array.isArray(n.children)) walk(n.children);
+    }
+  };
+  if (Array.isArray(panel.children)) walk(panel.children);
+  return out;
+}
+
 /**
  * Activa o limpia el modo ventana flotante temporal para #cf-diff-panel en móvil (<= 640px).
- * Crea/gestiona el backdrop, Escape y bloqueo de scroll con DOM seguro (cero innerHTML).
+ * Crea/gestiona el backdrop, trampa de foco (Tab/Shift+Tab), retorno de foco, Escape y bloqueo de scroll (cero innerHTML).
  */
-export function setDiffFloatingMode(panel, { active, onClose } = {}) {
+export function setDiffFloatingMode(panel, { active, onClose, returnFocusEl } = {}) {
   if (floatingCleanup) {
     floatingCleanup();
     floatingCleanup = null;
@@ -32,8 +54,15 @@ export function setDiffFloatingMode(panel, { active, onClose } = {}) {
     panel.removeAttribute?.('aria-modal');
     if (existingBackdrop) existingBackdrop.hidden = true;
     document?.body?.classList?.remove('cf-no-scroll');
+    const target = returnFocusEl || floatingReturnFocus;
+    floatingReturnFocus = null;
+    if (target && typeof target.focus === 'function' && target.isConnected !== false) {
+      target.focus();
+    }
     return false;
   }
+
+  floatingReturnFocus = returnFocusEl || (typeof document !== 'undefined' ? document.activeElement : null) || null;
 
   let backdrop = existingBackdrop;
   if (!backdrop && typeof document !== 'undefined') {
@@ -52,9 +81,27 @@ export function setDiffFloatingMode(panel, { active, onClose } = {}) {
 
   const onBackdropClick = () => { if (typeof onClose === 'function') onClose(); };
   const onKeyDown = (ev) => {
-    if (ev && ev.key === 'Escape' && typeof onClose === 'function') {
+    if (!ev) return;
+    if (ev.key === 'Escape' && typeof onClose === 'function') {
       ev.preventDefault?.();
       onClose();
+      return;
+    }
+    if (ev.key === 'Tab') {
+      const focusables = getFocusableElements(panel);
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const activeEl = typeof document !== 'undefined' ? document.activeElement : null;
+      if (ev.shiftKey) {
+        if (activeEl === first || !focusables.includes(activeEl)) {
+          ev.preventDefault?.();
+          last.focus?.();
+        }
+      } else if (activeEl === last || !focusables.includes(activeEl)) {
+        ev.preventDefault?.();
+        first.focus?.();
+      }
     }
   };
   backdrop?.addEventListener?.('click', onBackdropClick);

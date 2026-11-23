@@ -2,7 +2,9 @@
 // Regla de seguridad: <iframe sandbox="allow-scripts"> SIN allow-same-origin (origen opaco),
 // validación estricta de event.source === iframe.contentWindow y timeout de 3000 ms.
 
-const SANDBOX_TIMEOUT_MS = 3000;
+export const SANDBOX_TIMEOUT_MS = 3000;
+export const WASM_LOAD_TIMEOUT_MS = 20000;
+export const SANDBOX_SCRIPT_HASH = 'sha256-Z1aBCwyXShlE5F7N38UURJVHkraCKwMxuIWYw8u+/mI=';
 export const SQLJS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js';
 export const SQLJS_SRI = 'sha512-+6Q7hv5pGUBXOuHWw8OdQx3ac7DzM3oJhYqz7SHDku0yl9EBdMqegoPed4GsHRoNF/VQYK2LTYewAIEBrEf/3w==';
 const SQLJS_CACHE = 'cf-sqljs-v1';
@@ -11,6 +13,91 @@ export const PYODIDE_INDEX = 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/';
 
 let sqlPromise = null;
 let pyodidePromise = null;
+
+export function resetWasmLoaders() {
+  sqlPromise = null;
+  pyodidePromise = null;
+}
+
+/**
+ * Script puente 100% estático para <iframe sandbox="allow-scripts"> (hash SHA-256 fijo en CSP).
+ * Recibe { reqId, workerCode, timeoutMs } vía postMessage sin interpolación inline ni eval/new Function.
+ */
+export const SANDBOX_IFRAME_SCRIPT = [
+  "window.addEventListener('message', function(ev) {",
+  "  var d = ev && ev.data;",
+  "  if (!d || typeof d.reqId !== 'string' || typeof d.workerCode !== 'string') return;",
+  "  var reqId = d.reqId;",
+  "  var ms = Number(d.timeoutMs) > 0 ? Number(d.timeoutMs) : 3000;",
+  "  var blob = new Blob([d.workerCode], { type: 'application/javascript' });",
+  "  var url = URL.createObjectURL(blob);",
+  "  var w = new Worker(url);",
+  "  var done = false;",
+  "  var timer = setTimeout(function() {",
+  "    if (done) return;",
+  "    done = true;",
+  "    w.terminate();",
+  "    URL.revokeObjectURL(url);",
+  "    parent.postMessage({ reqId: reqId, ok: false, error: 'Timeout (' + ms + 'ms)', results: [] }, '*');",
+  "  }, ms);",
+  "  w.onmessage = function(wev) {",
+  "    if (done) return;",
+  "    done = true;",
+  "    clearTimeout(timer);",
+  "    w.terminate();",
+  "    URL.revokeObjectURL(url);",
+  "    var out = wev && wev.data ? wev.data : {};",
+  "    parent.postMessage({ reqId: reqId, ok: Boolean(out.ok), error: out.error || null, results: out.results || [] }, '*');",
+  "  };",
+  "  w.onerror = function(werr) {",
+  "    if (done) return;",
+  "    done = true;",
+  "    clearTimeout(timer);",
+  "    w.terminate();",
+  "    URL.revokeObjectURL(url);",
+  "    parent.postMessage({ reqId: reqId, ok: false, error: (werr && werr.message) || 'Worker error', results: [] }, '*');",
+  "  };",
+  "});",
+].join('\n');
+
+/**
+ * Genera el código fuente del Web Worker aislado de forma directa (compatible con CSP worker-src blob:).
+ */
+export function buildIsolatedWorkerSource(code, tests = []) {
+  const cleaned = String(code || '').replace(/^\s*export\s+/gm, '');
+  const safeTests = Array.isArray(tests) ? tests : [];
+  const entries = safeTests.map((t) => {
+    const idLit = JSON.stringify(String(t?.id ?? ''));
+    const nameLit = JSON.stringify(String(t?.name ?? ''));
+    if (t?.type === 'eval') {
+      const expr = String(t.input || 'undefined');
+      const expLit = JSON.stringify(t.expected);
+      return `{ id: ${idLit}, name: ${nameLit}, run: function() { const actual = (${expr}); return { ok: actual === ${expLit}, actual: actual }; } }`;
+    }
+    return `{ id: ${idLit}, name: ${nameLit}, run: function() { return { ok: true }; } }`;
+  }).join(',\n');
+
+  return `'use strict';
+(function() {
+  const results = [];
+  try {
+${cleaned}
+    const __specs = [${entries}];
+    for (let i = 0; i < __specs.length; i += 1) {
+      const sp = __specs[i];
+      try {
+        const r = sp.run();
+        results.push({ id: sp.id, name: sp.name, ok: Boolean(r && r.ok), error: null });
+      } catch (e) {
+        results.push({ id: sp.id, name: sp.name, ok: false, error: e && e.message ? e.message : 'Error' });
+      }
+    }
+    self.postMessage({ ok: true, results: results });
+  } catch (err) {
+    self.postMessage({ ok: false, error: err && err.message ? err.message : 'SyntaxError', results: results });
+  }
+})();`;
+}
 
 /**
  * Ejecuta código JS en un <iframe sandbox="allow-scripts"> (sin allow-same-origin) + Web Worker interno.
@@ -28,66 +115,8 @@ export function runInIsolatedIframe(code, tests = [], timeoutMs = SANDBOX_TIMEOU
     iframe.setAttribute('aria-hidden', 'true');
     iframe.style.display = 'none';
 
-    const workerSource = `
-      self.onmessage = function(ev) {
-        const { code, tests } = ev.data;
-        const results = [];
-        try {
-          const cleaned = String(code).replace(/^\\s*export\\s+/gm, '');
-          const fnBody = cleaned + "\\nreturn { " +
-            tests.map((t, i) => {
-              if (t.type === 'eval') {
-                return JSON.stringify(t.id) + ": (function(){ try { return { ok: (" + t.input + ") === " + JSON.stringify(t.expected) + ", actual: (" + t.input + ") }; } catch(e) { return { ok: false, error: e.message }; } })()";
-              }
-              return JSON.stringify(t.id) + ": { ok: true }";
-            }).join(",") + " };";
-          const out = (new Function(fnBody))();
-          for (const t of tests) {
-            if (t.type === 'eval') {
-              const r = out[t.id] || { ok: false };
-              results.push({ id: t.id, name: t.name, ok: Boolean(r.ok), error: r.error || null });
-            }
-          }
-          self.postMessage({ ok: true, results });
-        } catch (err) {
-          self.postMessage({ ok: false, error: err && err.message ? err.message : 'SyntaxError', results });
-        }
-      };
-    `;
-
-    const srcdoc = `<!doctype html><html><head><meta charset="utf-8"></head><body><script>
-      window.addEventListener('message', function(ev) {
-        if (!ev.data || ev.data.reqId !== ${JSON.stringify(reqId)}) return;
-        var blob = new Blob([${JSON.stringify(workerSource)}], { type: 'application/javascript' });
-        var url = URL.createObjectURL(blob);
-        var w = new Worker(url);
-        var done = false;
-        var timer = setTimeout(function() {
-          if (done) return;
-          done = true;
-          w.terminate();
-          URL.revokeObjectURL(url);
-          parent.postMessage({ reqId: ${JSON.stringify(reqId)}, ok: false, error: 'Timeout (${timeoutMs}ms)', results: [] }, '*');
-        }, ${Number(timeoutMs)});
-        w.onmessage = function(wev) {
-          if (done) return;
-          done = true;
-          clearTimeout(timer);
-          w.terminate();
-          URL.revokeObjectURL(url);
-          parent.postMessage({ reqId: ${JSON.stringify(reqId)}, ok: wev.data.ok, error: wev.data.error || null, results: wev.data.results || [] }, '*');
-        };
-        w.onerror = function(werr) {
-          if (done) return;
-          done = true;
-          clearTimeout(timer);
-          w.terminate();
-          URL.revokeObjectURL(url);
-          parent.postMessage({ reqId: ${JSON.stringify(reqId)}, ok: false, error: werr.message || 'Worker error', results: [] }, '*');
-        };
-        w.postMessage({ code: ev.data.code, tests: ev.data.tests });
-      });
-    </script></body></html>`;
+    const workerCode = buildIsolatedWorkerSource(code, tests);
+    const srcdoc = `<!doctype html><html><head><meta charset="utf-8"></head><body><script>${SANDBOX_IFRAME_SCRIPT}</script></body></html>`;
 
     let settled = false;
     const cleanup = () => {
@@ -119,13 +148,13 @@ export function runInIsolatedIframe(code, tests = [], timeoutMs = SANDBOX_TIMEOU
     window.addEventListener('message', onMessage);
     iframe.srcdoc = srcdoc;
     iframe.addEventListener('load', () => {
-      iframe.contentWindow?.postMessage({ reqId, code, tests }, '*');
+      iframe.contentWindow?.postMessage({ reqId, workerCode, timeoutMs: Number(timeoutMs) || SANDBOX_TIMEOUT_MS }, '*');
     });
     document.body.appendChild(iframe);
   });
 }
 
-/** Carga diferida de sql.js (WASM) con SRI verificado y caché en navegador (0 RAM VPS). */
+/** Carga diferida de sql.js (WASM) con SRI verificado, caché en navegador y limpieza ante fallo (0 RAM VPS). */
 export async function ensureSqlJs() {
   if (typeof window === 'undefined') return null;
   const wasmBase = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/';
@@ -151,12 +180,15 @@ export async function ensureSqlJs() {
       });
       if (!window.initSqlJs) throw new Error('sql.js unavailable');
       return window.initSqlJs({ locateFile: (f) => `${wasmBase}${f}` });
-    })();
+    })().catch((err) => {
+      sqlPromise = null;
+      throw err;
+    });
   }
   return sqlPromise;
 }
 
-/** Lazy-load de Pyodide (WASM) con cacheo en Cache API para Python. */
+/** Lazy-load de Pyodide (WASM) con cacheo en Cache API y limpieza ante fallo de red. */
 export async function ensurePyodide() {
   if (typeof window === 'undefined') return null;
   if (window.loadPyodide) return window.loadPyodide({ indexURL: PYODIDE_INDEX });
@@ -180,8 +212,12 @@ export async function ensurePyodide() {
         s.onerror = () => reject(new Error('Failed to load Pyodide'));
         document.head.appendChild(s);
       });
+      if (!window.loadPyodide) throw new Error('Pyodide unavailable');
       return window.loadPyodide({ indexURL: PYODIDE_INDEX });
-    })();
+    })().catch((err) => {
+      pyodidePromise = null;
+      throw err;
+    });
   }
   return pyodidePromise;
 }
@@ -432,12 +468,12 @@ function withTimeout(promise, timeoutMs) {
   });
 }
 
-/** Ejecuta pruebas `sql_eval` en cliente con sql.js (WASM) bajo demanda y timeout estricto. */
-export async function runSqlEvalTests(code, tests = [], timeoutMs = SANDBOX_TIMEOUT_MS, loader = ensureSqlJs) {
+/** Ejecuta pruebas `sql_eval` en cliente con sql.js (WASM) bajo demanda y timeouts separados (carga WASM vs ejecución). */
+export async function runSqlEvalTests(code, tests = [], timeoutMs = SANDBOX_TIMEOUT_MS, loader = ensureSqlJs, loadTimeoutMs = WASM_LOAD_TIMEOUT_MS) {
   const results = [];
   let runtimeError = null;
   try {
-    const SQL = await withTimeout(loader(), timeoutMs);
+    const SQL = await withTimeout(loader(), loadTimeoutMs);
     if (!SQL || typeof SQL.Database !== 'function') {
       return { ok: false, error: 'sql.js unavailable', results };
     }
@@ -445,7 +481,7 @@ export async function runSqlEvalTests(code, tests = [], timeoutMs = SANDBOX_TIME
       const db = new SQL.Database();
       try {
         if (t.setup_sql) db.run(String(t.setup_sql));
-        const res = db.exec(String(code || ''));
+        const res = await withTimeout(Promise.resolve().then(() => db.exec(String(code || ''))), timeoutMs);
         const rows = res?.[0]?.values || [];
         const ok = Array.isArray(t.expected)
           ? JSON.stringify(rows) === JSON.stringify(t.expected)
@@ -464,12 +500,12 @@ export async function runSqlEvalTests(code, tests = [], timeoutMs = SANDBOX_TIME
   return { ok: !runtimeError && results.every((r) => r.ok), error: runtimeError, results };
 }
 
-/** Ejecuta pruebas `py_eval` en cliente con Pyodide (WASM) bajo demanda y timeout estricto. */
-export async function runPythonEvalTests(code, tests = [], timeoutMs = SANDBOX_TIMEOUT_MS, loader = ensurePyodide) {
+/** Ejecuta pruebas `py_eval` en cliente con Pyodide (WASM) bajo demanda y timeouts separados (carga WASM vs ejecución). */
+export async function runPythonEvalTests(code, tests = [], timeoutMs = SANDBOX_TIMEOUT_MS, loader = ensurePyodide, loadTimeoutMs = WASM_LOAD_TIMEOUT_MS) {
   const results = [];
   let runtimeError = null;
   try {
-    const pyodide = await withTimeout(loader(), timeoutMs);
+    const pyodide = await withTimeout(loader(), loadTimeoutMs);
     if (!pyodide || typeof pyodide.runPythonAsync !== 'function') {
       return { ok: false, error: 'Pyodide unavailable', results };
     }

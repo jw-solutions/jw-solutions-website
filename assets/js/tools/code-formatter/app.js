@@ -77,14 +77,18 @@ const detailSel = $('cf-detail');
 const commentsToggle = $('cf-comments');
 const formatBtn = $('cf-format');
 
-// Selectores poblados desde la configuración
-docLangSel.innerHTML = Object.entries(DOC_LANGUAGES).map(([k, v]) => `<option value="${k}">${v.label}</option>`).join('');
+// Selectores poblados desde la configuración (DOM seguro: createElement + textContent, cero innerHTML)
+docLangSel.replaceChildren(
+  ...Object.entries(DOC_LANGUAGES).map(([k, v]) => Object.assign(document.createElement('option'), { value: k, textContent: v.label })),
+);
 docLangSel.value = DEFAULT_DOC_LANGUAGE;
 const fillDetail = () => {
   const keep = detailSel.value;
-  detailSel.innerHTML = ['basic', 'extended']
-    .filter((k) => k !== 'extended' || isFeatureOn('extended_detail'))
-    .map((k) => `<option value="${k}">${t(k)}</option>`).join('');
+  detailSel.replaceChildren(
+    ...['basic', 'extended']
+      .filter((k) => k !== 'extended' || isFeatureOn('extended_detail'))
+      .map((k) => Object.assign(document.createElement('option'), { value: k, textContent: t(k) })),
+  );
   if (keep) detailSel.value = keep;
 };
 fillDetail();

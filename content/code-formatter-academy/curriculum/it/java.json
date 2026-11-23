@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "JAVA 1 · Fondamenti e formattazione pulita",
       "estimatedMinutes": 5,
-      "concept_capsule": "Applica indentazione coerente, nomi chiari e documentazione standard per rendere il codice subito verificabile.",
+      "concept_capsule": "Le classi di utilità in Java 21 si dichiarano final con costruttore privato, rientro di 4 spazi, Javadoc (@param/@return) e Math.addExact() contro l’overflow.",
       "starter_code": "public class Calc{public static int add(int a,int b){return a+b;}}",
       "reference_solution": "/**\n * Arithmetic helper utilities.\n */\npublic final class Calc {\n    private Calc() {}\n\n    /**\n     * Adds two integers.\n     *\n     * @param a first operand\n     * @param b second operand\n     * @return sum of a and b\n     */\n    public static int add(int a, int b) {\n        return Math.addExact(a, b);\n    }\n}\n",
       "tests": [
@@ -73,7 +73,35 @@
           "expected_pattern": "@param",
           "solution_hint": "Documenta i parametri con `@param` in Javadoc."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "public final class + private Calc()",
+          "role": "Impedisce ereditarietà e istanziazione accidentale di classi statiche.",
+          "example_inline": "private Calc() {}"
+        },
+        {
+          "term": "Math.addExact(a, b)",
+          "role": "Solleva ArithmeticException in caso di overflow intero invece di andare in negativo.",
+          "example_inline": "return Math.addExact(a, b);"
+        },
+        {
+          "term": "Javadoc @param / @return",
+          "role": "Documenta parametri e valore restituito secondo lo standard Javadoc.",
+          "example_inline": "* @return sum of a and b"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "4 spazi per i membri della classe e 8 spazi nel corpo del metodo.",
+        "line_breaks": "Costruttore privato in alto, riga vuota e Javadoc sopra il metodo statico.",
+        "punctuation": "Graffa di apertura sulla stessa riga e punto e virgola finale.",
+        "documentation_standard": "Javadoc /** ... */ su classe e metodo con @param e @return."
+      },
+      "analogous_example": {
+        "title": "Classe di moltiplicazione sicura con Math.multiplyExact",
+        "code": "/**\n * Numeric multiplication utilities.\n */\npublic final class Multiplier {\n    private Multiplier() {}\n\n    /**\n     * Multiplies two integers with overflow protection.\n     *\n     * @param x first factor\n     * @param y second factor\n     * @return exact product of x and y\n     */\n    public static int multiply(int x, int y) {\n        return Math.multiplyExact(x, y);\n    }\n}\n",
+        "why_it_works": "Dichiara la classe final, costruttore privato, 4 spazi e protezione anti-overflow."
+      }
     },
     {
       "id": "java-2",
@@ -81,7 +109,7 @@
       "tier": "free",
       "title": "JAVA 2 · Casi limite e documentazione",
       "estimatedMinutes": 8,
-      "concept_capsule": "Proteggi input nulli o vuoti prima dell’elaborazione e documenta i contratti secondo lo standard ufficiale.",
+      "concept_capsule": "I record di Java 21 eliminano il boilerplate delle classi immutabili e validano i parametri nel costruttore compatto con Objects.requireNonNull().",
       "starter_code": "public class User{private final String email;public User(String email){this.email=email;}public String email(){return email;}}",
       "reference_solution": "import java.util.Objects;\n\n/**\n * Immutable user value record.\n *\n * @param email validated user email\n */\npublic record User(String email) {\n    public User {\n        Objects.requireNonNull(email, \"email must not be null\");\n    }\n}\n",
       "tests": [
@@ -144,7 +172,35 @@
           "expected_pattern": "/**",
           "solution_hint": "Aggiungi Javadoc sopra il record pubblico."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "public record User(String email)",
+          "role": "Genera campi final, costruttore, accessor email(), equals, hashCode e toString.",
+          "example_inline": "public record User(String email) {"
+        },
+        {
+          "term": "public User { ... } (Costruttore compatto)",
+          "role": "Valida i componenti del record senza ripetere i parametri.",
+          "example_inline": "public User {"
+        },
+        {
+          "term": "Objects.requireNonNull(email, ...)",
+          "role": "Fallisce subito con NullPointerException descrittiva se il valore è null.",
+          "example_inline": "Objects.requireNonNull(email, \"email must not be null\");"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "4 spazi per il costruttore compatto e 8 spazi per Objects.requireNonNull.",
+        "line_breaks": "import java.util.Objects in alto, riga vuota, Javadoc e dichiarazione del record.",
+        "punctuation": "Nessuna parentesi nell’intestazione del costruttore compatto public User { ... }.",
+        "documentation_standard": "Javadoc /** ... */ sopra il record con @param per ogni componente."
+      },
+      "analogous_example": {
+        "title": "Record immutabile Sku con validazione nel costruttore compatto",
+        "code": "import java.util.Objects;\n\n/**\n * Immutable invoice SKU record.\n *\n * @param code validated SKU identifier\n */\npublic record Sku(String code) {\n    public Sku {\n        Objects.requireNonNull(code, \"code must not be null\");\n    }\n}\n",
+        "why_it_works": "Sostituisce la classe verbosa con un record e valida null tramite Objects.requireNonNull."
+      }
     },
     {
       "id": "java-3",

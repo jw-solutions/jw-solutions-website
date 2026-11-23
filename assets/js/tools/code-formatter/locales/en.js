@@ -372,4 +372,8 @@ export default {
   acadOwnCompareReady: "Before vs. After comparison ready below with style suggestions.",
   acadOwnCompareTips: "Suggested improvements",
   acadOwnFormatError: "Could not format that snippet; check syntax before comparing.",
+  acadConvertCodeBtn: "Turn my code into a challenge",
+  acadCustomChallengeTitle: "Custom Challenge ({lang})",
+  acadCustomChallengeCapsule: "Refactor and document your own snippet applying the language rules.",
+  acadCustomChallengeTestName: "Non-empty code",
 };

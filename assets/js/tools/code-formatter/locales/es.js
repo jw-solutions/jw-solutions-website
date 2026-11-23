@@ -373,4 +373,8 @@ export default {
   acadOwnCompareReady: "Comparativa Antes vs. Después lista debajo con sugerencias de estilo.",
   acadOwnCompareTips: "Mejoras sugeridas",
   acadOwnFormatError: "No se pudo formatear ese fragmento; revisa la sintaxis antes de comparar.",
+  acadConvertCodeBtn: "Convertir mi código en reto",
+  acadCustomChallengeTitle: "Reto personalizado ({lang})",
+  acadCustomChallengeCapsule: "Refactoriza y documenta tu propio fragmento aplicando las reglas del lenguaje.",
+  acadCustomChallengeTestName: "Código no vacío",
 };

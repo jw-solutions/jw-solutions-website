@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "YAML 1 · Fondamenti e formattazione pulita",
       "estimatedMinutes": 5,
-      "concept_capsule": "Applica indentazione coerente, nomi chiari e documentazione standard per rendere il codice subito verificabile.",
+      "concept_capsule": "La specifica YAML 1.2 vieta i caratteri di tabulazione (\\t) per il rientro: le chiavi sorelle devono allinearsi con spazi ed essere documentate con #.",
       "starter_code": "service: api\n\tport: 8000\n\tenv: prod",
       "reference_solution": "# Service runtime configuration\nservice: api\nport: 8000\nenv: prod\n",
       "tests": [
@@ -73,7 +73,35 @@
           "expected_pattern": "# ",
           "solution_hint": "Aggiungi un commento `#` in alto che spieghi il file."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "# Commento di intestazione",
+          "role": "Spiega lo scopo del file di configurazione nella prima riga.",
+          "example_inline": "# Service runtime configuration"
+        },
+        {
+          "term": "chiave: valore",
+          "role": "Mappatura scalare YAML con spazio obbligatorio dopo i due punti (: ).",
+          "example_inline": "port: 8000"
+        },
+        {
+          "term": "Zero tabulazioni (\\t)",
+          "role": "I parser YAML rifiutano i tab; le chiavi radice si allineano a colonna 0.",
+          "example_inline": "service: api"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "0 spazi per le chiavi radice sorelle; vietati i tab (\\t).",
+        "line_breaks": "Una coppia chiave: valore per riga.",
+        "punctuation": "Due punti seguiti da uno spazio (: ).",
+        "documentation_standard": "Commento # descrittivo sulla prima riga."
+      },
+      "analogous_example": {
+        "title": "Configurazione YAML pulita per un servizio cache Redis",
+        "code": "# Cache service runtime configuration\ncache: redis\nport: 6379\nmode: cluster\n",
+        "why_it_works": "Inizia con un commento #, allinea le chiavi senza tab e separa ogni chiave: valore."
+      }
     },
     {
       "id": "yaml-2",
@@ -81,7 +109,7 @@
       "tier": "free",
       "title": "YAML 2 · Casi limite e documentazione",
       "estimatedMinutes": 8,
-      "concept_capsule": "Proteggi input nulli o vuoti prima dell’elaborazione e documenta i contratti secondo lo standard ufficiale.",
+      "concept_capsule": "Nei workflow GitHub Actions ogni livello gerarchico usa multipli rigorosi di 2 spazi (2, 4, 6) e le liste di branch si scrivono in blocco con trattini (- item).",
       "starter_code": "name: Build\non:\n  push:\n   branches: [main]\njobs:\n  lint:\n    runs-on: ubuntu-latest",
       "reference_solution": "# CI workflow for main branch validation\nname: Build\non:\n  push:\n    branches:\n      - main\njobs:\n  lint:\n    runs-on: ubuntu-latest\n",
       "tests": [
@@ -144,7 +172,35 @@
           "expected_pattern": "# ",
           "solution_hint": "Documenta lo scopo del job CI con un commento."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "on -> push -> branches",
+          "role": "Gerarchia dei trigger in cui ogni sottochiave avanza esattamente di 2 spazi.",
+          "example_inline": "    branches:"
+        },
+        {
+          "term": "- main (Sequenza in blocco)",
+          "role": "Formatta gli elementi di lista su righe dedicate per diff Git leggibili.",
+          "example_inline": "      - main"
+        },
+        {
+          "term": "jobs -> lint -> runs-on",
+          "role": "Definisce il runner del job con rientri di 2 e 4 spazi.",
+          "example_inline": "    runs-on: ubuntu-latest"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Multipli esatti di 2 spazi per livello (0 radice, 2 push/lint, 4 branches/runs-on, 6 - main).",
+        "line_breaks": "Espandere le liste inline [main] in sequenze in blocco.",
+        "punctuation": "Trattino seguito da uno spazio (- main) per ogni elemento.",
+        "documentation_standard": "Commento # nella prima riga che descrive lo scopo del workflow CI."
+      },
+      "analogous_example": {
+        "title": "Workflow YAML di sicurezza notturna con sequenze in blocco",
+        "code": "# Nightly security scan workflow\nname: Security\non:\n  schedule:\n    branches:\n      - develop\njobs:\n  audit:\n    runs-on: ubuntu-latest\n",
+        "why_it_works": "Applica passi di 2 spazi, sequenza - develop e commento # iniziale."
+      }
     },
     {
       "id": "yaml-3",

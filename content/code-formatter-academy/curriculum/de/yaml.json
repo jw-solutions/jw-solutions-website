@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "YAML 1 · Grundlagen & saubere Formatierung",
       "estimatedMinutes": 5,
-      "concept_capsule": "Nutze konsistente Einrückung, klare Namen und Standarddokumentation für sofort prüfbaren Code.",
+      "concept_capsule": "Die YAML-1.2-Spezifikation verbietet Tabulatoren (\\t) zur Einrückung: Geschwisterschlüssel müssen mit Leerzeichen ausgerichtet und per #-Kommentar dokumentiert werden.",
       "starter_code": "service: api\n\tport: 8000\n\tenv: prod",
       "reference_solution": "# Service runtime configuration\nservice: api\nport: 8000\nenv: prod\n",
       "tests": [
@@ -73,7 +73,35 @@
           "expected_pattern": "# ",
           "solution_hint": "Füge oben einen `#`-Kommentar zum Zweck der Datei hinzu."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "# Kopfkommentar",
+          "role": "Beschreibt den Zweck der Konfigurationsdatei in der ersten Zeile.",
+          "example_inline": "# Service runtime configuration"
+        },
+        {
+          "term": "schlüssel: wert",
+          "role": "YAML-Mapping mit obligatorischem Leerzeichen nach dem Doppelpunkt (: ).",
+          "example_inline": "port: 8000"
+        },
+        {
+          "term": "Keine Tabs (\\t)",
+          "role": "YAML-Parser lehnen Tab-Einrückungen ab; Root-Schlüssel stehen in Spalte 0.",
+          "example_inline": "service: api"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "0 Leerzeichen für Root-Geschwisterschlüssel; keine Tabulatoren (\\t).",
+        "line_breaks": "Ein schlüssel: wert-Paar pro Zeile.",
+        "punctuation": "Doppelpunkt gefolgt von einem Leerzeichen (: ).",
+        "documentation_standard": "Beschreibender #-Kommentar in Zeile 1."
+      },
+      "analogous_example": {
+        "title": "Saubere YAML-Konfiguration für einen Redis-Cache-Dienst",
+        "code": "# Cache service runtime configuration\ncache: redis\nport: 6379\nmode: cluster\n",
+        "why_it_works": "Beginnt mit #-Kommentar, verzichtet auf Tabs und formatiert schlüssel: wert sauber."
+      }
     },
     {
       "id": "yaml-2",
@@ -81,7 +109,7 @@
       "tier": "free",
       "title": "YAML 2 · Grenzfälle & Dokumentation",
       "estimatedMinutes": 8,
-      "concept_capsule": "Sichere leere oder Null-Eingaben vor der Verarbeitung ab und dokumentiere Verträge nach Sprachstandard.",
+      "concept_capsule": "In GitHub-Actions-Workflows wird jede Hierarchieebene strikt in 2-Leerzeichen-Schritten (2, 4, 6) eingerückt und Branch-Listen als Blocksequenz (- item) notiert.",
       "starter_code": "name: Build\non:\n  push:\n   branches: [main]\njobs:\n  lint:\n    runs-on: ubuntu-latest",
       "reference_solution": "# CI workflow for main branch validation\nname: Build\non:\n  push:\n    branches:\n      - main\njobs:\n  lint:\n    runs-on: ubuntu-latest\n",
       "tests": [
@@ -144,7 +172,35 @@
           "expected_pattern": "# ",
           "solution_hint": "Dokumentiere den Zweck des CI-Jobs mit einem Kommentar."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "on -> push -> branches",
+          "role": "Trigger-Hierarchie, bei der jeder Unterschlüssel exakt 2 Leerzeichen weiter einrückt.",
+          "example_inline": "    branches:"
+        },
+        {
+          "term": "- main (Blocksequenz)",
+          "role": "Schreibt Listenelemente in eigene Zeilen mit Bindestrich für saubere Git-Diffs.",
+          "example_inline": "      - main"
+        },
+        {
+          "term": "jobs -> lint -> runs-on",
+          "role": "Definiert die Runner-Umgebung in 2- und 4-Leerzeichen-Stufen.",
+          "example_inline": "    runs-on: ubuntu-latest"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Exakte Vielfache von 2 Leerzeichen pro Ebene (0 Root, 2 push/lint, 4 branches/runs-on, 6 - main).",
+        "line_breaks": "Inline-Listen [main] in mehrzeilige Blocksequenzen auflösen.",
+        "punctuation": "Bindestrich gefolgt von einem Leerzeichen (- main) je Listeneintrag.",
+        "documentation_standard": "Beschreibender #-Kommentar in der ersten Zeile."
+      },
+      "analogous_example": {
+        "title": "Nächtlicher Security-Workflow in YAML mit Blocksequenzen",
+        "code": "# Nightly security scan workflow\nname: Security\non:\n  schedule:\n    branches:\n      - develop\njobs:\n  audit:\n    runs-on: ubuntu-latest\n",
+        "why_it_works": "Nutzt strikte 2-Leerzeichen-Schritte, Blocksequenz - develop und einen #-Kopfkommentar."
+      }
     },
     {
       "id": "yaml-3",

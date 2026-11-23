@@ -66,7 +66,7 @@
 | 👥 `content/code-formatter-tips/distribution/*` (11) | Distribución | Kits de syndicación | `generate-distribution-kit.js` | Dev.to/Hashnode/social |
 | 👥 `content/code-formatter-tips/audits/*` (2) | Docs | Auditorías E2E live | — | Referencia |
 | `content/code-formatter-academy/{achievements,daily-challenges,paths}.json` | Contenido | Logros, retos diarios, rutas | — | `academy-*.js` |
-| 👥 `content/code-formatter-academy/curriculum/<locale>/<lang>.json` (70) | Contenido | Currículo 7 locales × 10 lenguajes | `validate-academy-curriculum.js` | `academy-engine.js`, tests |
+| 👥 `content/code-formatter-academy/curriculum/<locale>/<lang>.json` (70) | Contenido | Currículo v2 7 locales × 10 lenguajes (140 niveles free con glosario, mecánica y ejemplo análogo) | `validate-academy-curriculum.js` | `academy-engine.js`, `academy-ui.js`, tests |
 
 ### 2.3 Front-end Code Formatter (`assets/`, `tools/`, `config/`)
 | Archivo | Capa | Razón de ser | Depende de | Impacta a |
@@ -82,8 +82,8 @@
 | `assets/js/.../app.js`, `ui-controller.js`, `editor.js`, `actions.js` | Front | Orquestación UI y editor | `formatters.js`, `detect.js` | Núcleo |
 | `…/formatters.js`, `detect.js`, `diagnostics.js`, `diff-view.js`, `history.js`, `share.js`, `article-share.js`, `loaders.js` | Front | Formateo, detección, diagnóstico, diff, historial, compartir snippets, barra social y loaders por nicho (A/B/C) | `i18n.js` | Núcleo, Academia, tips y `/fix/` |
 | `…/doc-generator.js`, `json-documentation-adapter.js`, `structured-doc-ui.js` | Front | Generación de documentación | `documentation-languages.js` | UI doc |
-| `…/academy-{engine,pro,progress,sandbox,ui}.js` | Front | Modo Academia (vista única `paths→tree→editor→results`) | currículo JSON, `i18n.js` | Tests academia |
-| `…/auth-modal.js`, `pro-modal.js`, `pro-messages.js`, `newsletter.js`, `services/{api,session-monitor}.js` | Front | Auth, Pro, newsletter, API y sesión | `backend/app` | Flujo comercial |
+| `…/academy-{engine,pro,progress,sandbox,ui}.js` | Front | Modo Academia (vista única `paths→tree→editor→results`, sandbox CSP + WASM bajo demanda, niveles Pro y sync) | currículo JSON, `i18n.js`, `services/api.js` | Tests academia |
+| `…/auth-modal.js`, `pro-modal.js`, `pro-messages.js`, `newsletter.js`, `services/{api,session-monitor}.js` | Front | Auth, Pro, newsletter, API (`getJson`/`postJson` + CSRF) y sesión | `backend/app` | Flujo comercial y Academia Pro |
 | `…/cert-page.js`, `fix-page.js`, `tips-page.js`, `tips-carousel.js`, `embed.js` | Front | Páginas auxiliares | `build_public.py` | Landings |
 | `…/i18n.js`, `locales/*.js` (7), `locales-pro/*.js` (7) | Front | Internacionalización de/en/es/fr/it/pt-BR/pt-PT | — | Todos los textos (cambiar claves ⇒ 7 locales) |
 | 👥 `assets/images/{badges,og}/*` (78), `assets/logo-jw.png`, `assets/og-image.jpg` | Assets | Imágenes y OG | `generate-og-images.js`, `generate-blog-og.js` | SEO/social |

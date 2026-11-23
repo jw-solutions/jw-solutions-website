@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "TYPESCRIPT 1 · Grundlagen & saubere Formatierung",
       "estimatedMinutes": 5,
-      "concept_capsule": "Nutze konsistente Einrückung, klare Namen und Standarddokumentation für sofort prüfbaren Code.",
+      "concept_capsule": "Im strikten TypeScript wird any durch explizite Typen (number, : string) ersetzt, mit Number.isFinite() gegen NaN/Infinity abgesichert und per TSDoc dokumentiert.",
       "starter_code": "function formatPrice(v:any){return \"$\"+v.toFixed(2)}",
       "reference_solution": "/**\n * Format a numeric price into USD currency string.\n * @param amount - Monetary value.\n * @returns Formatted USD string.\n */\nexport function formatPrice(amount: number): string {\n  if (!Number.isFinite(amount)) return \"$0.00\";\n  return `$${amount.toFixed(2)}`;\n}\n",
       "tests": [
@@ -73,7 +73,35 @@
           "expected_pattern": ": number",
           "solution_hint": "Füge eine explizite Rückgabetyp-Annotation hinzu."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "amount: number): string",
+          "role": "Ersetzt any durch strikte Parameter- und Rückgabetypen zur Compile-Zeit.",
+          "example_inline": "export function formatPrice(amount: number): string"
+        },
+        {
+          "term": "Number.isFinite(amount)",
+          "role": "Fängt NaN und ±Infinity ab, bevor toFixed() aufgerufen wird.",
+          "example_inline": "if (!Number.isFinite(amount)) return \"$0.00\";"
+        },
+        {
+          "term": "TSDoc /** @param / @returns */",
+          "role": "Dokumentiert Parameter im TSDoc-Standard.",
+          "example_inline": "* @param amount - Monetary value."
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "2 Leerzeichen pro Ebene im Funktionskörper.",
+        "line_breaks": "Früher Number.isFinite-Guard vor der Rückgabe.",
+        "punctuation": "Typannotationen (: number): string und abschließende Semikolons.",
+        "documentation_standard": "TSDoc-Block /** ... */ mit @param und @returns."
+      },
+      "analogous_example": {
+        "title": "Sichere Prozentformatierung in striktem TypeScript",
+        "code": "/**\n * Format a ratio into a percentage label.\n * @param ratio - Decimal ratio value.\n * @returns Formatted percentage string.\n */\nexport function formatPercent(ratio: number): string {\n  if (!Number.isFinite(ratio)) return \"0.0%\";\n  return `${(ratio * 100).toFixed(1)}%`;\n}\n",
+        "why_it_works": "Vermeidet any, deklariert : string, prüft Number.isFinite() und nutzt TSDoc."
+      }
     },
     {
       "id": "typescript-2",
@@ -81,7 +109,7 @@
       "tier": "free",
       "title": "TYPESCRIPT 2 · Grenzfälle & Dokumentation",
       "estimatedMinutes": 8,
-      "concept_capsule": "Sichere leere oder Null-Eingaben vor der Verarbeitung ab und dokumentiere Verträge nach Sprachstandard.",
+      "concept_capsule": "Nimm externe Payloads als unknown (nie any) entgegen und verfeinere sie per Type Predicate (value is User) nach Prüfung von typeof, !== null und in.",
       "starter_code": "function isUser(x:any){return x&&typeof x.email==\"string\"}",
       "reference_solution": "export interface User {\n  email: string;\n}\n\n/**\n * Type guard verifying an unknown payload is a User.\n */\nexport function isUser(value: unknown): value is User {\n  return (\n    typeof value === \"object\" &&\n    value !== null &&\n    \"email\" in value &&\n    typeof (value as { email: unknown }).email === \"string\"\n  );\n}\n",
       "tests": [
@@ -144,7 +172,35 @@
           "expected_pattern": "/**",
           "solution_hint": "Füge einen TSDoc-Kommentar über exportierten Typen hinzu."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "value: unknown",
+          "role": "Typsicherer Top-Typ, der Laufzeitprüfungen vor Eigenschaftszugriffen erzwingt.",
+          "example_inline": "export function isUser(value: unknown): value is User"
+        },
+        {
+          "term": "value is User",
+          "role": "Type Predicate, das dem Compiler bei true das Interface User garantiert.",
+          "example_inline": "): value is User {"
+        },
+        {
+          "term": "value !== null && \"email\" in value",
+          "role": "Schließt null aus, bevor der Schlüssel mit in geprüft wird.",
+          "example_inline": "typeof value === \"object\" && value !== null && \"email\" in value"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "2 Leerzeichen für Interface und Funktion, 4 Leerzeichen für mehrzeilige &&-Bedingungen.",
+        "line_breaks": "Jede &&-Bedingung in einer eigenen Zeile innerhalb von return (...).",
+        "punctuation": "Semikolons im Interface und nach dem return-Ausdruck.",
+        "documentation_standard": "Exportiertes Interface oben und TSDoc /** ... */ über dem Type Guard."
+      },
+      "analogous_example": {
+        "title": "Type Guard zur Prüfung eines unbekannten ApiToken-Payloads",
+        "code": "export interface ApiToken {\n  token: string;\n}\n\n/**\n * Type guard verifying an unknown value is an ApiToken.\n */\nexport function isApiToken(payload: unknown): payload is ApiToken {\n  return (\n    typeof payload === \"object\" &&\n    payload !== null &&\n    \"token\" in payload &&\n    typeof (payload as { token: unknown }).token === \"string\"\n  );\n}\n",
+        "why_it_works": "Nutzt unknown, schließt null aus, prüft das Feld per in und gibt payload is ApiToken zurück."
+      }
     },
     {
       "id": "typescript-3",

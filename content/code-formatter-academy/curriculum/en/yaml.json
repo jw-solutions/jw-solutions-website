@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "YAML 1 · Clean Syntax & Formatting Basics",
       "estimatedMinutes": 5,
-      "concept_capsule": "Apply consistent indentation, clear naming, and official documentation so any team can read and audit the code in seconds.",
+      "concept_capsule": "The YAML 1.2 specification forbids tab characters (\\t) for indentation: sibling keys in the same mapping must align cleanly with spaces and start with a # header comment.",
       "starter_code": "service: api\n\tport: 8000\n\tenv: prod",
       "reference_solution": "# Service runtime configuration\nservice: api\nport: 8000\nenv: prod\n",
       "tests": [
@@ -73,7 +73,35 @@
           "expected_pattern": "# ",
           "solution_hint": "Add a top-level `#` comment explaining the file."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "# Header comment",
+          "role": "Documents the purpose of the configuration manifest at the top of the file.",
+          "example_inline": "# Service runtime configuration"
+        },
+        {
+          "term": "key: value",
+          "role": "YAML scalar mapping requiring a space after the colon (: ).",
+          "example_inline": "port: 8000"
+        },
+        {
+          "term": "Zero tabs (\\t)",
+          "role": "YAML parsers reject tab indentation; root-level sibling keys align at column 0.",
+          "example_inline": "service: api"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "0 spaces for root-level sibling keys; tab characters (\\t) are strictly forbidden.",
+        "line_breaks": "One key: value mapping per line.",
+        "punctuation": "Colon followed by a single space (: ) separating key and value.",
+        "documentation_standard": "Descriptive # comment on the first line of the file."
+      },
+      "analogous_example": {
+        "title": "Clean YAML configuration for a Redis cache service",
+        "code": "# Cache service runtime configuration\ncache: redis\nport: 6379\nmode: cluster\n",
+        "why_it_works": "Starts with a # comment, aligns root keys without tabs, and formats each key: value cleanly."
+      }
     },
     {
       "id": "yaml-2",
@@ -81,7 +109,7 @@
       "tier": "free",
       "title": "YAML 2 · Edge Cases & Documentation",
       "estimatedMinutes": 8,
-      "concept_capsule": "Guard null or empty inputs before processing and document input/output contracts using the language standard.",
+      "concept_capsule": "In GitHub Actions workflows every nesting level uses strict 2-space multiples (2, 4, 6) and branch lists are formatted as block sequences (- item) for clean Git diffs.",
       "starter_code": "name: Build\non:\n  push:\n   branches: [main]\njobs:\n  lint:\n    runs-on: ubuntu-latest",
       "reference_solution": "# CI workflow for main branch validation\nname: Build\non:\n  push:\n    branches:\n      - main\njobs:\n  lint:\n    runs-on: ubuntu-latest\n",
       "tests": [
@@ -144,7 +172,35 @@
           "expected_pattern": "# ",
           "solution_hint": "Document the CI job purpose with a comment."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "on -> push -> branches",
+          "role": "Workflow trigger hierarchy where each child key indents by exactly 2 spaces.",
+          "example_inline": "    branches:"
+        },
+        {
+          "term": "- main (Block sequence)",
+          "role": "Formats list items on dedicated lines with a dash and space for readable diffs.",
+          "example_inline": "      - main"
+        },
+        {
+          "term": "jobs -> lint -> runs-on",
+          "role": "Specifies the job runner environment using 2- and 4-space indentation steps.",
+          "example_inline": "    runs-on: ubuntu-latest"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Exact 2-space multiples per nesting depth (0 root, 2 push/lint, 4 branches/runs-on, 6 - main).",
+        "line_breaks": "Expand inline arrays [main] into multi-line block sequences under their parent key.",
+        "punctuation": "Dash followed by a single space (- main) for each sequence item.",
+        "documentation_standard": "Top-line # comment describing the CI workflow purpose."
+      },
+      "analogous_example": {
+        "title": "Nightly security workflow YAML with 2-space block sequences",
+        "code": "# Nightly security scan workflow\nname: Security\non:\n  schedule:\n    branches:\n      - develop\njobs:\n  audit:\n    runs-on: ubuntu-latest\n",
+        "why_it_works": "Uses strict 2-space steps, block sequence - develop, and a descriptive # header comment."
+      }
     },
     {
       "id": "yaml-3",

@@ -21,7 +21,15 @@ async function send(path, body, token) {
   return fetch(apiUrl(path), { method: 'POST', credentials: 'include', headers, body: JSON.stringify(body) });
 }
 
-/** POST JSON. Devuelve { status, ok, data } sin lanzar por códigos HTTP; lanza solo por fallo de red. */
+/** GET JSON. Devuelve { status, ok, data, json } sin lanzar por códigos HTTP; lanza solo por fallo de red. */
+export async function getJson(path) {
+  const res = await fetch(apiUrl(path), { method: 'GET', credentials: 'include', cache: 'no-store' });
+  let data = null;
+  try { data = await res.json(); } catch { /* respuesta sin cuerpo */ }
+  return { status: res.status, ok: res.ok, data, json: async () => data };
+}
+
+/** POST JSON. Devuelve { status, ok, data, json } sin lanzar por códigos HTTP; lanza solo por fallo de red. */
 export async function postJson(path, body) {
   const isAuth = path.startsWith('/api/auth/') && !path.endsWith('/logout');
   let res = await send(path, body, isAuth ? null : (csrfToken || await fetchCsrf()));
@@ -32,5 +40,5 @@ export async function postJson(path, body) {
   let data = null;
   try { data = await res.json(); } catch { /* respuesta sin cuerpo */ }
   if (isAuth) csrfToken = res.ok ? (data?.csrf_token || null) : null;
-  return { status: res.status, ok: res.ok, data };
+  return { status: res.status, ok: res.ok, data, json: async () => data };
 }
