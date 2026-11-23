@@ -507,6 +507,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
 
   function restoreDiffPanelHome() {
     if (typeof closeDiffPanel === 'function') closeDiffPanel();
+    if (diffSlot) diffSlot.hidden = true;
     const diffPanel = document.getElementById('cf-diff-panel');
     if (diffPanel) {
       diffPanel.hidden = true;
@@ -588,6 +589,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     } else {
       clearIdleNudge();
       if (typeof closeDiffPanel === 'function') closeDiffPanel();
+      if (diffSlot) diffSlot.hidden = true;
       if (view === 'paths' && isOwnCodeActive) exitOwnCodeMode();
     }
     if (!isPaths && scroll && typeof workspace.scrollIntoView === 'function') {
@@ -1326,7 +1328,11 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
           : `${t('acadOwnCompareTips')}: ${styleRes.violations.join(' · ')}`;
       }
       const diffPanel = document.getElementById('cf-diff-panel');
-      if (diffPanel && diffSlot && diffPanel.parentElement !== diffSlot) diffSlot.append(diffPanel);
+      if (diffSlot) diffSlot.hidden = false;
+      if (diffPanel) {
+        if (diffSlot && diffPanel.parentElement !== diffSlot) diffSlot.append(diffPanel);
+        diffPanel.hidden = false;
+      }
       if (typeof openDiffWith === 'function') {
         openDiffWith({ original: before, result: after, lang: tech });
       }
@@ -1430,13 +1436,33 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   });
 
   diffBtn?.addEventListener('click', () => {
-    if (!activeLevel?.reference_solution || !openDiffWith) return;
-    // El panel de diff vive en el slot del Formateador (oculto en Academia): se reubica en el workspace visible.
+    if (!openDiffWith) return;
+    // En refuerzo remedial: usar solución del drill si existe, o mostrar su pista sin comparar contra el nivel principal.
+    if (isRemedialActive && activeDrill) {
+      if (!activeDrill.reference_solution) {
+        const hintMsg = activeDrill.solution_hint || activeDrill.prompt || t('acadConsoleEmpty');
+        if (editorHintBox) {
+          editorHintBox.textContent = hintMsg;
+          editorHintBox.hidden = false;
+        }
+        toast(hintMsg);
+        return;
+      }
+    }
+    const targetSolution = (isRemedialActive && activeDrill?.reference_solution)
+      ? activeDrill.reference_solution
+      : activeLevel?.reference_solution;
+    if (!targetSolution) return;
+    // El panel de diff vive en el slot del Formateador (oculto en Academia): se reubica y muestra ANTES de montar MergeView.
     const diffPanel = document.getElementById('cf-diff-panel');
-    if (diffPanel && diffSlot && diffPanel.parentElement !== diffSlot) diffSlot.append(diffPanel);
+    if (diffSlot) diffSlot.hidden = false;
+    if (diffPanel) {
+      if (diffSlot && diffPanel.parentElement !== diffSlot) diffSlot.append(diffPanel);
+      diffPanel.hidden = false;
+    }
     openDiffWith({
       original: getCode ? getCode() : '',
-      result: activeLevel.reference_solution,
+      result: targetSolution,
       lang: currentCurriculum?.tech || 'python',
     });
   });

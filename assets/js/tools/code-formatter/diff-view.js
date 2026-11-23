@@ -1,34 +1,84 @@
 // Vista comparativa Antes/Después con @codemirror/merge (carga bajo demanda).
-import { languageExtension } from './editor.js';
+// Seguridad: fallback 100% DOM seguro (createElement + textContent, cero innerHTML).
 
 let current = null;
+let lastContainer = null;
+
+function renderFallbackDiff(container, original, result) {
+  container.replaceChildren();
+  const wrap = document.createElement('div');
+  wrap.className = 'cf-diff-fallback';
+
+  const mkPane = (cls, text) => {
+    const pre = document.createElement('pre');
+    pre.className = `cf-diff-fallback__pane ${cls}`;
+    const code = document.createElement('code');
+    code.textContent = String(text ?? '');
+    pre.append(code);
+    return pre;
+  };
+
+  wrap.append(
+    mkPane('cf-diff-fallback__pane--before', original),
+    mkPane('cf-diff-fallback__pane--after', result),
+  );
+  container.append(wrap);
+}
+
+/** Fuerza recálculo de medidas de CodeMirror MergeView cuando el panel ya es visible. */
+export function measureDiff() {
+  if (!current) return;
+  try {
+    current.a?.requestMeasure?.();
+    current.b?.requestMeasure?.();
+  } catch { /* opcional */ }
+}
 
 /** Muestra el diff en `container`. Devuelve true si hay diferencias, false si el texto es idéntico. */
 export async function showDiff(container, { original, result, lang }) {
   closeDiff();
-  if (original === result) return false;
+  if (!container) return false;
+  lastContainer = container;
+  const before = String(original ?? '');
+  const after = String(result ?? '');
+  if (before === after) return false;
 
-  const [{ MergeView }, { EditorView, lineNumbers }, { EditorState }, { oneDark }] = await Promise.all([
-    import('@codemirror/merge'),
-    import('@codemirror/view'),
-    import('@codemirror/state'),
-    import('@codemirror/theme-one-dark'),
-  ]);
-  const extensions = [
-    lineNumbers(), oneDark, languageExtension(lang),
-    EditorView.lineWrapping, EditorState.readOnly.of(true), EditorView.editable.of(false),
-  ];
-  current = new MergeView({
-    parent: container,
-    a: { doc: original, extensions },
-    b: { doc: result, extensions },
-    highlightChanges: true,
-    gutter: true,
-    collapseUnchanged: { margin: 3, minSize: 6 },
-  });
+  container.replaceChildren();
+  try {
+    const [{ MergeView }, { EditorView, lineNumbers }, { EditorState }, { oneDark }, { languageExtension }] = await Promise.all([
+      import('@codemirror/merge'),
+      import('@codemirror/view'),
+      import('@codemirror/state'),
+      import('@codemirror/theme-one-dark'),
+      import('./editor.js'),
+    ]);
+    const extensions = [
+      lineNumbers(), oneDark, languageExtension(lang),
+      EditorView.lineWrapping, EditorState.readOnly.of(true), EditorView.editable.of(false),
+    ];
+    current = new MergeView({
+      parent: container,
+      a: { doc: before, extensions },
+      b: { doc: after, extensions },
+      highlightChanges: true,
+      gutter: true,
+      collapseUnchanged: { margin: 3, minSize: 6 },
+    });
+    const raf = typeof requestAnimationFrame === 'function' ? requestAnimationFrame : (fn) => setTimeout(fn, 0);
+    raf(() => measureDiff());
+  } catch {
+    renderFallbackDiff(container, before, after);
+  }
   return true;
 }
 
 export function closeDiff() {
-  if (current) { current.destroy(); current = null; }
+  if (current) {
+    current.destroy();
+    current = null;
+  }
+  if (lastContainer) {
+    lastContainer.replaceChildren();
+    lastContainer = null;
+  }
 }

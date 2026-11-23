@@ -1157,3 +1157,135 @@ test('Bloque C · selectLevel() hidrata nivel Pro stub vía loadProLevel/fetchPr
     globalThis.fetch = prevFetch;
   }
 });
+
+test('Fix #cf-academy-diff: visible antes de MergeView, fallback seguro, manejo remedial y retorno limpio al Formateador (375px)', async () => {
+  const makeNode = (id, extra = {}) => {
+    const classes = new Set();
+    const attrs = new Map();
+    const listeners = new Map();
+    const children = [];
+    const node = {
+      id, hidden: true, disabled: false, textContent: '', children,
+      dataset: extra.dataset || {}, parentElement: null,
+      classList: {
+        toggle: (c, f) => (f === undefined ? (classes.has(c) ? classes.delete(c) : classes.add(c)) : (f ? classes.add(c) : classes.delete(c))),
+        add: (c) => classes.add(c), remove: (c) => classes.delete(c), contains: (c) => classes.has(c),
+      },
+      setAttribute: (k, v) => attrs.set(k, String(v)),
+      getAttribute: (k) => attrs.get(k) ?? null,
+      removeAttribute: (k) => attrs.delete(k),
+      addEventListener: (ev, fn) => { if (!listeners.has(ev)) listeners.set(ev, []); listeners.get(ev).push(fn); },
+      dispatchClick: async () => { for (const fn of listeners.get('click') || []) await fn({ preventDefault() {} }); },
+      append: (...items) => items.forEach((it) => { if (it && typeof it === 'object') it.parentElement = node; children.push(it); }),
+      prepend: (...items) => items.forEach((it) => { if (it && typeof it === 'object') it.parentElement = node; children.unshift(it); }),
+      insertBefore: (item) => { if (item && typeof item === 'object') item.parentElement = node; children.push(item); },
+      replaceChildren: (...items) => { children.length = 0; node.append(...items); },
+      scrollIntoView: () => {}, querySelector: () => null, querySelectorAll: () => [],
+    };
+    return node;
+  };
+  const nodes = {
+    'cf-academy-shell': makeNode('cf-academy-shell'),
+    'cf-academy-head': makeNode('cf-academy-head'),
+    'cf-academy-diff-slot': makeNode('cf-academy-diff-slot'),
+    'cf-diff-panel': makeNode('cf-diff-panel'),
+    'cf-diff-body': makeNode('cf-diff-body'),
+    'cf-mode-formatter': makeNode('cf-mode-formatter'),
+    'cf-mode-academy': makeNode('cf-mode-academy'),
+    'cf-formatter-toolbar': makeNode('cf-formatter-toolbar'),
+    'cf-editor-slot-home': makeNode('cf-editor-slot-home'),
+    'cf-editor-card': makeNode('cf-editor-card'),
+    'cf-academy-editor-slot': makeNode('cf-academy-editor-slot'),
+    'cf-academy-paths': makeNode('cf-academy-paths'),
+    'cf-academy-workspace': makeNode('cf-academy-workspace'),
+    'cf-academy-back': makeNode('cf-academy-back'),
+    'cf-academy-daily-btn': makeNode('cf-academy-daily-btn'),
+    'cf-academy-skill-tree': makeNode('cf-academy-skill-tree'),
+    'cf-academy-mission-card': makeNode('cf-academy-mission-card'),
+    'cf-academy-checklist': makeNode('cf-academy-checklist'),
+    'cf-academy-live': makeNode('cf-academy-live'),
+    'cf-academy-validate': makeNode('cf-academy-validate'),
+    'cf-academy-diff': makeNode('cf-academy-diff'),
+    'cf-academy-editor-hint-box': makeNode('cf-academy-editor-hint-box'),
+  };
+  nodes['cf-editor-slot-home'].append(nodes['cf-editor-card'], nodes['cf-diff-panel']);
+  const paneEditor = makeNode('cf-academy-editor-pane', { dataset: { acadPaneBody: 'editor' } });
+  const prevWin = globalThis.window;
+  const prevDoc = globalThis.document;
+  const prevLoc = globalThis.location;
+  const prevStorage = globalThis.localStorage;
+  const prevFetch = globalThis.fetch;
+  const mem = new Map();
+  globalThis.localStorage = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, String(v)), removeItem: (k) => mem.delete(k) };
+  globalThis.location = { pathname: '/tools/code-formatter/', search: '' };
+  globalThis.window = { innerWidth: 375, location: { href: 'https://jw-solutions.com/tools/code-formatter/', search: '' }, history: { replaceState() {} } };
+  globalThis.document = {
+    baseURI: 'https://jw-solutions.com/tools/code-formatter/',
+    documentElement: { lang: 'es', dataset: {} },
+    head: { append() {} }, body: { append() {} },
+    getElementById: (id) => nodes[id] || null,
+    querySelector: () => null,
+    querySelectorAll: (sel) => (sel === '[data-acad-pane-body]' ? [paneEditor] : []),
+    createElement: (tag) => makeNode(tag),
+    createTextNode: (txt) => ({ textContent: txt }),
+    addEventListener: () => {}, removeEventListener: () => {},
+  };
+  globalThis.fetch = async (url) => {
+    if (String(url).includes('curriculum/es/sql.json')) {
+      const doc = JSON.parse(readFileSync(join(ROOT, 'content/code-formatter-academy/curriculum/es/sql.json'), 'utf8'));
+      return { ok: true, status: 200, json: async () => doc };
+    }
+    return { ok: false, status: 404, json: async () => ({}) };
+  };
+
+  let editorCode = 'select id from users';
+  let visibleBeforeOpen = false;
+  let closedCount = 0;
+  try {
+    const { showDiff, closeDiff } = await import('../../assets/js/tools/code-formatter/diff-view.js');
+    const { initAcademyUI } = await import(`../../assets/js/tools/code-formatter/academy-ui.js?diff=${Date.now()}`);
+    const api = initAcademyUI({
+      getCode: () => editorCode,
+      setCode: (c) => { editorCode = c; },
+      openDiffWith: async (payload) => {
+        // Debe llegar con slot y panel YA visibles para que CodeMirror MergeView mida > 0px
+        visibleBeforeOpen = nodes['cf-academy-diff-slot'].hidden === false && nodes['cf-diff-panel'].hidden === false;
+        await showDiff(nodes['cf-diff-body'], payload);
+      },
+      closeDiffPanel: () => {
+        closedCount += 1;
+        closeDiff();
+        nodes['cf-diff-panel'].hidden = true;
+        nodes['cf-academy-diff-slot'].hidden = true;
+      },
+    });
+    await api.openTopic('sql', 1, 'data-bi', 'editor');
+    await nodes['cf-academy-diff'].dispatchClick();
+    await new Promise((r) => setTimeout(r, 30));
+
+    assert.equal(visibleBeforeOpen, true, '#cf-academy-diff-slot y #cf-diff-panel deben estar visibles antes de montar MergeView');
+    assert.equal(nodes['cf-diff-panel'].parentElement, nodes['cf-academy-diff-slot']);
+    assert.ok(nodes['cf-diff-body'].children.length > 0, '#cf-diff-body debe renderizar el diff (o fallback DOM seguro) sin quedar vacío');
+
+    // Volver al Formateador devuelve #cf-diff-panel a #cf-editor-slot-home y oculta el slot
+    await api.setWorkMode('format');
+    assert.equal(nodes['cf-diff-panel'].parentElement, nodes['cf-editor-slot-home']);
+    assert.equal(nodes['cf-diff-panel'].hidden, true);
+    assert.equal(nodes['cf-academy-diff-slot'].hidden, true);
+    assert.ok(closedCount >= 1);
+
+    // Verificar CSS móvil 375px para MergeView y fallback
+    const css = readFileSync(join(ROOT, 'assets/css/tools/code-formatter.css'), 'utf8');
+    assert.match(css, /\.cf-academy-diff-slot\[hidden\]/);
+    assert.match(css, /\.cf-diff__body\s*\{[^}]*min-height:\s*160px/);
+    assert.match(css, /\.cf-diff-fallback/);
+
+    api.destroy();
+  } finally {
+    globalThis.window = prevWin;
+    globalThis.document = prevDoc;
+    globalThis.location = prevLoc;
+    globalThis.localStorage = prevStorage;
+    globalThis.fetch = prevFetch;
+  }
+});

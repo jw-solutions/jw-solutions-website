@@ -143,15 +143,32 @@ let diffMod = null;
 
 async function openDiff() {
   if (!diffState) return toast(t('noDiff'));
+  if (String(diffState.original ?? '') === String(diffState.result ?? '')) {
+    closeDiffPanel();
+    return toast(t('sameCode'));
+  }
+  // Hacer visible el contenedor ANTES de montar MergeView para evitar altura 0px en CM6 (375px / Academia).
+  const academySlot = $('cf-academy-diff-slot');
+  if (academySlot && diffPanel.parentElement === academySlot) academySlot.hidden = false;
+  diffPanel.hidden = false;
+
   diffMod ||= await import('./diff-view.js');
   const hasChanges = await diffMod.showDiff($('cf-diff-body'), diffState);
-  if (!hasChanges) { diffPanel.hidden = true; return toast(t('sameCode')); }
-  diffPanel.hidden = false;
-  diffPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  if (!hasChanges) {
+    closeDiffPanel();
+    return toast(t('sameCode'));
+  }
+  const reduce = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches);
+  requestAnimationFrame(() => {
+    diffMod?.measureDiff?.();
+    diffPanel.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+  });
 }
 function closeDiffPanel() {
   diffMod?.closeDiff();
   if (diffPanel) diffPanel.hidden = true;
+  const academySlot = $('cf-academy-diff-slot');
+  if (academySlot) academySlot.hidden = true;
 }
 if (diffBtn && diffPanel) {
   diffBtn.addEventListener('click', () => openDiff().catch(() => toast(t('copyFail'))));

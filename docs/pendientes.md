@@ -17,6 +17,7 @@
 - [x] ✅ Bloque A: Cimientos Pedagógicos (esquema curricular v2 + validador), enriquecimiento Data & BI (7 locales), limpieza i18n y ampliación `evaluateStyleRules()` localizado — 2026-11-23
 - [x] ✅ Bloque B: Experiencia Autodidacta en el Editor (panel tutorial en 4 pestañas sin spoilers, atajos de intención rápida y modo "Practicar con mi código" Antes vs. Después en 7 locales) — 2026-11-23
 - [x] ✅ Bloque C: Ejecución WASM en Cliente (`sql.js`/`Pyodide` bajo demanda + SRI real + `_headers`/`index.html` CSP), conexión `fetchProLevel()` en `selectLevel()`, `seed_academy_pro.py` en 7 locales (210 niveles) y `MemoryHigh=512M`/`MemoryMax=768M` en `deploy/jw-api.service` — 2026-11-23
+- [x] ✅ Fix `#cf-academy-diff` en Academia y móvil 375px (panel visible antes de `MergeView`, `measureDiff()`, fallback DOM seguro, manejo `isRemedialActive` y CSS móvil `min-height`) — 2026-11-23
 
 ## Pendientes Técnicos
 
