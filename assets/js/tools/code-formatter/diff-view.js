@@ -1,8 +1,71 @@
 // Vista comparativa Antes/Después con @codemirror/merge (carga bajo demanda).
-// Seguridad: fallback 100% DOM seguro (createElement + textContent, cero innerHTML).
+// Seguridad: fallback y capa flotante móvil 100% DOM seguro (createElement + textContent, cero innerHTML).
 
 let current = null;
 let lastContainer = null;
+let floatingCleanup = null;
+
+export function isMobileDiffViewport() {
+  if (typeof window === 'undefined') return false;
+  if (typeof window.matchMedia === 'function') {
+    const mq = window.matchMedia('(max-width: 640px)');
+    if (mq && typeof mq.matches === 'boolean') return mq.matches;
+  }
+  return Number(window.innerWidth || 0) > 0 && Number(window.innerWidth) <= 640;
+}
+
+/**
+ * Activa o limpia el modo ventana flotante temporal para #cf-diff-panel en móvil (<= 640px).
+ * Crea/gestiona el backdrop, Escape y bloqueo de scroll con DOM seguro (cero innerHTML).
+ */
+export function setDiffFloatingMode(panel, { active, onClose } = {}) {
+  if (floatingCleanup) {
+    floatingCleanup();
+    floatingCleanup = null;
+  }
+  if (!panel) return false;
+
+  const existingBackdrop = typeof document !== 'undefined' ? document.getElementById('cf-diff-backdrop') : null;
+  if (!active) {
+    panel.classList?.remove('cf-diff--floating');
+    panel.removeAttribute?.('role');
+    panel.removeAttribute?.('aria-modal');
+    if (existingBackdrop) existingBackdrop.hidden = true;
+    document?.body?.classList?.remove('cf-no-scroll');
+    return false;
+  }
+
+  let backdrop = existingBackdrop;
+  if (!backdrop && typeof document !== 'undefined') {
+    backdrop = document.createElement('div');
+    backdrop.id = 'cf-diff-backdrop';
+    backdrop.className = 'cf-diff-backdrop';
+    backdrop.setAttribute('aria-hidden', 'true');
+    document.body?.append?.(backdrop);
+  }
+  if (backdrop) backdrop.hidden = false;
+
+  panel.classList?.add('cf-diff--floating');
+  panel.setAttribute?.('role', 'dialog');
+  panel.setAttribute?.('aria-modal', 'true');
+  document?.body?.classList?.add('cf-no-scroll');
+
+  const onBackdropClick = () => { if (typeof onClose === 'function') onClose(); };
+  const onKeyDown = (ev) => {
+    if (ev && ev.key === 'Escape' && typeof onClose === 'function') {
+      ev.preventDefault?.();
+      onClose();
+    }
+  };
+  backdrop?.addEventListener?.('click', onBackdropClick);
+  document?.addEventListener?.('keydown', onKeyDown);
+
+  floatingCleanup = () => {
+    backdrop?.removeEventListener?.('click', onBackdropClick);
+    document?.removeEventListener?.('keydown', onKeyDown);
+  };
+  return true;
+}
 
 function renderFallbackDiff(container, original, result) {
   container.replaceChildren();

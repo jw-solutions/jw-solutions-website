@@ -1289,3 +1289,109 @@ test('Fix #cf-academy-diff: visible antes de MergeView, fallback seguro, manejo 
     globalThis.fetch = prevFetch;
   }
 });
+
+test('Ventana flotante temporal móvil (375px) para #cf-diff-panel: apertura, Escape, backdrop y cierre al elegir acción', async () => {
+  const makeNode = (id = '') => {
+    const classes = new Set();
+    const attrs = new Map();
+    const listeners = new Map();
+    const children = [];
+    return {
+      id, hidden: true, children,
+      classList: {
+        add: (c) => classes.add(c),
+        remove: (c) => classes.delete(c),
+        contains: (c) => classes.has(c),
+      },
+      setAttribute: (k, v) => attrs.set(k, String(v)),
+      getAttribute: (k) => attrs.get(k) ?? null,
+      removeAttribute: (k) => attrs.delete(k),
+      addEventListener: (ev, fn) => {
+        if (!listeners.has(ev)) listeners.set(ev, new Set());
+        listeners.get(ev).add(fn);
+      },
+      removeEventListener: (ev, fn) => listeners.get(ev)?.delete(fn),
+      dispatch: (ev, payload = {}) => { for (const fn of listeners.get(ev) || []) fn(payload); },
+      append: (...items) => items.forEach((it) => children.push(it)),
+      replaceChildren: (...items) => { children.length = 0; items.forEach((it) => children.push(it)); },
+    };
+  };
+
+  const panel = makeNode('cf-diff-panel');
+  const body = makeNode('body');
+  let createdBackdrop = null;
+  const docListeners = new Map();
+  const prevWin = globalThis.window;
+  const prevDoc = globalThis.document;
+
+  globalThis.window = {
+    innerWidth: 375,
+    matchMedia: (q) => ({ matches: q.includes('640px') }),
+  };
+  globalThis.document = {
+    body,
+    getElementById: (id) => (id === 'cf-diff-backdrop' ? createdBackdrop : null),
+    createElement: (tag) => {
+      const n = makeNode(tag);
+      createdBackdrop = n;
+      return n;
+    },
+    addEventListener: (ev, fn) => {
+      if (!docListeners.has(ev)) docListeners.set(ev, new Set());
+      docListeners.get(ev).add(fn);
+    },
+    removeEventListener: (ev, fn) => docListeners.get(ev)?.delete(fn),
+  };
+
+  try {
+    const { isMobileDiffViewport, setDiffFloatingMode } = await import(`../../assets/js/tools/code-formatter/diff-view.js?float=${Date.now()}`);
+    assert.equal(isMobileDiffViewport(), true, 'Debe detectar viewport móvil en 375px');
+
+    let closed = 0;
+    const close = () => {
+      closed += 1;
+      setDiffFloatingMode(panel, { active: false });
+      panel.hidden = true;
+    };
+
+    // Apertura flotante en móvil
+    panel.hidden = false;
+    assert.equal(setDiffFloatingMode(panel, { active: true, onClose: close }), true);
+    assert.equal(panel.classList.contains('cf-diff--floating'), true);
+    assert.equal(panel.getAttribute('role'), 'dialog');
+    assert.equal(panel.getAttribute('aria-modal'), 'true');
+    assert.ok(createdBackdrop && createdBackdrop.hidden === false);
+    assert.equal(body.classList.contains('cf-no-scroll'), true);
+
+    // Cierre automático por tecla Escape
+    for (const fn of docListeners.get('keydown') || []) fn({ key: 'Escape', preventDefault() {} });
+    assert.equal(closed, 1);
+    assert.equal(panel.hidden, true);
+    assert.equal(panel.classList.contains('cf-diff--floating'), false);
+    assert.equal(panel.getAttribute('role'), null);
+    assert.equal(createdBackdrop.hidden, true);
+    assert.equal(body.classList.contains('cf-no-scroll'), false);
+
+    // Reapertura y cierre al pulsar backdrop (equivalente a cancelar / seleccionar acción)
+    panel.hidden = false;
+    setDiffFloatingMode(panel, { active: true, onClose: close });
+    createdBackdrop.dispatch('click');
+    assert.equal(closed, 2);
+    assert.equal(panel.hidden, true);
+
+    // En escritorio (1280px) no es móvil
+    globalThis.window = { innerWidth: 1280, matchMedia: () => ({ matches: false }) };
+    assert.equal(isMobileDiffViewport(), false);
+
+    // Seguridad DOM (0 innerHTML) y reglas CSS móvil flotante
+    const diffSrc = readFileSync(join(ROOT, 'assets/js/tools/code-formatter/diff-view.js'), 'utf8');
+    assert.doesNotMatch(diffSrc, /\.innerHTML\b/, 'diff-view.js no debe usar innerHTML');
+    const css = readFileSync(join(ROOT, 'assets/css/tools/code-formatter.css'), 'utf8');
+    assert.match(css, /\.cf-diff\.cf-diff--floating/);
+    assert.match(css, /\.cf-diff-backdrop\[hidden\]/);
+    assert.match(css, /min-height:\s*44px/);
+  } finally {
+    globalThis.window = prevWin;
+    globalThis.document = prevDoc;
+  }
+});

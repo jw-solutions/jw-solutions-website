@@ -141,18 +141,24 @@ const diffPanel = $('cf-diff-panel');
 let diffState = null; // { original, result, lang }
 let diffMod = null;
 
+let lastDiffTrigger = null;
+
 async function openDiff() {
   if (!diffState) return toast(t('noDiff'));
   if (String(diffState.original ?? '') === String(diffState.result ?? '')) {
     closeDiffPanel();
     return toast(t('sameCode'));
   }
+  lastDiffTrigger = document.activeElement;
   // Hacer visible el contenedor ANTES de montar MergeView para evitar altura 0px en CM6 (375px / Academia).
   const academySlot = $('cf-academy-diff-slot');
   if (academySlot && diffPanel.parentElement === academySlot) academySlot.hidden = false;
   diffPanel.hidden = false;
 
   diffMod ||= await import('./diff-view.js');
+  const floating = diffMod.isMobileDiffViewport?.() === true;
+  diffMod.setDiffFloatingMode?.(diffPanel, { active: floating, onClose: closeDiffPanel });
+
   const hasChanges = await diffMod.showDiff($('cf-diff-body'), diffState);
   if (!hasChanges) {
     closeDiffPanel();
@@ -161,14 +167,23 @@ async function openDiff() {
   const reduce = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches);
   requestAnimationFrame(() => {
     diffMod?.measureDiff?.();
-    diffPanel.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+    if (floating) {
+      $('cf-diff-apply')?.focus?.();
+    } else {
+      diffPanel.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+    }
   });
 }
 function closeDiffPanel() {
+  diffMod?.setDiffFloatingMode?.(diffPanel, { active: false });
   diffMod?.closeDiff();
   if (diffPanel) diffPanel.hidden = true;
   const academySlot = $('cf-academy-diff-slot');
   if (academySlot) academySlot.hidden = true;
+  if (lastDiffTrigger && typeof lastDiffTrigger.focus === 'function' && lastDiffTrigger.isConnected) {
+    lastDiffTrigger.focus();
+  }
+  lastDiffTrigger = null;
 }
 if (diffBtn && diffPanel) {
   diffBtn.addEventListener('click', () => openDiff().catch(() => toast(t('copyFail'))));
