@@ -1,6 +1,6 @@
 JW_SOLUTIONS_PLAN_COMPLETO.md
 proyectos_portafolio.md
-README_DEPLOY.md
+/README_DEPLOY.md
 
 .claude/
 
@@ -16,3 +16,12 @@ node_modules/
 
 # Respaldos de gobernanza
 *.bak_*
+*.bak*
+__pycache__/
+*.py[cod]
+
+# Protección PII: nunca versionar volcados locales de suscriptores
+data/*subscribers*.local.json
+data/*.pii.json
+
+

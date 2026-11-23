@@ -5,6 +5,8 @@
   "shared_files": [
     "favicon.ico",
     "_headers",
+    "privacidad/index.html",
+    "terminos/index.html",
     "tools/code-formatter/favicon.svg",
     "tools/code-formatter/favicon.ico",
     "tools/code-formatter/apple-touch-icon.png",

@@ -43,7 +43,8 @@
 | `docs/MapaDelProyecto.md` | Gobierno | Este inventario y matriz | Todo el repo | Pre-ejecución de cambios |
 | `docs/JW_SOLUTIONS_PLAN_COMPLETO.md` | Docs | Plan estratégico del negocio/sitio | — | Referencia |
 | `docs/proyectos_portafolio.md` | Docs | Portafolio de proyectos | — | Contenido `index.html` |
-| `docs/README_DEPLOY.md` | Docs | Guía de despliegue | `deploy/*`, workflows | Operación |
+| `docs/README_DEPLOY.md` | Docs | Guía de despliegue, arquitectura, `RTO`/`RPO` y rollback `< 3 min` | `deploy/*`, `.github/workflows/ci.yml` | Operación y DR |
+| `privacidad/index.html`, `terminos/index.html` | Front legal | Rutas públicas dedicadas (`HTTP 200`) de Política de Privacidad y Términos de Servicio (bilingües `es`/`en`) | `styles.css`, `script.js` | Cumplimiento legal / pie de página / auth |
 | `.gitignore`, `.gitattributes` | Config | Exclusiones (`dist-public/`, `node_modules/`, `.pw-profile/`, `.claude/`) y normalización EOL | — | Git |
 | `.nojekyll`, `CNAME` | Despliegue | GitHub Pages sin Jekyll; dominio `jw-solutions.com` | — | Hosting |
 | `_headers` | Seguridad | CSP/cabeceras HTTP | HTML/JS externos | Todas las páginas |
@@ -107,8 +108,8 @@
 ### 2.5 Backend Node legado (`backend/code-formatter/`)
 | Archivo | Capa | Razón de ser | Depende de | Impacta a |
 |---|---|---|---|---|
-| `src/{main,app,auth,config,cookies,events,http-utils,mailer,middleware,outbox,passwords,payments,sessions,tokens}.js` | API legado | Servidor Node del Code Formatter | `package.json`, `db/*.sql` | 🔶 Solapa funcionalmente con `backend/app` (auth/pagos); definir cuál es canónico |
-| `db/{schema,002_accounts_payments}.sql`, `package.json`, `package-lock.json` | Datos/Config | Esquema y dependencias Node | — | `src/*` |
+| `src/{main,app,auth,config,cookies,events,http-utils,mailer,middleware,outbox,passwords,payments,sessions,tokens}.js` | API legado | Servidor Node histórico del Code Formatter (NO desplegado; `backend/app` FastAPI es el único backend canónico en producción) | `package.json`, `db/*.sql` | Referencia histórica |
+| `db/{schema,002_accounts_payments}.sql`, `package.json`, `package-lock.json` | Datos/Config | Esquema y dependencias Node legadas | — | `src/*` |
 
 ### 2.6 Scripts, CI y despliegue
 | Archivo | Capa | Razón de ser | Depende de | Impacta a |
@@ -118,11 +119,11 @@
 | `scripts/code-formatter/{generate-weekly-tip,generate-og-images,generate-distribution-kit}.js` | Contenido | Generan tips, OG y kits | tips JSON | `content/`, `assets/images/og` |
 | `scripts/code-formatter/{syndicate-devto,syndicate-hashnode,syndicate-social}.js`, `browser-syndicate.mjs` | Distribución | Syndicación (usa `.pw-profile/` ignorado) | distribution kits | Canales externos |
 | `scripts/code-formatter/{check-deployment,notify-newsletter,ping-indexnow}.js`, `test-growth-loops.mjs` | Operación | Verificación de deploy, newsletter, IndexNow, loops de crecimiento | sitemap, API | Producción |
-| `scripts/{check-deployment,generate-blog-og,generate-weekly-draft,notify-newsletter,ping-indexnow,publication-manifest,validate-drafts,validate-formatter-tips}.js` | Operación | Equivalentes del blog/sitio | `content/` | Blog, SEO |
-| `tests/code-formatter/{academy,automation,certificates,click-audit,loaders-defense,pro-paypal}.test.mjs`, `fixtures.js`, `runner.html` | Tests | `node --test` + runner navegador | `assets/js/tools/code-formatter` | Calidad front |
-| `.github/workflows/{code-formatter-preflight,code-formatter-syndicate-backfill,code-formatter-tips,draft-preflight,weekly-blog-publisher}.yml` | CI/CD | Preflight, backfill, tips semanales, borradores y blog (cron) | scripts anteriores | `main` / publicación |
+| `scripts/{check-deployment,generate-blog-og,generate-weekly-draft,notify-newsletter,ping-indexnow,publication-manifest,validate-drafts,validate-formatter-tips}.js` | Operación | Equivalentes del blog/sitio (`validate-formatter-tips.js` incluye parser YAML nativo de respaldo si `gray-matter` no está instalado) | `content/` | Blog, SEO, CI |
+| `tests/code-formatter/{academy,automation,certificates,click-audit,loaders-defense,pro-paypal}.test.mjs`, `fixtures.js`, `runner.html` | Tests | `node --test` (48 tests) + runner navegador | `assets/js/tools/code-formatter` | Calidad front |
+| `.github/workflows/{ci,code-formatter-preflight,code-formatter-syndicate-backfill,code-formatter-tips,draft-preflight,weekly-blog-publisher}.yml` | CI/CD | Compuerta bloqueante de PR/push (`ci.yml`), preflight, backfill, tips semanales, borradores y blog (cron) | scripts anteriores | `main` / publicación |
 | `deploy/{jw-api.service,jw-expiration-worker.service,jw-expiration-worker.timer,jw-imap-worker.service}` | Despliegue | Unidades systemd VPS | `backend/app`, workers | Producción |
-| `data/formatter-subscribers.json` | Datos | Suscriptores locales del formateador | `newsletter.js` | 🔶 Datos personales: no exponer |
+| `data/formatter-subscribers.json` | Datos (Deprecado) | Archivo legado saneado (`subscribers: []`, `NO_PII_IN_GIT`); los suscriptores viven en PostgreSQL (`newsletter_subscribers`) | — | Sin PII versionada |
 | `.claude/{launch.json,settings.local.json}` | Herramienta | Config local de Claude (ignorada por Git) | — | Sesión local |
 
 ## 3. Matriz de dependencias cruzadas (impacto de cambios)
@@ -150,11 +151,11 @@
 | `dist-public/` | Ignorado | Artefacto de build; regenerable con `build_public.py` |
 | `node_modules/`, `backend/venv/` | Ignorados / fuera de inventario | Dependencias |
 | `.claude/` | Ignorado | Configuración local de sesión |
-| `data/formatter-subscribers.json` | Versionado | 🔶 Contiene datos de suscriptores; evaluar sacarlo del repo |
+| `data/formatter-subscribers.json` | Versionado (Deprecado) | ✅ Saneado (`subscribers: []`, `NO_PII_IN_GIT`); los suscriptores reales viven en PostgreSQL (`newsletter_subscribers`) |
 | `.git/`, `__pycache__/`, `.pytest_cache/`, `*.bak*` | Excluidos del escaneo | Residuos |
 
-## 5. Novedades detectadas (🔶) al generar el Mapa
-- 🔶 `backend/code-formatter/` (Node) y `backend/app/` (FastAPI) implementan auth/pagos en paralelo: confirmar cuál es el backend canónico.
-- 🔶 `data/formatter-subscribers.json` versionado con posibles datos personales.
-- 🔶 `AGENTS.md` y `GEMINI.md` sin trackear; no existe `TRAE.md` (sin espejo).
-- 🔶 Cambios sin commitear en `tools/code-formatter/tips/feed*.xml` (regenerados).
+## 5. Novedades detectadas (🔶) al generar y actualizar el Mapa
+- ✅ `backend/app/` (FastAPI) queda documentado como único backend canónico en producción; `backend/code-formatter/` (Node) se mantiene solo como referencia histórica/legada.
+- ✅ `data/formatter-subscribers.json` saneado con `deprecated: true`, `subscribers: []` y política `NO_PII_IN_GIT`.
+- ✅ Creados `.github/workflows/ci.yml`, `docs/README_DEPLOY.md`, `privacidad/index.html` y `terminos/index.html`.
+- 🔶 `AGENTS.md` y `GEMINI.md` presentes localmente; no existe `TRAE.md` (sin espejo).

@@ -33,8 +33,112 @@ let matter;
 try {
   matter = require('gray-matter');
 } catch (e) {
-  console.error('Falta la dependencia gray-matter (npm install gray-matter).');
-  process.exit(2);
+  /* Fallback nativo (cero dependencias externas) cuando gray-matter no está en node_modules:
+     soporta escalares YAML, bloques plegados (>- / |), fechas AAAA-MM-DD, cadenas entrecomilladas y arreglos/objetos (faq). */
+  const parseFrontmatter = (raw) => {
+    const str = String(raw || '');
+    const m = str.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+    if (!m) return { data: {}, content: str };
+    const data = {};
+    const lines = m[1].split(/\r?\n/);
+    const isFoldedMarker = (v) => /^[>|][-+]?$/.test(String(v || '').trim());
+    const collectIndented = (startIdx, minIndent) => {
+      const chunks = [];
+      let idx = startIdx;
+      while (idx < lines.length) {
+        const l = lines[idx];
+        if (!l.trim()) { chunks.push(''); idx += 1; continue; }
+        const ind = (l.match(/^(\s*)/) || ['', ''])[1].length;
+        if (ind < minIndent) break;
+        chunks.push(l.trim());
+        idx += 1;
+      }
+      return { text: chunks.join(' ').replace(/\s+/g, ' ').trim(), nextIdx: idx };
+    };
+    let currentListKey = null;
+    let currentObj = null;
+    let i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
+      if (!line.trim() || line.trim().startsWith('#')) { i += 1; continue; }
+      if (currentListKey && /^\s+-\s+/.test(line)) {
+        currentObj = {};
+        data[currentListKey].push(currentObj);
+        const itemIndent = (line.match(/^(\s*)/) || ['', ''])[1].length;
+        const rest = line.replace(/^\s+-\s+/, '');
+        const kv = rest.match(/^([A-Za-z0-9_]+):\s*(.*)$/);
+        if (kv) {
+          if (isFoldedMarker(kv[2])) {
+            const { text, nextIdx } = collectIndented(i + 1, itemIndent + 4);
+            currentObj[kv[1]] = text;
+            i = nextIdx;
+            continue;
+          }
+          currentObj[kv[1]] = parseScalar(kv[2]);
+        }
+        i += 1;
+        continue;
+      }
+      if (currentListKey && currentObj && /^\s+[A-Za-z0-9_]+:\s*/.test(line)) {
+        const propIndent = (line.match(/^(\s*)/) || ['', ''])[1].length;
+        const kv = line.trim().match(/^([A-Za-z0-9_]+):\s*(.*)$/);
+        if (kv) {
+          if (isFoldedMarker(kv[2])) {
+            const { text, nextIdx } = collectIndented(i + 1, propIndent + 2);
+            currentObj[kv[1]] = text;
+            i = nextIdx;
+            continue;
+          }
+          currentObj[kv[1]] = parseScalar(kv[2]);
+        }
+        i += 1;
+        continue;
+      }
+      currentListKey = null;
+      currentObj = null;
+      const kv = line.match(/^([A-Za-z0-9_]+):\s*(.*)$/);
+      if (!kv) { i += 1; continue; }
+      const key = kv[1];
+      const val = kv[2].trim();
+      if (!val) {
+        data[key] = [];
+        currentListKey = key;
+        i += 1;
+        continue;
+      }
+      if (isFoldedMarker(val)) {
+        const { text, nextIdx } = collectIndented(i + 1, 2);
+        data[key] = text;
+        i = nextIdx;
+        continue;
+      }
+      data[key] = parseScalar(val);
+      i += 1;
+    }
+    return { data, content: m[2] };
+  };
+  const parseScalar = (v) => {
+    const s = String(v ?? '').trim();
+    if ((s.startsWith('[') && s.endsWith(']')) || (s.startsWith('{') && s.endsWith('}'))) {
+      try { return JSON.parse(s); } catch { /* continuar */ }
+    }
+    if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+      try { return s.startsWith('"') ? JSON.parse(s) : s.slice(1, -1).replace(/''/g, "'"); } catch { return s.slice(1, -1); }
+    }
+    if (s === 'true') return true;
+    if (s === 'false') return false;
+    return s;
+  };
+  const stringifyFrontmatter = (content, data) => {
+    const rows = ['---'];
+    for (const [k, v] of Object.entries(data || {})) {
+      if (v === undefined) continue;
+      rows.push(`${k}: ${typeof v === 'object' ? JSON.stringify(v) : JSON.stringify(String(v))}`);
+    }
+    rows.push('---', String(content || '').replace(/^\r?\n/, ''));
+    return rows.join('\n');
+  };
+  matter = Object.assign(parseFrontmatter, { stringify: stringifyFrontmatter });
 }
 
 const ROOT = path.resolve(__dirname, '..');

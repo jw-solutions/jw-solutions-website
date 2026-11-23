@@ -21,6 +21,9 @@
 - [x] ✅ Ventana flotante temporal móvil (`<=640px`) para `#cf-diff-panel` con backdrop Dark Glass Gold, `Escape` y cierre automático al elegir opción — 2026-11-23
 - [x] ✅ Corrección de hallazgos críticos de Auditoría Doble Mirada (API `getJson`/sync/Pro `cf:lang`, Sandbox CSP + timeouts WASM, preservación buffer Formateador, móvil 375px + foco diff + ARIA árbol y pedagogía v2 en 12 niveles restantes × 7 locales) — 2026-11-23
 - [x] ✅ Auditoría Pre-Lanzamiento, Commit/Push a `origin/main` y Despliegue en VPS (`107.172.159.114`, `seed_academy_pro.py` 7 locales y verificación HTTP live) — 2026-11-23
+- [x] ✅ Cierre de Alertas de Auditoría Corporativa 10/10 (`.github/workflows/ci.yml`, coherencia comercial/legal en 7 locales + rutas `/privacidad` y `/terminos`, saneamiento `formatter-subscribers.json`, `validate-formatter-tips.js`, `docs/README_DEPLOY.md` y Tríada/RAG) — 2026-11-23
+- [x] ✅ Limpieza y Reindexación RAG (`MemPalace`) Pre-Commit (`repository_tree.txt`, `README_DEPLOY.md`, Tríada Documental y `ci.yml` en UTF-8 limpio) — 2026-11-23
+- [x] ✅ Commit selectivo, Push a `origin/main` y Verificación Controlada en VPS (`107.172.159.114`) y HTTPS en vivo — 2026-11-23
 
 ## Pendientes Técnicos
 
@@ -29,6 +32,7 @@
 | 🟢 | ✅ | Botón de pista (💡) duplicado en la barra del editor (implementado en Bloque 1: `#cf-academy-editor-hint` sincronizado con la tarjeta de misión). |
 | 🟢 | ❓ | Texto de `#cf-academy-validate` ("Validar nivel") vs. propuesta "▶ Ejecutar y Validar" (requiere 7 locales). |
 | 🟡 | ❓ | Verificación visual manual en móvil real (375px) del stepper sticky y el mini-brief. |
-| 🟡 | ❓ | 🔶 `backend/code-formatter` (Node) y `backend/app` (FastAPI) solapan auth/pagos: definir backend canónico. |
-| 🟡 | ❓ | 🔶 `data/formatter-subscribers.json` versionado con posibles datos personales. |
-| 🟢 | ❓ | 🔶 `AGENTS.md`/`GEMINI.md` sin trackear; sin `TRAE.md`; CLAUDE.md referencia `ci.yml` inexistente en workflows. |
+| 🟡 | ✅ | 🔶 `backend/app` (FastAPI Python) definido y documentado en `docs/README_DEPLOY.md` y `docs/MapaDelProyecto.md` como único backend canónico en producción; `backend/code-formatter` (Node) queda solo como referencia histórica/legada. |
+| 🟡 | ✅ | 🔶 `data/formatter-subscribers.json` saneado (`deprecated: true`, `subscribers: []`, política `NO_PII_IN_GIT`, historial verificado con 0 PII; suscripciones 100% en PostgreSQL `newsletter_subscribers`). |
+| 🟢 | ✅ | 🔶 Creado `.github/workflows/ci.yml` exigido por `CLAUDE.md` y `.cursorrules`; creado `docs/README_DEPLOY.md`; enlaces legales y rutas `/privacidad/` y `/terminos/` activas. |
+| 🟡 | ✅ | 🔶 `MemPalace` (`wing=proyectos`, `room=websites`): purgados los 3 cajones principales corruptos de `repository_tree.txt` (UTF-16LE de `D:\PROYECTOS\MetaAgenteLocal\repository_tree.txt`) y 4 cajones obsoletos de `README_DEPLOY.md` (`2026-05-18`), e indexada la documentación vigente de `P001` en 6 cajones UTF-8 limpios en `room="websites"`. |

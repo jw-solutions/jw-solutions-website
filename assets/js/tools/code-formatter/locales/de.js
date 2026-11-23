@@ -376,4 +376,7 @@ export default {
   acadCustomChallengeTitle: "Eigene Challenge ({lang})",
   acadCustomChallengeCapsule: "Refaktoriere und dokumentiere dein eigenes Snippet nach den Sprachregeln.",
   acadCustomChallengeTestName: "Nicht-leerer Code",
+  legalPrivacy: "Datenschutzerklärung",
+  legalTerms: "Nutzungsbedingungen",
+  authLegalNotice: "Mit dem Fortfahren stimmst du unserer Datenschutzerklärung und den Nutzungsbedingungen zu.",
 };

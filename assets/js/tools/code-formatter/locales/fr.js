@@ -376,4 +376,7 @@ export default {
   acadCustomChallengeTitle: "Défi personnalisé ({lang})",
   acadCustomChallengeCapsule: "Refactorisez et documentez votre propre extrait selon les règles du langage.",
   acadCustomChallengeTestName: "Code non vide",
+  legalPrivacy: "Politique de confidentialité",
+  legalTerms: "Conditions d'utilisation",
+  authLegalNotice: "En continuant, vous acceptez notre Politique de confidentialité et nos Conditions d'utilisation.",
 };

@@ -377,4 +377,7 @@ export default {
   acadCustomChallengeTitle: "Reto personalizado ({lang})",
   acadCustomChallengeCapsule: "Refactoriza y documenta tu propio fragmento aplicando las reglas del lenguaje.",
   acadCustomChallengeTestName: "Código no vacío",
+  legalPrivacy: "Política de Privacidad",
+  legalTerms: "Términos de Servicio",
+  authLegalNotice: "Al continuar, aceptas nuestra Política de Privacidad y los Términos de Servicio.",
 };

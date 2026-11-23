@@ -1,5 +1,7 @@
 {
   "version": 1,
-  "last_updated": "2026-11-01",
+  "deprecated": true,
+  "storage_policy": "NO_PII_IN_GIT: Las suscripciones del canal code-formatter se almacenan exclusivamente en PostgreSQL (api.jw-solutions.com / tabla newsletter_subscribers). Prohibido persistir correos reales en este archivo.",
+  "last_updated": "2026-11-23",
   "subscribers": []
 }

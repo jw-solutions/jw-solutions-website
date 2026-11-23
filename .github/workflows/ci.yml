@@ -1,0 +1,107 @@
+name: CI — Release Gates & Security Isolation
+
+# Compuerta obligatoria de integración continua (AUD-WEB-2026-v10 / CLAUDE.md / .cursorrules).
+# Bloquea merges y pushes a main si falla cualquier validador curricular, test frontend,
+# growth loops, suite pytest backend o auditoría de aislamiento comercial en dist-public/.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-and-isolation:
+    name: Frontend, Currículo, Tips & Aislamiento dist-public
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar dependencia ligera para validador de tips (gray-matter)
+        run: npm install --no-save --no-package-lock gray-matter@4.0.3
+
+      - name: Compuerta 1 · Validar currículo Academia (7 idiomas × 10 tecnologías, 0 pay)
+        run: node scripts/code-formatter/validate-academy-curriculum.js
+
+      - name: Compuerta 2 · Validar tips y traducciones publicadas
+        run: node scripts/validate-formatter-tips.js
+
+      - name: Compuerta 3 · Suite de pruebas Frontend (node --test)
+        run: node --test tests/code-formatter/*.test.mjs
+
+      - name: Compuerta 4 · Pruebas Growth Loops, SEO y Sindicación
+        run: node scripts/code-formatter/test-growth-loops.mjs
+
+      - name: Compuerta 5 · Compilación pública y auditoría de aislamiento (0 pay / 0 comercial)
+        run: |
+          python3 -B scripts/code-formatter/build_public.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path(".")
+          dist = root / "dist-public"
+          matrix = json.loads((root / "config/features-matrix.json").read_text(encoding="utf-8"))
+          pay_files = {p for f in matrix["features"] if f["tier"] == "pay" for p in f["files"]}
+
+          leaked_pay = [rel for rel in sorted(pay_files) if (dist / rel).exists()]
+          commercial_html = [
+              str(p.relative_to(dist))
+              for p in dist.rglob("*.html")
+              if "data-cf-commercial" in p.read_text(encoding="utf-8")
+          ]
+          runtime = json.loads((dist / "tools/code-formatter/features.runtime.json").read_text(encoding="utf-8"))
+          non_free = [f["id"] for f in runtime.get("features", []) if f.get("tier") != "free"]
+
+          assert not leaked_pay, f"Fuga de archivos pay en dist-public: {leaked_pay}"
+          assert not commercial_html, f"Nodos data-cf-commercial en dist-public: {commercial_html}"
+          assert not non_free, f"Features no-free en features.runtime.json: {non_free}"
+          print("OK Auditoría CI dist-public: 0 recursos pay, 0 nodos data-cf-commercial.")
+          PY
+
+  backend-pytest:
+    name: Backend FastAPI (pytest unit & security)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Instalar dependencias del backend
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r backend/requirements.txt pytest
+
+      - name: Compuerta 6 · Suite pytest backend (excluye integración PostgreSQL en vivo)
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONPATH: backend
+        run: pytest backend/tests --ignore=backend/tests/integration -q

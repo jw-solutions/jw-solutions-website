@@ -376,4 +376,7 @@ export default {
   acadCustomChallengeTitle: "Sfida personalizzata ({lang})",
   acadCustomChallengeCapsule: "Rifattorizza e documenta il tuo snippet applicando le regole del linguaggio.",
   acadCustomChallengeTestName: "Codice non vuoto",
+  legalPrivacy: "Informativa sulla Privacy",
+  legalTerms: "Termini di Servizio",
+  authLegalNotice: "Continuando, accetti la nostra Informativa sulla Privacy e i Termini di Servizio.",
 };

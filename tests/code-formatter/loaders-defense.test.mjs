@@ -150,3 +150,47 @@ test('Bloque 3: CSS respeta [hidden] y prefers-reduced-motion, paridad 7 locales
     assert.equal(existsSync(join(ROOT, 'dist-public/assets/js/tools/code-formatter/pro-modal.js')), false);
   }
 });
+
+test('Auditoría 10/10 · Gobernanza CI, enlaces legales en 7 locales, rutas públicas y saneamiento PII', async () => {
+  // 1. Workflow CI bloqueante (.github/workflows/ci.yml)
+  const ciPath = join(ROOT, '.github/workflows/ci.yml');
+  assert.equal(existsSync(ciPath), true, 'Falta .github/workflows/ci.yml');
+  const ciContent = readFileSync(ciPath, 'utf8');
+  assert.match(ciContent, /pull_request:/);
+  assert.match(ciContent, /validate-academy-curriculum\.js/);
+  assert.match(ciContent, /validate-formatter-tips\.js/);
+  assert.match(ciContent, /pytest backend\/tests --ignore=backend\/tests\/integration/);
+  assert.match(ciContent, /build_public\.py/);
+
+  // 2. Rutas legales públicas (/privacidad/ y /terminos/) y guía DR (docs/README_DEPLOY.md)
+  assert.equal(existsSync(join(ROOT, 'privacidad/index.html')), true);
+  assert.equal(existsSync(join(ROOT, 'terminos/index.html')), true);
+  assert.equal(existsSync(join(ROOT, 'docs/README_DEPLOY.md')), true);
+
+  // 3. Coherencia comercial y privacidad en index.html y tools/code-formatter/index.html
+  const mainHtml = readFileSync(join(ROOT, 'index.html'), 'utf8');
+  assert.doesNotMatch(mainHtml.slice(mainHtml.indexOf('id="modal-tool-code"'), mainHtml.indexOf('id="modal-tool-data"')), /Beta privada por invitación/);
+  assert.match(mainHtml, /api\.jw-solutions\.com\/api\/newsletter\/subscribe/);
+
+  const cfHtml = readFileSync(join(ROOT, 'tools/code-formatter/index.html'), 'utf8');
+  assert.match(cfHtml, /data-i18n="legalPrivacy"/);
+  assert.match(cfHtml, /data-i18n="legalTerms"/);
+  assert.match(cfHtml, /data-i18n="authLegalNotice"/);
+
+  // 4. Paridad de claves legales en los 7 locales
+  const legalKeys = ['legalPrivacy', 'legalTerms', 'authLegalNotice'];
+  for (const loc of LOCALES) {
+    const mod = (await import(`../../assets/js/tools/code-formatter/locales/${loc}.js`)).default;
+    for (const k of legalKeys) {
+      assert.equal(typeof mod[k], 'string', `Falta ${k} en ${loc}`);
+      assert.ok(mod[k].trim().length > 3, `Clave ${k} vacía en ${loc}`);
+    }
+  }
+
+  // 5. Saneamiento PII en data/formatter-subscribers.json
+  const subRaw = JSON.parse(readFileSync(join(ROOT, 'data/formatter-subscribers.json'), 'utf8'));
+  assert.equal(Array.isArray(subRaw.subscribers), true);
+  assert.equal(subRaw.subscribers.length, 0);
+  assert.equal(subRaw.deprecated, true);
+});
+
