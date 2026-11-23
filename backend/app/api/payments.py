@@ -37,8 +37,18 @@ from app.services.order_service import (
     activate_paid_order,
     create_or_reuse_order,
     report_order_txid,
+    revoke_paid_order,
 )
-from app.services.payment_channels import PLANS, ChannelNotConfiguredError, available_channels
+from app.services.payment_channels import (
+    PLANS,
+    ChannelNotConfiguredError,
+    PayPalAPIError,
+    available_channels,
+    calculate_paypal_pricing,
+    capture_paypal_order,
+    get_plan,
+    verify_paypal_webhook_signature,
+)
 
 router = APIRouter(prefix="/api")
 
@@ -145,7 +155,7 @@ class CreateOrderBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     plan_id: Literal["pro_30d", "pro_90d", "pro_365d"]
-    channel: Literal["binance_p2p", "crypto_gateway", "paypal_imap", "kofi_webhook"]
+    channel: Literal["binance_p2p", "crypto_gateway", "paypal_checkout", "paypal_imap", "kofi_webhook"]
     attribution_utm: dict[str, str] | None = None
 
     @field_validator("attribution_utm")
@@ -193,6 +203,16 @@ def _serialize_order(order: PaymentOrder, settings) -> dict[str, Any]:
     if order.channel == "binance_p2p":
         data["binance_uid"] = settings.binance_p2p_uid
         data["holder_name"] = settings.binance_p2p_holder_name
+    elif order.channel == "paypal_checkout":
+        plan = get_plan(order.plan_id)
+        pricing = calculate_paypal_pricing(plan["amount_usd"], settings)
+        data["pricing"] = {
+            "base_amount": f"{pricing['base_amount']:.2f}",
+            "fee_amount": f"{pricing['fee_amount']:.2f}",
+            "total_amount": f"{pricing['total_amount']:.2f}",
+            "currency": pricing["currency"],
+            "pass_fees_to_client": pricing["pass_fees_to_client"],
+        }
     return data
 
 
@@ -437,3 +457,218 @@ async def kofi_webhook(request: Request, db: Session = Depends(get_db)) -> dict[
         return {"ok": True, "matched": False, "reason": "amount_mismatch"}
 
     return {"ok": True, "order_code": order.order_code, "activated": activated}
+
+
+# --- PayPal Orders v2 Capture & Signed Webhook ------------------------------------------------------------------
+
+PAYPAL_ORDER_ID_RE = re.compile(r"^[A-Za-z0-9_-]{6,64}$")
+PAYPAL_ADVERSE_EVENTS = frozenset(
+    {
+        "PAYMENT.CAPTURE.REFUNDED",
+        "PAYMENT.CAPTURE.REVERSED",
+        "CUSTOMER.DISPUTE.CREATED",
+    }
+)
+
+
+class PayPalCaptureBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    paypal_order_id: str
+
+    @field_validator("paypal_order_id")
+    @classmethod
+    def _paypal_order_id(cls, v: str) -> str:
+        cleaned = v.strip()
+        if not PAYPAL_ORDER_ID_RE.fullmatch(cleaned):
+            raise ValueError("paypal_order_id inválido")
+        return cleaned
+
+
+@router.post("/payments/paypal/capture")
+def capture_paypal(
+    body: PayPalCaptureBody,
+    session: Annotated[SessionInfo, Depends(require_csrf)],
+    db: Annotated[Session, Depends(get_db)],
+) -> dict[str, Any]:
+    payment_limiter.check(f"paypal_capture:{session.account_id}")
+    account = db.get(Account, session.account_id)
+    if account is None or account.status != "active":
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    settings = get_settings()
+    if not settings.paypal_rest_configured:
+        raise HTTPException(status_code=503, detail="CHANNEL_NOT_CONFIGURED")
+
+    order = db.execute(
+        select(PaymentOrder).where(
+            PaymentOrder.provider_invoice_id == body.paypal_order_id,
+            PaymentOrder.account_id == session.account_id,
+            PaymentOrder.channel == "paypal_checkout",
+        )
+    ).scalar_one_or_none()
+    if order is None:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    if order.status == ORDER_STATUS_PAID:
+        return {
+            "ok": True,
+            "order_code": order.order_code,
+            "status": ORDER_STATUS_PAID,
+            "activated": False,
+            "already_paid": True,
+        }
+
+    now = datetime.now(timezone.utc)
+    exp = order.expires_at if order.expires_at.tzinfo else order.expires_at.replace(tzinfo=timezone.utc)
+    if exp <= now:
+        order.status = ORDER_STATUS_EXPIRED
+        raise HTTPException(status_code=410, detail="ORDER_EXPIRED")
+
+    try:
+        captured = capture_paypal_order(settings, paypal_order_id=body.paypal_order_id)
+    except PayPalAPIError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from None
+
+    if captured["capture_status"] != "COMPLETED":
+        raise HTTPException(status_code=409, detail=f"PAYPAL_STATUS_{captured['capture_status'] or 'INCOMPLETE'}")
+
+    if captured["currency"] != order.currency.upper():
+        raise HTTPException(status_code=422, detail="CURRENCY_MISMATCH")
+
+    if captured["custom_id"] and captured["custom_id"] != order.order_code.upper():
+        raise HTTPException(status_code=422, detail="ORDER_MISMATCH")
+
+    txid = captured["capture_id"] or body.paypal_order_id
+    try:
+        _, _, activated = activate_paid_order(
+            db,
+            order_id=order.id,
+            channel="paypal_checkout",
+            external_txid=txid,
+            webhook_event_id=f"paypal_capture:{txid}",
+            paid_amount=captured["amount"],
+            allow_fee_tolerance=False,
+            approved_by="paypal_capture",
+            now=now,
+        )
+    except AmountMismatchError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from None
+
+    return {
+        "ok": True,
+        "order_code": order.order_code,
+        "status": ORDER_STATUS_PAID,
+        "activated": activated,
+        "already_paid": not activated,
+    }
+
+
+def _find_paypal_order_from_resource(db: Session, resource: dict[str, Any]) -> PaymentOrder | None:
+    custom_id = str(resource.get("custom_id") or "").strip().upper()
+    if custom_id:
+        order = db.execute(select(PaymentOrder).where(PaymentOrder.order_code == custom_id)).scalar_one_or_none()
+        if order is not None:
+            return order
+
+    related = (resource.get("supplementary_data") or {}).get("related_ids") or {}
+    paypal_order_id = str(related.get("order_id") or "").strip()
+    if paypal_order_id:
+        order = db.execute(
+            select(PaymentOrder).where(PaymentOrder.provider_invoice_id == paypal_order_id)
+        ).scalar_one_or_none()
+        if order is not None:
+            return order
+
+    # En disputas / reembolsos el capture_id puede venir en disputed_transactions o en links/id
+    tx_candidates: list[str] = []
+    res_id = str(resource.get("id") or "").strip()
+    if res_id:
+        tx_candidates.append(res_id)
+    for dt in resource.get("disputed_transactions") or []:
+        if isinstance(dt, dict):
+            for key in ("seller_transaction_id", "buyer_transaction_id"):
+                val = str(dt.get(key) or "").strip()
+                if val:
+                    tx_candidates.append(val)
+    for link in resource.get("links") or []:
+        if isinstance(link, dict) and link.get("rel") == "up" and isinstance(link.get("href"), str):
+            tail = link["href"].rstrip("/").split("/")[-1]
+            if tail:
+                tx_candidates.append(tail)
+
+    for tx in tx_candidates:
+        order = db.execute(select(PaymentOrder).where(PaymentOrder.reported_txid == tx)).scalar_one_or_none()
+        if order is not None:
+            return order
+    return None
+
+
+@router.post("/webhooks/paypal")
+async def paypal_webhook(request: Request, db: Session = Depends(get_db)) -> dict[str, Any]:
+    raw_body = await request.body()
+    try:
+        payload = json.loads(raw_body.decode("utf-8"))
+    except (UnicodeDecodeError, ValueError):
+        raise HTTPException(status_code=400, detail="Invalid JSON") from None
+    if not isinstance(payload, dict):
+        raise HTTPException(status_code=400, detail="Invalid JSON object")
+
+    settings = get_settings()
+    if not verify_paypal_webhook_signature(settings, headers=dict(request.headers), webhook_event=payload):
+        raise HTTPException(status_code=401, detail="Invalid PayPal webhook signature")
+
+    event_id = str(payload.get("id") or "").strip()
+    event_type = str(payload.get("event_type") or "").strip().upper()
+    resource = payload.get("resource") if isinstance(payload.get("resource"), dict) else {}
+    if not event_id or not event_type:
+        raise HTTPException(status_code=400, detail="Missing event id or event_type")
+
+    order = _find_paypal_order_from_resource(db, resource)
+    if order is None:
+        return {"ok": True, "matched": False, "event_type": event_type}
+
+    if event_type == "PAYMENT.CAPTURE.COMPLETED":
+        amt_obj = resource.get("amount") if isinstance(resource.get("amount"), dict) else {}
+        currency = str(amt_obj.get("currency_code") or "").strip().upper()
+        if currency and currency != order.currency.upper():
+            raise HTTPException(status_code=422, detail="CURRENCY_MISMATCH")
+        try:
+            paid_amount = Decimal(str(amt_obj.get("value") or "0"))
+        except InvalidOperation:
+            raise HTTPException(status_code=400, detail="Invalid amount") from None
+        capture_id = str(resource.get("id") or event_id).strip()
+        try:
+            _, _, activated = activate_paid_order(
+                db,
+                order_id=order.id,
+                channel="paypal_checkout",
+                external_txid=capture_id,
+                webhook_event_id=f"paypal_event:{event_id}",
+                paid_amount=paid_amount,
+                allow_fee_tolerance=False,
+                approved_by="paypal_webhook",
+            )
+        except AmountMismatchError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from None
+        return {"ok": True, "order_code": order.order_code, "activated": activated}
+
+    if event_type in PAYPAL_ADVERSE_EVENTS:
+        txid = str(resource.get("id") or event_id).strip()
+        revoked, revoked_certs = revoke_paid_order(
+            db,
+            order_id=order.id,
+            channel="paypal_checkout",
+            external_txid=txid,
+            webhook_event_id=f"paypal_event:{event_id}",
+            reason=f"PayPal {event_type}",
+        )
+        return {
+            "ok": True,
+            "order_code": order.order_code,
+            "revoked": revoked,
+            "revoked_certificates": revoked_certs,
+            "event_type": event_type,
+        }
+
+    return {"ok": True, "ignored": True, "event_type": event_type}

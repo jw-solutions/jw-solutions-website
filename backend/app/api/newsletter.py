@@ -8,7 +8,7 @@ from typing import Annotated, Any
 from email_validator import EmailNotValidError, validate_email
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session
 from app.core.config import get_settings
 from app.core.database import get_db
 from app.models.newsletter import NewsletterDelivery, NewsletterSubscriber
+from app.security.anti_scraping import defense_engine
 from app.security.rate_limit import client_ip, newsletter_limiter
 from app.services.newsletter_service import (
     ALLOWED_CHANNELS,
@@ -29,10 +30,14 @@ router = APIRouter(prefix="/api/newsletter")
 
 
 class SubscribeBody(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     email: str = Field(min_length=3, max_length=254)
     lang: str = Field(default="es", max_length=10)
     channel: str = Field(default="main-website", max_length=50)
     source: str = Field(default="website", max_length=50)
+    website: str = Field(default="", max_length=200)
+    gotcha: str = Field(default="", alias="_gotcha", max_length=200)
 
 
 class ArticlePayload(BaseModel):
@@ -74,7 +79,20 @@ def subscribe(
     request: Request,
     db: Annotated[Session, Depends(get_db)],
 ) -> dict[str, Any]:
-    newsletter_limiter.check(client_ip(request))
+    ip = client_ip(request)
+    newsletter_limiter.check(ip)
+
+    # Honeypot silencioso: no guarda datos ni envía correos, pero registra telemetría anti-bot sin PII.
+    if (body.website or "").strip() or (body.gotcha or "").strip():
+        assessment = defense_engine.assess_request(
+            client_key=ip,
+            route=request.url.path,
+            user_agent=request.headers.get("user-agent"),
+            accept_header=request.headers.get("accept"),
+            honeypot_triggered=True,
+        )
+        defense_engine.emit_telemetry(assessment, route=request.url.path)
+        return {"ok": True, "status": "subscribed"}
 
     try:
         normalized_email = validate_email(body.email.strip(), check_deliverability=False).normalized.lower()

@@ -24,21 +24,41 @@ test('Switch dual Formateador <-> Academia presente en tools/code-formatter/inde
   assert.match(html, /frame-src 'self' blob:/);
 });
 
-test('Bloqueo secuencial: nivel N+1 bloqueado hasta aprobar nivel N', () => {
+test('Bloqueo secuencial estricto: nivel N+1 (free o pay) bloqueado hasta aprobar nivel N incluso con isPro=true', () => {
   const levels = [
     { id: 'python-1', level: 1, tier: 'free' },
     { id: 'python-2', level: 2, tier: 'free' },
     { id: 'python-3', level: 3, tier: 'pay' },
+    { id: 'python-4', level: 4, tier: 'pay' },
+    { id: 'python-5', level: 5, tier: 'pay' },
   ];
-  const state = createInitialState();
-  assert.equal(isLevelUnlocked(levels[0], 0, levels, state), true);
-  assert.equal(isLevelUnlocked(levels[1], 1, levels, state), false);
-  assert.equal(isLevelUnlocked(levels[2], 2, levels, state), false);
+  const freeState = createInitialState();
+  const proState = { ...createInitialState(), isPro: true };
 
-  const after1 = recordAttempt(state, levels[0], { passed: true }).state;
+  // Con isPro=true y Nivel 1 sin completar: SOLO Nivel 1 está activo; 2, 3, 4 y 5 bloqueados
+  assert.equal(isLevelUnlocked(levels[0], 0, levels, proState), true);
+  assert.equal(isLevelUnlocked(levels[1], 1, levels, proState), false);
+  assert.equal(isLevelUnlocked(levels[2], 2, levels, proState), false);
+  assert.equal(isLevelUnlocked(levels[3], 3, levels, proState), false);
+  assert.equal(isLevelUnlocked(levels[4], 4, levels, proState), false);
+
+  // Al completar Nivel 1: se abre Nivel 2, pero 3, 4 y 5 siguen bloqueados incluso con isPro=true
+  const after1 = recordAttempt(freeState, levels[0], { passed: true }).state;
   assert.equal(isLevelUnlocked(levels[1], 1, levels, after1), true);
   assert.equal(isLevelUnlocked(levels[2], 2, levels, after1), false);
-  assert.equal(isLevelUnlocked(levels[2], 2, levels, { ...after1, isPro: true }), true);
+  assert.equal(isLevelUnlocked(levels[2], 2, levels, { ...after1, isPro: true }), false);
+  assert.equal(isLevelUnlocked(levels[3], 3, levels, { ...after1, isPro: true }), false);
+
+  // Al completar Nivel 2: Nivel 3 exige isPro=true; Nivel 4 sigue bloqueado hasta completar Nivel 3
+  const after2 = recordAttempt(after1, levels[1], { passed: true }).state;
+  assert.equal(isLevelUnlocked(levels[2], 2, levels, after2), false);
+  assert.equal(isLevelUnlocked(levels[2], 2, levels, { ...after2, isPro: true }), true);
+  assert.equal(isLevelUnlocked(levels[3], 3, levels, { ...after2, isPro: true }), false);
+
+  // Al completar Nivel 3 con Pro: se abre Nivel 4, Nivel 5 sigue bloqueado
+  const after3 = recordAttempt(after2, levels[2], { passed: true }).state;
+  assert.equal(isLevelUnlocked(levels[3], 3, levels, { ...after3, isPro: true }), true);
+  assert.equal(isLevelUnlocked(levels[4], 4, levels, { ...after3, isPro: true }), false);
 });
 
 test('Disparo automático de entrenamiento remedial tras 2 fallos consecutivos y racha diaria', () => {
@@ -168,6 +188,11 @@ test('Flujo de vista única (375px) + Gate de usuario: paths → tree → editor
     'cf-academy-live': makeNode('cf-academy-live'),
     'cf-academy-validate': makeNode('cf-academy-validate'),
     'cf-academy-diff': makeNode('cf-academy-diff'),
+    'cf-academy-mini-brief': makeNode('cf-academy-mini-brief'),
+    'cf-academy-mini-brief-title': makeNode('cf-academy-mini-brief-title'),
+    'cf-academy-mini-brief-body': makeNode('cf-academy-mini-brief-body'),
+    'cf-academy-editor-hint': makeNode('cf-academy-editor-hint'),
+    'cf-academy-editor-hint-box': makeNode('cf-academy-editor-hint-box'),
   };
 
   const tabMission = makeNode('tab-mission', { dataset: { acadPane: 'mission' } });
@@ -274,7 +299,7 @@ test('Flujo de vista única (375px) + Gate de usuario: paths → tree → editor
     assert.equal(nodes['cf-academy-paths'].hidden, false);
     assert.equal(nodes['cf-academy-workspace'].hidden, true);
 
-    // Vista 2 · tree (Reto Diario): cabecera y rutas ocultas, solo la misión visible
+    // Reto Diario directo: entra en vista editor lista para trabajar con mini-brief visible
     await nodes['cf-academy-daily-btn'].dispatchClick();
     await new Promise((r) => setTimeout(r, 80));
     assert.equal(nodes['cf-academy-shell'].hidden, false);
@@ -282,16 +307,16 @@ test('Flujo de vista única (375px) + Gate de usuario: paths → tree → editor
     assert.equal(nodes['cf-academy-paths'].hidden, true);
     assert.equal(nodes['cf-academy-workspace'].hidden, false);
     assert.equal(nodes['cf-academy-workspace']._scrolled, true);
-    assert.equal(paneMission.hidden, false);
-    assert.equal(paneEditor.hidden, true);
+    assert.equal(paneEditor.hidden, false, 'Reto Diario debe abrir directamente en el editor');
+    assert.equal(paneMission.hidden, true);
     assert.equal(paneResults.hidden, true);
     assert.equal(visiblePanes(), 1);
+    assert.equal(nodes['cf-academy-mini-brief'].hidden, false, 'Mini-brief visible en cabecera del editor');
     assert.ok(nodes['cf-academy-mission-card'].children.length >= 3, 'El panel de Misión debe renderizar título, descripción y cápsula');
     assert.ok(loadedCode.length > 10, 'El código inicial del reto debe cargarse en el editor');
     assert.ok(loadedLang.length > 0, 'El lenguaje del reto debe seleccionarse');
     assert.equal(tabResults.disabled, true, 'Resultados bloqueado hasta validar');
 
-    // Vista 3 · editor
     const findById = (node, id) => {
       for (const c of node.children || []) {
         if (c && c.id === id) return c;
@@ -302,11 +327,6 @@ test('Flujo de vista única (375px) + Gate de usuario: paths → tree → editor
     };
     const goEditor = findById(nodes['cf-academy-mission-card'], 'cf-academy-go-editor');
     assert.ok(goEditor, 'Debe existir #cf-academy-go-editor en la misión');
-    await goEditor.dispatchClick();
-    assert.equal(paneEditor.hidden, false);
-    assert.equal(paneMission.hidden, true);
-    assert.equal(paneResults.hidden, true);
-    assert.equal(visiblePanes(), 1);
 
     // cf:lang conserva paso, nivel y el código del usuario
     loadedCode = 'def total(items):\n    return 0\n';
@@ -360,6 +380,8 @@ test('Flujo de vista única (375px) + Gate de usuario: paths → tree → editor
     assert.equal(paneEditor.hidden, false);
     assert.equal(paneResults.hidden, true);
     assert.equal(loadedCode, '# drill start', 'El editor carga el micro-ejercicio');
+    assert.ok(nodes['cf-academy-mini-brief-title'].textContent.includes('Guardia vacía'), 'Mini-brief debe actualizarse con el título del drill remedial');
+    assert.ok(nodes['cf-academy-mini-brief-body'].textContent.includes('Protege la lista vacía'), 'Mini-brief debe mostrar la consigna del drill remedial');
 
     // Código que cumple el drill pero NO las pruebas del nivel principal ('def total(')
     loadedCode = 'if not items:\n    pass';
@@ -376,6 +398,20 @@ test('Flujo de vista única (375px) + Gate de usuario: paths → tree → editor
     assert.equal(paneResults.hidden, true);
     assert.equal(loadedCode, 'x = 1', 'Se restaura el código del reto principal');
     assert.equal(findById(nodes['cf-academy-checklist'], 'cf-academy-remedial-box'), null, 'Remedial cerrado');
+
+    // Blindaje de selectLevel: con isPro=true pero Nivel 1 sin completar, rechaza abrir Nivel 2 por secuencia
+    for (const fn of docListeners.get('cf:pro-activated') || []) await fn({});
+    assert.equal(api.selectLevel(2), false, 'selectLevel debe rechazar nivel bloqueado por secuencia');
+
+    // Aprobar nivel 1 y pulsar Siguiente nivel -> navega directo a editor (sin paso intermedio en tree)
+    loadedCode = 'def total(items):\n    return 0\n';
+    await nodes['cf-academy-validate'].dispatchClick();
+    await new Promise((r) => setTimeout(r, 60));
+    const nextBtn = findById(nodes['cf-academy-checklist'], 'cf-academy-next-level-btn');
+    assert.ok(nextBtn, 'Debe ofrecer botón Siguiente nivel tras aprobar');
+    await nextBtn.dispatchClick();
+    assert.equal(paneEditor.hidden, false, 'Siguiente nivel debe abrir directamente en vista editor');
+    assert.equal(paneMission.hidden, true);
 
     // ===== Gate de usuario =====
     const collect = (node, pred, acc = []) => {
@@ -417,7 +453,7 @@ test('Flujo de vista única (375px) + Gate de usuario: paths → tree → editor
     assert.equal(nodes['cf-academy-workspace'].hidden, true);
     assert.equal(pending(), null, 'pending consumido');
 
-    // 2) Reto Diario sin sesión → pending daily_challenge; con sesión reanuda en 'tree'
+    // 2) Reto Diario sin sesión → pending daily_challenge; con sesión reanuda directo en 'editor'
     meState = 'anon';
     await nodes['cf-academy-daily-btn'].dispatchClick();
     await new Promise((r) => setTimeout(r, 80));
@@ -426,11 +462,12 @@ test('Flujo de vista única (375px) + Gate de usuario: paths → tree → editor
     meState = 'free';
     await fireAuthSuccess({ plan: 'free' });
     assert.equal(nodes['cf-academy-workspace'].hidden, false);
-    assert.equal(paneMission.hidden, false);
+    assert.equal(paneEditor.hidden, false);
     assert.equal(nodes['cf-academy-head'].hidden, true);
 
     // 3) Tecnología sin sesión → pending open_topic; con sesión reanuda el tema exacto
-    await nodes['cf-academy-back'].dispatchClick();
+    await nodes['cf-academy-back'].dispatchClick(); // editor -> tree
+    await nodes['cf-academy-back'].dispatchClick(); // tree -> paths
     await new Promise((r) => setTimeout(r, 40));
     assert.equal(nodes['cf-academy-paths'].hidden, false);
     const pill = () => collect(nodes['cf-academy-paths'], (c) => c.textContent === 'PYTHON' && String(c.className).includes('cf-academy-tech-btn'))[0];
@@ -554,5 +591,37 @@ test('Header: #cf-btn-login visible sin data-cf-commercial y ensureAuthenticated
     assert.ok(d.includes('id="cf-btn-login"'), 'dist-public debe conservar #cf-btn-login');
     assert.ok(d.includes('id="cf-auth-modal"'), 'dist-public debe conservar #cf-auth-modal');
     assert.equal(d.includes('data-cf-commercial'), false);
+  }
+});
+
+test('Bloque 1: resolveTipHref con categoría (sin 404), sin textos hardcodeados en academy-ui.js y paridad i18n compartir', async () => {
+  const { resolveTipHref } = await import('../../assets/js/tools/code-formatter/academy-ui.js');
+  assert.equal(resolveTipHref('python', 'python-312-pep8-tips', 'es'), 'tips/python/python-312-pep8-tips/es/');
+  assert.equal(resolveTipHref('typescript', 'ts-strict-tips', 'en'), 'tips/javascript/ts-strict-tips/en/');
+  assert.equal(resolveTipHref('dax', 'dax-calculate', 'pt-BR'), 'tips/sql-dax/dax-calculate/pt-BR/');
+  assert.equal(resolveTipHref('python', 'python/python-312-pep8-tips', 'fr'), 'tips/python/python-312-pep8-tips/fr/');
+
+  const acadJs = readFileSync(join(ROOT, 'assets/js/tools/code-formatter/academy-ui.js'), 'utf8');
+  assert.doesNotMatch(acadJs, /Desbloquea el diagnóstico completo con Tutor IA Pro/);
+  assert.match(acadJs, /t\('acadProTutorTeaser'/);
+
+  const shareKeys = [
+    'acadHintEditorBtn',
+    'acadProTutorTeaser',
+    'acadPathTechSwitchAria',
+    'shareArticleTitle',
+    'shareNative',
+    'shareLinkedIn',
+    'shareX',
+    'shareWhatsApp',
+    'shareCopyLink',
+    'shareCopied',
+    'shareCopyFail',
+  ];
+  for (const loc of LOCALES) {
+    const dict = (await import(`../../assets/js/tools/code-formatter/locales/${loc}.js`)).default;
+    for (const k of shareKeys) {
+      assert.ok(typeof dict[k] === 'string' && dict[k].trim().length > 0, `Falta clave ${k} en ${loc}`);
+    }
   }
 });

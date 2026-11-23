@@ -3,6 +3,8 @@
 // Sin innerHTML: todo se construye con nodos de texto.
 import { t, lang, SUPPORTED_LANGS, applyI18n, applySeo, setupLangSelector, MAX_CODE_BYTES } from './i18n.js';
 import { initNewsletter } from './newsletter.js';
+import { createShareBar, bindStaticShareBars } from './article-share.js';
+import { startTopLoader, stopTopLoader } from './loaders.js';
 
 const SITE = 'https://jw-solutions.com';
 const el = (tag, props = {}, ...children) => {
@@ -41,6 +43,8 @@ function renderEntry(slug, data, root) {
   document.getElementById('cf-fix-title').textContent = loc.title;
   document.getElementById('cf-fix-lead').textContent = loc.summary;
   document.title = `${loc.title} | Code Formatter & Auto-Doc AI`;
+  const canonicalUrl = `${SITE}/tools/code-formatter/fix/${encodeURIComponent(slug)}/${lang === 'es' ? '' : `${encodeURIComponent(lang)}/`}`;
+  const shareBar = createShareBar({ url: canonicalUrl, title: loc.title });
   document.getElementById('cf-fix-body').replaceChildren(
     el('div', { className: 'cf-fix__pair' },
       el('div', {}, el('p', { className: 'cf-fix__label cf-fix__label--bad', textContent: t('fixBefore') }), el('pre', { className: 'cf-tip__code' }, el('code', { textContent: entry.before }))),
@@ -48,6 +52,7 @@ function renderEntry(slug, data, root) {
     el('h2', { className: 'cf-tip__h', textContent: t('fixSteps') }),
     el('ol', { className: 'cf-fix__steps' }, ...loc.steps.map((s) => el('li', { textContent: s }))),
     ctaButton(entry, root),
+    ...(shareBar ? [shareBar] : []),
     el('h2', { className: 'cf-tip__h', textContent: t('fixOthers') }),
     el('ul', { className: 'cf-fix__list' }, ...others.map(([s, e]) => el('li', { className: 'cf-card' }, el('a', { href: `../${s}/?lang=${lang}`, textContent: (e.i18n[lang] || e.i18n.es).title })))),
   );
@@ -75,7 +80,9 @@ async function main() {
   applyI18n();
   await setupLangSelector(document.getElementById('cf-ui-lang'));
   initNewsletter();
+  bindStaticShareBars();
   const mainEl = document.getElementById('cf-main');
+  startTopLoader();
   try {
     const res = await fetch(mainEl.dataset.fixData, { cache: 'no-cache' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -85,6 +92,8 @@ async function main() {
     else if (!slug) renderHub(data);
   } catch (err) {
     console.warn('[code-formatter] soluciones no localizadas:', err.message); // queda el contenido estático en español
+  } finally {
+    stopTopLoader();
   }
 }
 

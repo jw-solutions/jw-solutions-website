@@ -9,6 +9,7 @@ from sqlalchemy import text
 
 from app.api.academy import router as academy_router
 from app.api.auth import router as auth_router
+from app.api.defense import router as defense_router
 from app.api.newsletter import router as newsletter_router
 from app.api.payments import router as payments_router
 from app.api.session import router as session_router
@@ -64,6 +65,7 @@ def create_app() -> FastAPI:
 
     app.include_router(academy_router)
     app.include_router(auth_router)
+    app.include_router(defense_router)
     app.include_router(newsletter_router)
     app.include_router(payments_router)
     app.include_router(session_router)

@@ -560,3 +560,34 @@ test('generate-distribution-kit.js genera 7 idiomas con comunidades y parámetro
   const toolHtml = fs.readFileSync(path.join(ROOT, 'tools', 'code-formatter', 'index.html'), 'utf8');
   assert.match(toolHtml, /https:\/\/dly\.to\/nmdN9vQObOU/);
 });
+
+test('Botones de compartir social (LinkedIn, X, WhatsApp, copiar) en /tips/, /fix/ y seguridad DOM sin innerHTML', () => {
+  const tipHtml = fs.readFileSync(
+    path.join(ROOT, 'tools', 'code-formatter', 'tips', 'python', 'python-312-pep8-tips', 'es', 'index.html'),
+    'utf8',
+  );
+  assert.match(tipHtml, /data-cf-share="1"/);
+  assert.match(tipHtml, /https:\/\/www\.linkedin\.com\/sharing\/share-offsite\/\?url=https%3A%2F%2Fjw-solutions\.com%2Ftools%2Fcode-formatter%2Ftips%2Fpython%2Fpython-312-pep8-tips%2Fes%2F/);
+  assert.match(tipHtml, /https:\/\/twitter\.com\/intent\/tweet\?/);
+  assert.match(tipHtml, /https:\/\/api\.whatsapp\.com\/send\?text=/);
+  assert.match(tipHtml, /data-cf-share-copy="1"/);
+  assert.match(tipHtml, /rel="noopener noreferrer"/);
+
+  const fixHtml = fs.readFileSync(
+    path.join(ROOT, 'tools', 'code-formatter', 'fix', 'python-indentation-error', 'en', 'index.html'),
+    'utf8',
+  );
+  assert.match(fixHtml, /data-cf-share="1"/);
+  assert.match(fixHtml, /https:\/\/www\.linkedin\.com\/sharing\/share-offsite\/\?url=https%3A%2F%2Fjw-solutions\.com%2Ftools%2Fcode-formatter%2Ffix%2Fpython-indentation-error%2Fen%2F/);
+  assert.match(fixHtml, /data-cf-share-copy="1"/);
+
+  for (const rel of [
+    'assets/js/tools/code-formatter/article-share.js',
+    'assets/js/tools/code-formatter/tips-carousel.js',
+    'assets/js/tools/code-formatter/tips-page.js',
+    'assets/js/tools/code-formatter/fix-page.js',
+  ]) {
+    const src = fs.readFileSync(path.join(ROOT, rel), 'utf8');
+    assert.doesNotMatch(src, /\.innerHTML\s*=|insertAdjacentHTML/, `${rel} no debe usar innerHTML`);
+  }
+});

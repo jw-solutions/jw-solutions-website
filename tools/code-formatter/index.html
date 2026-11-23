@@ -218,6 +218,7 @@
           <div class="cf-academy-topbar">
             <button type="button" id="cf-academy-back" class="cf-btn cf-btn--small" hidden data-i18n="acadBackPaths">← Cambiar ruta o lenguaje</button>
             <div id="cf-academy-progress-bar" class="cf-academy-progress-bar" aria-live="polite"></div>
+            <div id="cf-academy-path-techs" class="cf-academy-path-techs" hidden></div>
           </div>
           <div id="cf-academy-mobile-tabs" class="cf-academy-mobile-tabs cf-academy-stepper" role="tablist" data-i18n-aria="acadStepperAria" aria-label="Pasos de la Academia">
             <button type="button" class="cf-academy-mobile-tab is-active" role="tab" aria-selected="true" data-acad-pane="mission" data-i18n="acadTabMission">Misión</button>
@@ -238,9 +239,11 @@
               </details>
               <div id="cf-academy-editor-slot"></div>
               <div class="cf-academy-editor-bar">
+                <button type="button" id="cf-academy-editor-hint" class="cf-btn cf-btn--small" data-i18n="acadHintEditorBtn">💡 Pista (1/2)</button>
                 <button type="button" id="cf-academy-diff" class="cf-btn" data-i18n="acadDiffBtn">Comparar con solución óptima</button>
-                <button type="button" id="cf-academy-validate" class="cf-btn cf-btn--primary" data-i18n="acadValidateBtn">Validar nivel</button>
+                <button type="button" id="cf-academy-validate" class="cf-btn cf-btn--primary" data-i18n="acadValidateBtn" title="Ctrl+Enter">Validar nivel</button>
               </div>
+              <p id="cf-academy-editor-hint-box" class="cf-muted cf-academy-editor-hint-box" role="status" aria-live="polite" hidden></p>
               <div id="cf-academy-diff-slot" class="cf-academy-diff-slot"></div>
             </div>
 
@@ -400,6 +403,7 @@
       <button type="button" id="cf-tip-modal-load" class="cf-btn" data-i18n="tipsLoadInEditor">Cargar ejemplo en el editor</button>
       <a id="cf-tip-modal-academy" class="cf-btn cf-btn--secondary" href="?mode=learn" data-i18n="tipsPracticeAcademy">Practicar en Modo Academia</a>
     </div>
+    <div id="cf-tip-modal-share"></div>
   </dialog>
 
   <dialog id="cf-embed-modal" class="cf-dialog" aria-labelledby="cf-embed-title">
@@ -441,15 +445,19 @@
       <h3 class="cf-dialog__sub" data-i18n="planSelectTitle">Elige tu Pase Prepago Acumulable</h3>
       <div class="cf-plan-grid" role="radiogroup" aria-label="Plans">
         <button type="button" class="cf-plan-btn is-active" data-cf-plan="pro_30d" aria-pressed="true" data-i18n="plan30d">30 días · $12</button>
-        <button type="button" class="cf-plan-btn" data-cf-plan="pro_90d" aria-pressed="false" data-i18n="plan90d">90 días · $30</button>
+        <button type="button" class="cf-plan-btn cf-plan-btn--recommended" data-cf-plan="pro_90d" aria-pressed="false">
+          <span class="cf-plan-badge" data-i18n="planRecommendedBadge">Recomendado</span>
+          <span data-i18n="plan90d">90 días · $30</span>
+        </button>
         <button type="button" class="cf-plan-btn" data-cf-plan="pro_365d" aria-pressed="false" data-i18n="plan365d">365 días · $99</button>
       </div>
+      <ul id="cf-plan-benefits" class="cf-plan-benefits" aria-live="polite"></ul>
 
       <h3 class="cf-dialog__sub" data-i18n="payMethodTitle">Método de pago global</h3>
       <div class="cf-tabs" role="tablist">
         <button type="button" role="tab" class="cf-tab is-active" data-cf-pay-tab="binance_p2p" aria-selected="true" data-i18n="payTabBinance">Binance Pay / P2P (0%)</button>
         <button type="button" role="tab" class="cf-tab" data-cf-pay-tab="crypto_gateway" aria-selected="false" data-i18n="payTabCrypto">Cripto Multi-Wallet</button>
-        <button type="button" role="tab" class="cf-tab" data-cf-pay-tab="paypal_imap" aria-selected="false" data-i18n="payTabPaypal">Tarjeta / PayPal</button>
+        <button type="button" role="tab" class="cf-tab" data-cf-pay-tab="paypal_checkout" aria-selected="false" data-i18n="payTabPaypal">Tarjeta / PayPal</button>
       </div>
 
       <div id="cf-order-meta" class="cf-order-meta" hidden>
@@ -486,13 +494,10 @@
       </div>
 
       <div id="cf-pay-pane-paypal" class="cf-pay-pane" hidden>
-        <p class="cf-muted" data-i18n="payPaypalStep">Envía el pago e incluye obligatoriamente este código en la nota del comprador:</p>
-        <div class="cf-payid">
-          <code id="cf-paypal-code" class="cf-payid__value"></code>
-          <button type="button" id="cf-paypal-copy" class="cf-btn cf-btn--small" data-i18n="payCopyCode">Copiar código</button>
-        </div>
-        <a id="cf-paypal-open-link" class="cf-btn cf-btn--primary" target="_blank" rel="noopener noreferrer" hidden data-i18n="payPaypalOpenBtn">Ir a PayPal / Tarjeta</a>
-        <p class="cf-muted" data-i18n="payPaypalAutoStatus">Conciliación automática vía recibo oficial activada.</p>
+        <p class="cf-muted" data-i18n="payPaypalCheckoutLead">Paga de forma segura con PayPal o tarjeta. Tu pase Pro se activa automáticamente al confirmar el pago.</p>
+        <dl id="cf-paypal-breakdown" class="cf-paypal-breakdown" hidden></dl>
+        <button type="button" id="cf-paypal-pay-btn" class="cf-btn cf-btn--primary" data-i18n="payPaypalOpenBtn">Pagar con PayPal / Tarjeta</button>
+        <p id="cf-paypal-status" class="cf-form__status" role="status" aria-live="polite"></p>
       </div>
     </div>
   </dialog>

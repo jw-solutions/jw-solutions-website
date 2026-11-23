@@ -7,6 +7,7 @@ import { toast } from './actions.js';
 import { evaluateChallenge } from './academy-sandbox.js';
 import {
   isLevelUnlocked,
+  findFirstPendingLevel,
   recordAttempt,
   completeRemedialDrill,
   recordDailyCompletion,
@@ -14,9 +15,35 @@ import {
 } from './academy-engine.js';
 import { loadAcademyState, saveAcademyState, captureUtmParams, syncAcademyState } from './academy-progress.js';
 import { apiUrl, postJson } from './services/api.js';
+import { showAcademyLoader, hideAcademyLoader } from './loaders.js';
 
 const TECHS = ['python', 'javascript', 'typescript', 'sql', 'dax', 'java', 'csharp', 'php', 'json', 'yaml'];
+const TIP_CATEGORY_BY_TECH = {
+  python: 'python',
+  javascript: 'javascript',
+  typescript: 'javascript',
+  java: 'java',
+  csharp: 'csharp',
+  php: 'php',
+  sql: 'sql-dax',
+  dax: 'sql-dax',
+  json: 'json-yaml',
+  yaml: 'json-yaml',
+};
 const ACADEMY_BASE = new URL('../../../../content/code-formatter-academy/', import.meta.url);
+
+/** Resuelve la ruta relativa de un tip relacionado incluyendo su subcarpeta de categoría (evita 404). */
+export function resolveTipHref(tech, slug, locale = 'es') {
+  const cleanSlug = String(slug || '').replace(/^\/+|\/+$/g, '');
+  if (!cleanSlug) return `tips/${TIP_CATEGORY_BY_TECH[tech] || 'python'}/`;
+  const loc = encodeURIComponent(String(locale || 'es'));
+  if (cleanSlug.includes('/')) {
+    const parts = cleanSlug.split('/').map((s) => encodeURIComponent(s)).join('/');
+    return `tips/${parts}/${loc}/`;
+  }
+  const cat = TIP_CATEGORY_BY_TECH[String(tech || '').toLowerCase()] || 'python';
+  return `tips/${cat}/${encodeURIComponent(cleanSlug)}/${loc}/`;
+}
 // Vistas exclusivas del flujo secuencial (una sola visible a la vez).
 export const ACADEMY_VIEWS = ['paths', 'tree', 'editor', 'results'];
 const PENDING_ACTION_KEY = 'cf_pending_action';
@@ -180,6 +207,10 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   const validateBtn = document.getElementById('cf-academy-validate');
   const diffBtn = document.getElementById('cf-academy-diff');
   const progressBarEl = document.getElementById('cf-academy-progress-bar');
+  const pathTechsEl = document.getElementById('cf-academy-path-techs');
+  const editorPane = document.getElementById('cf-academy-editor-pane');
+  const editorHintBtn = document.getElementById('cf-academy-editor-hint');
+  const editorHintBox = document.getElementById('cf-academy-editor-hint-box');
   const miniBriefEl = document.getElementById('cf-academy-mini-brief');
   const miniBriefTitleEl = document.getElementById('cf-academy-mini-brief-title');
   const miniBriefBodyEl = document.getElementById('cf-academy-mini-brief-body');
@@ -207,6 +238,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   let academyView = 'paths';
   let resultsReady = false;
   let primaryFocus = null;
+  let lastEvaluation = null;
 
   const PANE_BY_VIEW = { tree: 'mission', editor: 'editor', results: 'results' };
   const nextFrame = (fn) => (typeof requestAnimationFrame === 'function' ? requestAnimationFrame(fn) : setTimeout(fn, 0));
@@ -368,7 +400,15 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
 
       const startBtn = el('button', 'cf-btn cf-btn--primary', t('acadStartPath'));
       startBtn.type = 'button';
-      startBtn.addEventListener('click', () => { gatedOpenTopic(p.technologies[0], 1, p.id); });
+      startBtn.addEventListener('click', () => {
+        const st = readLocalState();
+        const completed = new Set(st.completed || []);
+        const targetTech = (p.technologies || []).find((tech) => {
+          const doneCount = [...completed].filter((id) => id.startsWith(`${tech}-`)).length;
+          return doneCount < 5;
+        }) || p.technologies[0];
+        gatedOpenTopic(targetTech, null, p.id);
+      });
       card.append(startBtn);
 
       grid.append(card);
@@ -379,13 +419,35 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     for (const tech of TECHS) {
       const btn = el('button', 'cf-academy-tech-btn', tech.toUpperCase());
       btn.type = 'button';
-      btn.addEventListener('click', () => { gatedOpenTopic(tech, 1, ''); });
+      btn.addEventListener('click', () => { gatedOpenTopic(tech, null, ''); });
       techPills.append(btn);
     }
 
     pathsContainer.append(hPaths, grid, hTech, techPills);
     injectAcademyJsonLd(pathsData, loc);
     setAcademyView('paths', { scroll: false });
+  }
+
+  function renderPathTechSwitcher() {
+    if (!pathTechsEl) return;
+    pathTechsEl.replaceChildren();
+    const pathObj = currentPath && pathsCache?.paths?.find((p) => p.id === currentPath);
+    if (!pathObj || !Array.isArray(pathObj.technologies) || pathObj.technologies.length <= 1 || currentCurriculum?.isDaily) {
+      pathTechsEl.hidden = true;
+      return;
+    }
+    pathTechsEl.setAttribute('role', 'group');
+    pathTechsEl.setAttribute('aria-label', t('acadPathTechSwitchAria'));
+    for (const tech of pathObj.technologies) {
+      const btn = el('button', `cf-academy-tech-btn cf-academy-tech-btn--compact${tech === currentTopic ? ' is-active' : ''}`, tech.toUpperCase());
+      btn.type = 'button';
+      btn.setAttribute('aria-pressed', String(tech === currentTopic));
+      btn.addEventListener('click', () => {
+        if (tech !== currentTopic) openTopic(tech, null, currentPath, 'tree');
+      });
+      pathTechsEl.append(btn);
+    }
+    pathTechsEl.hidden = false;
   }
 
   function resolveNodeState(lvl, idx, levels, state) {
@@ -438,10 +500,10 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
           const prevTitle = curriculum.levels[idx - 1]?.title || `Nivel ${idx}`;
           toast(t('acadLockedPrevMsg', { prev: prevTitle }));
           const activeIdx = curriculum.levels.findIndex((l, i) => resolveNodeState(l, i, curriculum.levels, readLocalState()) === 'active');
-          if (activeIdx >= 0) selectLevel(curriculum, curriculum.levels[activeIdx].level);
+          if (activeIdx >= 0) selectLevel(curriculum, curriculum.levels[activeIdx].level, { view: 'tree' });
           return;
         }
-        selectLevel(curriculum, lvl.level);
+        selectLevel(curriculum, lvl.level, { view: 'editor' });
       };
       node.addEventListener('click', activate);
       node.addEventListener('keydown', (ev) => {
@@ -453,6 +515,55 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       list.append(node);
     });
     skillTreeEl.append(list);
+  }
+
+  function syncHintControls(lvl) {
+    const missionHintBtn = document.getElementById('cf-academy-hint-btn');
+    const missionHintBox = document.getElementById('cf-academy-hint-box');
+    const nextStep = Math.min(2, hintStep + 1);
+    const done = hintStep >= 2;
+
+    let text = '';
+    if (hintStep === 1) {
+      const rulesText = (lvl?.style_rules || []).join(', ') || lvl?.concept_capsule || activeDrill?.solution_hint || '';
+      text = t('acadHintConcept', { text: rulesText });
+    } else if (hintStep >= 2) {
+      const firstTest = (lvl?.tests || [])[0];
+      const syntax = activeDrill?.expected_pattern
+        || (firstTest?.expected ? String(firstTest.expected) : String(lvl?.reference_solution || '').split('\n')[0]);
+      text = t('acadHintSyntax', { text: syntax });
+    }
+
+    if (missionHintBtn) {
+      missionHintBtn.textContent = t('acadHintBtn', { step: nextStep });
+      missionHintBtn.disabled = done;
+    }
+    if (missionHintBox) {
+      missionHintBox.textContent = text;
+      missionHintBox.hidden = hintStep === 0;
+    }
+    if (editorHintBtn) {
+      editorHintBtn.textContent = `💡 ${t('acadHintBtn', { step: nextStep })}`;
+      editorHintBtn.disabled = done;
+    }
+    if (editorHintBox) {
+      editorHintBox.textContent = text;
+      editorHintBox.hidden = hintStep === 0;
+    }
+  }
+
+  function revealNextHint() {
+    if (!activeLevel || hintStep >= 2) return;
+    hintStep = Math.min(2, hintStep + 1);
+    syncHintControls(activeLevel);
+  }
+
+  function updateMiniBrief(title, body) {
+    if (miniBriefEl && miniBriefTitleEl && miniBriefBodyEl) {
+      miniBriefTitleEl.textContent = `${t('acadStickyBriefLabel')}: ${title}`;
+      miniBriefBodyEl.textContent = String(body || '').slice(0, 180);
+      miniBriefEl.hidden = false;
+    }
   }
 
   function renderMission(lvl, standard) {
@@ -469,11 +580,8 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
         total,
       });
     }
-    if (miniBriefEl && miniBriefTitleEl && miniBriefBodyEl) {
-      miniBriefTitleEl.textContent = `${t('acadStickyBriefLabel')}: ${lvl.title}`;
-      miniBriefBodyEl.textContent = String(lvl.concept_capsule || '').slice(0, 140);
-      miniBriefEl.hidden = false;
-    }
+    renderPathTechSwitcher();
+    updateMiniBrief(lvl.title, lvl.concept_capsule || '');
 
     missionEl.append(el('h3', 'cf-academy-pane__title', t('acadMissionTitle')));
     missionEl.append(el('p', 'cf-muted', `${standard} · ${lvl.title}`));
@@ -494,22 +602,10 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     const hintBox = el('p', 'cf-muted');
     hintBox.id = 'cf-academy-hint-box';
     hintBox.hidden = true;
-    hintBtn.addEventListener('click', () => {
-      hintStep = Math.min(2, hintStep + 1);
-      if (hintStep === 1) {
-        const rulesText = (lvl.style_rules || []).join(', ') || lvl.concept_capsule || '';
-        hintBox.textContent = t('acadHintConcept', { text: rulesText });
-        hintBtn.textContent = t('acadHintBtn', { step: 2 });
-      } else {
-        const firstTest = (lvl.tests || [])[0];
-        const syntax = firstTest?.expected ? String(firstTest.expected) : String(lvl.reference_solution || '').split('\n')[0];
-        hintBox.textContent = t('acadHintSyntax', { text: syntax });
-        hintBtn.disabled = true;
-      }
-      hintBox.hidden = false;
-    });
+    hintBtn.addEventListener('click', () => revealNextHint());
     navBar.append(goEditorBtn, hintBtn);
     missionEl.append(navBar, hintBox);
+    syncHintControls(lvl);
 
     renderChecklist(lvl);
   }
@@ -535,10 +631,26 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   }
 
   function selectLevel(curriculum, levelNum, { view = 'tree' } = {}) {
-    const lvl = (curriculum.levels || []).find((l) => l.level === levelNum) || curriculum.levels[0];
-    if (!lvl || (lvl.tier === 'pay' && !readLocalState().isPro)) {
+    const levels = curriculum?.levels || [];
+    const idx = levels.findIndex((l) => l.level === levelNum);
+    const resolvedIdx = idx >= 0 ? idx : 0;
+    const lvl = levels[resolvedIdx];
+    const state = readLocalState();
+    if (!lvl) return false;
+    if (lvl.tier === 'pay' && !state.isPro) {
       openProOrExplain();
-      return;
+      return false;
+    }
+    if (!isLevelUnlocked(lvl, resolvedIdx, levels, state)) {
+      const prevTitle = levels[resolvedIdx - 1]?.title || `Nivel ${resolvedIdx}`;
+      toast(t('acadLockedPrevMsg', { prev: prevTitle }));
+      if (!activeLevel) {
+        const fallback = findFirstPendingLevel(levels, state);
+        if (fallback && fallback.level !== lvl.level) {
+          return selectLevel(curriculum, fallback.level, { view: 'tree' });
+        }
+      }
+      return false;
     }
     isRemedialActive = false;
     mainLevelSnapshot = null;
@@ -546,7 +658,8 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     mainCodeSnapshot = null;
     resultsReady = false;
     primaryFocus = null;
-    preloadedNextLevel = (curriculum.levels || []).find((l) => l.level === (lvl.level + 1)) || null;
+    lastEvaluation = null;
+    preloadedNextLevel = levels.find((l) => l.level === (lvl.level + 1)) || null;
     activeLevel = lvl;
     currentLevelNum = lvl.level;
     renderSkillTree(curriculum);
@@ -555,9 +668,11 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     if (setCode && lvl.starter_code) setCode(lvl.starter_code);
     if (liveEl) liveEl.textContent = t('acadConsoleEmpty');
     setAcademyView(view);
+    return true;
   }
 
-  async function openTopic(tech, levelNum = 1, pathId = '', view = 'tree') {
+  async function openTopic(tech, levelNum = null, pathId = '', view = 'tree') {
+    showAcademyLoader(workspace);
     try {
       const loc = getUiLang();
       const curriculum = await fetchJson(`curriculum/${loc}/${tech}.json`);
@@ -565,10 +680,15 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       currentTopic = tech;
       currentCurriculum = curriculum;
       mountEditorInAcademy();
-      selectLevel(curriculum, levelNum, { view });
+      const targetLevel = (levelNum !== null && levelNum !== undefined && Number(levelNum) > 0)
+        ? Number(levelNum)
+        : (findFirstPendingLevel(curriculum.levels, readLocalState())?.level || 1);
+      selectLevel(curriculum, targetLevel, { view });
     } catch {
       if (liveEl) liveEl.textContent = t('acadLoadError');
       toast(t('acadLoadError'));
+    } finally {
+      hideAcademyLoader(workspace);
     }
   }
 
@@ -606,7 +726,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     };
   }
 
-  async function openDailyChallenge(view = 'tree') {
+  async function openDailyChallenge(view = 'editor') {
     dailyCache ||= await loadDailyChallengesData();
     const ch = resolveDailyChallenge(dailyCache, getUiLang());
     currentMode = 'learn';
@@ -630,6 +750,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     activeDrill = null;
     resultsReady = false;
     primaryFocus = null;
+    lastEvaluation = null;
     renderSkillTree(pseudoCurriculum);
     renderMission(activeLevel, pseudoCurriculum.standard);
     if (setLanguage) setLanguage(ch.tech);
@@ -692,10 +813,11 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
         await setWorkMode('learn', { skipGate: true, params: sanitizePendingParams({}) });
       }
       if (pending.action === 'daily_challenge') {
-        await openDailyChallenge('tree');
+        await openDailyChallenge('editor');
       } else if (TECHS.includes(pending.tech)) {
-        const level = Math.floor(Number(pending.level));
-        await openTopic(pending.tech, level > 0 && level < 100 ? level : 1, typeof pending.pathId === 'string' ? pending.pathId.slice(0, 60) : '', 'tree');
+        const rawLevel = pending.level !== null && pending.level !== undefined ? Math.floor(Number(pending.level)) : null;
+        const level = rawLevel && rawLevel > 0 && rawLevel < 100 ? rawLevel : null;
+        await openTopic(pending.tech, level, typeof pending.pathId === 'string' ? pending.pathId.slice(0, 60) : '', 'tree');
       }
     } catch { /* ignorar */ }
   }
@@ -733,9 +855,9 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       if (params.step === 'paths') {
         renderPathsView(pathsCache);
       } else if (params.daily) {
-        await openDailyChallenge(startView);
+        await openDailyChallenge(params.step === 'tree' ? 'tree' : 'editor');
       } else if (params.topic && TECHS.includes(params.topic)) {
-        await openTopic(params.topic, params.level || 1, params.path || '', startView);
+        await openTopic(params.topic, params.level || null, params.path || '', startView);
       } else {
         renderPathsView(pathsCache);
       }
@@ -746,6 +868,16 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
 
   btnFormat.addEventListener('click', () => setWorkMode('format'));
   btnAcademy.addEventListener('click', () => setWorkMode('learn'));
+  editorHintBtn?.addEventListener('click', () => revealNextHint());
+  const onEditorShortcut = (ev) => {
+    if (currentMode !== 'learn' || academyView !== 'editor') return;
+    if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter' && validateBtn && !validateBtn.disabled) {
+      ev.preventDefault();
+      validateBtn.click();
+    }
+  };
+  editorPane?.addEventListener?.('keydown', onEditorShortcut);
+  document.addEventListener('keydown', onEditorShortcut);
   backBtn?.addEventListener('click', async () => {
     if (academyView === 'results') { setAcademyView('editor'); return; }
     if (academyView === 'editor') { setAcademyView('tree'); return; }
@@ -758,11 +890,9 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   });
   dailyBtn?.addEventListener('click', () => { handleDailyChallengeClick(); });
   document.addEventListener('cf:auth-success', async (ev) => {
-    const isPro = Boolean(ev?.detail?.plan === 'pro' || ev?.detail?.trial_auto_activated);
-    if (isPro) {
-      academyState = saveAcademyState({ ...readLocalState(), isPro: true });
-      if (currentCurriculum) renderSkillTree(currentCurriculum);
-    }
+    const isPro = Boolean(ev?.detail?.plan === 'pro' || ev?.detail?.pro_active || ev?.detail?.trial_auto_activated);
+    academyState = saveAcademyState({ ...readLocalState(), isPro });
+    if (currentCurriculum) renderSkillTree(currentCurriculum);
     if (ev?.detail?.trial_auto_activated) {
       const proDialog = document.getElementById('cf-pro-modal');
       if (proDialog && proDialog.open && typeof proDialog.close === 'function') proDialog.close();
@@ -931,7 +1061,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   }
 
   /** Restaura el reto principal (nivel + código previo del usuario) y vuelve al editor. */
-  function returnToMainChallenge() {
+  function returnToMainChallenge(completedDrillTitle = '') {
     const snap = mainLevelSnapshot;
     const keptCode = mainCodeSnapshot;
     isRemedialActive = false;
@@ -941,26 +1071,22 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     if (!snap) return;
     selectLevel(currentCurriculum, snap.level, { view: 'editor' });
     if (keptCode !== null && setCode) setCode(keptCode);
+    if (completedDrillTitle) toast(t('acadRemedialPassedMsg', { title: completedDrillTitle }));
   }
 
-  async function validateRemedial(tech, code) {
-    const drill = activeDrill;
-    const drillLevel = buildDrillLevel(drill);
-    const evaluation = await evaluateChallenge(tech, code, drillLevel);
+  function renderRemedialResults(drill, drillLevel, evaluation) {
     const passedCount = evaluation.results.filter((r) => r.ok).length;
     const totalCount = evaluation.results.length;
-    resultsReady = true;
     primaryFocus = null;
     renderChecklist(drillLevel, evaluation);
 
     if (evaluation.passed) {
-      academyState = saveAcademyState(completeRemedialDrill(academyState, mainLevelSnapshot.id, drill.id));
       liveEl.textContent = t('acadRemedialPassedMsg', { title: drill.title });
       const card = el('div', 'cf-academy-achievement-card');
       const returnBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadRemedialMastered'));
       returnBtn.type = 'button';
       returnBtn.id = 'cf-academy-remedial-return-btn';
-      returnBtn.addEventListener('click', returnToMainChallenge);
+      returnBtn.addEventListener('click', () => returnToMainChallenge(drill.title));
       card.append(returnBtn);
       checklistEl.append(card);
       primaryFocus = returnBtn;
@@ -974,13 +1100,111 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       checklistEl.append(fixBtn);
       primaryFocus = fixBtn;
     }
+  }
+
+  async function validateRemedial(tech, code) {
+    const drill = activeDrill;
+    const drillLevel = buildDrillLevel(drill);
+    const evaluation = await evaluateChallenge(tech, code, drillLevel);
+    resultsReady = true;
+    lastEvaluation = { kind: 'remedial', drill, drillLevel, evaluation };
+    if (evaluation.passed) {
+      academyState = saveAcademyState(completeRemedialDrill(academyState, mainLevelSnapshot.id, drill.id));
+    }
+    renderRemedialResults(drill, drillLevel, evaluation);
     setAcademyView('results');
+  }
+
+  function renderMainResults(tech, lvl, evaluation, attempt, { emitToasts = false, achRes = null } = {}) {
+    const passedCount = evaluation.results.filter((r) => r.ok).length;
+    const totalCount = evaluation.results.length;
+    primaryFocus = null;
+    renderChecklist(lvl, evaluation);
+
+    if (evaluation.passed) {
+      liveEl.textContent = `OK ${passedCount}/${totalCount} · ${lvl.title}`;
+      renderSkillTree(currentCurriculum);
+
+      const feedbackCard = el('div', 'cf-academy-achievement-card');
+      {
+        const remaining = Math.max(0, (currentCurriculum?.levels?.length || 1) - (academyState.completed || []).filter((id) => id.startsWith(tech)).length);
+        feedbackCard.append(el('p', 'cf-muted', t('acadNextBadgeProgress', { remaining })));
+        if (preloadedNextLevel && (preloadedNextLevel.tier !== 'pay' || readLocalState().isPro)) {
+          const nextBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadNextLevelBtn', { n: preloadedNextLevel.level }));
+          nextBtn.type = 'button';
+          nextBtn.id = 'cf-academy-next-level-btn';
+          nextBtn.addEventListener('click', () => {
+            selectLevel(currentCurriculum, preloadedNextLevel.level, { view: 'editor' });
+          });
+          feedbackCard.append(nextBtn);
+          primaryFocus = nextBtn;
+        }
+      }
+      checklistEl.append(feedbackCard);
+
+      if (lvl.related_tip_slug) {
+        const tipLink = el('a', 'cf-btn cf-btn--secondary cf-btn--small', t('tipsOpenFullPage'));
+        tipLink.href = resolveTipHref(tech, lvl.related_tip_slug, getUiLang());
+        checklistEl.append(tipLink);
+      }
+      renderCertificateAction(tech);
+      if (emitToasts && achRes?.newlyUnlocked) {
+        for (const ach of achRes.newlyUnlocked) {
+          const copy = ach.i18n?.[getUiLang()] || ach.i18n?.es || {};
+          toast(`${ach.icon} ${copy.title || ach.id}`);
+        }
+      }
+    } else {
+      const firstIssue = evaluation.runtimeError || evaluation.styleViolations[0] || evaluation.errorType || 'failed';
+      liveEl.textContent = `${passedCount}/${totalCount} · ${firstIssue}`;
+
+      const fixBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadFixInEditorBtn'));
+      fixBtn.type = 'button';
+      fixBtn.id = 'cf-academy-fix-editor-btn';
+      fixBtn.addEventListener('click', () => setAcademyView('editor'));
+      checklistEl.append(fixBtn);
+      primaryFocus = fixBtn;
+
+      if (attempt.triggerRemedial && attempt.recommendedDrill) {
+        const drill = attempt.recommendedDrill;
+        const box = el('div', 'cf-academy-capsule');
+        box.id = 'cf-academy-remedial-box';
+        box.append(el('strong', null, `${drill.title}: `));
+        box.append(document.createTextNode(drill.prompt));
+        const practiceBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadRemedialPracticeBtn'));
+        practiceBtn.type = 'button';
+        practiceBtn.id = 'cf-academy-remedial-practice-btn';
+        practiceBtn.addEventListener('click', () => {
+          isRemedialActive = true;
+          mainLevelSnapshot = activeLevel;
+          mainCodeSnapshot = getCode ? getCode() : null;
+          activeDrill = drill;
+          hintStep = 0;
+          updateMiniBrief(drill.title, drill.prompt);
+          syncHintControls(buildDrillLevel(drill));
+          if (setCode) setCode(drill.starter_code);
+          setAcademyView('editor');
+        });
+        box.append(practiceBtn);
+        primaryFocus = practiceBtn;
+
+        if (isFeatureOn('pro_billing')) {
+          const teaser = el('p', 'cf-muted', t('acadProTutorTeaser', { issue: firstIssue }));
+          const proBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadProOpenPlans'));
+          proBtn.type = 'button';
+          proBtn.addEventListener('click', openProOrExplain);
+          box.append(teaser, proBtn);
+        }
+        checklistEl.append(box);
+      }
+    }
   }
 
   validateBtn?.addEventListener('click', async () => {
     if (!activeLevel) return;
     validateBtn.disabled = true;
     validateBtn.setAttribute('aria-busy', 'true');
+    showAcademyLoader(workspace);
     try {
       const tech = currentCurriculum?.tech || 'python';
       const code = getCode ? getCode() : '';
@@ -992,12 +1216,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       }
 
       const evaluation = await evaluateChallenge(tech, code, activeLevel);
-
-      const passedCount = evaluation.results.filter((r) => r.ok).length;
-      const totalCount = evaluation.results.length;
       resultsReady = true;
-      primaryFocus = null;
-      renderChecklist(activeLevel, evaluation);
 
       const attempt = recordAttempt(academyState, activeLevel, evaluation);
       academyState = attempt.state;
@@ -1018,87 +1237,18 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
         syncAcademyState(academyState).then((merged) => { academyState = merged; });
       }
 
-      if (evaluation.passed) {
-        liveEl.textContent = `OK ${passedCount}/${totalCount} · ${activeLevel.title}`;
-        renderSkillTree(currentCurriculum);
-
-        const feedbackCard = el('div', 'cf-academy-achievement-card');
-        {
-          const remaining = Math.max(0, (currentCurriculum?.levels?.length || 1) - (academyState.completed || []).filter((id) => id.startsWith(tech)).length);
-          feedbackCard.append(el('p', 'cf-muted', t('acadNextBadgeProgress', { remaining })));
-          if (preloadedNextLevel && (preloadedNextLevel.tier !== 'pay' || readLocalState().isPro)) {
-            const nextBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadNextLevelBtn', { n: preloadedNextLevel.level }));
-            nextBtn.type = 'button';
-            nextBtn.id = 'cf-academy-next-level-btn';
-            nextBtn.addEventListener('click', () => {
-              selectLevel(currentCurriculum, preloadedNextLevel.level);
-            });
-            feedbackCard.append(nextBtn);
-            primaryFocus = nextBtn;
-          }
-        }
-        checklistEl.append(feedbackCard);
-
-        if (activeLevel.related_tip_slug) {
-          const tipLink = el('a', 'cf-btn cf-btn--secondary cf-btn--small', t('tipsOpenFullPage'));
-          tipLink.href = `tips/${activeLevel.related_tip_slug}/${getUiLang()}/`;
-          checklistEl.append(tipLink);
-        }
-        renderCertificateAction(tech);
-        for (const ach of achRes.newlyUnlocked) {
-          const copy = ach.i18n?.[getUiLang()] || ach.i18n?.es || {};
-          toast(`${ach.icon} ${copy.title || ach.id}`);
-        }
-      } else {
-        const firstIssue = evaluation.runtimeError || evaluation.styleViolations[0] || evaluation.errorType || 'failed';
-        liveEl.textContent = `${passedCount}/${totalCount} · ${firstIssue}`;
-
-        const fixBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadFixInEditorBtn'));
-        fixBtn.type = 'button';
-        fixBtn.id = 'cf-academy-fix-editor-btn';
-        fixBtn.addEventListener('click', () => setAcademyView('editor'));
-        checklistEl.append(fixBtn);
-        primaryFocus = fixBtn;
-
-        if (attempt.triggerRemedial && attempt.recommendedDrill) {
-          const drill = attempt.recommendedDrill;
-          const box = el('div', 'cf-academy-capsule');
-          box.id = 'cf-academy-remedial-box';
-          box.append(el('strong', null, `${drill.title}: `));
-          box.append(document.createTextNode(drill.prompt));
-          const practiceBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadRemedialPracticeBtn'));
-          practiceBtn.type = 'button';
-          practiceBtn.id = 'cf-academy-remedial-practice-btn';
-          practiceBtn.addEventListener('click', () => {
-            isRemedialActive = true;
-            mainLevelSnapshot = activeLevel;
-            mainCodeSnapshot = getCode ? getCode() : null;
-            activeDrill = drill;
-            if (setCode) setCode(drill.starter_code);
-            setAcademyView('editor');
-          });
-          box.append(practiceBtn);
-          primaryFocus = practiceBtn;
-
-          if (isFeatureOn('pro_billing')) {
-            const teaser = el('p', 'cf-muted', `${firstIssue} — Desbloquea el diagnóstico completo con Tutor IA Pro.`);
-            const proBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadProOpenPlans'));
-            proBtn.type = 'button';
-            proBtn.addEventListener('click', openProOrExplain);
-            box.append(teaser, proBtn);
-          }
-          checklistEl.append(box);
-        }
-      }
+      lastEvaluation = { kind: 'main', tech, evaluation, attempt };
+      renderMainResults(tech, activeLevel, evaluation, attempt, { emitToasts: true, achRes });
       updateStepper();
       setAcademyView('results');
     } finally {
+      hideAcademyLoader(workspace);
       validateBtn.disabled = false;
       validateBtn.removeAttribute('aria-busy');
     }
   });
 
-  // Cambio de idioma: reconstruye la vista exacta (ruta, tema, nivel y paso) sin tocar el código del editor.
+  // Cambio de idioma: reconstruye la vista exacta (ruta, tema, nivel y paso, incluyendo results) sin tocar el código del editor.
   async function rebuildForLang() {
     if (currentMode !== 'learn') return;
     try {
@@ -1109,7 +1259,6 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       }
       const view = academyView;
       const keepLive = liveEl ? liveEl.textContent : '';
-      const keepResults = view === 'results' ? Array.from(checklistEl.children || []) : null;
       if (currentCurriculum.isDaily) {
         dailyCache ||= await loadDailyChallengesData();
         currentCurriculum = buildDailyCurriculum(resolveDailyChallenge(dailyCache, getUiLang()));
@@ -1120,8 +1269,18 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       preloadedNextLevel = (currentCurriculum.levels || []).find((l) => l.level === (activeLevel.level + 1)) || null;
       renderSkillTree(currentCurriculum);
       renderMission(activeLevel, currentCurriculum.standard);
-      if (keepResults) checklistEl.replaceChildren(...keepResults);
-      if (liveEl && view !== 'tree') liveEl.textContent = keepLive;
+      if (isRemedialActive && activeDrill) {
+        updateMiniBrief(activeDrill.title, activeDrill.prompt);
+      }
+      if (view === 'results' && lastEvaluation) {
+        if (lastEvaluation.kind === 'remedial') {
+          renderRemedialResults(lastEvaluation.drill, lastEvaluation.drillLevel, lastEvaluation.evaluation);
+        } else {
+          renderMainResults(lastEvaluation.tech, activeLevel, lastEvaluation.evaluation, lastEvaluation.attempt);
+        }
+      } else if (liveEl && view !== 'tree') {
+        liveEl.textContent = keepLive;
+      }
       setAcademyView(view, { scroll: false, focus: false });
     } catch {
       toast(t('acadLoadError'));
@@ -1139,5 +1298,9 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     });
   }
 
-  return { setWorkMode, openTopic };
+  return {
+    setWorkMode,
+    openTopic,
+    selectLevel: (levelNum, opts) => (currentCurriculum ? selectLevel(currentCurriculum, levelNum, opts) : false),
+  };
 }

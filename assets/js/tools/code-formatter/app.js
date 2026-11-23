@@ -10,9 +10,15 @@ import { featuresReady, isFeatureOn } from './ui-controller.js';
 import { t, lang as uiLang, applyI18n, setupLangSelector, intlLocale, MAX_CODE_BYTES } from './i18n.js';
 import { diagnose, autoFix } from './diagnostics.js';
 import { buildShareUrl, decodeSnippet } from './share.js';
+import { createCompactSplash, startTopLoader, stopTopLoader } from './loaders.js';
 
 applyI18n();
+const splash = createCompactSplash();
+splash.show({ initialProgress: 20 });
+startTopLoader();
+try {
 await setupLangSelector(document.getElementById('cf-ui-lang'), { reactive: true }); // cambio de idioma sin recargar (evento cf:lang)
+splash.setProgress(45);
 try { (await import('./embed.js')).initEmbedModal(); } catch (err) { console.warn('[code-formatter] embebido no iniciado:', err.message); }
 try { (await import('./newsletter.js')).initNewsletter(); } catch (err) { console.warn('[code-formatter] newsletter no iniciado:', err.message); }
 document.addEventListener('cf:load-snippet', (e) => {
@@ -30,6 +36,12 @@ document.addEventListener('cf:load-snippet', (e) => {
   view.focus();
 });
 await featuresReady; // el inventario free/pay decide qué controles existen
+splash.setProgress(75);
+} finally {
+  splash.setProgress(100);
+  splash.dismiss();
+  stopTopLoader();
+}
 
 // Módulos de funciones opcionales: se importan solo si la función está activa (en dist-public pueden no existir).
 const jsonDocs = isFeatureOn('json_docs')

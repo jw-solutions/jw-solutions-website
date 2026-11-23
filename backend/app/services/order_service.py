@@ -21,9 +21,12 @@ from app.models.payment_order import (
     WebhookEvent,
 )
 from app.models.subscription import Subscription
+from app.services.certificate_service import revoke_certificates_for_subscription
 from app.services.notification_service import enqueue
 from app.services.payment_channels import (
     ChannelNotConfiguredError,
+    calculate_paypal_pricing,
+    create_paypal_order,
     create_provider_invoice,
     generate_order_code,
     get_plan,
@@ -68,6 +71,8 @@ def create_or_reuse_order(
     plan = get_plan(plan_id)
 
     # Validar configuración del canal antes de crear
+    if channel == "paypal_checkout" and not settings.paypal_rest_configured:
+        raise ChannelNotConfiguredError("CHANNEL_NOT_CONFIGURED")
     if channel == "paypal_imap" and not settings.paypal_me_url.strip():
         raise ChannelNotConfiguredError("CHANNEL_NOT_CONFIGURED")
     if channel == "kofi_webhook" and not settings.kofi_page_url.strip():
@@ -100,6 +105,7 @@ def create_or_reuse_order(
     ttl = timedelta(seconds=settings.binance_p2p_order_ttl_seconds)
     provider_invoice_id: str | None = None
     provider_checkout_url: str | None = None
+    order_amount: Decimal = plan["amount_usd"]
     currency = "USDT" if channel == "binance_p2p" else "USD"
 
     if channel == "crypto_gateway":
@@ -108,6 +114,17 @@ def create_or_reuse_order(
             order_code=order_code,
             amount_usd=plan["amount_usd"],
             plan_id=plan_id,
+        )
+    elif channel == "paypal_checkout":
+        pricing = calculate_paypal_pricing(plan["amount_usd"], settings)
+        order_amount = pricing["total_amount"]
+        currency = pricing["currency"]
+        provider_invoice_id, provider_checkout_url = create_paypal_order(
+            settings,
+            order_code=order_code,
+            plan_id=plan_id,
+            total_amount=order_amount,
+            currency=currency,
         )
     elif channel == "paypal_imap":
         provider_checkout_url = settings.paypal_me_url.strip()
@@ -120,7 +137,7 @@ def create_or_reuse_order(
         plan_id=plan_id,
         days_to_grant=int(plan["days"]),
         channel=channel,
-        amount_usd=plan["amount_usd"],
+        amount_usd=order_amount,
         currency=currency,
         provider_invoice_id=provider_invoice_id,
         provider_checkout_url=provider_checkout_url,
@@ -212,6 +229,59 @@ def activate_paid_order(
     )
     log.info("Orden %s activada (%s, +%d días)", order.order_code, channel, order.days_to_grant)
     return order, subscription, True
+
+
+def revoke_paid_order(
+    db: Session,
+    *,
+    order_id: uuid.UUID,
+    channel: str,
+    external_txid: str,
+    webhook_event_id: str,
+    reason: str,
+) -> tuple[bool, int]:
+    """Revoca suscripción y certificados asociados a una orden (reembolso/reversión/disputa) de forma idempotente."""
+    order = db.execute(
+        select(PaymentOrder).where(PaymentOrder.id == order_id).with_for_update()
+    ).scalar_one_or_none()
+    if order is None:
+        raise OrderNotFoundError(str(order_id))
+
+    try:
+        with db.begin_nested():
+            db.add(
+                WebhookEvent(
+                    channel=f"{channel}:revoke",
+                    webhook_event_id=webhook_event_id,
+                    external_txid=external_txid[:128],
+                    order_code=order.order_code,
+                )
+            )
+            db.flush()
+    except IntegrityError:
+        return False, 0
+
+    sub = db.execute(
+        select(Subscription).where(Subscription.payment_order_id == order.id).with_for_update()
+    ).scalar_one_or_none()
+    revoked_certs = 0
+    if sub is not None and sub.status != "REVOKED":
+        sub.status = "REVOKED"
+        revoked_certs = revoke_certificates_for_subscription(db, sub.subscription_id, reason)
+        other_active = db.execute(
+            select(Subscription.subscription_id).where(
+                Subscription.account_id == order.account_id,
+                Subscription.subscription_id != sub.subscription_id,
+                Subscription.status == "ACTIVE",
+            )
+        ).first()
+        if other_active is None:
+            account = db.get(Account, order.account_id)
+            if account is not None:
+                account.plan = "free"
+
+    log.warning("Orden %s revocada (%s, motivo=%s, certs=%d)", order.order_code, channel, reason, revoked_certs)
+    return True, revoked_certs
 
 
 def report_order_txid(

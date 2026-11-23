@@ -80,7 +80,7 @@
 | 👥 `tools/code-formatter/fix/**/index.html` (82) | Generado | Landings de errores de sintaxis | `build_public.py` ← `syntax-fixes.json` | SEO |
 | `assets/css/tools/code-formatter.css` | Front | Estilos del formateador/academia | — | Todas las vistas |
 | `assets/js/.../app.js`, `ui-controller.js`, `editor.js`, `actions.js` | Front | Orquestación UI y editor | `formatters.js`, `detect.js` | Núcleo |
-| `…/formatters.js`, `detect.js`, `diagnostics.js`, `diff-view.js`, `history.js`, `share.js` | Front | Formateo, detección, diagnóstico, diff, historial, compartir | — | Núcleo |
+| `…/formatters.js`, `detect.js`, `diagnostics.js`, `diff-view.js`, `history.js`, `share.js`, `article-share.js`, `loaders.js` | Front | Formateo, detección, diagnóstico, diff, historial, compartir snippets, barra social y loaders por nicho (A/B/C) | `i18n.js` | Núcleo, Academia, tips y `/fix/` |
 | `…/doc-generator.js`, `json-documentation-adapter.js`, `structured-doc-ui.js` | Front | Generación de documentación | `documentation-languages.js` | UI doc |
 | `…/academy-{engine,pro,progress,sandbox,ui}.js` | Front | Modo Academia (vista única `paths→tree→editor→results`) | currículo JSON, `i18n.js` | Tests academia |
 | `…/auth-modal.js`, `pro-modal.js`, `pro-messages.js`, `newsletter.js`, `services/{api,session-monitor}.js` | Front | Auth, Pro, newsletter, API y sesión | `backend/app` | Flujo comercial |
@@ -92,17 +92,17 @@
 | Archivo | Capa | Razón de ser | Depende de | Impacta a |
 |---|---|---|---|---|
 | `backend/app/main.py` | API | Punto de entrada FastAPI | `api/*`, `core/*` | Servicio `jw-api` |
-| `backend/app/api/{auth,session,payments,subscriptions,newsletter,academy}.py` | API | Endpoints REST | `models`, `services`, `security` | Front `services/api.js` |
+| `backend/app/api/{auth,defense,session,payments,subscriptions,newsletter,academy}.py` | API | Endpoints REST (incl. señuelos anti-scraping) | `models`, `services`, `security` | Front `services/api.js` |
 | `backend/app/core/{config,database,locks,logging}.py` | Core | Config `.env`, DB, locks, logging | `backend/.env` | Todo backend |
 | `backend/app/models/*.py` (9) | Datos | Modelos SQLAlchemy | `core/database.py` | `migrations/`, servicios |
-| `backend/app/security/{csrf,email_authentication,origin_validation,rate_limit,sessions}.py` | Seguridad | CSRF, SPF/DKIM, origen, rate-limit, sesiones | `core/config.py` | `api/*` |
+| `backend/app/security/{anti_scraping,csrf,email_authentication,origin_validation,rate_limit,sessions}.py` | Seguridad | Anti-scraping/honeypots, CSRF, SPF/DKIM, origen, rate-limit, sesiones | `core/config.py` | `api/*` |
 | `backend/security/passwords.py` | Seguridad | Hash de contraseñas (argon2) | — | `api/auth.py` |
-| `backend/app/services/{binance_parser,certificate_service,newsletter_service,notification_service,order_service,payment_matching,subscription_service}.py`, `payment_channels/{__init__,catalog}.py` | Servicios | Lógica de negocio y pagos | `models`, `core` | `api/*`, `workers/*` |
+| `backend/app/services/{binance_parser,certificate_service,newsletter_service,notification_service,order_service,payment_matching,subscription_service}.py`, `payment_channels/{__init__,catalog,paypal}.py` | Servicios | Lógica de negocio y pagos (incl. PayPal Orders v2) | `models`, `core` | `api/*`, `workers/*` |
 | `backend/app/workers/{expiration_worker,imap_reconciliation,outbox_worker}.py` | Workers | Expiración, conciliación IMAP, outbox | `services`, DB | `deploy/*.service` |
 | `backend/migrations/{env.py,script.py.mako}`, `versions/0001…0006_*.py`, `backend/alembic.ini` | Datos | Migraciones Alembic | `models` | Esquema DB |
 | `backend/scripts/{__init__,inspect_mailbox,seed_academy_pro}.py` | Utilidad | Inspección buzón y seed academia | `core`, `models` | Operación |
 | `backend/{pyproject.toml,requirements.txt,.gitignore}` | Config | Dependencias y exclusiones | — | Entorno |
-| `backend/tests/{conftest,test_academy,test_certificates_tiered,test_imap_parser,test_newsletter,test_payment_matching,test_payments_automation,test_workers}.py`, `integration/`, `fixtures/emails/` | Tests | Suite pytest backend | `backend/app` | Calidad |
+| `backend/tests/{conftest,test_academy,test_anti_scraping,test_certificates_tiered,test_imap_parser,test_newsletter,test_payment_matching,test_payments_automation,test_paypal_payments,test_workers}.py`, `integration/`, `fixtures/emails/` | Tests | Suite pytest backend | `backend/app` | Calidad |
 
 ### 2.5 Backend Node legado (`backend/code-formatter/`)
 | Archivo | Capa | Razón de ser | Depende de | Impacta a |
@@ -119,7 +119,7 @@
 | `scripts/code-formatter/{syndicate-devto,syndicate-hashnode,syndicate-social}.js`, `browser-syndicate.mjs` | Distribución | Syndicación (usa `.pw-profile/` ignorado) | distribution kits | Canales externos |
 | `scripts/code-formatter/{check-deployment,notify-newsletter,ping-indexnow}.js`, `test-growth-loops.mjs` | Operación | Verificación de deploy, newsletter, IndexNow, loops de crecimiento | sitemap, API | Producción |
 | `scripts/{check-deployment,generate-blog-og,generate-weekly-draft,notify-newsletter,ping-indexnow,publication-manifest,validate-drafts,validate-formatter-tips}.js` | Operación | Equivalentes del blog/sitio | `content/` | Blog, SEO |
-| `tests/code-formatter/{academy,automation,certificates,click-audit}.test.mjs`, `fixtures.js`, `runner.html` | Tests | `node --test` + runner navegador | `assets/js/tools/code-formatter` | Calidad front |
+| `tests/code-formatter/{academy,automation,certificates,click-audit,loaders-defense,pro-paypal}.test.mjs`, `fixtures.js`, `runner.html` | Tests | `node --test` + runner navegador | `assets/js/tools/code-formatter` | Calidad front |
 | `.github/workflows/{code-formatter-preflight,code-formatter-syndicate-backfill,code-formatter-tips,draft-preflight,weekly-blog-publisher}.yml` | CI/CD | Preflight, backfill, tips semanales, borradores y blog (cron) | scripts anteriores | `main` / publicación |
 | `deploy/{jw-api.service,jw-expiration-worker.service,jw-expiration-worker.timer,jw-imap-worker.service}` | Despliegue | Unidades systemd VPS | `backend/app`, workers | Producción |
 | `data/formatter-subscribers.json` | Datos | Suscriptores locales del formateador | `newsletter.js` | 🔶 Datos personales: no exponer |

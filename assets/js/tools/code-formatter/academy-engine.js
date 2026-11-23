@@ -13,14 +13,33 @@ export function createInitialState() {
   };
 }
 
-/** Determina si un nivel está desbloqueado secuencialmente. */
+/** Determina si un nivel está desbloqueado secuencialmente (niveles Pro exigen isPro Y nivel previo completado). */
 export function isLevelUnlocked(level, index, levels, state) {
   if (!level) return false;
-  if (level.tier === 'pay') return Boolean(state?.isPro);
+  if (level.tier === 'pay' && !state?.isPro) return false;
   if (index === 0) return true;
   const completed = new Set(state?.completed || []);
   const prev = levels[index - 1];
   return Boolean(prev && completed.has(prev.id));
+}
+
+/** Devuelve el primer nivel pendiente desbloqueado (priorizando remedial activo) para auto-resume inteligente. */
+export function findFirstPendingLevel(levels = [], state = {}) {
+  if (!Array.isArray(levels) || !levels.length) return null;
+  const completed = new Set(state?.completed || []);
+  const remedial = new Set(state?.remedial || []);
+  for (let i = 0; i < levels.length; i += 1) {
+    const lvl = levels[i];
+    if (remedial.has(lvl.id) && isLevelUnlocked(lvl, i, levels, state)) return lvl;
+  }
+  for (let i = 0; i < levels.length; i += 1) {
+    const lvl = levels[i];
+    if (!completed.has(lvl.id) && isLevelUnlocked(lvl, i, levels, state)) return lvl;
+  }
+  for (let i = levels.length - 1; i >= 0; i -= 1) {
+    if (isLevelUnlocked(levels[i], i, levels, state)) return levels[i];
+  }
+  return levels[0];
 }
 
 /**

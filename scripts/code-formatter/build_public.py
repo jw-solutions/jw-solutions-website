@@ -70,6 +70,104 @@ SQUAD_LABELS = {
     "de": "Tritt unserem daily.dev Squad bei",
     "it": "Unisciti al nostro Squad su daily.dev",
 }
+SHARE_UI_STRINGS = {
+    "es": {
+        "title": "Compartir artículo",
+        "native": "Compartir",
+        "linkedin": "Compartir en LinkedIn",
+        "x": "Compartir en X",
+        "whatsapp": "Compartir en WhatsApp",
+        "copy": "Copiar enlace",
+        "copied": "¡Enlace copiado!",
+        "copy_fail": "No se pudo copiar el enlace.",
+    },
+    "en": {
+        "title": "Share article",
+        "native": "Share",
+        "linkedin": "Share on LinkedIn",
+        "x": "Share on X",
+        "whatsapp": "Share on WhatsApp",
+        "copy": "Copy link",
+        "copied": "Link copied!",
+        "copy_fail": "Could not copy link.",
+    },
+    "pt-BR": {
+        "title": "Compartilhar artigo",
+        "native": "Compartilhar",
+        "linkedin": "Compartilhar no LinkedIn",
+        "x": "Compartilhar no X",
+        "whatsapp": "Compartilhar no WhatsApp",
+        "copy": "Copiar link",
+        "copied": "Link copiado!",
+        "copy_fail": "Não foi possível copiar o link.",
+    },
+    "pt-PT": {
+        "title": "Partilhar artigo",
+        "native": "Partilhar",
+        "linkedin": "Partilhar no LinkedIn",
+        "x": "Partilhar no X",
+        "whatsapp": "Partilhar no WhatsApp",
+        "copy": "Copiar ligação",
+        "copied": "Ligação copiada!",
+        "copy_fail": "Não foi possível copiar a ligação.",
+    },
+    "fr": {
+        "title": "Partager l'article",
+        "native": "Partager",
+        "linkedin": "Partager sur LinkedIn",
+        "x": "Partager sur X",
+        "whatsapp": "Partager sur WhatsApp",
+        "copy": "Copier le lien",
+        "copied": "Lien copié !",
+        "copy_fail": "Impossible de copier le lien.",
+    },
+    "de": {
+        "title": "Artikel teilen",
+        "native": "Teilen",
+        "linkedin": "Auf LinkedIn teilen",
+        "x": "Auf X teilen",
+        "whatsapp": "Auf WhatsApp teilen",
+        "copy": "Link kopieren",
+        "copied": "Link kopiert!",
+        "copy_fail": "Link konnte nicht kopiert werden.",
+    },
+    "it": {
+        "title": "Condividi articolo",
+        "native": "Condividi",
+        "linkedin": "Condividi su LinkedIn",
+        "x": "Condividi su X",
+        "whatsapp": "Condividi su WhatsApp",
+        "copy": "Copia link",
+        "copied": "Link copiato!",
+        "copy_fail": "Impossibile copiare il link.",
+    },
+}
+
+
+def _share_bar_html(canonical_url: str, title: str, loc: str) -> str:
+    """Genera bloque HTML accesible de compartir social con URL canónica validada."""
+    if not str(canonical_url).startswith(f"{SITE}/"):
+        return ""
+    s = SHARE_UI_STRINGS.get(loc, SHARE_UI_STRINGS["en"])
+    u = quote(canonical_url, safe="")
+    t_enc = quote(str(title or "")[:200], safe="")
+    li_href = f"https://www.linkedin.com/sharing/share-offsite/?url={u}"
+    x_href = f"https://twitter.com/intent/tweet?text={t_enc}&amp;url={u}"
+    wa_href = f"https://api.whatsapp.com/send?text={t_enc}%20{u}"
+    return (
+        f'      <section class="cf-card cf-share" data-cf-share="1" data-share-url="{escape(canonical_url, quote=True)}" '
+        f'data-share-title="{escape(str(title or "")[:200], quote=True)}" aria-label="{escape(s["title"], quote=True)}">\n'
+        f'        <h2 class="cf-share__title">{escape(s["title"])}</h2>\n'
+        '        <div class="cf-share__actions">\n'
+        f'          <button type="button" class="cf-share__btn cf-share__btn--primary" data-cf-share-native hidden>{escape(s["native"])}</button>\n'
+        f'          <a class="cf-share__btn" data-cf-share-net="linkedin" href="{li_href}" target="_blank" rel="noopener noreferrer" aria-label="{escape(s["linkedin"], quote=True)}">LinkedIn</a>\n'
+        f'          <a class="cf-share__btn" data-cf-share-net="x" href="{x_href}" target="_blank" rel="noopener noreferrer" aria-label="{escape(s["x"], quote=True)}">X</a>\n'
+        f'          <a class="cf-share__btn" data-cf-share-net="whatsapp" href="{wa_href}" target="_blank" rel="noopener noreferrer" aria-label="{escape(s["whatsapp"], quote=True)}">WhatsApp</a>\n'
+        f'          <button type="button" class="cf-share__btn" data-cf-share-copy="1" data-copied-msg="{escape(s["copied"], quote=True)}" data-copy-fail-msg="{escape(s["copy_fail"], quote=True)}">{escape(s["copy"])}</button>\n'
+        '        </div>\n'
+        '        <p class="cf-share__status" role="status" aria-live="polite"></p>\n'
+        '      </section>'
+    )
 ACADEMY_CTA_COPY = {
     "es": {
         "tag": "Academia Guiada",
@@ -403,12 +501,14 @@ def fix_pages() -> dict[str, str]:
                 for o in errors if o["slug"] != e["slug"]
             )
             related_tips = _related_tips_block(e["language"], lang_code, tips)
+            share_bar = _share_bar_html(url, loc["title"], lang_code)
             academy_cta = _academy_cta_block(tool_rel, lang_code, e["language"], e["slug"], level=1, source="fix_landing")
             body = (
                 f'        <div class="cf-fix__pair"><div><p class="cf-fix__label cf-fix__label--bad">{escape(_es("fixBefore"))}</p><pre class="cf-tip__code"><code>{escape(e["before"])}</code></pre></div>'
                 f'<div><p class="cf-fix__label cf-fix__label--good">{escape(_es("fixAfter"))}</p><pre class="cf-tip__code"><code>{escape(e["after"])}</code></pre></div></div>\n'
                 f'        <h2 class="cf-tip__h">{escape(_es("fixSteps"))}</h2>\n        <ol class="cf-fix__steps">{"".join(f"<li>{escape(t)}</li>" for t in steps)}</ol>\n'
                 f'        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="{tool_rel}?sample=1&amp;lang={escape(lang_code)}">{escape(_es("fixCta"))}</a></p>\n'
+                f'{share_bar}\n'
                 f'{related_tips}\n'
                 f'        <h2 class="cf-tip__h">{escape(_es("fixOthers"))}</h2>\n        <ul class="cf-fix__list">{others}</ul>\n'
                 f'{academy_cta}'
@@ -735,10 +835,11 @@ def tip_pages() -> dict[str, str]:
             showcase_html = _tips_showcase_block("../../../../", loc, fallback_cards)
             unified_footer = _unified_footer_html("../../../../", SQUAD_LABELS.get(loc, SQUAD_LABELS["es"]))
             academy_level = int(tip.get("academy_level") or 1)
+            share_bar = _share_bar_html(url, title, loc)
             academy_cta = _academy_cta_block("../../../../", loc, prog_lang, slug, level=academy_level, source="tips_article")
             html_page = re.sub(
                 r"  <footer class=\"cf-footer\">[\s\S]*?  </footer>",
-                f"{academy_cta}\n\n{showcase_html}\n\n{unified_footer}\n\n{TIP_DETAIL_MODAL_HTML}",
+                f"{share_bar}\n\n{academy_cta}\n\n{showcase_html}\n\n{unified_footer}\n\n{TIP_DETAIL_MODAL_HTML}",
                 html_page,
                 count=1,
             )
@@ -1041,6 +1142,7 @@ TIP_DETAIL_MODAL_HTML = """  <dialog id="cf-tip-detail-modal" class="cf-dialog c
       <a id="cf-tip-modal-full" class="cf-btn cf-btn--primary" href="#" data-i18n="tipsOpenFullPage">Leer guía completa y FAQ</a>
       <button type="button" id="cf-tip-modal-load" class="cf-btn" data-i18n="tipsLoadInEditor">Cargar ejemplo en el editor</button>
     </div>
+    <div id="cf-tip-modal-share"></div>
   </dialog>"""
 
 

@@ -3,6 +3,26 @@
 // construye con nodos de texto, así el contenido Markdown nunca se interpreta como HTML.
 import { t, lang, SUPPORTED_LANGS, applyI18n, applySeo, setupLangSelector, intlLocale, MAX_CODE_BYTES } from './i18n.js';
 import { initNewsletter } from './newsletter.js';
+import { createShareBar, bindStaticShareBars } from './article-share.js';
+import { startTopLoader, stopTopLoader, createSkeleton } from './loaders.js';
+
+const CANONICAL_TOOL = 'https://jw-solutions.com/tools/code-formatter/';
+const TIP_CATEGORY_PATH = {
+  python: 'tips/python/',
+  javascript: 'tips/javascript/',
+  typescript: 'tips/javascript/',
+  java: 'tips/java/',
+  csharp: 'tips/csharp/',
+  php: 'tips/php/',
+  sql: 'tips/sql-dax/',
+  dax: 'tips/sql-dax/',
+  json: 'tips/json-yaml/',
+  yaml: 'tips/json-yaml/',
+};
+const canonicalTipUrl = (tip, locale) => {
+  const cat = TIP_CATEGORY_PATH[tip.programming_language || tip.language] || 'tips/python/';
+  return `${CANONICAL_TOOL}${cat}${encodeURIComponent(tip.slug)}/${encodeURIComponent(locale)}/`;
+};
 
 const CONTENT = '../../../../content/code-formatter-tips/';
 const MANIFEST_URL = `${CONTENT}code-formatter-manifest.json`;
@@ -154,6 +174,8 @@ async function main() {
 
   const list = document.getElementById('cf-tips-list');
   const article = document.getElementById('cf-tip-article');
+  startTopLoader();
+  if (list && !list.children.length) list.replaceChildren(createSkeleton(4));
   try {
     const tips = (await fetchJson(MANIFEST_URL)).tips
       .filter((x) => langs.includes(x.language))
@@ -164,12 +186,14 @@ async function main() {
     if (current) {
       const v = variantFor(current);
       const md = await (await fetch(`${CONTENT}${v.file}`, { cache: 'no-cache' })).text();
+      const shareBar = createShareBar({ url: canonicalTipUrl(current, v.locale), title: v.title });
       article.lang = v.locale;
       article.replaceChildren(
         el('h2', { className: 'cf-tip__title', textContent: v.title }),
         tipMeta(current, v),
         ...(v.fallback ? [el('p', { className: 'cf-muted cf-tip__note', lang, textContent: t('tipsFallback', { lang: langName(lang), shown: langName(v.locale) }) })] : []),
         renderMarkdown(md),
+        ...(shareBar ? [shareBar] : []),
         el('p', {}, el('a', { href: `?lang=${lang}`, textContent: `← ${t('tipsBackList')}` }))
       );
       article.hidden = false;
@@ -185,13 +209,18 @@ async function main() {
     list.replaceChildren(...tips.map((tip) => {
       const v = variantFor(tip);
       const href = `?lang=${lang}&tip=${encodeURIComponent(tip.slug)}`;
+      const cardShare = createShareBar({ url: canonicalTipUrl(tip, v.locale), title: v.title, compact: true });
       return el('article', { className: 'cf-card cf-tip-card', lang: v.locale },
         el('h2', { className: 'cf-tip__title' }, el('a', { href, textContent: v.title })),
-        tipMeta(tip, v));
+        tipMeta(tip, v),
+        ...(cardShare ? [cardShare] : []));
     }));
+    bindStaticShareBars();
   } catch (err) {
     console.warn('[code-formatter] tips no cargados:', err.message);
     list.replaceChildren(el('p', { className: 'cf-form__status', dataset: { state: 'error' }, textContent: t('tipsLoadError') }));
+  } finally {
+    stopTopLoader();
   }
 }
 

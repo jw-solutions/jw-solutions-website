@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from decimal import Decimal
 from functools import lru_cache
 
 from pydantic import SecretStr, field_validator
@@ -53,6 +54,16 @@ class Settings(BaseSettings):
     cryptomus_api_key: SecretStr = SecretStr("")
     cryptomus_merchant_id: str = ""
     paypal_me_url: str = ""
+    paypal_mode: str = "sandbox"
+    paypal_client_id: str = ""
+    paypal_client_secret: SecretStr = SecretStr("")
+    paypal_webhook_id: SecretStr = SecretStr("")
+    paypal_currency: str = "USD"
+    paypal_pass_fees_to_client: bool = False
+    paypal_fee_percent: Decimal = Decimal("0.054")
+    paypal_fee_fixed: Decimal = Decimal("0.30")
+    paypal_return_url: str = "https://jw-solutions.com/tools/code-formatter/?mode=learn&payment=paypal_return"
+    paypal_cancel_url: str = "https://jw-solutions.com/tools/code-formatter/?mode=learn&payment=cancel"
     kofi_page_url: str = ""
     kofi_verification_token: SecretStr = SecretStr("")
 
@@ -132,6 +143,42 @@ class Settings(BaseSettings):
     @property
     def reminder_days_tuple(self) -> tuple[int, ...]:
         return tuple(int(d) for d in _csv(self.reminder_days))
+
+    @field_validator("paypal_mode")
+    @classmethod
+    def _paypal_mode_valid(cls, v: str) -> str:
+        cleaned = str(v or "").strip().lower()
+        return "live" if cleaned == "live" else "sandbox"
+
+    @field_validator("paypal_currency")
+    @classmethod
+    def _paypal_currency_valid(cls, v: str) -> str:
+        cleaned = str(v or "").strip().upper()
+        if len(cleaned) != 3 or not cleaned.isalpha():
+            raise ValueError("PAYPAL_CURRENCY debe ser un código ISO-4217 de 3 letras (ej. USD)")
+        return cleaned
+
+    @field_validator("paypal_fee_percent")
+    @classmethod
+    def _paypal_fee_percent_valid(cls, v: Decimal) -> Decimal:
+        if v < 0 or v >= Decimal("50"):
+            raise ValueError("PAYPAL_FEE_PERCENT fuera de rango permitido")
+        return v
+
+    @field_validator("paypal_fee_fixed")
+    @classmethod
+    def _paypal_fee_fixed_valid(cls, v: Decimal) -> Decimal:
+        if v < 0 or v > Decimal("100"):
+            raise ValueError("PAYPAL_FEE_FIXED fuera de rango permitido")
+        return v
+
+    @property
+    def paypal_api_base(self) -> str:
+        return "https://api-m.paypal.com" if self.paypal_mode == "live" else "https://api-m.sandbox.paypal.com"
+
+    @property
+    def paypal_rest_configured(self) -> bool:
+        return bool(self.paypal_client_id.strip() and self.paypal_client_secret.get_secret_value().strip())
 
     @property
     def is_production(self) -> bool:

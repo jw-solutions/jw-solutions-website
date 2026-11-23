@@ -3,6 +3,9 @@
 import { t, lang, SUPPORTED_LANGS, intlLocale, MAX_CODE_BYTES, applyI18n, setupLangSelector } from './i18n.js';
 import { toast } from './actions.js';
 import { initNewsletter } from './newsletter.js';
+import { createShareBar, bindStaticShareBars } from './article-share.js';
+
+const CANONICAL_TOOL = 'https://jw-solutions.com/tools/code-formatter/';
 
 const CONTENT_BASE = new URL('../../../../content/code-formatter-tips/', import.meta.url).href;
 const MANIFEST_URL = `${CONTENT_BASE}code-formatter-manifest.json`;
@@ -75,6 +78,11 @@ function fmtDate(iso) {
 function tipFullPageUrl(tip, locale) {
   const catPath = TIP_CATEGORY_PATH[tip.language] || 'tips/python/';
   return `${TOOL_BASE}${catPath}${encodeURIComponent(tip.slug)}/${encodeURIComponent(locale)}/`;
+}
+
+function tipCanonicalUrl(tip, locale) {
+  const catPath = TIP_CATEGORY_PATH[tip.programming_language || tip.language] || 'tips/python/';
+  return `${CANONICAL_TOOL}${catPath}${encodeURIComponent(tip.slug)}/${encodeURIComponent(locale)}/`;
 }
 
 function parseMarkdownDetails(md) {
@@ -389,6 +397,14 @@ export async function initTipsShowcase({ onLoadSnippet } = {}) {
       const topic = encodeURIComponent(String(tip.language || 'python').toLowerCase());
       academyBtn.setAttribute('href', `${TOOL_BASE}?mode=learn&lang=${encodeURIComponent(v.locale)}&topic=${topic}`);
     }
+
+    let shareSlot = document.getElementById('cf-tip-modal-share');
+    if (!shareSlot) {
+      shareSlot = el('div', { id: 'cf-tip-modal-share' });
+      modal.append(shareSlot);
+    }
+    const modalShare = createShareBar({ url: tipCanonicalUrl(tip, v.locale), title: v.title, compact: true });
+    shareSlot.replaceChildren(...(modalShare ? [modalShare] : []));
     if (loadBtn) {
       loadBtn.hidden = !parsed.codeSnippet;
       loadBtn.onclick = () => {
@@ -474,6 +490,7 @@ export async function initTipsShowcase({ onLoadSnippet } = {}) {
 
   updateRssLink();
   updateToggleButton();
+  bindStaticShareBars();
 
   try {
     const res = await fetch(MANIFEST_URL, { cache: 'no-cache' });

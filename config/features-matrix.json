@@ -29,6 +29,8 @@
     "assets/js/tools/code-formatter/locales/de.js",
     "assets/js/tools/code-formatter/locales/it.js",
     "assets/js/tools/code-formatter/share.js",
+    "assets/js/tools/code-formatter/article-share.js",
+    "assets/js/tools/code-formatter/loaders.js",
     "assets/js/tools/code-formatter/diagnostics.js",
     "assets/js/tools/code-formatter/embed.js",
     "assets/js/tools/code-formatter/fix-page.js",
@@ -146,7 +148,7 @@
     },
     {
       "id": "pro_billing",
-      "name": "Modal PRO, Binance Pay y reporte de pago",
+      "name": "Modal PRO, PayPal Checkout, Binance Pay y reporte de pago",
       "tier": "pay",
       "status": "ready",
       "files": [

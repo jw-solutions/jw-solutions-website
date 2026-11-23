@@ -10,6 +10,7 @@ from decimal import Decimal
 from typing import Any
 
 from app.core.config import Settings
+from app.services.payment_channels.paypal import calculate_paypal_pricing
 
 # Alfabeto sin ambigüedad visual (sin 0, O, 1, I)
 _CODE_ALPHABET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"
@@ -20,7 +21,7 @@ PLANS: dict[str, dict[str, Any]] = {
     "pro_365d": {"id": "pro_365d", "days": 365, "amount_usd": Decimal("99.00"), "currency": "USD"},
 }
 
-CHANNELS = ("binance_p2p", "crypto_gateway", "paypal_imap", "kofi_webhook")
+CHANNELS = ("binance_p2p", "crypto_gateway", "paypal_checkout", "paypal_imap", "kofi_webhook")
 
 
 class ChannelNotConfiguredError(RuntimeError):
@@ -48,6 +49,16 @@ def _has_cryptomus(settings: Settings) -> bool:
 
 
 def available_channels(settings: Settings) -> dict[str, Any]:
+    paypal_plans = {}
+    for plan_id, plan in PLANS.items():
+        pricing = calculate_paypal_pricing(plan["amount_usd"], settings)
+        paypal_plans[plan_id] = {
+            "base_amount": f"{pricing['base_amount']:.2f}",
+            "fee_amount": f"{pricing['fee_amount']:.2f}",
+            "total_amount": f"{pricing['total_amount']:.2f}",
+            "currency": pricing["currency"],
+            "pass_fees_to_client": pricing["pass_fees_to_client"],
+        }
     return {
         "binance_p2p": {
             "enabled": True,
@@ -58,6 +69,13 @@ def available_channels(settings: Settings) -> dict[str, Any]:
         "crypto_gateway": {
             "enabled": _has_nowpayments(settings) or _has_cryptomus(settings),
             "provider": "nowpayments" if _has_nowpayments(settings) else ("cryptomus" if _has_cryptomus(settings) else None),
+        },
+        "paypal_checkout": {
+            "enabled": settings.paypal_rest_configured,
+            "mode": settings.paypal_mode,
+            "currency": settings.paypal_currency,
+            "pass_fees_to_client": settings.paypal_pass_fees_to_client,
+            "plans": paypal_plans,
         },
         "paypal_imap": {
             "enabled": bool(settings.paypal_me_url.strip()),
