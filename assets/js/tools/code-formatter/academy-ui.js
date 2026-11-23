@@ -46,8 +46,35 @@ export function resolveTipHref(tech, slug, locale = 'es') {
 }
 // Vistas exclusivas del flujo secuencial (una sola visible a la vez).
 export const ACADEMY_VIEWS = ['paths', 'tree', 'editor', 'results'];
+export const ASSIST_PREF_KEY = 'cf_academy_assist_v1';
+export const IDLE_NUDGE_MS = 20000;
 const PENDING_ACTION_KEY = 'cf_pending_action';
 const PENDING_ACTION_TTL_MS = 900000;
+
+/** Genera pasos cortos y accionables de guía tutorial adaptados al nivel y estándar activo. */
+export function buildTutorialSteps(level, standard = '', translate = t) {
+  if (!level) return [];
+  const visibleTests = (level.tests || []).filter((tst) => tst.visible !== false);
+  const criteria = visibleTests.map((tst) => tst.description || tst.name).filter(Boolean).slice(0, 2).join(' · ');
+  const rules = (level.style_rules || []).join(', ');
+  const firstTest = (level.tests || [])[0];
+  const syntax = firstTest?.expected
+    ? String(firstTest.expected)
+    : String(level.reference_solution || '').split('\n')[0] || '';
+
+  return [
+    translate('acadTutStep1', {
+      standard: standard || 'Clean Code',
+      goal: String(level.concept_capsule || level.title || '').slice(0, 180),
+    }),
+    translate('acadTutStep2', {
+      criteria: criteria || rules || level.title || '',
+    }),
+    translate('acadTutStep3', {
+      syntax: syntax || 'Ctrl+Enter',
+    }),
+  ];
+}
 
 export const BUILTIN_FALLBACK_DAILY_CHALLENGE = {
   id: 'daily-python-clean-sum',
@@ -186,7 +213,7 @@ async function fetchJson(relPath) {
   return res.json();
 }
 
-export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, getEditorView } = {}) {
+export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, getEditorView, idleNudgeMs = IDLE_NUDGE_MS } = {}) {
   const shell = document.getElementById('cf-academy-shell');
   const headCard = document.getElementById('cf-academy-head');
   const diffSlot = document.getElementById('cf-academy-diff-slot');
@@ -214,6 +241,16 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   const miniBriefEl = document.getElementById('cf-academy-mini-brief');
   const miniBriefTitleEl = document.getElementById('cf-academy-mini-brief-title');
   const miniBriefBodyEl = document.getElementById('cf-academy-mini-brief-body');
+  const tutorialEl = document.getElementById('cf-academy-tutorial');
+  const assistToggleBtn = document.getElementById('cf-academy-assist-toggle');
+  const assistStatusEl = document.getElementById('cf-academy-assist-status');
+  const tutorialBodyEl = document.getElementById('cf-academy-tutorial-body');
+  const tutStepBadgeEl = document.getElementById('cf-academy-tut-step-badge');
+  const tutTextEl = document.getElementById('cf-academy-tut-text');
+  const tutPrevBtn = document.getElementById('cf-academy-tut-prev');
+  const tutNextBtn = document.getElementById('cf-academy-tut-next');
+  const idleNudgeEl = document.getElementById('cf-academy-idle-nudge');
+  const idleEnableBtn = document.getElementById('cf-academy-idle-enable');
 
   if (!shell || !btnFormat || !btnAcademy) return null;
 
@@ -239,6 +276,71 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   let resultsReady = false;
   let primaryFocus = null;
   let lastEvaluation = null;
+  let tutorialSteps = [];
+  let tutorialIndex = 0;
+  let assistEnabled = (() => {
+    try { return localStorage.getItem(ASSIST_PREF_KEY) !== '0'; } catch { return true; }
+  })();
+  let idleTimer = null;
+
+  function clearIdleNudge() {
+    if (idleTimer) {
+      clearTimeout(idleTimer);
+      idleTimer = null;
+    }
+    if (idleNudgeEl) idleNudgeEl.hidden = true;
+  }
+
+  function scheduleIdleNudge() {
+    clearIdleNudge();
+    if (currentMode !== 'learn' || academyView !== 'editor' || assistEnabled || !activeLevel) return;
+    idleTimer = setTimeout(() => {
+      if (currentMode === 'learn' && academyView === 'editor' && !assistEnabled && idleNudgeEl) {
+        idleNudgeEl.hidden = false;
+      }
+    }, Math.max(50, Number(idleNudgeMs) || IDLE_NUDGE_MS));
+  }
+
+  function renderTutorialStep() {
+    if (!tutorialEl) return;
+    const total = tutorialSteps.length;
+    if (!total) {
+      tutorialEl.hidden = true;
+      return;
+    }
+    tutorialEl.hidden = false;
+    if (assistToggleBtn) {
+      assistToggleBtn.setAttribute('aria-pressed', String(assistEnabled));
+      assistToggleBtn.textContent = t(assistEnabled ? 'acadAssistOn' : 'acadAssistOff');
+    }
+    if (tutorialBodyEl) tutorialBodyEl.hidden = !assistEnabled;
+    const safeIdx = Math.max(0, Math.min(total - 1, tutorialIndex));
+    tutorialIndex = safeIdx;
+    if (tutStepBadgeEl) tutStepBadgeEl.textContent = `${safeIdx + 1} / ${total}`;
+    if (tutTextEl) tutTextEl.textContent = tutorialSteps[safeIdx] || '';
+    if (tutPrevBtn) tutPrevBtn.disabled = safeIdx <= 0;
+    if (tutNextBtn) tutNextBtn.disabled = safeIdx >= total - 1;
+  }
+
+  function setAssistEnabled(next, { announce = true } = {}) {
+    assistEnabled = Boolean(next);
+    try { localStorage.setItem(ASSIST_PREF_KEY, assistEnabled ? '1' : '0'); } catch { /* opcional */ }
+    if (assistEnabled) {
+      clearIdleNudge();
+    } else {
+      scheduleIdleNudge();
+    }
+    renderTutorialStep();
+    if (announce && assistStatusEl) {
+      assistStatusEl.textContent = t(assistEnabled ? 'acadAssistAnnounceOn' : 'acadAssistAnnounceOff');
+    }
+  }
+
+  function refreshTutorialForLevel(lvl, standard) {
+    tutorialSteps = buildTutorialSteps(lvl, standard, t);
+    tutorialIndex = 0;
+    renderTutorialStep();
+  }
 
   const PANE_BY_VIEW = { tree: 'mission', editor: 'editor', results: 'results' };
   const nextFrame = (fn) => (typeof requestAnimationFrame === 'function' ? requestAnimationFrame(fn) : setTimeout(fn, 0));
@@ -300,12 +402,16 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
 
     if (view === 'editor') {
       mountEditorInAcademy();
+      renderTutorialStep();
+      scheduleIdleNudge();
       // CM6 mide gutters y líneas al ser visible: se recalcula tras el primer frame.
       nextFrame(() => {
         const ev = typeof getEditorView === 'function' ? getEditorView() : null;
         if (ev && typeof ev.requestMeasure === 'function') ev.requestMeasure();
         if (focus && ev && typeof ev.focus === 'function') ev.focus();
       });
+    } else {
+      clearIdleNudge();
     }
     if (!isPaths && scroll && typeof workspace.scrollIntoView === 'function') {
       const reduce = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches);
@@ -454,9 +560,9 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     const completedSet = new Set(state.completed || []);
     const remedialSet = new Set(state.remedial || []);
     if (completedSet.has(lvl.id)) return 'completed';
-    if (lvl.tier === 'pay' && !state.isPro) return 'locked';
+    if (!isLevelUnlocked(lvl, idx, levels, state)) return 'locked';
     if (remedialSet.has(lvl.id)) return 'remedial';
-    return isLevelUnlocked(lvl, idx, levels, state) ? 'active' : 'locked';
+    return 'active';
   }
 
   function renderSkillTree(curriculum) {
@@ -492,15 +598,19 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       node.append(left, right);
 
       const activate = () => {
-        if (lvl.tier === 'pay' && !readLocalState().isPro) {
-          openProOrExplain();
+        const latestState = readLocalState();
+        const completedSet = new Set(latestState.completed || []);
+        const prevLvl = idx > 0 ? curriculum.levels[idx - 1] : null;
+        const prevCompleted = !prevLvl || completedSet.has(prevLvl.id);
+        if (!prevCompleted) {
+          const prevTitle = prevLvl?.title || `Nivel ${idx}`;
+          toast(t('acadLockedPrevMsg', { prev: prevTitle }));
+          const activeIdx = curriculum.levels.findIndex((l, i) => resolveNodeState(l, i, curriculum.levels, latestState) === 'active');
+          if (activeIdx >= 0) selectLevel(curriculum, curriculum.levels[activeIdx].level, { view: 'tree' });
           return;
         }
-        if (nodeState === 'locked') {
-          const prevTitle = curriculum.levels[idx - 1]?.title || `Nivel ${idx}`;
-          toast(t('acadLockedPrevMsg', { prev: prevTitle }));
-          const activeIdx = curriculum.levels.findIndex((l, i) => resolveNodeState(l, i, curriculum.levels, readLocalState()) === 'active');
-          if (activeIdx >= 0) selectLevel(curriculum, curriculum.levels[activeIdx].level, { view: 'tree' });
+        if (lvl.tier === 'pay' && !latestState.isPro) {
+          openProOrExplain();
           return;
         }
         selectLevel(curriculum, lvl.level, { view: 'editor' });
@@ -582,6 +692,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     }
     renderPathTechSwitcher();
     updateMiniBrief(lvl.title, lvl.concept_capsule || '');
+    refreshTutorialForLevel(lvl, standard);
 
     missionEl.append(el('h3', 'cf-academy-pane__title', t('acadMissionTitle')));
     missionEl.append(el('p', 'cf-muted', `${standard} · ${lvl.title}`));
@@ -839,6 +950,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     shell.hidden = !isLearn;
 
     if (!isLearn) {
+      clearIdleNudge();
       if (editorCard && editorHome && editorCard.parentElement !== editorHome) {
         editorHome.prepend(editorCard);
       }
@@ -868,9 +980,21 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
 
   btnFormat.addEventListener('click', () => setWorkMode('format'));
   btnAcademy.addEventListener('click', () => setWorkMode('learn'));
-  editorHintBtn?.addEventListener('click', () => revealNextHint());
+  editorHintBtn?.addEventListener('click', () => { clearIdleNudge(); revealNextHint(); });
+  assistToggleBtn?.addEventListener('click', () => setAssistEnabled(!assistEnabled));
+  tutPrevBtn?.addEventListener('click', () => { tutorialIndex = Math.max(0, tutorialIndex - 1); renderTutorialStep(); });
+  tutNextBtn?.addEventListener('click', () => { tutorialIndex = Math.min(tutorialSteps.length - 1, tutorialIndex + 1); renderTutorialStep(); });
+  idleEnableBtn?.addEventListener('click', () => setAssistEnabled(true));
+  const onEditorActivity = () => {
+    if (currentMode === 'learn' && academyView === 'editor' && !assistEnabled) {
+      scheduleIdleNudge();
+    }
+  };
+  editorPane?.addEventListener?.('input', onEditorActivity);
+  editorPane?.addEventListener?.('pointerdown', onEditorActivity);
   const onEditorShortcut = (ev) => {
     if (currentMode !== 'learn' || academyView !== 'editor') return;
+    if (!assistEnabled) scheduleIdleNudge();
     if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter' && validateBtn && !validateBtn.disabled) {
       ev.preventDefault();
       validateBtn.click();
@@ -1098,6 +1222,16 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       fixBtn.id = 'cf-academy-fix-editor-btn';
       fixBtn.addEventListener('click', () => setAcademyView('editor'));
       checklistEl.append(fixBtn);
+      if (!assistEnabled) {
+        const assistFixBtn = el('button', 'cf-btn cf-btn--secondary cf-btn--small', t('acadFixWithAssistBtn'));
+        assistFixBtn.type = 'button';
+        assistFixBtn.id = 'cf-academy-fix-with-assist-btn';
+        assistFixBtn.addEventListener('click', () => {
+          setAssistEnabled(true);
+          setAcademyView('editor');
+        });
+        checklistEl.append(assistFixBtn);
+      }
       primaryFocus = fixBtn;
     }
   }
@@ -1163,6 +1297,16 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       fixBtn.id = 'cf-academy-fix-editor-btn';
       fixBtn.addEventListener('click', () => setAcademyView('editor'));
       checklistEl.append(fixBtn);
+      if (!assistEnabled) {
+        const assistFixBtn = el('button', 'cf-btn cf-btn--secondary cf-btn--small', t('acadFixWithAssistBtn'));
+        assistFixBtn.type = 'button';
+        assistFixBtn.id = 'cf-academy-fix-with-assist-btn';
+        assistFixBtn.addEventListener('click', () => {
+          setAssistEnabled(true);
+          setAcademyView('editor');
+        });
+        checklistEl.append(assistFixBtn);
+      }
       primaryFocus = fixBtn;
 
       if (attempt.triggerRemedial && attempt.recommendedDrill) {
@@ -1202,6 +1346,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
 
   validateBtn?.addEventListener('click', async () => {
     if (!activeLevel) return;
+    clearIdleNudge();
     validateBtn.disabled = true;
     validateBtn.setAttribute('aria-busy', 'true');
     showAcademyLoader(workspace);
@@ -1302,5 +1447,10 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     setWorkMode,
     openTopic,
     selectLevel: (levelNum, opts) => (currentCurriculum ? selectLevel(currentCurriculum, levelNum, opts) : false),
+    setAssistEnabled,
+    destroy: () => {
+      clearIdleNudge();
+      document.removeEventListener?.('keydown', onEditorShortcut);
+    },
   };
 }

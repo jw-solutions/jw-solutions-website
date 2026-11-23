@@ -625,3 +625,84 @@ test('Bloque 1: resolveTipHref con categoría (sin 404), sin textos hardcodeados
     }
   }
 });
+
+test('Bloqueo secuencial estricto (N1→N5 incluidos niveles Pro) y guía tutorial en Editor', async () => {
+  const { isLevelUnlocked } = await import('../../assets/js/tools/code-formatter/academy-engine.js');
+  const { buildTutorialSteps, ASSIST_PREF_KEY } = await import('../../assets/js/tools/code-formatter/academy-ui.js');
+
+  const levels = [
+    { id: 'py-1', level: 1, tier: 'free', title: 'N1' },
+    { id: 'py-2', level: 2, tier: 'free', title: 'N2' },
+    { id: 'py-3', level: 3, tier: 'pay', title: 'N3 Pro' },
+    { id: 'py-4', level: 4, tier: 'pay', title: 'N4 Pro' },
+    { id: 'py-5', level: 5, tier: 'pay', title: 'N5 Pro' },
+  ];
+
+  // Sin niveles completados: incluso con isPro=true, solo N1 está desbloqueado
+  const proEmpty = { completed: [], isPro: true };
+  assert.equal(isLevelUnlocked(levels[0], 0, levels, proEmpty), true);
+  assert.equal(isLevelUnlocked(levels[1], 1, levels, proEmpty), false);
+  assert.equal(isLevelUnlocked(levels[2], 2, levels, proEmpty), false);
+  assert.equal(isLevelUnlocked(levels[3], 3, levels, proEmpty), false);
+  assert.equal(isLevelUnlocked(levels[4], 4, levels, proEmpty), false);
+
+  // Con N1 y N2 completados: N3 Pro requiere isPro=true; N4 sigue bloqueado hasta completar N3
+  assert.equal(isLevelUnlocked(levels[2], 2, levels, { completed: ['py-1', 'py-2'], isPro: false }), false);
+  assert.equal(isLevelUnlocked(levels[2], 2, levels, { completed: ['py-1', 'py-2'], isPro: true }), true);
+  assert.equal(isLevelUnlocked(levels[3], 3, levels, { completed: ['py-1', 'py-2'], isPro: true }), false);
+  assert.equal(isLevelUnlocked(levels[3], 3, levels, { completed: ['py-1', 'py-2', 'py-3'], isPro: true }), true);
+
+  // Guía tutorial paso a paso genera 3 pasos claros con interpolación real
+  const es = (await import('../../assets/js/tools/code-formatter/locales/es.js')).default;
+  const tr = (k, vars = {}) => String(es[k] || k).replace(/\{(\w+)\}/g, (_, name) => (vars[name] ?? ''));
+  const steps = buildTutorialSteps({
+    title: 'Indentación',
+    concept_capsule: 'Usa 4 espacios.',
+    tests: [{ visible: true, description: 'Define función limpia', expected: 'def clean():' }],
+  }, 'PEP 8', tr);
+  assert.equal(steps.length, 3);
+  assert.ok(steps[0].includes('PEP 8') && steps[0].includes('Usa 4 espacios.'));
+  assert.ok(steps[1].includes('Define función limpia'));
+  assert.ok(steps[2].includes('def clean():'));
+  assert.equal(ASSIST_PREF_KEY, 'cf_academy_assist_v1');
+
+  // Paridad i18n de las 13 nuevas llaves de tutorial/asistencia en los 7 idiomas
+  const tutKeys = [
+    'acadTutTitle',
+    'acadAssistOn',
+    'acadAssistOff',
+    'acadAssistAnnounceOn',
+    'acadAssistAnnounceOff',
+    'acadTutPrev',
+    'acadTutNext',
+    'acadTutStep1',
+    'acadTutStep2',
+    'acadTutStep3',
+    'acadIdleNudgeText',
+    'acadIdleEnableBtn',
+    'acadFixWithAssistBtn',
+  ];
+  for (const loc of LOCALES) {
+    const dict = (await import(`../../assets/js/tools/code-formatter/locales/${loc}.js`)).default;
+    for (const k of tutKeys) {
+      assert.ok(typeof dict[k] === 'string' && dict[k].trim().length > 0, `Falta clave tutorial ${k} en ${loc}`);
+    }
+  }
+
+  // Verificar nodos del tutorial en index.html
+  const html = readFileSync(join(ROOT, 'tools/code-formatter/index.html'), 'utf8');
+  for (const id of [
+    'cf-academy-tutorial',
+    'cf-academy-assist-toggle',
+    'cf-academy-assist-status',
+    'cf-academy-tutorial-body',
+    'cf-academy-tut-step-badge',
+    'cf-academy-tut-text',
+    'cf-academy-tut-prev',
+    'cf-academy-tut-next',
+    'cf-academy-idle-nudge',
+    'cf-academy-idle-enable',
+  ]) {
+    assert.equal((html.match(new RegExp(`id="${id}"`, 'g')) || []).length, 1, `Falta o duplicado id="${id}"`);
+  }
+});

@@ -146,3 +146,41 @@ test('Bloque 2: paridad i18n PayPal/PRO en 7 locales y aislamiento total en dist
     assert.equal(existsSync(join(ROOT, 'dist-public/assets/js/tools/code-formatter/pro-modal.js')), false);
   }
 });
+
+test('Rediseño Planes PRO + fallback PayPal siempre visible + paridad 7 locales', async () => {
+  const { getFallbackPaypalPricing } = await import('../../assets/js/tools/code-formatter/pro-modal.js');
+  const p30 = getFallbackPaypalPricing('pro_30d');
+  const p90 = getFallbackPaypalPricing('pro_90d');
+  const p365 = getFallbackPaypalPricing('pro_365d');
+  assert.equal(p30.total_amount, '12.00');
+  assert.equal(p90.total_amount, '30.00');
+  assert.equal(p365.total_amount, '99.00');
+  assert.equal(p90.currency, 'USD');
+
+  const html = readFileSync(join(ROOT, 'tools/code-formatter/index.html'), 'utf8');
+  assert.match(html, /data-cf-plan="pro_30d"/);
+  assert.match(html, /class="cf-plan-btn cf-plan-btn--recommended" data-cf-plan="pro_90d"/);
+  assert.match(html, /class="cf-plan-btn cf-plan-btn--annual" data-cf-plan="pro_365d"/);
+  assert.match(html, /class="cf-plan-benefits-card"/);
+  assert.match(html, /id="cf-paypal-breakdown" class="cf-paypal-breakdown"/);
+  assert.match(html, /id="cf-paypal-pay-btn" class="cf-btn cf-btn--primary cf-paypal-cta"/);
+
+  const proKeys = [
+    'planBestValueBadge',
+    'plan30dDuration',
+    'plan90dDuration',
+    'plan365dDuration',
+    'plan30dSub',
+    'plan90dSub',
+    'plan365dSub',
+    'planBenefitsHeading',
+    'planStackableNote',
+    'payPaypalSecureBadge',
+  ];
+  for (const loc of LOCALES) {
+    const dict = (await import(`../../assets/js/tools/code-formatter/locales/${loc}.js`)).default;
+    for (const k of proKeys) {
+      assert.ok(typeof dict[k] === 'string' && dict[k].trim().length > 0, `Falta clave PRO/PayPal ${k} en ${loc}`);
+    }
+  }
+});

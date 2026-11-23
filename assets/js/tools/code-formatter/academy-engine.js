@@ -13,14 +13,16 @@ export function createInitialState() {
   };
 }
 
-/** Determina si un nivel está desbloqueado secuencialmente (niveles Pro exigen isPro Y nivel previo completado). */
+/** Determina si un nivel está desbloqueado secuencialmente (niveles > 0 exigen nivel previo completado; niveles Pro exigen además isPro). */
 export function isLevelUnlocked(level, index, levels, state) {
   if (!level) return false;
+  if (index > 0) {
+    const completed = new Set(state?.completed || []);
+    const prev = levels?.[index - 1];
+    if (!prev || !completed.has(prev.id)) return false;
+  }
   if (level.tier === 'pay' && !state?.isPro) return false;
-  if (index === 0) return true;
-  const completed = new Set(state?.completed || []);
-  const prev = levels[index - 1];
-  return Boolean(prev && completed.has(prev.id));
+  return true;
 }
 
 /** Devuelve el primer nivel pendiente desbloqueado (priorizando remedial activo) para auto-resume inteligente. */

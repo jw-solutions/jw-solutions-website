@@ -13,6 +13,7 @@
 - [x] ✅ Bloque 2: Integración PayPal End-to-End (config, Orders v2, comisiones Decimal, capture, webhook firmado, modal PRO + 7 locales + tests) — 2026-11-22
 - [x] ✅ Bloque 3: Loaders por Nicho (A/B/C), Defensas Anti-Scraping/Honeypots, Monetización Indirecta y Telemetría — 2026-11-22
 - [x] ✅ Exportación PAYPAL_* al VPS (`paypal_checkout` live activo) + Correos de Bienvenida y Cumpleaños Opcional (migración 0007 + plantillas Dark Glass Gold) — 2026-11-23
+- [x] ✅ Bloqueo secuencial real en Academia (incl. niveles Pro), guía tutorial colapsable + toggle asistencia + aviso inactividad en Editor, rediseño cards Planes PRO y pestaña PayPal siempre visible (local validado, pendiente de commit/push/deploy) — 2026-11-23
 
 ## Pendientes Técnicos
 

@@ -600,23 +600,79 @@
 .cf-plan-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 12px;
 }
 .cf-plan-btn {
-  min-height: 44px;
-  padding: 8px 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 112px;
+  padding: 14px 12px;
   border: 1px solid var(--cf-border);
-  border-radius: 10px;
-  background: #171b22;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #171B22 0%, #11151C 100%);
   color: var(--cf-text);
   font-weight: 600;
+  text-align: left;
   cursor: pointer;
+  transition: border-color 140ms ease, transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+.cf-plan-btn:hover {
+  border-color: rgba(251, 178, 0, 0.6);
+  transform: translateY(-1px);
+}
+.cf-plan-btn:focus-visible {
+  outline: 2px solid #FBB200;
+  outline-offset: 2px;
 }
 .cf-plan-btn.is-active {
-  border-color: var(--cf-gold);
-  background: rgba(212, 175, 55, 0.16);
-  color: var(--cf-gold);
+  border-color: #FBB200;
+  background: linear-gradient(180deg, rgba(251, 178, 0, 0.16) 0%, rgba(23, 27, 34, 0.96) 100%);
+  box-shadow: 0 0 0 1px rgba(251, 178, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+.cf-plan-card__duration {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #C9D1D9;
+}
+.cf-plan-card__price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #FFFFFF;
+}
+.cf-plan-btn.is-active .cf-plan-card__price {
+  color: #FBB200;
+}
+.cf-plan-card__currency {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #9AA4B2;
+}
+.cf-plan-card__sub {
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: #9AA4B2;
+  line-height: 1.25;
+}
+.cf-plan-card__sub--gold {
+  color: #FFD35A;
+  font-weight: 600;
+}
+@media (max-width: 640px) {
+  .cf-plan-grid {
+    grid-template-columns: 1fr;
+  }
+  .cf-plan-btn {
+    min-height: 88px;
+  }
 }
 .cf-order-meta {
   border: 1px solid var(--cf-border);
@@ -869,26 +925,178 @@
 }
 .cf-plan-badge {
   display: inline-block;
-  margin-right: 6px;
-  padding: 2px 7px;
+  padding: 2px 8px;
   border-radius: 999px;
   background: #FBB200;
   color: #0B0E12;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.7rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
-.cf-plan-benefits {
-  margin: 10px 0 14px;
-  padding: 10px 14px 10px 28px;
+.cf-plan-badge--subtle {
+  background: rgba(251, 178, 0, 0.16);
+  color: #FFD35A;
+  border: 1px solid rgba(251, 178, 0, 0.45);
+}
+.cf-plan-benefits-card {
+  margin: 0 0 14px;
+  padding: 12px 14px;
   background: #0B0E12;
   border: 1px solid rgba(251, 178, 0, 0.25);
-  border-radius: 10px;
+  border-radius: 12px;
+}
+.cf-plan-benefits-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.cf-plan-benefits-card__title {
+  font-size: 0.86rem;
+  color: #FFFFFF;
+}
+.cf-plan-benefits-card__note {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #FFD35A;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(251, 178, 0, 0.12);
+}
+.cf-plan-benefits {
+  margin: 0;
+  padding: 0 0 0 18px;
   color: #E8EDF3;
   font-size: 0.86rem;
   display: grid;
   gap: 5px;
+}
+.cf-pay-pane[hidden] {
+  display: none !important;
+}
+.cf-paypal-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #11151C;
+  border: 1px solid rgba(251, 178, 0, 0.32);
+}
+.cf-paypal-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.cf-paypal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(251, 178, 0, 0.14);
+  border: 1px solid rgba(251, 178, 0, 0.4);
+  color: #FFD35A;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+.cf-paypal-card__lead {
+  margin: 0;
+  font-size: 0.86rem;
+}
+.cf-paypal-cta {
+  width: 100%;
+  min-height: 46px;
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+.cf-paypal-cta:focus-visible {
+  outline: 2px solid #FFFFFF;
+  outline-offset: 2px;
+}
+
+/* Academia: guía tutorial colapsable y aviso discreto por inactividad */
+.cf-academy-tutorial[hidden],
+.cf-academy-tutorial__body[hidden],
+.cf-academy-idle-nudge[hidden] {
+  display: none !important;
+}
+.cf-academy-tutorial {
+  margin: 8px 0 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #141820;
+  border: 1px solid rgba(251, 178, 0, 0.3);
+  display: grid;
+  gap: 8px;
+}
+.cf-academy-tutorial__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.cf-academy-tutorial__title {
+  font-size: 0.88rem;
+  color: #FBB200;
+}
+.cf-academy-assist-toggle {
+  min-height: 44px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(251, 178, 0, 0.45);
+  background: rgba(251, 178, 0, 0.14);
+  color: #FFD35A;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cf-academy-assist-toggle[aria-pressed="false"] {
+  border-color: var(--cf-border);
+  background: #0B0E12;
+  color: #C9D1D9;
+}
+.cf-academy-assist-toggle:focus-visible {
+  outline: 2px solid #FBB200;
+  outline-offset: 2px;
+}
+.cf-academy-tutorial__body {
+  display: grid;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.cf-academy-tutorial__step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.cf-academy-tutorial__text {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #E8EDF3;
+}
+.cf-academy-tutorial__nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.cf-academy-idle-nudge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(251, 178, 0, 0.1);
+  border: 1px dashed rgba(251, 178, 0, 0.45);
+  font-size: 0.84rem;
+  color: #E8EDF3;
 }
 .cf-paypal-breakdown {
   margin: 10px 0 14px;
@@ -1065,7 +1273,8 @@
   .cf-academy-loader__cursor {
     animation: none !important;
   }
-  .cf-splash__fill {
+  .cf-splash__fill,
+  .cf-plan-btn {
     transition: none !important;
   }
 }

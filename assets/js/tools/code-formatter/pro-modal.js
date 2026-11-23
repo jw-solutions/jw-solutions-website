@@ -18,6 +18,17 @@ const PLAN_PRICES = {
   pro_365d: '99.00',
 };
 
+export function getFallbackPaypalPricing(planId) {
+  const base = PLAN_PRICES[planId] || PLAN_PRICES.pro_30d;
+  return {
+    base_amount: base,
+    fee_amount: '0.00',
+    total_amount: base,
+    currency: 'USD',
+    pass_fees_to_client: false,
+  };
+}
+
 export const PLAN_BENEFIT_KEYS = {
   pro_30d: ['planBenLevels', 'planBenCert30d', 'planBenStackable'],
   pro_90d: ['planBenLevels', 'planBenCert90d', 'planBenPathsLangs', 'planBenLinkedIn'],
@@ -205,6 +216,7 @@ export async function initProModal() {
   let paypalRedirecting = false;
 
   renderPlanBenefits(planBenefitsEl, selectedPlan);
+  refreshPaypalBreakdown();
 
   function stopTimers() {
     if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
@@ -251,7 +263,7 @@ export async function initProModal() {
     const orderPricing = currentOrder?.channel === 'paypal_checkout' && currentOrder?.plan_id === selectedPlan
       ? currentOrder.pricing
       : null;
-    renderPaypalBreakdown(paypalBreakdownEl, orderPricing || chPricing);
+    renderPaypalBreakdown(paypalBreakdownEl, orderPricing || chPricing || getFallbackPaypalPricing(selectedPlan));
   }
 
   function renderOrder(order) {
@@ -386,6 +398,10 @@ export async function initProModal() {
     if (paneBinance) paneBinance.hidden = channel !== 'binance_p2p';
     if (paneCrypto) paneCrypto.hidden = channel !== 'crypto_gateway';
     if (panePaypal) panePaypal.hidden = channel !== 'paypal_checkout';
+    if (channel === 'paypal_checkout') {
+      if (orderMeta) orderMeta.hidden = true;
+      refreshPaypalBreakdown();
+    }
     if (dialog.open) ensureOrder();
   }
 
@@ -449,6 +465,7 @@ export async function initProModal() {
       syncTrialBannerVisibility(session?.user || session);
     } catch { /* sin sesión activa */ }
     renderPlanBenefits(planBenefitsEl, selectedPlan);
+  refreshPaypalBreakdown();
     await loadChannels();
     await ensureOrder();
   };
