@@ -14,6 +14,11 @@ from sqlalchemy.orm import Session
 
 from app.core.config import Settings
 from app.models.outbox import STATUS_QUEUED
+from app.services.email_templates import (
+    render_birthday_greeting,
+    render_newsletter_welcome,
+    render_purchase_welcome,
+)
 
 _CONTROL = re.compile(r"[\x00-\x1f\x7f]+")
 
@@ -37,6 +42,22 @@ def enqueue(
 
     Devuelve el id, o None si la clave de idempotencia ya existía (no se duplica el evento de negocio).
     """
+    dialect_name = getattr(getattr(session, "bind", None), "dialect", None)
+    is_sqlite = getattr(dialect_name, "name", "") == "sqlite"
+    if is_sqlite:
+        row = session.execute(
+            text(
+                """
+                INSERT OR IGNORE INTO notification_outbox (event_type, payload, status, idempotency_key)
+                VALUES (:event_type, :payload, :status, :key)
+                """
+            ),
+            {"event_type": event_type, "payload": _json(payload), "status": STATUS_QUEUED, "key": idempotency_key},
+        )
+        if getattr(row, "rowcount", 0) == 0:
+            return None
+        return getattr(row, "lastrowid", None)
+
     row = session.execute(
         text(
             """
@@ -150,7 +171,43 @@ def render(event_type: str, payload: dict[str, Any], settings: Settings) -> tupl
     raise PermanentDeliveryError(f"evento desconocido: {event_type}")
 
 
-def send_email(settings: Settings, to: str, subject: str, body: str) -> None:
+def render_email(event_type: str, payload: dict[str, Any], settings: Settings) -> tuple[str, str, str, str | None]:
+    """Devuelve (destinatario, asunto, texto_plano, html_opcional) usando plantillas Dark Glass Gold."""
+    if event_type == "newsletter_welcome":
+        base = settings.newsletter_base_url.rstrip("/")
+        token = clean(payload.get("unsubscribe_token") or "", 128)
+        unsub_url = f"{base}/api/newsletter/unsubscribe?token={token}" if token else f"{base}/"
+        subject, text_body, html_body = render_newsletter_welcome(
+            channel=clean(payload.get("channel") or "main-website", 50),
+            lang=clean(payload.get("lang") or "es", 10),
+            unsubscribe_url=unsub_url,
+        )
+        return clean(payload["to"], 254), subject, text_body, html_body
+
+    if event_type == "order_paid":
+        subject, text_body, html_body = render_purchase_welcome(
+            plan_id=clean(payload.get("plan_id") or "pro"),
+            days=int(payload.get("days") or 30),
+            order_code=clean(payload.get("order_code") or ""),
+            channel=clean(payload.get("channel") or "online"),
+            expires_at=_fmt_date(payload.get("expires_at")),
+            lang=clean(payload.get("lang") or "es", 10),
+        )
+        return clean(payload["to"], 254), subject, text_body, html_body
+
+    if event_type == "birthday_greeting":
+        year = int(payload["year"]) if payload.get("year") else None
+        subject, text_body, html_body = render_birthday_greeting(
+            lang=clean(payload.get("lang") or "es", 10),
+            year=year,
+        )
+        return clean(payload["to"], 254), subject, text_body, html_body
+
+    to, subject, body = render(event_type, payload, settings)
+    return to, subject, body, None
+
+
+def send_email(settings: Settings, to: str, subject: str, body: str, html_body: str | None = None) -> None:
     try:
         recipient = validate_email(to, check_deliverability=False).normalized
     except EmailNotValidError as exc:
@@ -161,6 +218,8 @@ def send_email(settings: Settings, to: str, subject: str, body: str) -> None:
     message["To"] = recipient
     message["Subject"] = subject
     message.set_content(body)
+    if html_body:
+        message.add_alternative(html_body, subtype="html")
 
     context = ssl.create_default_context()
     with smtplib.SMTP(settings.mail_host, settings.mail_port, timeout=30) as smtp:

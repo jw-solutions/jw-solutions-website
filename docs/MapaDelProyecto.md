@@ -97,12 +97,12 @@
 | `backend/app/models/*.py` (9) | Datos | Modelos SQLAlchemy | `core/database.py` | `migrations/`, servicios |
 | `backend/app/security/{anti_scraping,csrf,email_authentication,origin_validation,rate_limit,sessions}.py` | Seguridad | Anti-scraping/honeypots, CSRF, SPF/DKIM, origen, rate-limit, sesiones | `core/config.py` | `api/*` |
 | `backend/security/passwords.py` | Seguridad | Hash de contraseñas (argon2) | — | `api/auth.py` |
-| `backend/app/services/{binance_parser,certificate_service,newsletter_service,notification_service,order_service,payment_matching,subscription_service}.py`, `payment_channels/{__init__,catalog,paypal}.py` | Servicios | Lógica de negocio y pagos (incl. PayPal Orders v2) | `models`, `core` | `api/*`, `workers/*` |
+| `backend/app/services/{binance_parser,certificate_service,email_templates,newsletter_service,notification_service,order_service,payment_matching,subscription_service}.py`, `payment_channels/{__init__,catalog,paypal}.py` | Servicios | Lógica de negocio, correos Dark Glass Gold y pagos (incl. PayPal Orders v2) | `models`, `core` | `api/*`, `workers/*` |
 | `backend/app/workers/{expiration_worker,imap_reconciliation,outbox_worker}.py` | Workers | Expiración, conciliación IMAP, outbox | `services`, DB | `deploy/*.service` |
-| `backend/migrations/{env.py,script.py.mako}`, `versions/0001…0006_*.py`, `backend/alembic.ini` | Datos | Migraciones Alembic | `models` | Esquema DB |
+| `backend/migrations/{env.py,script.py.mako}`, `versions/0001…0007_*.py`, `backend/alembic.ini` | Datos | Migraciones Alembic | `models` | Esquema DB |
 | `backend/scripts/{__init__,inspect_mailbox,seed_academy_pro}.py` | Utilidad | Inspección buzón y seed academia | `core`, `models` | Operación |
 | `backend/{pyproject.toml,requirements.txt,.gitignore}` | Config | Dependencias y exclusiones | — | Entorno |
-| `backend/tests/{conftest,test_academy,test_anti_scraping,test_certificates_tiered,test_imap_parser,test_newsletter,test_payment_matching,test_payments_automation,test_paypal_payments,test_workers}.py`, `integration/`, `fixtures/emails/` | Tests | Suite pytest backend | `backend/app` | Calidad |
+| `backend/tests/{conftest,test_academy,test_anti_scraping,test_certificates_tiered,test_imap_parser,test_lifecycle_emails,test_newsletter,test_payment_matching,test_payments_automation,test_paypal_payments,test_workers}.py`, `integration/`, `fixtures/emails/` | Tests | Suite pytest backend | `backend/app` | Calidad |
 
 ### 2.5 Backend Node legado (`backend/code-formatter/`)
 | Archivo | Capa | Razón de ser | Depende de | Impacta a |

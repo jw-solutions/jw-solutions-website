@@ -25,6 +25,7 @@ from app.services.newsletter_service import (
     render_unsubscribe_page,
     send_html_email,
 )
+from app.services.notification_service import enqueue
 
 router = APIRouter(prefix="/api/newsletter")
 
@@ -121,6 +122,17 @@ def subscribe(
         )
         db.add(sub)
         db.flush()
+        enqueue(
+            db,
+            "newsletter_welcome",
+            {
+                "to": normalized_email,
+                "channel": channel,
+                "lang": lang,
+                "unsubscribe_token": sub.unsubscribe_token,
+            },
+            idempotency_key=f"newsletter_welcome:{channel}:{normalized_email}",
+        )
         return {"ok": True, "status": "subscribed"}
 
     if existing.status == "unsubscribed":
@@ -130,6 +142,17 @@ def subscribe(
         existing.source = source
         existing.subscribed_at = datetime.now(timezone.utc)
         db.flush()
+        enqueue(
+            db,
+            "newsletter_welcome",
+            {
+                "to": normalized_email,
+                "channel": channel,
+                "lang": lang,
+                "unsubscribe_token": existing.unsubscribe_token,
+            },
+            idempotency_key=f"newsletter_welcome:{channel}:{normalized_email}:{existing.subscribed_at.date().isoformat()}",
+        )
         return {"ok": True, "status": "subscribed"}
 
     return {"ok": True, "status": "already_subscribed"}

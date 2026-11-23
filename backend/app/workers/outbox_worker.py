@@ -16,7 +16,7 @@ from sqlalchemy import text
 from app.core.config import Settings, get_settings
 from app.core.database import session_scope
 from app.core.logging import get_logger
-from app.services.notification_service import PermanentDeliveryError, render, send_email
+from app.services.notification_service import PermanentDeliveryError, render_email, send_email
 
 log = get_logger("JW-OUTBOX")
 
@@ -65,8 +65,8 @@ def claim_batch(batch: int = BATCH_SIZE, lease: int = LEASE_SECONDS) -> list[dic
 def process_event(settings: Settings, event: dict[str, Any]) -> str:
     """Devuelve 'sent', 'retry' o 'failed'."""
     try:
-        to, subject, body = render(event["event_type"], event["payload"], settings)
-        send_email(settings, to, subject, body)
+        to, subject, body, html_body = render_email(event["event_type"], event["payload"], settings)
+        send_email(settings, to, subject, body, html_body=html_body)
     except PermanentDeliveryError as exc:
         _finish(event["id"], "failed", str(exc), 0)
         return "failed"

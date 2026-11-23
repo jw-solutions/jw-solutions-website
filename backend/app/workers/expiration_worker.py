@@ -85,8 +85,52 @@ def create_reminders(session: Session, settings: Settings, days: int, now: datet
     return created
 
 
+def enqueue_birthday_greetings(session: Session, settings: Settings, now: datetime | None = None) -> int:
+    """Encola saludo anual de cumpleaños solo para cuentas con fecha opcional registrada (máx. 1 vez por año)."""
+    zone = ZoneInfo(settings.business_timezone)
+    local_today = (now.astimezone(zone) if now else datetime.now(zone)).date()
+    month, day, year = local_today.month, local_today.day, local_today.year
+
+    dialect_name = getattr(getattr(session, "bind", None), "dialect", None)
+    lock_clause = " FOR UPDATE SKIP LOCKED" if getattr(dialect_name, "name", "") != "sqlite" else ""
+    rows = session.execute(
+        text(
+            f"""
+            SELECT account_id, email, preferred_lang
+              FROM accounts
+             WHERE status = 'active'
+               AND birth_month = :month
+               AND birth_day = :day
+               AND (birthday_last_sent_year IS NULL OR birthday_last_sent_year < :year)
+             ORDER BY account_id ASC{lock_clause}
+            """
+        ),
+        {"month": month, "day": day, "year": year},
+    ).all()
+
+    sent = 0
+    for account_id, email, preferred_lang in rows:
+        event_id = enqueue(
+            session,
+            "birthday_greeting",
+            {
+                "to": email,
+                "lang": preferred_lang or "es",
+                "year": year,
+            },
+            idempotency_key=f"birthday_greeting:{account_id}:{year}",
+        )
+        session.execute(
+            text("UPDATE accounts SET birthday_last_sent_year = :year WHERE account_id = :aid"),
+            {"year": year, "aid": account_id},
+        )
+        if event_id is not None:
+            sent += 1
+    return sent
+
+
 def run_once(settings: Settings, now: datetime | None = None) -> dict[str, int]:
-    result = {"reminders_created": 0, "expired": 0}
+    result = {"reminders_created": 0, "expired": 0, "birthdays_queued": 0}
     for days in settings.reminder_days_tuple:
         try:
             with session_scope() as session:  # BEGIN ... COMMIT; ROLLBACK si falla
@@ -95,6 +139,11 @@ def run_once(settings: Settings, now: datetime | None = None) -> dict[str, int]:
             log.exception("reminder creation failed for %d-day window", days)
     with session_scope() as session:
         result["expired"] = expire_due_subscriptions(session, now)
+    try:
+        with session_scope() as session:
+            result["birthdays_queued"] = enqueue_birthday_greetings(session, settings, now)
+    except Exception:  # noqa: BLE001 - cumpleaños opcional nunca bloquea el worker principal
+        log.exception("birthday greeting sweep failed")
     return result
 
 

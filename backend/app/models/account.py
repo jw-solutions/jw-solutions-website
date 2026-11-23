@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, String, Text, func, text
+from sqlalchemy import Boolean, DateTime, SmallInteger, String, Text, func, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -25,3 +25,7 @@ class Account(Base):
     certificate_name_locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     certificate_name_edited: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
     portfolio_slug: Mapped[str | None] = mapped_column(String(64), unique=True, nullable=True)
+    birth_month: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)
+    birth_day: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)
+    birthday_last_sent_year: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)
+    preferred_lang: Mapped[str | None] = mapped_column(String(10), nullable=True)

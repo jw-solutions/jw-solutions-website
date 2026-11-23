@@ -67,7 +67,11 @@ def db_session() -> Session:
                 certificate_holder_name TEXT,
                 certificate_name_locked_at TEXT,
                 certificate_name_edited INTEGER NOT NULL DEFAULT 0,
-                portfolio_slug TEXT UNIQUE
+                portfolio_slug TEXT UNIQUE,
+                birth_month INTEGER,
+                birth_day INTEGER,
+                birthday_last_sent_year INTEGER,
+                preferred_lang TEXT
             )
         """))
         conn.execute(text("""
