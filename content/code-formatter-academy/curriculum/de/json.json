@@ -10,33 +10,33 @@
       "tier": "free",
       "title": "JSON 1 · Grundlagen & saubere Formatierung",
       "estimatedMinutes": 5,
-      "concept_capsule": "Nutze konsistente Einrückung, klare Namen und Standarddokumentation für sofort prüfbaren Code.",
+      "concept_capsule": "Striktes JSON (RFC 8259) verlangt doppelte Anführungszeichen für Schlüssel und Strings, verbietet nachgestellte Kommas und nutzt 2 Leerzeichen Einrückung.",
       "starter_code": "{'service':'formatter',\"port\":8080,}",
       "reference_solution": "{\n  \"service\": \"formatter\",\n  \"port\": 8080\n}\n",
       "tests": [
         {
           "id": "json1-t1",
-          "name": "Valid RFC 8259 JSON",
+          "name": "Gültiges RFC-8259-JSON",
           "visible": true,
           "type": "json_valid",
           "expected": true,
-          "description": "Parses cleanly with JSON.parse"
+          "description": "Wird fehlerfrei von JSON.parse gelesen"
         },
         {
           "id": "json1-t2",
-          "name": "Double quotes only",
+          "name": "Nur doppelte Anführungszeichen",
           "visible": true,
           "type": "pattern_absent",
           "expected": "'",
-          "description": "Replaces single quotes with double quotes"
+          "description": "Ersetzt einfache durch doppelte Anführungszeichen"
         },
         {
           "id": "json1-t3",
-          "name": "2-space indent",
+          "name": "2-Leerzeichen-Einrückung",
           "visible": false,
           "type": "pattern",
           "expected": "  \"service\":",
-          "description": "Uses 2-space indentation"
+          "description": "Verwendet 2 Leerzeichen Einrückung"
         }
       ],
       "style_rules": [
@@ -53,7 +53,7 @@
           "prompt": "Behebe den Syntaxfehler, damit der Code gültig ist.",
           "starter_code": "{\"ok\": true,}",
           "expected_pattern": "true\n}",
-          "solution_hint": "Remove the trailing comma after `true`."
+          "solution_hint": "Entferne das nachgestellte Komma nach `true`."
         },
         {
           "id": "json1-d-edge",
@@ -62,7 +62,7 @@
           "prompt": "Ergänze die Schutzprüfung gegen Laufzeitfehler.",
           "starter_code": "{\"ratio\": NaN}",
           "expected_pattern": "null",
-          "solution_hint": "JSON does not support `NaN`; use `null`."
+          "solution_hint": "JSON unterstützt kein `NaN`; verwende `null`."
         },
         {
           "id": "json1-d-style",
@@ -71,9 +71,37 @@
           "prompt": "Wende den offiziellen Formatierungs- und Dokumentationsstandard an.",
           "starter_code": "{\"a\":1,\"b\":2}",
           "expected_pattern": "  \"a\":",
-          "solution_hint": "Pretty-print JSON with 2-space indentation."
+          "solution_hint": "Formatiere das JSON mit 2 Leerzeichen Einrückung."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "\"schlüssel\": wert",
+          "role": "Alle Schlüssel und Strings müssen in doppelten Anführungszeichen `\"` stehen. In Produktion brechen einfache Anführungszeichen `JSON.parse` und APIs.",
+          "example_inline": "\"worker\": \"billing-sync\""
+        },
+        {
+          "term": "Kein nachgestelltes Komma",
+          "role": "Nach dem letzten Eintrag vor `}` steht kein Komma. In Produktion stoppt ein überzähliges Komma strikte Parser beim Deploy.",
+          "example_inline": "\"retries\": 3\n}"
+        },
+        {
+          "term": "RFC-8259-Datentypen",
+          "role": "Erlaubt sind nur Strings, endliche Zahlen, Booleans, `null`, Objekte und Arrays. In Produktion vermeidet das ungültiges `NaN`.",
+          "example_inline": "\"timeoutMs\": 5000"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Rücke jede Ebene innerhalb von `{ ... }` um 2 Leerzeichen ein.",
+        "line_breaks": "Setze `{` auf Zeile 1, ein Schlüssel-Wert-Paar pro Zeile und `}` auf die Abschlusszeile.",
+        "punctuation": "Ein Leerzeichen nach `:`, doppelte Anführungszeichen überall und kein abschließendes Komma.",
+        "documentation_standard": "RFC 8259 erlaubt keine Kommentare; Verträge werden über JSON Schema dokumentiert."
+      },
+      "analogous_example": {
+        "title": "Gültige Konfiguration eines Billing-Workers",
+        "code": "{\n  \"worker\": \"billing-sync\",\n  \"retries\": 3\n}\n",
+        "why_it_works": "Erfüllt RFC 8259 mit doppelten Anführungszeichen, 2 Leerzeichen Einrückung und ohne Endkomma in einer anderen Domäne."
+      }
     },
     {
       "id": "json-2",
@@ -81,33 +109,33 @@
       "tier": "free",
       "title": "JSON 2 · Grenzfälle & Dokumentation",
       "estimatedMinutes": 8,
-      "concept_capsule": "Sichere leere oder Null-Eingaben vor der Verarbeitung ab und dokumentiere Verträge nach Sprachstandard.",
+      "concept_capsule": "In verschachtelten JSON-Payloads (Objekte in Arrays) fügt jede Ebene 2 Leerzeichen hinzu und jedes innere Objekt bleibt frei von nachgestellten Kommas.",
       "starter_code": "{\"apiVersion\":\"v1\",\"endpoints\":[{\"path\":\"/health\",\"auth\":false,},{\"path\":\"/sync\",\"auth\":true}]}",
       "reference_solution": "{\n  \"apiVersion\": \"v1\",\n  \"endpoints\": [\n    {\n      \"path\": \"/health\",\n      \"auth\": false\n    },\n    {\n      \"path\": \"/sync\",\n      \"auth\": true\n    }\n  ]\n}\n",
       "tests": [
         {
           "id": "json2-t1",
-          "name": "Valid nested JSON",
+          "name": "Gültiges verschachteltes JSON",
           "visible": true,
           "type": "json_valid",
           "expected": true,
-          "description": "Nested array/object parses cleanly"
+          "description": "Verschachtelte Arrays/Objekte parsen fehlerfrei"
         },
         {
           "id": "json2-t2",
-          "name": "No trailing comma",
+          "name": "Kein Endkomma",
           "visible": true,
           "type": "pattern_absent",
           "expected": ",}",
-          "description": "Removes trailing comma in object"
+          "description": "Entfernt nachgestelltes Komma im Objekt"
         },
         {
           "id": "json2-t3",
-          "name": "Formatted array items",
+          "name": "Formatierte Array-Elemente",
           "visible": false,
           "type": "pattern",
           "expected": "      \"path\":",
-          "description": "Indents nested object properties consistently"
+          "description": "Rückt verschachtelte Eigenschaften konsistent ein"
         }
       ],
       "style_rules": [
@@ -124,7 +152,7 @@
           "prompt": "Behebe den Syntaxfehler, damit der Code gültig ist.",
           "starter_code": "[1, 2, 3,]",
           "expected_pattern": "[1, 2, 3]",
-          "solution_hint": "Remove the trailing comma inside the array."
+          "solution_hint": "Entferne das nachgestellte Komma im Array."
         },
         {
           "id": "json2-d-edge",
@@ -133,7 +161,7 @@
           "prompt": "Ergänze die Schutzprüfung gegen Laufzeitfehler.",
           "starter_code": "{\"note\": \"line1\nline2\"}",
           "expected_pattern": "\\n",
-          "solution_hint": "Escape literal newlines inside JSON strings as `\\n`."
+          "solution_hint": "Escape wörtliche Zeilenumbrüche in JSON-Strings als `\\n`."
         },
         {
           "id": "json2-d-style",
@@ -142,9 +170,37 @@
           "prompt": "Wende den offiziellen Formatierungs- und Dokumentationsstandard an.",
           "starter_code": "{\"k\":1}",
           "expected_pattern": "  \"k\": 1",
-          "solution_hint": "Format with 2 spaces per nesting level."
+          "solution_hint": "Formatiere mit 2 Leerzeichen je Verschachtelungsebene."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "[ { ... }, { ... } ]",
+          "role": "Array aus Objekten für strukturierte Listen. In Produktion beschreibt es Webhook-Batches, Routen oder Kanäle.",
+          "example_inline": "\"channels\": [\n  { \"name\": \"email\", \"enabled\": true }\n]"
+        },
+        {
+          "term": "Element-Trennzeichen",
+          "role": "Trenne Geschwisterobjekte mit `},`, aber setze nie ein Komma nach der letzten Eigenschaft oder vor `]`. In Produktion verhindert das HTTP-400-Fehler.",
+          "example_inline": "    },\n    {"
+        },
+        {
+          "term": "Stufenweise 2-Leerzeichen-Einrückung",
+          "role": "Ebene 1 = 2, Array-Objekt = 4, innere Eigenschaften = 6 Leerzeichen. In Produktion fallen Klammerfehler im Diff sofort auf.",
+          "example_inline": "      \"name\": \"email\""
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Füge pro geöffnetem `{` oder `[` 2 Leerzeichen hinzu (2 → 4 → 6 Leerzeichen).",
+        "line_breaks": "Setze jedes Array-Objekt auf eigene Zeilen und richte `}` sowie `]` an ihrer Öffnung aus.",
+        "punctuation": "Stelle sicher, dass auf keiner Ebene `,}` oder `,]` vorkommt.",
+        "documentation_standard": "Halte Schlüsselnamen konsistent und dokumentiere das Schema per JSON Schema."
+      },
+      "analogous_example": {
+        "title": "Verschachteltes Manifest für Benachrichtigungskanäle",
+        "code": "{\n  \"schemaVersion\": \"2.0\",\n  \"channels\": [\n    {\n      \"name\": \"email\",\n      \"enabled\": true\n    },\n    {\n      \"name\": \"slack\",\n      \"enabled\": false\n    }\n  ]\n}\n",
+        "why_it_works": "Zeigt 2/4/6-Leerzeichen-Einrückung, sauberes `},` und keine Endkommas in einer separaten Domäne."
+      }
     },
     {
       "id": "json-3",

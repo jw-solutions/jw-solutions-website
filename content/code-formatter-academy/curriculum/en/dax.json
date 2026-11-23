@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "DAX 1 · Clean Syntax & Formatting Basics",
       "estimatedMinutes": 5,
-      "concept_capsule": "Apply consistent indentation, clear naming, and official documentation so any team can read and audit the code in seconds.",
+      "concept_capsule": "In Power BI, separating intermediate logic with `VAR`/`RETURN` and wrapping output in `COALESCE` prevents `(Blank)` cards and keeps measures easy to audit.",
       "starter_code": "Total Sales:=SUM(Sales[Amount])",
       "reference_solution": "-- Total net sales measure\nTotal Sales :=\nVAR _TotalAmount = SUM ( Sales[Amount] )\nRETURN\n    COALESCE ( _TotalAmount, 0 )\n",
       "tests": [
@@ -73,7 +73,35 @@
           "expected_pattern": "RETURN",
           "solution_hint": "Extract intermediate expressions into `VAR` and `RETURN`."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "VAR _Name =",
+          "role": "Stores an intermediate expression evaluated once in the current filter context. In production, it simplifies debugging in DAX Studio.",
+          "example_inline": "VAR _Units = SUM ( Inventory[Qty] )"
+        },
+        {
+          "term": "RETURN",
+          "role": "Declares the final expression returned by the measure. In production, it separates calculation steps from final output cleanly.",
+          "example_inline": "RETURN\n    COALESCE ( _Units, 0 )"
+        },
+        {
+          "term": "COALESCE ( expr, 0 )",
+          "role": "Returns the first non-BLANK argument. In production, it prevents executive KPI cards from displaying `(Blank)` on empty filters.",
+          "example_inline": "COALESCE ( _Units, 0 )"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Indent the final expression 4 spaces beneath `RETURN` following DAX Formatter conventions.",
+        "line_breaks": "Put the measure header `:=` on line 1, each `VAR` on its own line, `RETURN` on its own line, and the output indented below.",
+        "punctuation": "Add spaces around `:=` and `=`, and pad function parentheses (`SUM ( Table[Col] )`).",
+        "documentation_standard": "Start the measure with a `-- ` comment describing its business definition."
+      },
+      "analogous_example": {
+        "title": "Inventory units measure without BLANK",
+        "code": "-- Total available units in inventory\nTotal Units :=\nVAR _TotalQty = SUM ( Inventory[Qty] )\nRETURN\n    COALESCE ( _TotalQty, 0 )\n",
+        "why_it_works": "Combines a `-- ` header, `VAR`/`RETURN`, DAX Formatter spacing, and `COALESCE` on an unrelated inventory table."
+      }
     },
     {
       "id": "dax-2",
@@ -81,7 +109,7 @@
       "tier": "free",
       "title": "DAX 2 · Edge Cases & Documentation",
       "estimatedMinutes": 8,
-      "concept_capsule": "Guard null or empty inputs before processing and document input/output contracts using the language standard.",
+      "concept_capsule": "Replacing `/` with `DIVIDE(..., 0)` and caching reused measures in `VAR` prevents `Infinity` visuals and avoids redundant VertiPaq engine scans.",
       "starter_code": "Margin Pct:=([Sales]-[Cost])/[Sales]",
       "reference_solution": "-- Safe profit margin percentage using DIVIDE\nMargin Pct :=\nVAR _Sales = [Sales]\nVAR _Cost = [Cost]\nRETURN\n    DIVIDE ( _Sales - _Cost, _Sales, 0 )\n",
       "tests": [
@@ -144,7 +172,35 @@
           "expected_pattern": "VAR ",
           "solution_hint": "Use `VAR` variables for readability and performance."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "DIVIDE ( num, den, 0 )",
+          "role": "Performs safe division returning the fallback (`0`) when the denominator is zero or `BLANK`. In production, it prevents `Infinity` values in Power BI charts.",
+          "example_inline": "DIVIDE ( _Shipped, _Ordered, 0 )"
+        },
+        {
+          "term": "VAR caching",
+          "role": "Evaluates a reused measure once inside a `VAR`. In production, it cuts query time on multi-million-row fact tables.",
+          "example_inline": "VAR _Ordered = [Orders Placed]"
+        },
+        {
+          "term": "RETURN",
+          "role": "Computes the final ratio from the cached variables. In production, it keeps ratio logic transparent during code reviews.",
+          "example_inline": "RETURN\n    DIVIDE ( _Shipped, _Ordered, 0 )"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Keep `VAR` and `RETURN` left-aligned and indent `DIVIDE` by 4 spaces under `RETURN`.",
+        "line_breaks": "Place one `VAR` per line, followed by `RETURN` and the indented result.",
+        "punctuation": "Pad `DIVIDE ( a, b, 0 )` parentheses with spaces and put a space after each comma.",
+        "documentation_standard": "Open with a `-- ` comment stating the KPI ratio and its zero-denominator guard."
+      },
+      "analogous_example": {
+        "title": "Safe logistics fulfillment rate",
+        "code": "-- Safe shipment fulfillment ratio using DIVIDE\nFulfillment Rate :=\nVAR _Ordered = [Orders Placed]\nVAR _Shipped = [Orders Shipped]\nRETURN\n    DIVIDE ( _Shipped, _Ordered, 0 )\n",
+        "why_it_works": "Caches both measures in `VAR` and uses `DIVIDE ( ..., 0 )` to guard zero denominators in a logistics domain."
+      }
     },
     {
       "id": "dax-3",

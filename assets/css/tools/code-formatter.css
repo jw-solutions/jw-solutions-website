@@ -1085,6 +1085,166 @@
   justify-content: flex-end;
   gap: 8px;
 }
+.cf-academy-tutorial__tabs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cf-academy-tut-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cf-academy-tut-tab {
+  min-height: 36px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--cf-border);
+  background: #0B0E12;
+  color: #C9D1D9;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cf-academy-tut-tab.is-active {
+  border-color: #FBB200;
+  background: rgba(251, 178, 0, 0.16);
+  color: #FFD35A;
+}
+.cf-academy-tut-tab:focus-visible,
+.cf-academy-intent-card:focus-visible {
+  outline: 2px solid #FBB200;
+  outline-offset: 2px;
+}
+.cf-academy-tut-rich[hidden],
+.cf-academy-own-bar[hidden] {
+  display: none !important;
+}
+.cf-academy-tut-rich {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #0B0E12;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  max-height: 220px;
+  overflow-y: auto;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: #DCE3EC;
+}
+.cf-academy-tut-note {
+  margin: 0;
+}
+.cf-academy-tut-glossary {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.cf-academy-tut-glossary__item {
+  display: grid;
+  gap: 2px;
+}
+.cf-academy-tut-glossary__term code {
+  color: #FFD35A;
+  font-weight: 700;
+}
+.cf-academy-tut-glossary__role {
+  margin: 0;
+  color: #C9D1D9;
+}
+.cf-academy-tut-glossary__inline {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(251, 178, 0, 0.12);
+  color: #FFD35A;
+  font-size: 0.78rem;
+}
+.cf-academy-tut-mechanics {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+.cf-academy-tut-code {
+  margin: 0;
+  padding: 10px;
+  border-radius: 6px;
+  background: #12161E;
+  border: 1px solid rgba(251, 178, 0, 0.22);
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: #E8EDF3;
+}
+.cf-academy-intents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.cf-academy-intent-card {
+  display: grid;
+  gap: 4px;
+  text-align: left;
+  min-height: 44px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(251, 178, 0, 0.28);
+  background: #171B22;
+  color: #E8EDF3;
+  cursor: pointer;
+}
+.cf-academy-intent-card:hover {
+  border-color: #FBB200;
+  background: rgba(251, 178, 0, 0.1);
+}
+.cf-academy-intent-card__title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #FFD35A;
+}
+.cf-academy-intent-card__desc {
+  font-size: 0.8rem;
+  color: #A9B4C2;
+}
+.cf-academy-own-bar {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #171B22;
+  border: 1px solid rgba(251, 178, 0, 0.35);
+}
+.cf-academy-own-bar__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.cf-academy-own-bar__hint {
+  margin: 0;
+  font-size: 0.84rem;
+}
+.cf-academy-own-bar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+@media (max-width: 640px) {
+  .cf-academy-tut-tab {
+    min-height: 44px;
+    flex: 1 1 calc(50% - 6px);
+  }
+  .cf-academy-tut-rich {
+    max-height: 150px;
+  }
+  .cf-academy-tutorial {
+    padding: 10px;
+  }
+}
 .cf-academy-idle-nudge {
   display: flex;
   align-items: center;

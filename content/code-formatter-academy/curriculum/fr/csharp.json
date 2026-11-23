@@ -16,27 +16,27 @@
       "tests": [
         {
           "id": "cs1-t1",
-          "name": "XML summary",
+          "name": "Résumé XML",
           "visible": true,
           "type": "pattern",
           "expected": "/// <summary>",
-          "description": "Includes XML documentation summary"
+          "description": "Inclut un résumé de documentation XML"
         },
         {
           "id": "cs1-t2",
-          "name": "Null/whitespace guard",
+          "name": "Garde null/vide",
           "visible": true,
           "type": "pattern",
           "expected": "ThrowIfNullOrWhiteSpace",
-          "description": "Validates name input"
+          "description": "Valide le paramètre name"
         },
         {
           "id": "cs1-t3",
-          "name": "String interpolation",
+          "name": "Interpolation de chaînes",
           "visible": false,
           "type": "pattern",
           "expected": "$\"Hi ",
-          "description": "Uses C# string interpolation"
+          "description": "Utilise l'interpolation de chaînes C#"
         }
       ],
       "style_rules": [
@@ -53,7 +53,7 @@
           "prompt": "Corrigez l’erreur de syntaxe pour valider l’extrait.",
           "starter_code": "public int Sum(int a, int b) => a + b",
           "expected_pattern": ";",
-          "solution_hint": "End expression-bodied members with `;`."
+          "solution_hint": "Terminez les membres à corps d'expression par `;`."
         },
         {
           "id": "cs1-d-edge",
@@ -62,7 +62,7 @@
           "prompt": "Ajoutez la garde défensive pour éviter les erreurs.",
           "starter_code": "public int Len(string s) => s.Length;",
           "expected_pattern": "??",
-          "solution_hint": "Guard against null strings using `?.Length ?? 0`."
+          "solution_hint": "Protégez contre les chaînes nulles avec `?.Length ?? 0`."
         },
         {
           "id": "cs1-d-style",
@@ -71,7 +71,7 @@
           "prompt": "Appliquez le standard officiel de formatage et documentation.",
           "starter_code": "public class Service {}",
           "expected_pattern": "/// <summary>",
-          "solution_hint": "Add XML doc comments `/// <summary>`."
+          "solution_hint": "Ajoutez des commentaires XML `/// <summary>`."
         }
       ]
     },
@@ -87,11 +87,11 @@
       "tests": [
         {
           "id": "cs2-t1",
-          "name": "Primary constructor",
+          "name": "Constructeur primaire",
           "visible": true,
           "type": "pattern",
           "expected": "OrderService(ILogger log)",
-          "description": "Uses C# 12 primary constructor syntax"
+          "description": "Utilise la syntaxe de constructeur primaire C# 12"
         },
         {
           "id": "cs2-t2",
@@ -99,15 +99,15 @@
           "visible": true,
           "type": "pattern",
           "expected": "ArgumentNullException",
-          "description": "Guards injected dependency against null"
+          "description": "Protège la dépendance injectée contre null"
         },
         {
           "id": "cs2-t3",
-          "name": "XML param doc",
+          "name": "Doc XML du paramètre",
           "visible": false,
           "type": "pattern",
           "expected": "<param name=\"log\">",
-          "description": "Documents primary constructor parameter"
+          "description": "Documente le paramètre du constructeur primaire"
         }
       ],
       "style_rules": [
@@ -124,7 +124,7 @@
           "prompt": "Corrigez l’erreur de syntaxe pour valider l’extrait.",
           "starter_code": "public class Repo(IDb db {}",
           "expected_pattern": ")",
-          "solution_hint": "Close the primary constructor parameter list."
+          "solution_hint": "Fermez la liste de paramètres du constructeur primaire."
         },
         {
           "id": "cs2-d-edge",
@@ -133,7 +133,7 @@
           "prompt": "Ajoutez la garde défensive pour éviter les erreurs.",
           "starter_code": "private readonly IDb _db = db;",
           "expected_pattern": "ArgumentNullException",
-          "solution_hint": "Throw `ArgumentNullException` if `db` is null."
+          "solution_hint": "Levez `ArgumentNullException` si `db` est nul."
         },
         {
           "id": "cs2-d-style",
@@ -142,7 +142,7 @@
           "prompt": "Appliquez le standard officiel de formatage et documentation.",
           "starter_code": "public class Repo(IDb db) {}",
           "expected_pattern": "<summary>",
-          "solution_hint": "Document the class with `<summary>`."
+          "solution_hint": "Documentez la classe avec `<summary>`."
         }
       ]
     },

@@ -14,6 +14,10 @@ ExecStart=/opt/jw-solutions/backend/.venv/bin/uvicorn app.main:app --host 127.0.
 Restart=on-failure
 RestartSec=5
 
+# Límites de memoria (paridad con VPS 107.172.159.114 junto a segubot.service y PostgreSQL)
+MemoryHigh=512M
+MemoryMax=768M
+
 # Endurecimiento
 NoNewPrivileges=true
 PrivateTmp=true

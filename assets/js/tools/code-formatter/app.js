@@ -361,6 +361,8 @@ if (isFeatureOn('academy.core')) {
       getCode,
       setCode,
       getEditorView: () => view,
+      formatOwnCode: (code, lang) => formatCode(code, lang),
+      closeDiffPanel,
       setLanguage: (lang) => {
         if (langSel && [...langSel.options].some((o) => o.value === lang)) {
           langSel.value = lang;

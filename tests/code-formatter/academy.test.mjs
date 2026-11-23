@@ -652,18 +652,19 @@ test('Bloqueo secuencial estricto (N1→N5 incluidos niveles Pro) y guía tutori
   assert.equal(isLevelUnlocked(levels[3], 3, levels, { completed: ['py-1', 'py-2'], isPro: true }), false);
   assert.equal(isLevelUnlocked(levels[3], 3, levels, { completed: ['py-1', 'py-2', 'py-3'], isPro: true }), true);
 
-  // Guía tutorial paso a paso genera 3 pasos claros con interpolación real
+  // Guía tutorial paso a paso genera 4 pestañas claras sin filtrar firstTest.expected ni reference_solution
   const es = (await import('../../assets/js/tools/code-formatter/locales/es.js')).default;
   const tr = (k, vars = {}) => String(es[k] || k).replace(/\{(\w+)\}/g, (_, name) => (vars[name] ?? ''));
   const steps = buildTutorialSteps({
     title: 'Indentación',
     concept_capsule: 'Usa 4 espacios.',
+    reference_solution: 'def clean() -> None:\n    """Doc."""\n    pass\n',
     tests: [{ visible: true, description: 'Define función limpia', expected: 'def clean():' }],
   }, 'PEP 8', tr);
-  assert.equal(steps.length, 3);
+  assert.equal(steps.length, 4);
   assert.ok(steps[0].includes('PEP 8') && steps[0].includes('Usa 4 espacios.'));
   assert.ok(steps[1].includes('Define función limpia'));
-  assert.ok(steps[2].includes('def clean():'));
+  assert.equal(steps.some((s) => s.includes('def clean():') || s.includes('def clean() -> None:')), false, 'La guía no debe revelar la solución');
   assert.equal(ASSIST_PREF_KEY, 'cf_academy_assist_v1');
 
   // Paridad i18n de las 13 nuevas llaves de tutorial/asistencia en los 7 idiomas
@@ -704,5 +705,455 @@ test('Bloqueo secuencial estricto (N1→N5 incluidos niveles Pro) y guía tutori
     'cf-academy-idle-enable',
   ]) {
     assert.equal((html.match(new RegExp(`id="${id}"`, 'g')) || []).length, 1, `Falta o duplicado id="${id}"`);
+  }
+});
+
+test('Bloque A · Esquema curricular v2 (Data & BI en 7 locales) y no duplicación con reference_solution', () => {
+  const dataBi = ['sql', 'python', 'dax', 'json'];
+  const norm = (s) => String(s || '').replace(/\r\n/g, '\n').replace(/[ \t]+/g, ' ').trim();
+
+  for (const tech of dataBi) {
+    const capsulesL1 = new Set();
+    for (const loc of LOCALES) {
+      const doc = JSON.parse(readFileSync(join(ROOT, `content/code-formatter-academy/curriculum/${loc}/${tech}.json`), 'utf8'));
+      for (const lvl of doc.levels) {
+        if (lvl.tier === 'pay') {
+          assert.equal('keywords_glossary' in lvl, false, `Fuga pay keywords_glossary en ${loc}/${tech}#${lvl.id}`);
+          assert.equal('formatting_mechanics' in lvl, false, `Fuga pay formatting_mechanics en ${loc}/${tech}#${lvl.id}`);
+          assert.equal('analogous_example' in lvl, false, `Fuga pay analogous_example en ${loc}/${tech}#${lvl.id}`);
+          continue;
+        }
+        assert.ok(Array.isArray(lvl.keywords_glossary) && lvl.keywords_glossary.length >= 3, `${loc}/${tech}#${lvl.id} requiere keywords_glossary`);
+        for (const entry of lvl.keywords_glossary) {
+          assert.ok(entry.term?.trim() && entry.role?.trim() && entry.example_inline?.trim());
+        }
+        const fm = lvl.formatting_mechanics;
+        assert.ok(fm?.indentation?.trim() && fm?.line_breaks?.trim() && fm?.punctuation?.trim() && fm?.documentation_standard?.trim());
+        const ex = lvl.analogous_example;
+        assert.ok(ex?.title?.trim() && ex?.code?.trim() && ex?.why_it_works?.trim());
+        assert.notEqual(norm(ex.code), norm(lvl.reference_solution), `Ejemplo análogo no puede copiar reference_solution en ${loc}/${tech}#${lvl.id}`);
+        if (lvl.level === 1 && loc === 'es') capsulesL1.add(lvl.concept_capsule);
+      }
+    }
+    assert.equal(capsulesL1.size, 1);
+  }
+});
+
+test('Bloque A · Limpieza i18n en academy-ui.js, currículo no-EN y paridad de claves acadStyle* en 7 locales', async () => {
+  const uiSrc = readFileSync(join(ROOT, 'assets/js/tools/code-formatter/academy-ui.js'), 'utf8');
+  assert.equal(uiSrc.includes('(Hidden edge case)'), false, 'academy-ui.js no debe contener literal inglés (Hidden edge case)');
+
+  // Verificar que los 6 locales no-ingleses localizan tests[] y drills[] respecto a en/
+  const nonEn = ['es', 'pt-BR', 'pt-PT', 'fr', 'de', 'it'];
+  for (const loc of nonEn) {
+    const enSql = JSON.parse(readFileSync(join(ROOT, 'content/code-formatter-academy/curriculum/en/sql.json'), 'utf8'));
+    const locSql = JSON.parse(readFileSync(join(ROOT, `content/code-formatter-academy/curriculum/${loc}/sql.json`), 'utf8'));
+    assert.notEqual(locSql.levels[0].tests[0].description, enSql.levels[0].tests[0].description, `sql-1 test sin localizar en ${loc}`);
+    assert.notEqual(locSql.levels[0].remedial_drills[0].solution_hint, enSql.levels[0].remedial_drills[0].solution_hint, `sql-1 drill sin localizar en ${loc}`);
+  }
+
+  const { STYLE_RULE_SPECS } = await import('../../assets/js/tools/code-formatter/academy-sandbox.js');
+  const styleKeys = [...new Set(Object.values(STYLE_RULE_SPECS).map((s) => s.key))];
+  const required = ['acadHiddenEdgeCase', 'acadLevelFallback', ...styleKeys];
+  for (const loc of LOCALES) {
+    const dict = (await import(`../../assets/js/tools/code-formatter/locales/${loc}.js`)).default;
+    for (const k of required) {
+      assert.ok(typeof dict[k] === 'string' && dict[k].trim().length > 0, `Falta clave ${k} en ${loc}`);
+    }
+  }
+});
+
+test('Bloque A · evaluateStyleRules cubre 100% de style_rules del currículo y devuelve mensajes localizados', async () => {
+  const { evaluateStyleRules, STYLE_RULE_SPECS } = await import('../../assets/js/tools/code-formatter/academy-sandbox.js');
+  const esDict = (await import('../../assets/js/tools/code-formatter/locales/es.js')).default;
+  const frDict = (await import('../../assets/js/tools/code-formatter/locales/fr.js')).default;
+  const techs = ['sql', 'python', 'dax', 'json', 'javascript', 'typescript', 'java', 'csharp', 'php', 'yaml'];
+
+  for (const tech of techs) {
+    const doc = JSON.parse(readFileSync(join(ROOT, `content/code-formatter-academy/curriculum/es/${tech}.json`), 'utf8'));
+    for (const lvl of doc.levels) {
+      if (lvl.tier !== 'free') continue;
+      for (const r of lvl.style_rules) {
+        assert.ok(STYLE_RULE_SPECS[r], `Regla no implementada en STYLE_RULE_SPECS: ${r}`);
+      }
+      const okRes = evaluateStyleRules(tech, lvl.reference_solution, lvl.style_rules, (k) => esDict[k]);
+      assert.equal(okRes.ok, true, `reference_solution de ${lvl.id} falló reglas: ${okRes.violations.join('; ')}`);
+    }
+  }
+
+  // Violaciones reales localizadas en ES y FR
+  const sqlBad = evaluateStyleRules('sql', 'select id from users', ['uppercase_keywords', 'multiline_select', 'header_comment'], (k) => esDict[k]);
+  assert.equal(sqlBad.ok, false);
+  assert.equal(sqlBad.violations.length, 3);
+  assert.equal(sqlBad.violations[0], esDict.acadStyleSqlUppercase);
+
+  const daxBadFr = evaluateStyleRules('dax', 'Margin := [Sales]/[Cost]', ['var_return', 'safe_divide', 'header_comment'], (k) => frDict[k]);
+  assert.equal(daxBadFr.ok, false);
+  assert.equal(daxBadFr.violations.length, 3);
+  assert.equal(daxBadFr.violations[0], frDict.acadStyleVarReturn);
+  assert.equal(daxBadFr.violationKeys[1].key, 'acadStyleSafeDivide');
+});
+
+test('Bloque B · Panel tutorial en 4 pestañas sin spoilers, intención rápida y paridad i18n 7 locales', async () => {
+  const { buildTutorialTabs, QUICK_INTENTS } = await import('../../assets/js/tools/code-formatter/academy-ui.js');
+  const esDict = (await import('../../assets/js/tools/code-formatter/locales/es.js')).default;
+  const tr = (k, v = {}) => String(esDict[k] || k).replace(/\{(\w+)\}/g, (_, m) => (m in v ? String(v[m]) : `{${m}}`));
+
+  const sqlDoc = JSON.parse(readFileSync(join(ROOT, 'content/code-formatter-academy/curriculum/es/sql.json'), 'utf8'));
+  const sql1 = sqlDoc.levels[0];
+  const tabs = buildTutorialTabs(sql1, sqlDoc.standard, tr);
+  assert.deepEqual(tabs.map((tb) => tb.id), ['concept', 'keywords', 'style', 'example']);
+  assert.ok(tabs[1].glossary.length >= 3);
+  assert.ok(tabs[2].mechanics?.indentation && tabs[2].mechanics?.line_breaks);
+  assert.ok(tabs[3].example?.code && tabs[3].example.code !== sql1.reference_solution);
+  // Jamás filtrar la solución del reto
+  for (const tb of tabs) {
+    assert.equal(tb.summary.includes(sql1.reference_solution.trim()), false);
+  }
+  // Blindaje anti-spoiler si un nivel copiara reference_solution en analogous_example
+  const spoiledTabs = buildTutorialTabs({
+    ...sql1,
+    analogous_example: { title: 'Copia', code: sql1.reference_solution, why_it_works: 'No debe mostrarse' },
+  }, sqlDoc.standard, tr);
+  assert.equal(spoiledTabs[3].example, null, 'Debe bloquear analogous_example idéntico a reference_solution');
+
+  // Intenciones rápidas + nodos HTML + CSS 375px
+  assert.ok(QUICK_INTENTS.length >= 4);
+  const html = readFileSync(join(ROOT, 'tools/code-formatter/index.html'), 'utf8');
+  for (const id of [
+    'cf-academy-tut-tabs',
+    'cf-academy-tut-rich',
+    'cf-academy-own-code-btn',
+    'cf-academy-own-bar',
+    'cf-academy-own-lang',
+    'cf-academy-own-snapshot',
+    'cf-academy-own-compare',
+  ]) {
+    assert.equal((html.match(new RegExp(`id="${id}"`, 'g')) || []).length, 1, `Falta o duplicado id="${id}"`);
+  }
+  const css = readFileSync(join(ROOT, 'assets/css/tools/code-formatter.css'), 'utf8');
+  assert.match(css, /\.cf-academy-tut-rich\[hidden\]/);
+  assert.match(css, /\.cf-academy-own-bar\[hidden\]/);
+  assert.match(css, /@media\s*\(max-width:\s*640px\)/);
+
+  // Paridad de claves Bloque B en los 7 locales
+  const bKeys = [
+    'acadTutTabsAria', 'acadTutTabConcept', 'acadTutTabKeywords', 'acadTutTabStyle', 'acadTutTabExample',
+    'acadQuickIntentsTitle', 'acadIntentSqlTitle', 'acadIntentPythonTitle', 'acadIntentDaxTitle', 'acadIntentOwnTitle',
+    'acadOwnCodeBtn', 'acadOwnBarTitle', 'acadOwnSnapshotBtn', 'acadOwnCompareBtn', 'acadOwnCompareOk',
+  ];
+  for (const loc of LOCALES) {
+    const dict = (await import(`../../assets/js/tools/code-formatter/locales/${loc}.js`)).default;
+    for (const k of bKeys) {
+      assert.ok(typeof dict[k] === 'string' && dict[k].trim().length > 0, `Falta clave Bloque B ${k} en ${loc}`);
+    }
+  }
+});
+
+test('Bloque B · Flujo "Practicar con mi código" (Antes vs. Después) en #cf-academy-diff-slot', async () => {
+  const makeNode = (id, extra = {}) => {
+    const classes = new Set();
+    const attrs = new Map();
+    const listeners = new Map();
+    const children = [];
+    const node = {
+      id,
+      hidden: true,
+      disabled: false,
+      value: extra.value || '',
+      textContent: '',
+      children,
+      dataset: extra.dataset || {},
+      parentElement: null,
+      classList: {
+        toggle: (c, force) => (force === undefined ? (classes.has(c) ? classes.delete(c) : classes.add(c)) : (force ? classes.add(c) : classes.delete(c))),
+        add: (c) => classes.add(c),
+        remove: (c) => classes.delete(c),
+        contains: (c) => classes.has(c),
+      },
+      setAttribute: (k, v) => attrs.set(k, String(v)),
+      getAttribute: (k) => attrs.get(k) ?? null,
+      removeAttribute: (k) => attrs.delete(k),
+      addEventListener: (ev, fn) => {
+        if (!listeners.has(ev)) listeners.set(ev, []);
+        listeners.get(ev).push(fn);
+      },
+      dispatchClick: async () => {
+        for (const fn of listeners.get('click') || []) await fn({ preventDefault() {} });
+      },
+      append: (...items) => items.forEach((it) => { if (it && typeof it === 'object') it.parentElement = node; children.push(it); }),
+      prepend: (...items) => items.forEach((it) => { if (it && typeof it === 'object') it.parentElement = node; children.unshift(it); }),
+      replaceChildren: (...items) => { children.length = 0; node.append(...items); },
+      scrollIntoView: () => {},
+      querySelector: () => null,
+      querySelectorAll: () => [],
+    };
+    return node;
+  };
+
+  const nodes = {
+    'cf-academy-shell': makeNode('cf-academy-shell'),
+    'cf-academy-head': makeNode('cf-academy-head'),
+    'cf-academy-diff-slot': makeNode('cf-academy-diff-slot'),
+    'cf-diff-panel': makeNode('cf-diff-panel'),
+    'cf-mode-formatter': makeNode('cf-mode-formatter'),
+    'cf-mode-academy': makeNode('cf-mode-academy'),
+    'cf-formatter-toolbar': makeNode('cf-formatter-toolbar'),
+    'cf-editor-slot-home': makeNode('cf-editor-slot-home'),
+    'cf-editor-card': makeNode('cf-editor-card'),
+    'cf-academy-editor-slot': makeNode('cf-academy-editor-slot'),
+    'cf-academy-paths': makeNode('cf-academy-paths'),
+    'cf-academy-workspace': makeNode('cf-academy-workspace'),
+    'cf-academy-back': makeNode('cf-academy-back'),
+    'cf-academy-daily-btn': makeNode('cf-academy-daily-btn'),
+    'cf-academy-own-code-btn': makeNode('cf-academy-own-code-btn'),
+    'cf-academy-own-bar': makeNode('cf-academy-own-bar'),
+    'cf-academy-own-lang': makeNode('cf-academy-own-lang', { value: 'sql' }),
+    'cf-academy-own-snapshot': makeNode('cf-academy-own-snapshot'),
+    'cf-academy-own-compare': makeNode('cf-academy-own-compare'),
+    'cf-academy-skill-tree': makeNode('cf-academy-skill-tree'),
+    'cf-academy-mission-card': makeNode('cf-academy-mission-card'),
+    'cf-academy-checklist': makeNode('cf-academy-checklist'),
+    'cf-academy-live': makeNode('cf-academy-live'),
+    'cf-academy-validate': makeNode('cf-academy-validate'),
+    'cf-academy-diff': makeNode('cf-academy-diff'),
+  };
+  const paneEditor = makeNode('cf-academy-editor-pane', { dataset: { acadPaneBody: 'editor' } });
+  const prevWin = globalThis.window;
+  const prevDoc = globalThis.document;
+  const prevLoc = globalThis.location;
+  const prevStorage = globalThis.localStorage;
+  const mem = new Map();
+  globalThis.localStorage = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, String(v)), removeItem: (k) => mem.delete(k) };
+  globalThis.location = { pathname: '/tools/code-formatter/', search: '' };
+  globalThis.window = { location: { href: 'https://jw-solutions.com/tools/code-formatter/', search: '' }, history: { replaceState() {} } };
+  globalThis.document = {
+    baseURI: 'https://jw-solutions.com/tools/code-formatter/',
+    documentElement: { lang: 'es', dataset: {} },
+    head: { append() {} },
+    body: { append() {} },
+    getElementById: (id) => nodes[id] || null,
+    querySelector: () => null,
+    querySelectorAll: (sel) => (sel === '[data-acad-pane-body]' ? [paneEditor] : []),
+    createElement: (tag) => makeNode(tag),
+    createTextNode: (txt) => ({ textContent: txt }),
+    addEventListener: () => {},
+    removeEventListener: () => {},
+  };
+
+  let editorCode = 'select id from users';
+  let diffPayload = null;
+  let closedDiff = false;
+  let measured = false;
+  try {
+    const { initAcademyUI } = await import(`../../assets/js/tools/code-formatter/academy-ui.js?own=${Date.now()}`);
+    const api = initAcademyUI({
+      getCode: () => editorCode,
+      setCode: (c) => { editorCode = c; },
+      getEditorView: () => ({ requestMeasure: () => { measured = true; }, focus: () => {} }),
+      formatOwnCode: async (code) => ({ code: '-- Clean query\nSELECT\n  id\nFROM users;\n', engine: 'sql-formatter' }),
+      openDiffWith: (p) => { diffPayload = p; },
+      closeDiffPanel: () => { closedDiff = true; },
+    });
+    api.openOwnCodePractice('sql');
+    assert.equal(nodes['cf-academy-own-bar'].hidden, false);
+    assert.equal(paneEditor.hidden, false);
+
+    await nodes['cf-academy-own-snapshot'].dispatchClick();
+    await nodes['cf-academy-own-compare'].dispatchClick();
+    await new Promise((r) => setTimeout(r, 30));
+
+    assert.ok(diffPayload, 'Debe invocar openDiffWith con Antes vs. Después');
+    assert.equal(diffPayload.original, 'select id from users');
+    assert.ok(diffPayload.result.includes('SELECT'));
+    assert.equal(nodes['cf-diff-panel'].parentElement, nodes['cf-academy-diff-slot']);
+    assert.equal(measured, true, 'Debe invocar requestMeasure en CodeMirror');
+
+    api.destroy();
+    assert.equal(closedDiff, true, 'Debe cerrar el diff al destruir/salir');
+  } finally {
+    globalThis.window = prevWin;
+    globalThis.document = prevDoc;
+    globalThis.location = prevLoc;
+    globalThis.localStorage = prevStorage;
+  }
+});
+
+test('Bloque C · SQLJS_SRI válido, CSP en _headers/index.html, WASM bajo demanda y jw-api.service', async () => {
+  const { SQLJS_SRI, evaluateChallenge } = await import('../../assets/js/tools/code-formatter/academy-sandbox.js');
+  assert.match(SQLJS_SRI, /^sha512-[A-Za-z0-9+/]{86}==$/, 'SQLJS_SRI debe ser un hash SHA-512 base64 válido (88 chars)');
+
+  // CSP en _headers e index.html debe permitir cdnjs + jsdelivr en script-src y connect-src conservando importmap
+  const headersTxt = readFileSync(join(ROOT, '_headers'), 'utf8');
+  const htmlTxt = readFileSync(join(ROOT, 'tools/code-formatter/index.html'), 'utf8');
+  for (const src of [headersTxt, htmlTxt]) {
+    assert.ok(src.includes("'wasm-unsafe-eval'"));
+    assert.ok(src.includes('https://cdnjs.cloudflare.com'));
+    assert.ok(src.includes('https://cdn.jsdelivr.net'));
+    assert.ok(src.includes("sha256-ZCh9uLobU/eLEHs011X4CeRT/9JAjSY8bKMuPaZL1pU="));
+  }
+
+  // Carga estrictamente bajo demanda: un reto sin sql_eval ni py_eval NO invoca loaders WASM
+  let sqlCalls = 0;
+  let pyCalls = 0;
+  const patternRes = await evaluateChallenge('sql', '-- ok\nSELECT\n  id\nFROM users;\n', {
+    tests: [{ id: 't1', name: 'SELECT', visible: true, type: 'pattern', expected: 'SELECT' }],
+    style_rules: ['uppercase_keywords', 'multiline_select', 'header_comment'],
+  }, {
+    sqlLoader: async () => { sqlCalls += 1; return null; },
+    pyLoader: async () => { pyCalls += 1; return null; },
+  });
+  assert.equal(patternRes.passed, true);
+  assert.equal(sqlCalls, 0, 'No debe cargar sql.js si no hay tests sql_eval');
+  assert.equal(pyCalls, 0, 'No debe cargar Pyodide si no hay tests py_eval');
+
+  // sql_eval invoca sqlLoader y cierra Database
+  let dbClosed = false;
+  const sqlEvalRes = await evaluateChallenge('sql', '-- ok\nSELECT\n  id\nFROM users;\n', {
+    tests: [{ id: 's1', name: 'Row count', visible: true, type: 'sql_eval', setup_sql: 'CREATE TABLE users(id INT); INSERT INTO users VALUES (1);', expected: [[1]] }],
+    style_rules: ['uppercase_keywords', 'multiline_select', 'header_comment'],
+  }, {
+    sqlLoader: async () => {
+      sqlCalls += 1;
+      return {
+        Database: class {
+          run() {}
+          exec() { return [{ values: [[1]] }]; }
+          close() { dbClosed = true; }
+        },
+      };
+    },
+  });
+  assert.equal(sqlCalls, 1);
+  assert.equal(dbClosed, true);
+  assert.equal(sqlEvalRes.passed, true);
+
+  // py_eval invoca pyLoader y libera globals
+  let globalsDestroyed = false;
+  const pyEvalRes = await evaluateChallenge('python', 'def add(a: int, b: int) -> int:\n    """Add."""\n    return a + b\n', {
+    tests: [{ id: 'p1', name: 'add(2,3)', visible: true, type: 'py_eval', input: 'add(2, 3)', expected: 5 }],
+    style_rules: ['pep8_indent_4', 'type_hints', 'docstring_pep257'],
+  }, {
+    pyLoader: async () => {
+      pyCalls += 1;
+      return {
+        toPy: () => ({ destroy: () => { globalsDestroyed = true; } }),
+        runPythonAsync: async (expr) => (expr === 'add(2, 3)' ? 5 : null),
+      };
+    },
+  });
+  assert.equal(pyCalls, 1);
+  assert.equal(globalsDestroyed, true);
+  assert.equal(pyEvalRes.passed, true);
+
+  // Paridad VPS en deploy/jw-api.service
+  const svc = readFileSync(join(ROOT, 'deploy/jw-api.service'), 'utf8');
+  assert.match(svc, /^MemoryMax=768M$/m);
+  assert.match(svc, /^MemoryHigh=512M$/m);
+});
+
+test('Bloque C · selectLevel() hidrata nivel Pro stub vía loadProLevel/fetchProLevel y revoca en 403', async () => {
+  const makeNode = (id, extra = {}) => {
+    const classes = new Set();
+    const attrs = new Map();
+    const listeners = new Map();
+    const children = [];
+    const node = {
+      id, hidden: true, disabled: false, textContent: '', children,
+      dataset: extra.dataset || {}, parentElement: null,
+      classList: {
+        toggle: (c, f) => (f === undefined ? (classes.has(c) ? classes.delete(c) : classes.add(c)) : (f ? classes.add(c) : classes.delete(c))),
+        add: (c) => classes.add(c), remove: (c) => classes.delete(c), contains: (c) => classes.has(c),
+      },
+      setAttribute: (k, v) => attrs.set(k, String(v)),
+      getAttribute: (k) => attrs.get(k) ?? null,
+      removeAttribute: (k) => attrs.delete(k),
+      addEventListener: (ev, fn) => { if (!listeners.has(ev)) listeners.set(ev, []); listeners.get(ev).push(fn); },
+      append: (...items) => items.forEach((it) => { if (it && typeof it === 'object') it.parentElement = node; children.push(it); }),
+      prepend: (...items) => items.forEach((it) => { if (it && typeof it === 'object') it.parentElement = node; children.unshift(it); }),
+      replaceChildren: (...items) => { children.length = 0; node.append(...items); },
+      scrollIntoView: () => {}, querySelector: () => null, querySelectorAll: () => [],
+    };
+    return node;
+  };
+  const nodes = {
+    'cf-academy-shell': makeNode('cf-academy-shell'),
+    'cf-academy-head': makeNode('cf-academy-head'),
+    'cf-mode-formatter': makeNode('cf-mode-formatter'),
+    'cf-mode-academy': makeNode('cf-mode-academy'),
+    'cf-formatter-toolbar': makeNode('cf-formatter-toolbar'),
+    'cf-editor-slot-home': makeNode('cf-editor-slot-home'),
+    'cf-editor-card': makeNode('cf-editor-card'),
+    'cf-academy-editor-slot': makeNode('cf-academy-editor-slot'),
+    'cf-academy-paths': makeNode('cf-academy-paths'),
+    'cf-academy-workspace': makeNode('cf-academy-workspace'),
+    'cf-academy-back': makeNode('cf-academy-back'),
+    'cf-academy-daily-btn': makeNode('cf-academy-daily-btn'),
+    'cf-academy-skill-tree': makeNode('cf-academy-skill-tree'),
+    'cf-academy-mission-card': makeNode('cf-academy-mission-card'),
+    'cf-academy-checklist': makeNode('cf-academy-checklist'),
+    'cf-academy-live': makeNode('cf-academy-live'),
+    'cf-academy-validate': makeNode('cf-academy-validate'),
+    'cf-academy-diff': makeNode('cf-academy-diff'),
+  };
+  const paneEditor = makeNode('cf-academy-editor-pane', { dataset: { acadPaneBody: 'editor' } });
+  const prevWin = globalThis.window;
+  const prevDoc = globalThis.document;
+  const prevLoc = globalThis.location;
+  const prevStorage = globalThis.localStorage;
+  const prevFetch = globalThis.fetch;
+  const mem = new Map([['cf_academy_state_v1', JSON.stringify({ completed: ['sql-1', 'sql-2'], isPro: true })]]);
+  globalThis.localStorage = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, String(v)), removeItem: (k) => mem.delete(k) };
+  globalThis.location = { pathname: '/tools/code-formatter/', search: '' };
+  globalThis.window = { location: { href: 'https://jw-solutions.com/tools/code-formatter/', search: '' }, history: { replaceState() {} } };
+  globalThis.document = {
+    baseURI: 'https://jw-solutions.com/tools/code-formatter/',
+    documentElement: { lang: 'es', dataset: {} },
+    head: { append() {} }, body: { append() {} },
+    getElementById: (id) => nodes[id] || null,
+    querySelector: () => null,
+    querySelectorAll: (sel) => (sel === '[data-acad-pane-body]' ? [paneEditor] : []),
+    createElement: (tag) => makeNode(tag),
+    createTextNode: (txt) => ({ textContent: txt }),
+    addEventListener: () => {}, removeEventListener: () => {},
+  };
+  globalThis.fetch = async (url) => {
+    if (String(url).includes('curriculum/es/sql.json')) {
+      const doc = JSON.parse(readFileSync(join(ROOT, 'content/code-formatter-academy/curriculum/es/sql.json'), 'utf8'));
+      return { ok: true, status: 200, json: async () => doc };
+    }
+    return { ok: false, status: 404, json: async () => ({}) };
+  };
+
+  let editorCode = '';
+  const proCalls = [];
+  try {
+    const { initAcademyUI } = await import(`../../assets/js/tools/code-formatter/academy-ui.js?pro=${Date.now()}`);
+    const api = initAcademyUI({
+      getCode: () => editorCode,
+      setCode: (c) => { editorCode = c; },
+      loadProLevel: async (tech, lvl, loc) => {
+        proCalls.push({ tech, lvl, loc });
+        return {
+          id: 'sql-3', tier: 'pay', concept_capsule: 'CTE modular Pro',
+          starter_code: 'with t as (select 1) select * from t',
+          reference_solution: '-- ok\nWITH t AS (SELECT 1)\nSELECT * FROM t;\n',
+          style_rules: ['uppercase_keywords'],
+          tests: [{ id: 'sql3-t1', name: 'CTE', visible: true, type: 'pattern', expected: 'WITH ', description: 'Usa CTE' }],
+        };
+      },
+    });
+    await api.openTopic('sql', 3, 'data-bi', 'editor');
+    await new Promise((r) => setTimeout(r, 40));
+    assert.equal(proCalls.length, 1);
+    assert.deepEqual(proCalls[0], { tech: 'sql', lvl: 3, loc: 'es' });
+    assert.equal(editorCode, 'with t as (select 1) select * from t');
+    api.destroy();
+  } finally {
+    globalThis.window = prevWin;
+    globalThis.document = prevDoc;
+    globalThis.location = prevLoc;
+    globalThis.localStorage = prevStorage;
+    globalThis.fetch = prevFetch;
   }
 });

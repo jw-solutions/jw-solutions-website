@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "JSON 1 · Clean Syntax & Formatting Basics",
       "estimatedMinutes": 5,
-      "concept_capsule": "Apply consistent indentation, clear naming, and official documentation so any team can read and audit the code in seconds.",
+      "concept_capsule": "Strict JSON (RFC 8259) requires double quotes on all keys and strings, forbids trailing commas, and uses 2-space indentation for clean diffs and reliable parsing.",
       "starter_code": "{'service':'formatter',\"port\":8080,}",
       "reference_solution": "{\n  \"service\": \"formatter\",\n  \"port\": 8080\n}\n",
       "tests": [
@@ -73,7 +73,35 @@
           "expected_pattern": "  \"a\":",
           "solution_hint": "Pretty-print JSON with 2-space indentation."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "\"key\": value",
+          "role": "Every property name and string value must use double quotes `\"`. In production, single quotes break `JSON.parse`, REST APIs, and config loaders.",
+          "example_inline": "\"worker\": \"billing-sync\""
+        },
+        {
+          "term": "No trailing comma",
+          "role": "The final property before `}` must omit any comma. In production, stray trailing commas crash strict parsers during deployments and webhook ingestion.",
+          "example_inline": "\"retries\": 3\n}"
+        },
+        {
+          "term": "RFC 8259 value types",
+          "role": "Only strings, finite numbers, booleans (`true`/`false`), `null`, objects, and arrays are valid. In production, avoid `NaN` or `undefined`.",
+          "example_inline": "\"timeoutMs\": 5000"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Use 2 spaces per nesting level inside `{ ... }`.",
+        "line_breaks": "Put `{` on line 1, one key-value pair per line, and `}` on its own closing line.",
+        "punctuation": "One space after `:`, none before `:`, double quotes everywhere, and zero trailing commas.",
+        "documentation_standard": "RFC 8259 forbids comments inside JSON; document contracts externally with JSON Schema or structured docs."
+      },
+      "analogous_example": {
+        "title": "Valid billing worker configuration",
+        "code": "{\n  \"worker\": \"billing-sync\",\n  \"retries\": 3\n}\n",
+        "why_it_works": "Follows RFC 8259 strictly with double quotes, 2-space indentation, and no trailing comma on an independent payload."
+      }
     },
     {
       "id": "json-2",
@@ -81,7 +109,7 @@
       "tier": "free",
       "title": "JSON 2 · Edge Cases & Documentation",
       "estimatedMinutes": 8,
-      "concept_capsule": "Guard null or empty inputs before processing and document input/output contracts using the language standard.",
+      "concept_capsule": "In nested JSON payloads (objects inside arrays), each nesting level adds 2 spaces and every inner object must be free of hidden trailing commas.",
       "starter_code": "{\"apiVersion\":\"v1\",\"endpoints\":[{\"path\":\"/health\",\"auth\":false,},{\"path\":\"/sync\",\"auth\":true}]}",
       "reference_solution": "{\n  \"apiVersion\": \"v1\",\n  \"endpoints\": [\n    {\n      \"path\": \"/health\",\n      \"auth\": false\n    },\n    {\n      \"path\": \"/sync\",\n      \"auth\": true\n    }\n  ]\n}\n",
       "tests": [
@@ -144,7 +172,35 @@
           "expected_pattern": "  \"k\": 1",
           "solution_hint": "Format with 2 spaces per nesting level."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "[ { ... }, { ... } ]",
+          "role": "Array of objects representing structured collections. In production, it models webhook batches, routes, or channel configs.",
+          "example_inline": "\"channels\": [\n  { \"name\": \"email\", \"enabled\": true }\n]"
+        },
+        {
+          "term": "Element separators",
+          "role": "Separate sibling objects with `},`, never after the last inner property or final object before `]`. In production, this avoids subtle HTTP 400 parse errors.",
+          "example_inline": "    },\n    {"
+        },
+        {
+          "term": "Stepwise 2-space indent",
+          "role": "Level 1 = 2 spaces, array item `{` = 4 spaces, inner properties = 6 spaces. In production, mismatched braces jump out immediately in diffs.",
+          "example_inline": "      \"name\": \"email\""
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Add 2 spaces for each open `{` or `[` (2 → 4 → 6 spaces for nested objects).",
+        "line_breaks": "Place each array object on new lines and align closing `}` and `]` with their opening level.",
+        "punctuation": "Ensure zero `,}` or `,]` sequences exist at any depth.",
+        "documentation_standard": "Keep key naming consistent (`camelCase` or `snake_case`) and document the contract with JSON Schema."
+      },
+      "analogous_example": {
+        "title": "Nested notification channels manifest",
+        "code": "{\n  \"schemaVersion\": \"2.0\",\n  \"channels\": [\n    {\n      \"name\": \"email\",\n      \"enabled\": true\n    },\n    {\n      \"name\": \"slack\",\n      \"enabled\": false\n    }\n  ]\n}\n",
+        "why_it_works": "Demonstrates 2/4/6-space nesting, clean `},` separation, and zero trailing commas in a separate domain."
+      }
     },
     {
       "id": "json-3",

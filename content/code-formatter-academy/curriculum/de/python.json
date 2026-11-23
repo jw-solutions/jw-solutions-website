@@ -10,33 +10,33 @@
       "tier": "free",
       "title": "PYTHON 1 · Grundlagen & saubere Formatierung",
       "estimatedMinutes": 5,
-      "concept_capsule": "Nutze konsistente Einrückung, klare Namen und Standarddokumentation für sofort prüfbaren Code.",
+      "concept_capsule": "PEP 8 und PEP 257 verbinden 4-Leerzeichen-Einrückung, explizite Type Hints und präzise Docstrings für prüfbare, typsichere Daten-Skripte.",
       "starter_code": "def calc_tax(price,rate):\n if price<0:\n  return 0\n return price*rate",
       "reference_solution": "def calc_tax(price: float, rate: float) -> float:\n    \"\"\"Calculate tax amount for a non-negative price.\"\"\"\n    if price <= 0:\n        return 0.0\n    return round(price * rate, 2)\n",
       "tests": [
         {
           "id": "py1-t1",
-          "name": "PEP 8 4-space indent",
+          "name": "PEP-8-Einrückung (4 Leerzeichen)",
           "visible": true,
           "type": "pattern",
           "expected": "    if price <= 0:",
-          "description": "Uses 4-space indentation"
+          "description": "Verwendet 4 Leerzeichen Einrückung"
         },
         {
           "id": "py1-t2",
-          "name": "Type hints & docstring",
+          "name": "Type Hints und Rückgabetyp",
           "visible": true,
           "type": "pattern",
           "expected": "-> float:",
-          "description": "Includes return type annotation"
+          "description": "Enthält Rückgabetyp-Annotation"
         },
         {
           "id": "py1-t3",
-          "name": "Docstring present",
+          "name": "Docstring vorhanden",
           "visible": false,
           "type": "pattern",
           "expected": "\"\"\"",
-          "description": "Documents function with PEP 257 docstring"
+          "description": "Dokumentiert die Funktion mit PEP-257-Docstring"
         }
       ],
       "style_rules": [
@@ -53,7 +53,7 @@
           "prompt": "Behebe den Syntaxfehler, damit der Code gültig ist.",
           "starter_code": "def greet(name)\n    return f\"Hi {name}\"",
           "expected_pattern": "def greet(name):",
-          "solution_hint": "Add the missing colon `:` after the parameter list."
+          "solution_hint": "Füge den fehlenden Doppelpunkt `:` nach den Parametern hinzu."
         },
         {
           "id": "py1-d-edge",
@@ -62,7 +62,7 @@
           "prompt": "Ergänze die Schutzprüfung gegen Laufzeitfehler.",
           "starter_code": "def safe_div(a, b):\n    return a / b",
           "expected_pattern": "if b == 0",
-          "solution_hint": "Guard against division by zero before dividing."
+          "solution_hint": "Prüfe vor der Division auf Division durch Null."
         },
         {
           "id": "py1-d-style",
@@ -71,9 +71,37 @@
           "prompt": "Wende den offiziellen Formatierungs- und Dokumentationsstandard an.",
           "starter_code": "def add(a, b):\n    return a + b",
           "expected_pattern": "\"\"\"",
-          "solution_hint": "Add a concise PEP 257 docstring inside the function."
+          "solution_hint": "Füge einen knappen PEP-257-Docstring in die Funktion ein."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "def ... -> float:",
+          "role": "Definiert Funktionsparameter und Rückgabetyp explizit. In Produktion erkennen Typprüfer Fehler schon vor dem Deployment.",
+          "example_inline": "def calc_discount(subtotal: float, pct: float) -> float:"
+        },
+        {
+          "term": "\"\"\"...\"\"\" (PEP 257)",
+          "role": "Beschreibt den Vertrag direkt unter `def`. In Produktion liefern IDEs und Doku-Tools sofort Kontext ohne Code-Lektüre.",
+          "example_inline": "\"\"\"Compute net discount for a positive subtotal.\"\"\""
+        },
+        {
+          "term": "if ... <= 0: return 0.0",
+          "role": "Früher Guard, der ungültige Werte vor der Berechnung abfängt. In Produktion verhindert das stille Negativbeträge in Abrechnungen.",
+          "example_inline": "if subtotal <= 0:\n    return 0.0"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Verwende strikt 4 Leerzeichen pro Blockebene; Tabulatoren sind unzulässig.",
+        "line_breaks": "Setze den Docstring in die erste Zeile des Funktionskörpers und trenne Guard und Rückgabe klar.",
+        "punctuation": "Setze Leerzeichen nach Kommas und um Operatoren (`<=`, `*`, `->`), aber kein Leerzeichen vor `:`.",
+        "documentation_standard": "Füge einen PEP-257-Docstring (`\"\"\"`) sowie vollständige Typannotationen hinzu."
+      },
+      "analogous_example": {
+        "title": "Sichere Rabattberechnung",
+        "code": "def calc_discount(subtotal: float, pct: float) -> float:\n    \"\"\"Return rounded discount amount for a positive subtotal.\"\"\"\n    if subtotal <= 0:\n        return 0.0\n    return round(subtotal * pct, 2)\n",
+        "why_it_works": "Zeigt 4-Leerzeichen-Einrückung, `-> float`-Typisierung, PEP-257-Docstring und frühen Guard in einer anderen Domäne."
+      }
     },
     {
       "id": "python-2",
@@ -81,33 +109,33 @@
       "tier": "free",
       "title": "PYTHON 2 · Grenzfälle & Dokumentation",
       "estimatedMinutes": 8,
-      "concept_capsule": "Sichere leere oder Null-Eingaben vor der Verarbeitung ab und dokumentiere Verträge nach Sprachstandard.",
+      "concept_capsule": "Defensives Verarbeiten von Dictionary-Listen prüft leere Eingaben früh (`if not ...:`), liest optionale Schlüssel per `.get()` und gliedert Comprehensions mehrzeilig.",
       "starter_code": "def parse_users(rows):\n res=[]\n for r in rows:\n  if r.get(\"active\"):\n   res.append(r[\"email\"].strip().lower())\n return res",
       "reference_solution": "def parse_users(rows: list[dict[str, object]]) -> list[str]:\n    \"\"\"Extract normalized active user emails.\"\"\"\n    if not rows:\n        return []\n    return [\n        str(row[\"email\"]).strip().lower()\n        for row in rows\n        if row.get(\"active\") and row.get(\"email\")\n    ]\n",
       "tests": [
         {
           "id": "py2-t1",
-          "name": "Empty input guard",
+          "name": "Guard für leere Eingabe",
           "visible": true,
           "type": "pattern",
           "expected": "if not rows:",
-          "description": "Returns [] when rows is empty"
+          "description": "Gibt [] zurück, wenn rows leer ist"
         },
         {
           "id": "py2-t2",
-          "name": "Email normalization",
+          "name": "E-Mail-Normalisierung",
           "visible": true,
           "type": "pattern",
           "expected": ".strip().lower()",
-          "description": "Normalizes email casing and whitespace"
+          "description": "Normalisiert Groß-/Kleinschreibung und Leerzeichen"
         },
         {
           "id": "py2-t3",
-          "name": "Missing email guard",
+          "name": "Guard für fehlenden Schlüssel",
           "visible": false,
           "type": "pattern",
           "expected": "row.get(\"email\")",
-          "description": "Skips rows without email key"
+          "description": "Überspringt Zeilen ohne email-Schlüssel"
         }
       ],
       "style_rules": [
@@ -125,7 +153,7 @@
           "prompt": "Behebe den Syntaxfehler, damit der Code gültig ist.",
           "starter_code": "items = [x for x in data if x > 0",
           "expected_pattern": "]",
-          "solution_hint": "Close the list comprehension bracket `]`."
+          "solution_hint": "Schließe die eckige Klammer `]` der List Comprehension."
         },
         {
           "id": "py2-d-edge",
@@ -134,7 +162,7 @@
           "prompt": "Ergänze die Schutzprüfung gegen Laufzeitfehler.",
           "starter_code": "def first_item(items):\n    return items[0]",
           "expected_pattern": "if not items",
-          "solution_hint": "Check `if not items:` before indexing `items[0]`."
+          "solution_hint": "Prüfe `if not items:`, bevor du auf `items[0]` zugreifst."
         },
         {
           "id": "py2-d-style",
@@ -143,9 +171,37 @@
           "prompt": "Wende den offiziellen Formatierungs- und Dokumentationsstandard an.",
           "starter_code": "def clean(s):\n    return s.strip()",
           "expected_pattern": "-> str:",
-          "solution_hint": "Annotate parameter and return type `-> str:`."
+          "solution_hint": "Annotiere Parameter und Rückgabetyp `-> str:`."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "if not collection:",
+          "role": "Gibt bei leerer Eingabe sofort `[]` zurück. In Produktion verhindert das Fehler bei leeren ETL-Batches.",
+          "example_inline": "if not records:\n    return []"
+        },
+        {
+          "term": "dict.get(\"key\")",
+          "role": "Liest optionale Schlüssel ohne `KeyError`. In Produktion schützt das vor unvollständigen API-Datensätzen.",
+          "example_inline": "if rec.get(\"enabled\") and rec.get(\"tag\")"
+        },
+        {
+          "term": ".strip().lower()",
+          "role": "Entfernt Randleerzeichen und vereinheitlicht Kleinschreibung. In Produktion verhindert das Scheinduplikate bei Text-Joins.",
+          "example_inline": "str(rec[\"tag\"]).strip().lower()"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Nutze 4 Leerzeichen je Block und 4 Leerzeichen innerhalb mehrzeiliger List Comprehensions.",
+        "line_breaks": "Teile Ausdruck, `for` und `if` auf eigene Zeilen für gute Lesbarkeit.",
+        "punctuation": "Verwende Python-3.12-Generics (`list[dict[str, object]] -> list[str]`) und konsistente doppelte Anführungszeichen.",
+        "documentation_standard": "Beschreibe Filterung und Normalisierung in einem PEP-257-Docstring."
+      },
+      "analogous_example": {
+        "title": "Saubere Extraktion aktiver Tags",
+        "code": "def extract_active_tags(records: list[dict[str, object]]) -> list[str]:\n    \"\"\"Return normalized tags from enabled catalog records.\"\"\"\n    if not records:\n        return []\n    return [\n        str(rec[\"tag\"]).strip().lower()\n        for rec in records\n        if rec.get(\"enabled\") and rec.get(\"tag\")\n    ]\n",
+        "why_it_works": "Sichert leere Listen und fehlende Schlüssel mit `.get()` ab, normalisiert Strings und formatiert mehrzeilig mit 4 Leerzeichen."
+      }
     },
     {
       "id": "python-3",

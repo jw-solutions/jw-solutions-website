@@ -16,27 +16,27 @@
       "tests": [
         {
           "id": "yaml1-t1",
-          "name": "Zero tab characters",
+          "name": "Cero tabuladores",
           "visible": true,
           "type": "pattern_absent",
           "expected": "\t",
-          "description": "Removes all tab characters"
+          "description": "Elimina todos los caracteres de tabulación"
         },
         {
           "id": "yaml1-t2",
-          "name": "Document comment",
+          "name": "Comentario de documento",
           "visible": true,
           "type": "pattern",
           "expected": "# ",
-          "description": "Adds descriptive YAML comment"
+          "description": "Agrega un comentario YAML descriptivo"
         },
         {
           "id": "yaml1-t3",
-          "name": "Valid key-value",
+          "name": "Clave-valor válida",
           "visible": false,
           "type": "pattern",
           "expected": "port: 8000",
-          "description": "Preserves port mapping"
+          "description": "Preserva el mapeo de puerto"
         }
       ],
       "style_rules": [
@@ -53,7 +53,7 @@
           "prompt": "Corrige el error de sintaxis para que el código sea válido.",
           "starter_code": "app:\n\tname: web",
           "expected_pattern": "  name: web",
-          "solution_hint": "Replace tab indentation with 2 spaces."
+          "solution_hint": "Reemplaza la sangría con tabuladores por 2 espacios."
         },
         {
           "id": "yaml1-d-edge",
@@ -62,7 +62,7 @@
           "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
           "starter_code": "country: NO",
           "expected_pattern": "\"NO\"",
-          "solution_hint": "Quote `NO` so YAML 1.1 parsers do not treat it as boolean false."
+          "solution_hint": "Entrecomilla `NO` para que parsers YAML 1.1 no lo interpreten como `false`."
         },
         {
           "id": "yaml1-d-style",
@@ -71,7 +71,7 @@
           "prompt": "Aplica el estándar oficial de formato y documentación.",
           "starter_code": "name: app",
           "expected_pattern": "# ",
-          "solution_hint": "Add a top-level `#` comment explaining the file."
+          "solution_hint": "Agrega un comentario `#` al inicio explicando el archivo."
         }
       ]
     },
@@ -87,27 +87,27 @@
       "tests": [
         {
           "id": "yaml2-t1",
-          "name": "2-space alignment",
+          "name": "Alineación de 2 espacios",
           "visible": true,
           "type": "pattern",
           "expected": "    branches:",
-          "description": "Aligns branches under push with 2-space step"
+          "description": "Alinea branches bajo push con pasos de 2 espacios"
         },
         {
           "id": "yaml2-t2",
-          "name": "Block sequence",
+          "name": "Secuencia en bloque",
           "visible": true,
           "type": "pattern",
           "expected": "      - main",
-          "description": "Formats list items using block dashes"
+          "description": "Formatea los elementos de lista usando guiones"
         },
         {
           "id": "yaml2-t3",
-          "name": "Header comment",
+          "name": "Comentario de cabecera",
           "visible": false,
           "type": "pattern",
           "expected": "# ",
-          "description": "Includes workflow purpose comment"
+          "description": "Incluye comentario del propósito del workflow"
         }
       ],
       "style_rules": [
@@ -124,7 +124,7 @@
           "prompt": "Corrige el error de sintaxis para que el código sea válido.",
           "starter_code": "steps:\n- uses: actions/checkout@v4\n   run: npm test",
           "expected_pattern": "  run:",
-          "solution_hint": "Align sibling keys inside a sequence item."
+          "solution_hint": "Alinea las claves hermanas dentro de un elemento de secuencia."
         },
         {
           "id": "yaml2-d-edge",
@@ -133,7 +133,7 @@
           "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
           "starter_code": "version: 1.0",
           "expected_pattern": "\"1.0\"",
-          "solution_hint": "Quote version strings like `\"1.0\"` so trailing `.0` is preserved."
+          "solution_hint": "Entrecomilla versiones como `\"1.0\"` para conservar el `.0` final."
         },
         {
           "id": "yaml2-d-style",
@@ -142,7 +142,7 @@
           "prompt": "Aplica el estándar oficial de formato y documentación.",
           "starter_code": "jobs:\n  test:\n    runs-on: ubuntu-latest",
           "expected_pattern": "# ",
-          "solution_hint": "Document the CI job purpose with a comment."
+          "solution_hint": "Documenta el propósito del job de CI con un comentario."
         }
       ]
     },

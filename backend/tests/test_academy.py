@@ -257,3 +257,22 @@ def test_register_auto_activates_trial_7d_and_falls_back_on_abuse(academy_db):
         assert acc2.plan == "free"
     finally:
         ss.enqueue = orig_enqueue
+
+
+def test_seed_academy_pro_covers_7_locales_without_placeholders():
+    from scripts.seed_academy_pro import LOCALES, TECHS, build_pro_level_records
+
+    records = build_pro_level_records()
+    assert len(records) == len(TECHS) * 3 * len(LOCALES) == 210
+    seen_keys = set()
+    for rec in records:
+        key = (rec["tech"], rec["level"], rec["locale"])
+        assert key not in seen_keys
+        seen_keys.add(key)
+        payload = rec["payload"]
+        assert payload["tier"] == "pay"
+        assert "Pro Level" not in payload["starter_code"]
+        assert payload["analogous_example"]["code"].strip() != payload["reference_solution"].strip()
+        assert len(payload["tests"]) >= 1
+        assert payload["tests"][0]["expected"] in payload["reference_solution"]
+        assert payload["tests"][0]["expected"] != "Pro"

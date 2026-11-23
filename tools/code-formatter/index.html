@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Code Formatter &amp; Auto-Doc AI | JW Solutions</title>
   <meta name="description" content="Formatea y documenta tu código en Python, JavaScript, TypeScript, SQL, DAX, Java, C#, PHP, JSON y YAML. Herramienta de JW Solutions.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-ZCh9uLobU/eLEHs011X4CeRT/9JAjSY8bKMuPaZL1pU=' https://esm.sh https://cdnjs.cloudflare.com; worker-src 'self' blob:; frame-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io https://esm.sh; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-ZCh9uLobU/eLEHs011X4CeRT/9JAjSY8bKMuPaZL1pU=' https://esm.sh https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io https://esm.sh https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="canonical" href="https://jw-solutions.com/tools/code-formatter/">
   <link rel="alternate" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/">
@@ -208,6 +208,7 @@
             <p class="cf-muted" data-i18n="acadSubtitle">Entrenamiento guiado por rutas profesionales, estándares oficiales y retos prácticos.</p>
           </div>
           <div class="cf-academy-head__actions">
+            <button type="button" id="cf-academy-own-code-btn" class="cf-btn cf-btn--small" data-i18n="acadOwnCodeBtn">Practicar con mi código</button>
             <button type="button" id="cf-academy-daily-btn" class="cf-btn cf-btn--primary cf-btn--small" data-i18n="acadDailyBtn">Practicar Reto Clean &amp; Document</button>
           </div>
         </div>
@@ -237,6 +238,31 @@
                 <summary id="cf-academy-mini-brief-title" class="cf-academy-mini-brief__title"></summary>
                 <p id="cf-academy-mini-brief-body" class="cf-academy-mini-brief__body"></p>
               </details>
+              <section id="cf-academy-own-bar" class="cf-academy-own-bar" hidden aria-labelledby="cf-academy-own-title">
+                <div class="cf-academy-own-bar__head">
+                  <span id="cf-academy-own-title" class="cf-academy-tutorial__title" data-i18n="acadOwnBarTitle">Práctica con código propio (Antes vs. Después)</span>
+                  <label class="cf-academy-own-bar__lang">
+                    <span class="cf-sr-only" data-i18n="language">Lenguaje</span>
+                    <select id="cf-academy-own-lang" class="cf-select cf-select--compact" data-i18n-aria="language" aria-label="Lenguaje">
+                      <option value="sql">SQL</option>
+                      <option value="python">Python</option>
+                      <option value="dax">DAX</option>
+                      <option value="json">JSON</option>
+                      <option value="javascript">JavaScript</option>
+                      <option value="typescript">TypeScript</option>
+                      <option value="java">Java</option>
+                      <option value="csharp">C#</option>
+                      <option value="php">PHP</option>
+                      <option value="yaml">YAML</option>
+                    </select>
+                  </label>
+                </div>
+                <p class="cf-muted cf-academy-own-bar__hint" data-i18n="acadOwnBarHint">Pega o escribe tu código en el editor, guarda tu versión inicial y compara el resultado formateado.</p>
+                <div class="cf-academy-own-bar__actions">
+                  <button type="button" id="cf-academy-own-snapshot" class="cf-btn cf-btn--small" data-i18n="acadOwnSnapshotBtn">Guardar "Antes"</button>
+                  <button type="button" id="cf-academy-own-compare" class="cf-btn cf-btn--primary cf-btn--small" data-i18n="acadOwnCompareBtn">Formatear y ver Antes vs. Después</button>
+                </div>
+              </section>
               <section id="cf-academy-tutorial" class="cf-academy-tutorial" aria-labelledby="cf-academy-tut-heading">
                 <div class="cf-academy-tutorial__head">
                   <span id="cf-academy-tut-heading" class="cf-academy-tutorial__title" data-i18n="acadTutTitle">Guía paso a paso</span>
@@ -244,8 +270,17 @@
                 </div>
                 <p id="cf-academy-assist-status" class="cf-sr-only" role="status" aria-live="polite"></p>
                 <div id="cf-academy-tutorial-body" class="cf-academy-tutorial__body">
-                  <span id="cf-academy-tut-step-badge" class="cf-badge">1 / 3</span>
-                  <p id="cf-academy-tut-text" class="cf-academy-tutorial__text"></p>
+                  <div class="cf-academy-tutorial__tabs-row">
+                    <div id="cf-academy-tut-tabs" class="cf-academy-tut-tabs" role="tablist" data-i18n-aria="acadTutTabsAria" aria-label="Secciones de la guía">
+                      <button type="button" class="cf-academy-tut-tab is-active" role="tab" aria-selected="true" data-tut-tab="0" data-i18n="acadTutTabConcept">Concepto</button>
+                      <button type="button" class="cf-academy-tut-tab" role="tab" aria-selected="false" data-tut-tab="1" data-i18n="acadTutTabKeywords">Palabras clave</button>
+                      <button type="button" class="cf-academy-tut-tab" role="tab" aria-selected="false" data-tut-tab="2" data-i18n="acadTutTabStyle">Estilo</button>
+                      <button type="button" class="cf-academy-tut-tab" role="tab" aria-selected="false" data-tut-tab="3" data-i18n="acadTutTabExample">Ejemplo análogo</button>
+                    </div>
+                    <span id="cf-academy-tut-step-badge" class="cf-badge">1 / 4</span>
+                  </div>
+                  <p id="cf-academy-tut-text" class="cf-academy-tutorial__text" aria-live="polite"></p>
+                  <div id="cf-academy-tut-rich" class="cf-academy-tut-rich" hidden></div>
                   <div class="cf-academy-tutorial__nav">
                     <button type="button" id="cf-academy-tut-prev" class="cf-btn cf-btn--small" data-i18n="acadTutPrev">← Paso anterior</button>
                     <button type="button" id="cf-academy-tut-next" class="cf-btn cf-btn--small" data-i18n="acadTutNext">Siguiente paso →</button>

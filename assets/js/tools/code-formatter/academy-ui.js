@@ -4,7 +4,7 @@ import { t, lang as uiLang } from './i18n.js';
 const getUiLang = () => (typeof uiLang === 'function' ? uiLang() : (uiLang || 'es'));
 import { isFeatureOn } from './ui-controller.js';
 import { toast } from './actions.js';
-import { evaluateChallenge } from './academy-sandbox.js';
+import { evaluateChallenge, evaluateStyleRules, STYLE_RULE_SPECS } from './academy-sandbox.js';
 import {
   isLevelUnlocked,
   findFirstPendingLevel,
@@ -51,29 +51,96 @@ export const IDLE_NUDGE_MS = 20000;
 const PENDING_ACTION_KEY = 'cf_pending_action';
 const PENDING_ACTION_TTL_MS = 900000;
 
-/** Genera pasos cortos y accionables de guía tutorial adaptados al nivel y estándar activo. */
-export function buildTutorialSteps(level, standard = '', translate = t) {
+function normCode(code) {
+  return String(code || '').replace(/\r\n/g, '\n').replace(/[ \t]+/g, ' ').trim();
+}
+
+/** Reglas por defecto para evaluar código propio según lenguaje. */
+const OWN_CODE_STYLE_RULES = {
+  sql: ['uppercase_keywords', 'multiline_select', 'header_comment'],
+  python: ['pep8_indent_4', 'type_hints', 'docstring_pep257'],
+  dax: ['var_return', 'header_comment'],
+  json: ['rfc8259_valid', 'double_quotes', 'no_trailing_comma'],
+  javascript: ['jsdoc', 'semicolons'],
+  typescript: ['no_explicit_any', 'tsdoc', 'return_type'],
+  java: ['javadoc', 'indent_4'],
+  csharp: ['xml_docs', 'allman_braces'],
+  php: ['strict_types', 'psr12_braces'],
+  yaml: ['no_tabs', 'consistent_indent'],
+};
+
+/** Atajos de intención rápida en la vista de rutas (TTV < 10s). */
+export const QUICK_INTENTS = [
+  { id: 'intent-sql', titleKey: 'acadIntentSqlTitle', descKey: 'acadIntentSqlDesc', kind: 'topic', tech: 'sql', pathId: 'data-bi' },
+  { id: 'intent-python', titleKey: 'acadIntentPythonTitle', descKey: 'acadIntentPythonDesc', kind: 'topic', tech: 'python', pathId: 'data-bi' },
+  { id: 'intent-dax', titleKey: 'acadIntentDaxTitle', descKey: 'acadIntentDaxDesc', kind: 'topic', tech: 'dax', pathId: 'data-bi' },
+  { id: 'intent-own', titleKey: 'acadIntentOwnTitle', descKey: 'acadIntentOwnDesc', kind: 'own_code' },
+];
+
+/**
+ * Construye las 4 pestañas pedagógicas (Concepto, Palabras clave, Estilo, Ejemplo análogo)
+ * SIN revelar jamás `firstTest.expected` ni `reference_solution`.
+ */
+export function buildTutorialTabs(level, standard = '', translate = t) {
   if (!level) return [];
   const visibleTests = (level.tests || []).filter((tst) => tst.visible !== false);
   const criteria = visibleTests.map((tst) => tst.description || tst.name).filter(Boolean).slice(0, 2).join(' · ');
-  const rules = (level.style_rules || []).join(', ');
-  const firstTest = (level.tests || [])[0];
-  const syntax = firstTest?.expected
-    ? String(firstTest.expected)
-    : String(level.reference_solution || '').split('\n')[0] || '';
+
+  const glossary = Array.isArray(level.keywords_glossary) ? level.keywords_glossary : [];
+  const mechanics = level.formatting_mechanics && typeof level.formatting_mechanics === 'object' ? level.formatting_mechanics : null;
+  const rawEx = level.analogous_example && typeof level.analogous_example === 'object' ? level.analogous_example : null;
+  // Blindaje anti-spoiler: jamás mostrar un ejemplo idéntico a reference_solution
+  const safeExample = rawEx && rawEx.code && normCode(rawEx.code) !== normCode(level.reference_solution)
+    ? rawEx
+    : null;
+
+  const localizedRuleNotes = (level.style_rules || [])
+    .map((r) => STYLE_RULE_SPECS[r]?.key)
+    .filter(Boolean)
+    .map((k) => translate(k))
+    .filter(Boolean);
 
   return [
-    translate('acadTutStep1', {
-      standard: standard || 'Clean Code',
-      goal: String(level.concept_capsule || level.title || '').slice(0, 180),
-    }),
-    translate('acadTutStep2', {
-      criteria: criteria || rules || level.title || '',
-    }),
-    translate('acadTutStep3', {
-      syntax: syntax || 'Ctrl+Enter',
-    }),
+    {
+      id: 'concept',
+      labelKey: 'acadTutTabConcept',
+      summary: translate('acadTutStep1', {
+        standard: standard || 'Clean Code',
+        goal: String(level.concept_capsule || level.title || '').slice(0, 200),
+      }),
+      criteria,
+    },
+    {
+      id: 'keywords',
+      labelKey: 'acadTutTabKeywords',
+      summary: glossary.length
+        ? translate('acadTutKeywordsIntro')
+        : translate('acadTutStep2', { criteria: criteria || localizedRuleNotes.slice(0, 2).join(' · ') || level.title || '' }),
+      glossary,
+    },
+    {
+      id: 'style',
+      labelKey: 'acadTutTabStyle',
+      summary: mechanics
+        ? translate('acadTutStyleIntro', { standard: standard || 'Clean Code' })
+        : (localizedRuleNotes.length ? localizedRuleNotes.join(' · ') : translate('acadTutStyleFallback')),
+      mechanics,
+      ruleNotes: localizedRuleNotes,
+    },
+    {
+      id: 'example',
+      labelKey: 'acadTutTabExample',
+      summary: safeExample
+        ? `${safeExample.title} — ${safeExample.why_it_works}`
+        : translate('acadTutExampleFallback'),
+      example: safeExample,
+    },
   ];
+}
+
+/** Devuelve los textos resumen de cada pestaña/paso del tutorial (sin spoilers de solución). */
+export function buildTutorialSteps(level, standard = '', translate = t) {
+  return buildTutorialTabs(level, standard, translate).map((tab) => tab.summary);
 }
 
 export const BUILTIN_FALLBACK_DAILY_CHALLENGE = {
@@ -213,7 +280,7 @@ async function fetchJson(relPath) {
   return res.json();
 }
 
-export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, getEditorView, idleNudgeMs = IDLE_NUDGE_MS } = {}) {
+export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, getEditorView, formatOwnCode, closeDiffPanel, loadProLevel, idleNudgeMs = IDLE_NUDGE_MS } = {}) {
   const shell = document.getElementById('cf-academy-shell');
   const headCard = document.getElementById('cf-academy-head');
   const diffSlot = document.getElementById('cf-academy-diff-slot');
@@ -227,6 +294,11 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   const workspace = document.getElementById('cf-academy-workspace');
   const backBtn = document.getElementById('cf-academy-back');
   const dailyBtn = document.getElementById('cf-academy-daily-btn');
+  const ownCodeBtn = document.getElementById('cf-academy-own-code-btn');
+  const ownBarEl = document.getElementById('cf-academy-own-bar');
+  const ownLangSel = document.getElementById('cf-academy-own-lang');
+  const ownSnapshotBtn = document.getElementById('cf-academy-own-snapshot');
+  const ownCompareBtn = document.getElementById('cf-academy-own-compare');
   const skillTreeEl = document.getElementById('cf-academy-skill-tree');
   const missionEl = document.getElementById('cf-academy-mission-card');
   const checklistEl = document.getElementById('cf-academy-checklist');
@@ -245,6 +317,8 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   const assistToggleBtn = document.getElementById('cf-academy-assist-toggle');
   const assistStatusEl = document.getElementById('cf-academy-assist-status');
   const tutorialBodyEl = document.getElementById('cf-academy-tutorial-body');
+  const tutTabsEl = document.getElementById('cf-academy-tut-tabs');
+  const tutRichEl = document.getElementById('cf-academy-tut-rich');
   const tutStepBadgeEl = document.getElementById('cf-academy-tut-step-badge');
   const tutTextEl = document.getElementById('cf-academy-tut-text');
   const tutPrevBtn = document.getElementById('cf-academy-tut-prev');
@@ -276,12 +350,82 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   let resultsReady = false;
   let primaryFocus = null;
   let lastEvaluation = null;
+  let tutorialTabs = [];
   let tutorialSteps = [];
   let tutorialIndex = 0;
+  let isOwnCodeActive = false;
+  let ownCodeBefore = null;
   let assistEnabled = (() => {
     try { return localStorage.getItem(ASSIST_PREF_KEY) !== '0'; } catch { return true; }
   })();
   let idleTimer = null;
+
+  function renderTutorialRich(tab) {
+    if (!tutRichEl) return;
+    tutRichEl.replaceChildren();
+    if (!tab) {
+      tutRichEl.hidden = true;
+      return;
+    }
+
+    if (tab.id === 'concept' && tab.criteria) {
+      const p = el('p', 'cf-academy-tut-note');
+      p.append(el('strong', null, `${t('acadTutCriteriaLabel')}: `), document.createTextNode(tab.criteria));
+      tutRichEl.append(p);
+      tutRichEl.hidden = false;
+      return;
+    }
+
+    if (tab.id === 'keywords' && Array.isArray(tab.glossary) && tab.glossary.length) {
+      const dl = el('dl', 'cf-academy-tut-glossary');
+      for (const item of tab.glossary) {
+        const row = el('div', 'cf-academy-tut-glossary__item');
+        const dt = el('dt', 'cf-academy-tut-glossary__term');
+        dt.append(el('code', null, item.term));
+        const dd = el('dd', 'cf-academy-tut-glossary__role', item.role);
+        if (item.example_inline) {
+          const exLine = el('code', 'cf-academy-tut-glossary__inline', item.example_inline);
+          dd.append(document.createTextNode(' '), exLine);
+        }
+        row.append(dt, dd);
+        dl.append(row);
+      }
+      tutRichEl.append(dl);
+      tutRichEl.hidden = false;
+      return;
+    }
+
+    if (tab.id === 'style' && tab.mechanics) {
+      const list = el('ul', 'cf-academy-tut-mechanics');
+      const entries = [
+        ['acadMechIndent', tab.mechanics.indentation],
+        ['acadMechBreaks', tab.mechanics.line_breaks],
+        ['acadMechPunct', tab.mechanics.punctuation],
+        ['acadMechDoc', tab.mechanics.documentation_standard],
+      ];
+      for (const [labelKey, val] of entries) {
+        if (!val) continue;
+        const li = el('li', 'cf-academy-tut-mechanics__item');
+        li.append(el('strong', null, `${t(labelKey)}: `), document.createTextNode(val));
+        list.append(li);
+      }
+      tutRichEl.append(list);
+      tutRichEl.hidden = false;
+      return;
+    }
+
+    if (tab.id === 'example' && tab.example) {
+      const wrap = el('div', 'cf-academy-tut-example');
+      const pre = el('pre', 'cf-academy-tut-code');
+      pre.append(el('code', null, tab.example.code));
+      wrap.append(pre);
+      tutRichEl.append(wrap);
+      tutRichEl.hidden = false;
+      return;
+    }
+
+    tutRichEl.hidden = true;
+  }
 
   function clearIdleNudge() {
     if (idleTimer) {
@@ -318,6 +462,15 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     tutorialIndex = safeIdx;
     if (tutStepBadgeEl) tutStepBadgeEl.textContent = `${safeIdx + 1} / ${total}`;
     if (tutTextEl) tutTextEl.textContent = tutorialSteps[safeIdx] || '';
+    if (tutTabsEl && typeof tutTabsEl.querySelectorAll === 'function') {
+      tutTabsEl.querySelectorAll('[data-tut-tab]').forEach((btn) => {
+        const idx = Number(btn.dataset.tutTab);
+        const on = idx === safeIdx;
+        btn.classList.toggle('is-active', on);
+        btn.setAttribute('aria-selected', String(on));
+      });
+    }
+    renderTutorialRich(tutorialTabs[safeIdx] || null);
     if (tutPrevBtn) tutPrevBtn.disabled = safeIdx <= 0;
     if (tutNextBtn) tutNextBtn.disabled = safeIdx >= total - 1;
   }
@@ -337,7 +490,8 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   }
 
   function refreshTutorialForLevel(lvl, standard) {
-    tutorialSteps = buildTutorialSteps(lvl, standard, t);
+    tutorialTabs = buildTutorialTabs(lvl, standard, t);
+    tutorialSteps = tutorialTabs.map((tab) => tab.summary);
     tutorialIndex = 0;
     renderTutorialStep();
   }
@@ -352,10 +506,30 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   }
 
   function restoreDiffPanelHome() {
+    if (typeof closeDiffPanel === 'function') closeDiffPanel();
     const diffPanel = document.getElementById('cf-diff-panel');
-    if (diffPanel && editorHome && diffPanel.parentElement !== editorHome) {
-      editorHome.insertBefore(diffPanel, editorCard ? editorCard.nextSibling : null);
+    if (diffPanel) {
+      diffPanel.hidden = true;
+      if (editorHome && diffPanel.parentElement !== editorHome) {
+        editorHome.insertBefore(diffPanel, editorCard ? editorCard.nextSibling : null);
+      }
     }
+  }
+
+  function syncOwnCodeControls() {
+    if (ownBarEl) ownBarEl.hidden = !isOwnCodeActive;
+    if (editorHintBtn) editorHintBtn.hidden = isOwnCodeActive;
+    if (diffBtn) diffBtn.hidden = isOwnCodeActive;
+    if (validateBtn) validateBtn.hidden = isOwnCodeActive;
+  }
+
+  function exitOwnCodeMode() {
+    isOwnCodeActive = false;
+    ownCodeBefore = null;
+    syncOwnCodeControls();
+    if (typeof closeDiffPanel === 'function') closeDiffPanel();
+    const diffPanel = document.getElementById('cf-diff-panel');
+    if (diffPanel) diffPanel.hidden = true;
   }
 
   function backLabelKey() {
@@ -402,6 +576,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
 
     if (view === 'editor') {
       mountEditorInAcademy();
+      syncOwnCodeControls();
       renderTutorialStep();
       scheduleIdleNudge();
       // CM6 mide gutters y líneas al ser visible: se recalcula tras el primer frame.
@@ -412,6 +587,8 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       });
     } else {
       clearIdleNudge();
+      if (typeof closeDiffPanel === 'function') closeDiffPanel();
+      if (view === 'paths' && isOwnCodeActive) exitOwnCodeMode();
     }
     if (!isPaths && scroll && typeof workspace.scrollIntoView === 'function') {
       const reduce = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches);
@@ -471,8 +648,30 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
 
   function renderPathsView(pathsData) {
     pathsContainer.replaceChildren();
+    exitOwnCodeMode();
 
     const loc = getUiLang();
+    const hIntent = el('h3', 'cf-academy-section-title', t('acadQuickIntentsTitle'));
+    const intentGrid = el('div', 'cf-academy-intents-grid');
+    intentGrid.id = 'cf-academy-quick-intents';
+    for (const intent of QUICK_INTENTS) {
+      const btn = el('button', 'cf-academy-intent-card');
+      btn.type = 'button';
+      btn.id = `cf-academy-${intent.id}`;
+      btn.append(
+        el('span', 'cf-academy-intent-card__title', t(intent.titleKey)),
+        el('span', 'cf-academy-intent-card__desc', t(intent.descKey)),
+      );
+      btn.addEventListener('click', () => {
+        if (intent.kind === 'own_code') {
+          openOwnCodePractice();
+        } else {
+          gatedOpenTopic(intent.tech, null, intent.pathId || '');
+        }
+      });
+      intentGrid.append(btn);
+    }
+
     const hPaths = el('h3', 'cf-academy-section-title', t('acadByPath'));
     const grid = el('div', 'cf-academy-paths-grid');
 
@@ -529,7 +728,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       techPills.append(btn);
     }
 
-    pathsContainer.append(hPaths, grid, hTech, techPills);
+    pathsContainer.append(hIntent, intentGrid, hPaths, grid, hTech, techPills);
     injectAcademyJsonLd(pathsData, loc);
     setAcademyView('paths', { scroll: false });
   }
@@ -603,7 +802,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
         const prevLvl = idx > 0 ? curriculum.levels[idx - 1] : null;
         const prevCompleted = !prevLvl || completedSet.has(prevLvl.id);
         if (!prevCompleted) {
-          const prevTitle = prevLvl?.title || `Nivel ${idx}`;
+          const prevTitle = prevLvl?.title || t('acadLevelFallback', { n: idx });
           toast(t('acadLockedPrevMsg', { prev: prevTitle }));
           const activeIdx = curriculum.levels.findIndex((l, i) => resolveNodeState(l, i, curriculum.levels, latestState) === 'active');
           if (activeIdx >= 0) selectLevel(curriculum, curriculum.levels[activeIdx].level, { view: 'tree' });
@@ -728,7 +927,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     const byId = new Map((evaluation?.results || []).map((r) => [r.id, r.ok]));
     const ul = el('ul', 'cf-academy-checklist-list');
     for (const test of lvl.tests || []) {
-      const label = test.visible ? `${test.name}: ${test.description}` : `${test.name} (Hidden edge case)`;
+      const label = test.visible ? `${test.name}: ${test.description}` : t('acadHiddenEdgeCase', { name: test.name });
       let mark = '';
       let cls = 'cf-academy-check-item';
       if (byId.has(test.id)) {
@@ -741,28 +940,20 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     checklistEl.append(ul);
   }
 
-  function selectLevel(curriculum, levelNum, { view = 'tree' } = {}) {
+  async function resolveProLoader() {
+    if (typeof loadProLevel === 'function') return loadProLevel;
+    if (!isFeatureOn('academy_pro')) return null;
+    try {
+      const mod = await import('./academy-pro.js');
+      return typeof mod.fetchProLevel === 'function' ? mod.fetchProLevel : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function applyResolvedLevel(curriculum, lvl, { view = 'tree' } = {}) {
     const levels = curriculum?.levels || [];
-    const idx = levels.findIndex((l) => l.level === levelNum);
-    const resolvedIdx = idx >= 0 ? idx : 0;
-    const lvl = levels[resolvedIdx];
-    const state = readLocalState();
-    if (!lvl) return false;
-    if (lvl.tier === 'pay' && !state.isPro) {
-      openProOrExplain();
-      return false;
-    }
-    if (!isLevelUnlocked(lvl, resolvedIdx, levels, state)) {
-      const prevTitle = levels[resolvedIdx - 1]?.title || `Nivel ${resolvedIdx}`;
-      toast(t('acadLockedPrevMsg', { prev: prevTitle }));
-      if (!activeLevel) {
-        const fallback = findFirstPendingLevel(levels, state);
-        if (fallback && fallback.level !== lvl.level) {
-          return selectLevel(curriculum, fallback.level, { view: 'tree' });
-        }
-      }
-      return false;
-    }
+    exitOwnCodeMode();
     isRemedialActive = false;
     mainLevelSnapshot = null;
     activeDrill = null;
@@ -779,6 +970,67 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     if (setCode && lvl.starter_code) setCode(lvl.starter_code);
     if (liveEl) liveEl.textContent = t('acadConsoleEmpty');
     setAcademyView(view);
+  }
+
+  async function hydrateAndApplyProLevel(curriculum, resolvedIdx, { view = 'tree' } = {}) {
+    const stub = curriculum.levels[resolvedIdx];
+    const loader = await resolveProLoader();
+    if (!loader) {
+      openProOrExplain();
+      return false;
+    }
+    showAcademyLoader(workspace);
+    try {
+      const proPayload = await loader(curriculum.tech, stub.level, getUiLang());
+      if (!proPayload || typeof proPayload !== 'object') {
+        toast(t('acadLoadError'));
+        return false;
+      }
+      const merged = { ...stub, ...proPayload, tier: 'pay', level: stub.level };
+      curriculum.levels[resolvedIdx] = merged;
+      applyResolvedLevel(curriculum, merged, { view });
+      return true;
+    } catch (err) {
+      if (err && (err.status === 401 || err.status === 403)) {
+        academyState = saveAcademyState({ ...readLocalState(), isPro: false });
+        renderSkillTree(curriculum);
+        openProOrExplain();
+      } else {
+        toast(t('acadLoadError'));
+      }
+      return false;
+    } finally {
+      hideAcademyLoader(workspace);
+    }
+  }
+
+  function selectLevel(curriculum, levelNum, { view = 'tree' } = {}) {
+    const levels = curriculum?.levels || [];
+    const idx = levels.findIndex((l) => l.level === levelNum);
+    const resolvedIdx = idx >= 0 ? idx : 0;
+    const lvl = levels[resolvedIdx];
+    const state = readLocalState();
+    if (!lvl) return false;
+    if (lvl.tier === 'pay' && !state.isPro) {
+      openProOrExplain();
+      return false;
+    }
+    if (!isLevelUnlocked(lvl, resolvedIdx, levels, state)) {
+      const prevTitle = levels[resolvedIdx - 1]?.title || t('acadLevelFallback', { n: resolvedIdx });
+      toast(t('acadLockedPrevMsg', { prev: prevTitle }));
+      if (!activeLevel) {
+        const fallback = findFirstPendingLevel(levels, state);
+        if (fallback && fallback.level !== lvl.level) {
+          return selectLevel(curriculum, fallback.level, { view: 'tree' });
+        }
+      }
+      return false;
+    }
+    if (lvl.tier === 'pay' && (!lvl.starter_code || !Array.isArray(lvl.tests) || lvl.tests.length === 0)) {
+      hydrateAndApplyProLevel(curriculum, resolvedIdx, { view });
+      return true;
+    }
+    applyResolvedLevel(curriculum, lvl, { view });
     return true;
   }
 
@@ -856,6 +1108,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     currentCurriculum = pseudoCurriculum;
     activeLevel = pseudoCurriculum.levels[0];
     preloadedNextLevel = null;
+    exitOwnCodeMode();
     isRemedialActive = false;
     mainLevelSnapshot = null;
     activeDrill = null;
@@ -951,6 +1204,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
 
     if (!isLearn) {
       clearIdleNudge();
+      exitOwnCodeMode();
       if (editorCard && editorHome && editorCard.parentElement !== editorHome) {
         editorHome.prepend(editorCard);
       }
@@ -978,12 +1232,149 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
     }
   }
 
+  function buildOwnCodeCurriculum(tech) {
+    const cleanTech = TECHS.includes(tech) ? tech : 'sql';
+    const rules = OWN_CODE_STYLE_RULES[cleanTech] || [];
+    return {
+      tech: cleanTech,
+      isOwnCode: true,
+      standard: `${cleanTech.toUpperCase()} · ${t('acadOwnCodeBadge')}`,
+      levels: [{
+        id: `own-${cleanTech}`,
+        level: 1,
+        tier: 'free',
+        title: t('acadOwnBarTitle'),
+        concept_capsule: t('acadOwnBarHint'),
+        style_rules: rules,
+        tests: [],
+      }],
+    };
+  }
+
+  function openOwnCodePractice(tech = '') {
+    const chosen = TECHS.includes(tech) ? tech : (ownLangSel?.value && TECHS.includes(ownLangSel.value) ? ownLangSel.value : 'sql');
+    currentMode = 'learn';
+    currentPath = '';
+    currentTopic = chosen;
+    currentLevelNum = 1;
+    if (toolbar) toolbar.hidden = true;
+    if (editorHome) editorHome.hidden = true;
+    shell.hidden = false;
+    btnFormat.classList.remove('is-active');
+    btnFormat.setAttribute('aria-selected', 'false');
+    btnAcademy.classList.add('is-active');
+    btnAcademy.setAttribute('aria-selected', 'true');
+    mountEditorInAcademy();
+    isOwnCodeActive = true;
+    isRemedialActive = false;
+    mainLevelSnapshot = null;
+    activeDrill = null;
+    resultsReady = false;
+    primaryFocus = null;
+    lastEvaluation = null;
+    if (ownLangSel) ownLangSel.value = chosen;
+    const pseudo = buildOwnCodeCurriculum(chosen);
+    currentCurriculum = pseudo;
+    activeLevel = pseudo.levels[0];
+    preloadedNextLevel = null;
+    renderSkillTree(pseudo);
+    renderMission(activeLevel, pseudo.standard);
+    if (setLanguage) setLanguage(chosen);
+    const existing = getCode ? getCode() : '';
+    ownCodeBefore = existing.trim() ? existing : null;
+    if (liveEl) liveEl.textContent = t('acadOwnBarHint');
+    syncOwnCodeControls();
+    setAcademyView('editor');
+  }
+
+  function handleOwnCodeSnapshot() {
+    const current = getCode ? getCode() : '';
+    if (!current.trim()) {
+      toast(t('acadOwnEmptyWarn'));
+      return;
+    }
+    ownCodeBefore = current;
+    toast(t('acadOwnSnapshotSaved'));
+  }
+
+  async function handleOwnCodeCompare() {
+    if (!isOwnCodeActive) return;
+    const tech = ownLangSel?.value && TECHS.includes(ownLangSel.value) ? ownLangSel.value : (currentTopic || 'sql');
+    const current = getCode ? getCode() : '';
+    if (!current.trim()) {
+      toast(t('acadOwnEmptyWarn'));
+      return;
+    }
+    const before = ownCodeBefore !== null ? ownCodeBefore : current;
+    if (ownCodeBefore === null) ownCodeBefore = before;
+    if (ownCompareBtn) {
+      ownCompareBtn.disabled = true;
+      ownCompareBtn.setAttribute('aria-busy', 'true');
+    }
+    try {
+      let after = current;
+      if (typeof formatOwnCode === 'function') {
+        const res = await formatOwnCode(current, tech);
+        if (res && typeof res.code === 'string') after = res.code;
+      }
+      if (setCode) setCode(after);
+      const rules = OWN_CODE_STYLE_RULES[tech] || [];
+      const styleRes = evaluateStyleRules(tech, after, rules, t);
+      if (liveEl) {
+        liveEl.textContent = styleRes.ok
+          ? t('acadOwnCompareOk')
+          : `${t('acadOwnCompareTips')}: ${styleRes.violations.join(' · ')}`;
+      }
+      const diffPanel = document.getElementById('cf-diff-panel');
+      if (diffPanel && diffSlot && diffPanel.parentElement !== diffSlot) diffSlot.append(diffPanel);
+      if (typeof openDiffWith === 'function') {
+        openDiffWith({ original: before, result: after, lang: tech });
+      }
+      nextFrame(() => {
+        const ev = typeof getEditorView === 'function' ? getEditorView() : null;
+        if (ev && typeof ev.requestMeasure === 'function') ev.requestMeasure();
+      });
+      toast(styleRes.ok ? t('acadOwnCompareOk') : t('acadOwnCompareReady'));
+    } catch {
+      toast(t('acadOwnFormatError'));
+    } finally {
+      if (ownCompareBtn) {
+        ownCompareBtn.disabled = false;
+        ownCompareBtn.removeAttribute('aria-busy');
+      }
+    }
+  }
+
   btnFormat.addEventListener('click', () => setWorkMode('format'));
   btnAcademy.addEventListener('click', () => setWorkMode('learn'));
   editorHintBtn?.addEventListener('click', () => { clearIdleNudge(); revealNextHint(); });
   assistToggleBtn?.addEventListener('click', () => setAssistEnabled(!assistEnabled));
   tutPrevBtn?.addEventListener('click', () => { tutorialIndex = Math.max(0, tutorialIndex - 1); renderTutorialStep(); });
   tutNextBtn?.addEventListener('click', () => { tutorialIndex = Math.min(tutorialSteps.length - 1, tutorialIndex + 1); renderTutorialStep(); });
+  tutTabsEl?.querySelectorAll?.('[data-tut-tab]')?.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const idx = Number(btn.dataset.tutTab);
+      if (!Number.isNaN(idx)) {
+        tutorialIndex = idx;
+        renderTutorialStep();
+      }
+    });
+  });
+  ownCodeBtn?.addEventListener('click', () => openOwnCodePractice());
+  ownLangSel?.addEventListener('change', () => {
+    if (!isOwnCodeActive) return;
+    const chosen = ownLangSel.value;
+    if (TECHS.includes(chosen)) {
+      currentTopic = chosen;
+      const pseudo = buildOwnCodeCurriculum(chosen);
+      currentCurriculum = pseudo;
+      activeLevel = pseudo.levels[0];
+      if (setLanguage) setLanguage(chosen);
+      refreshTutorialForLevel(activeLevel, pseudo.standard);
+    }
+  });
+  ownSnapshotBtn?.addEventListener('click', handleOwnCodeSnapshot);
+  ownCompareBtn?.addEventListener('click', () => { handleOwnCodeCompare(); });
   idleEnableBtn?.addEventListener('click', () => setAssistEnabled(true));
   const onEditorActivity = () => {
     if (currentMode === 'learn' && academyView === 'editor' && !assistEnabled) {
@@ -1188,6 +1579,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   function returnToMainChallenge(completedDrillTitle = '') {
     const snap = mainLevelSnapshot;
     const keptCode = mainCodeSnapshot;
+    exitOwnCodeMode();
     isRemedialActive = false;
     mainLevelSnapshot = null;
     activeDrill = null;
@@ -1215,7 +1607,10 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       checklistEl.append(card);
       primaryFocus = returnBtn;
     } else {
-      const firstIssue = evaluation.runtimeError || evaluation.styleViolations[0] || evaluation.errorType || 'failed';
+      const translatedStyle = evaluation.styleViolationKeys?.[0]?.key
+        ? t(evaluation.styleViolationKeys[0].key)
+        : evaluation.styleViolations?.[0];
+      const firstIssue = evaluation.runtimeError || translatedStyle || evaluation.errorType || 'failed';
       liveEl.textContent = `${passedCount}/${totalCount} · ${firstIssue}`;
       const fixBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadFixInEditorBtn'));
       fixBtn.type = 'button';
@@ -1239,7 +1634,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   async function validateRemedial(tech, code) {
     const drill = activeDrill;
     const drillLevel = buildDrillLevel(drill);
-    const evaluation = await evaluateChallenge(tech, code, drillLevel);
+    const evaluation = await evaluateChallenge(tech, code, drillLevel, { translate: t });
     resultsReady = true;
     lastEvaluation = { kind: 'remedial', drill, drillLevel, evaluation };
     if (evaluation.passed) {
@@ -1289,7 +1684,10 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
         }
       }
     } else {
-      const firstIssue = evaluation.runtimeError || evaluation.styleViolations[0] || evaluation.errorType || 'failed';
+      const translatedStyle = evaluation.styleViolationKeys?.[0]?.key
+        ? t(evaluation.styleViolationKeys[0].key)
+        : evaluation.styleViolations?.[0];
+      const firstIssue = evaluation.runtimeError || translatedStyle || evaluation.errorType || 'failed';
       liveEl.textContent = `${passedCount}/${totalCount} · ${firstIssue}`;
 
       const fixBtn = el('button', 'cf-btn cf-btn--primary cf-btn--small', t('acadFixInEditorBtn'));
@@ -1360,7 +1758,7 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
         return;
       }
 
-      const evaluation = await evaluateChallenge(tech, code, activeLevel);
+      const evaluation = await evaluateChallenge(tech, code, activeLevel, { translate: t });
       resultsReady = true;
 
       const attempt = recordAttempt(academyState, activeLevel, evaluation);
@@ -1404,7 +1802,9 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
       }
       const view = academyView;
       const keepLive = liveEl ? liveEl.textContent : '';
-      if (currentCurriculum.isDaily) {
+      if (currentCurriculum.isOwnCode) {
+        currentCurriculum = buildOwnCodeCurriculum(currentTopic);
+      } else if (currentCurriculum.isDaily) {
         dailyCache ||= await loadDailyChallengesData();
         currentCurriculum = buildDailyCurriculum(resolveDailyChallenge(dailyCache, getUiLang()));
       } else {
@@ -1446,10 +1846,12 @@ export function initAcademyUI({ getCode, setCode, setLanguage, openDiffWith, get
   return {
     setWorkMode,
     openTopic,
+    openOwnCodePractice,
     selectLevel: (levelNum, opts) => (currentCurriculum ? selectLevel(currentCurriculum, levelNum, opts) : false),
     setAssistEnabled,
     destroy: () => {
       clearIdleNudge();
+      exitOwnCodeMode();
       document.removeEventListener?.('keydown', onEditorShortcut);
     },
   };

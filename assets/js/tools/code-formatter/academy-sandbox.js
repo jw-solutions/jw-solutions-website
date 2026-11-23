@@ -3,10 +3,11 @@
 // validación estricta de event.source === iframe.contentWindow y timeout de 3000 ms.
 
 const SANDBOX_TIMEOUT_MS = 3000;
-const SQLJS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js';
-const SQLJS_SRI = 'sha512-xL7wV8V3sV1w8vM5mJ2u7n8K2fK9n1+6xJ9V4tK0x5G3G8mR1J2aJ9f8V0wM8Q==';
+export const SQLJS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js';
+export const SQLJS_SRI = 'sha512-+6Q7hv5pGUBXOuHWw8OdQx3ac7DzM3oJhYqz7SHDku0yl9EBdMqegoPed4GsHRoNF/VQYK2LTYewAIEBrEf/3w==';
+const SQLJS_CACHE = 'cf-sqljs-v1';
 const PYODIDE_CACHE = 'cf-pyodide-v1';
-const PYODIDE_INDEX = 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/';
+export const PYODIDE_INDEX = 'https://cdn.jsdelivr.net/pyodide/v0.26.2/full/';
 
 let sqlPromise = null;
 let pyodidePromise = null;
@@ -124,26 +125,33 @@ export function runInIsolatedIframe(code, tests = [], timeoutMs = SANDBOX_TIMEOU
   });
 }
 
-/** Carga diferida de sql.js (WASM) con SRI. */
+/** Carga diferida de sql.js (WASM) con SRI verificado y caché en navegador (0 RAM VPS). */
 export async function ensureSqlJs() {
   if (typeof window === 'undefined') return null;
-  if (window.initSqlJs) return window.initSqlJs({ locateFile: (f) => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${f}` });
+  const wasmBase = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/';
+  if (window.initSqlJs) return window.initSqlJs({ locateFile: (f) => `${wasmBase}${f}` });
   if (!sqlPromise) {
-    sqlPromise = new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = SQLJS_CDN;
-      s.integrity = SQLJS_SRI;
-      s.crossOrigin = 'anonymous';
-      s.onload = () => {
-        if (window.initSqlJs) {
-          window.initSqlJs({ locateFile: (f) => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${f}` }).then(resolve, reject);
-        } else {
-          reject(new Error('sql.js unavailable'));
-        }
-      };
-      s.onerror = () => reject(new Error('Failed to load sql.js'));
-      document.head.appendChild(s);
-    });
+    sqlPromise = (async () => {
+      if ('caches' in window) {
+        try {
+          const cache = await caches.open(SQLJS_CACHE);
+          const cached = await cache.match(SQLJS_CDN);
+          if (!cached) await cache.add(SQLJS_CDN).catch(() => {});
+        } catch { /* Cache API opcional */ }
+      }
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = SQLJS_CDN;
+        s.integrity = SQLJS_SRI;
+        s.crossOrigin = 'anonymous';
+        s.referrerPolicy = 'no-referrer';
+        s.onload = resolve;
+        s.onerror = () => reject(new Error('Failed to load sql.js'));
+        document.head.appendChild(s);
+      });
+      if (!window.initSqlJs) throw new Error('sql.js unavailable');
+      return window.initSqlJs({ locateFile: (f) => `${wasmBase}${f}` });
+    })();
   }
   return sqlPromise;
 }
@@ -178,36 +186,321 @@ export async function ensurePyodide() {
   return pyodidePromise;
 }
 
-/** Valida reglas deterministas de estilo/AST ligero por lenguaje. */
-export function evaluateStyleRules(tech, code, rules = []) {
+/** Mapa determinista de reglas de estilo → clave i18n y mensaje de respaldo. */
+export const STYLE_RULE_SPECS = {
+  pep8_indent_4: {
+    key: 'acadStyleIndent4',
+    fallback: 'Use 4 spaces instead of tabs (PEP 8).',
+    check: (src) => !/\t/.test(src),
+  },
+  indent_4: {
+    key: 'acadStyleIndent4',
+    fallback: 'Use 4-space indentation without tabs.',
+    check: (src) => !/\t/.test(src),
+  },
+  indent_2: {
+    key: 'acadStyleIndent2',
+    fallback: 'Use consistent 2-space indentation without tabs.',
+    check: (src) => !/\t/.test(src) && src.split('\n').some((l) => /^ {2}\S/.test(l)),
+  },
+  consistent_indent: {
+    key: 'acadStyleConsistentIndent',
+    fallback: 'Keep indentation consistent using spaces (no tabs).',
+    check: (src) => !/\t/.test(src),
+  },
+  no_tabs: {
+    key: 'acadStyleNoTabs',
+    fallback: 'Tabs are forbidden; use spaces instead.',
+    check: (src) => !/\t/.test(src),
+  },
+  docstring_pep257: {
+    key: 'acadStyleDocstringPep257',
+    fallback: 'Add a PEP 257 docstring ("""...""").',
+    check: (src) => src.includes('"""') || src.includes("'''"),
+  },
+  docstring: {
+    key: 'acadStyleDocstringPep257',
+    fallback: 'Add a PEP 257 docstring ("""...""").',
+    check: (src) => src.includes('"""') || src.includes("'''"),
+  },
+  type_hints: {
+    key: 'acadStyleTypeHints',
+    fallback: 'Add explicit return type annotation (->).',
+    check: (src) => /->\s*[\w[\]|.,\s]+:/.test(src),
+  },
+  empty_guard: {
+    key: 'acadStyleEmptyGuard',
+    fallback: 'Guard against empty collections before processing.',
+    check: (src) => /\bif\s+not\s+\w+/.test(src) || /len\s*\([^)]+\)\s*==\s*0/.test(src),
+  },
+  uppercase_keywords: {
+    key: 'acadStyleSqlUppercase',
+    fallback: 'Write SQL keywords (SELECT, FROM, WHERE) in uppercase.',
+    check: (src) => /\bSELECT\b/.test(src) && /\bFROM\b/.test(src) && !/^\s*(select|from|where)\b/m.test(src),
+  },
+  multiline_select: {
+    key: 'acadStyleMultilineSelect',
+    fallback: 'Format SELECT clauses across multiple readable lines.',
+    check: (src) => /\bSELECT\b/.test(src) && src.trim().split('\n').length >= 3,
+  },
+  header_comment: {
+    key: 'acadStyleHeaderComment',
+    fallback: 'Start with a descriptive header comment.',
+    check: (src, tech) => {
+      if (tech === 'yaml') return /^\s*#\s*\S+/m.test(src);
+      if (tech === 'sql' || tech === 'dax') return /^\s*(--|\/\/|\/\*)\s*\S+/m.test(src);
+      return /^\s*(#|\/\/|\/\*|--)\s*\S+/m.test(src);
+    },
+  },
+  explicit_alias_as: {
+    key: 'acadStyleExplicitAliasAs',
+    fallback: 'Use explicit AS aliases for aggregated columns or tables.',
+    check: (src) => /\bAS\s+[A-Za-z_]\w*/.test(src),
+  },
+  var_return: {
+    key: 'acadStyleVarReturn',
+    fallback: 'Structure the DAX measure with VAR and RETURN.',
+    check: (src) => /\bVAR\b/i.test(src) && /\bRETURN\b/i.test(src),
+  },
+  coalesce_blank: {
+    key: 'acadStyleCoalesceBlank',
+    fallback: 'Handle BLANK values using COALESCE or ISBLANK.',
+    check: (src) => /\b(COALESCE|ISBLANK)\s*\(/i.test(src),
+  },
+  safe_divide: {
+    key: 'acadStyleSafeDivide',
+    fallback: 'Use DIVIDE(..., 0) instead of raw `/` division.',
+    check: (src) => /\bDIVIDE\s*\(/i.test(src),
+  },
+  rfc8259_valid: {
+    key: 'acadStyleJsonValid',
+    fallback: 'Output must be valid RFC 8259 JSON.',
+    check: (src) => {
+      try { JSON.parse(src); return true; } catch { return false; }
+    },
+  },
+  double_quotes: {
+    key: 'acadStyleDoubleQuotes',
+    fallback: 'Use double quotes (") for all JSON keys and strings.',
+    check: (src) => src.includes('"') && !/'[^']*'\s*:/.test(src),
+  },
+  no_trailing_comma: {
+    key: 'acadStyleNoTrailingComma',
+    fallback: 'Remove trailing commas before `}` or `]`.',
+    check: (src) => !/,\s*[}\]]/.test(src),
+  },
+  jsdoc: {
+    key: 'acadStyleJsdoc',
+    fallback: 'Include a JSDoc comment block (/** ... */).',
+    check: (src) => src.includes('/**'),
+  },
+  tsdoc: {
+    key: 'acadStyleTsdoc',
+    fallback: 'Include a TSDoc comment block (/** ... */).',
+    check: (src) => src.includes('/**'),
+  },
+  semicolons: {
+    key: 'acadStyleSemicolons',
+    fallback: 'Terminate statements with semicolons (;).',
+    check: (src) => /;/.test(src),
+  },
+  optional_chaining: {
+    key: 'acadStyleOptionalChaining',
+    fallback: 'Use optional chaining (?.) for nullable property access.',
+    check: (src) => src.includes('?.'),
+  },
+  nullish_coalescing: {
+    key: 'acadStyleNullishCoalescing',
+    fallback: 'Use nullish coalescing (??) for fallback values.',
+    check: (src) => src.includes('??'),
+  },
+  no_explicit_any: {
+    key: 'acadStyleNoExplicitAny',
+    fallback: 'Avoid explicit `any`; prefer strict types or `unknown`.',
+    check: (src) => !/:\s*any\b/.test(src),
+  },
+  return_type: {
+    key: 'acadStyleReturnType',
+    fallback: 'Declare an explicit function return type.',
+    check: (src) => /\)\s*:\s*[\w<>[\]| ]+/.test(src),
+  },
+  type_guard: {
+    key: 'acadStyleTypeGuard',
+    fallback: 'Use a TypeScript type predicate (`param is Type`).',
+    check: (src) => /\bis\s+[A-Z]\w*/.test(src),
+  },
+  javadoc: {
+    key: 'acadStyleJavadoc',
+    fallback: 'Include a Javadoc comment block (/** ... */).',
+    check: (src) => src.includes('/**'),
+  },
+  overflow_safe: {
+    key: 'acadStyleOverflowSafe',
+    fallback: 'Guard against integer overflow (e.g. Math.addExact).',
+    check: (src) => /Math\.(addExact|multiplyExact|subtractExact)|\blong\b/.test(src),
+  },
+  java_record: {
+    key: 'acadStyleJavaRecord',
+    fallback: 'Use a Java `record` for immutable data carriers.',
+    check: (src) => /\brecord\s+[A-Z]\w*\s*\(/.test(src),
+  },
+  null_guard: {
+    key: 'acadStyleNullGuard',
+    fallback: 'Add explicit null/empty input validation.',
+    check: (src) => /Objects\.requireNonNull|ArgumentNullException|ThrowIfNull|IsNullOrWhiteSpace|IsNullOrEmpty|!=\s*null|==\s*null|\?\?/.test(src),
+  },
+  xml_docs: {
+    key: 'acadStyleXmlDocs',
+    fallback: 'Include C# XML Docs (/// <summary>).',
+    check: (src) => src.includes('/// <summary>'),
+  },
+  allman_braces: {
+    key: 'acadStyleAllmanBraces',
+    fallback: 'Place opening braces on a new line (Allman style).',
+    check: (src) => /\n\s*\{/.test(src),
+  },
+  primary_constructor: {
+    key: 'acadStylePrimaryConstructor',
+    fallback: 'Use C# 12 primary constructor syntax.',
+    check: (src) => /\bclass\s+[A-Z]\w*\s*\([^)]+\)/.test(src),
+  },
+  strict_types: {
+    key: 'acadStyleStrictTypes',
+    fallback: 'Declare `declare(strict_types=1);` at the top.',
+    check: (src) => src.includes('declare(strict_types=1);'),
+  },
+  psr12_braces: {
+    key: 'acadStylePsr12Braces',
+    fallback: 'Place class/function opening braces on a new line (PSR-12).',
+    check: (src) => /\n\s*\{/.test(src),
+  },
+  type_declarations: {
+    key: 'acadStyleTypeDeclarations',
+    fallback: 'Add explicit parameter and return type declarations.',
+    check: (src) => /function\s+\w+\s*\([^)]*:\s*|\)\s*:\s*\??\w+/.test(src),
+  },
+  php83_enum: {
+    key: 'acadStylePhp83Enum',
+    fallback: 'Use a PHP 8.1+ backed `enum` instead of magic strings.',
+    check: (src) => /\benum\s+[A-Z]\w*\s*:\s*(string|int)/.test(src),
+  },
+  readonly_property: {
+    key: 'acadStyleReadonlyProperty',
+    fallback: 'Mark immutable promoted properties as `readonly`.',
+    check: (src) => /\breadonly\b/.test(src),
+  },
+  list_dashes: {
+    key: 'acadStyleListDashes',
+    fallback: 'Format YAML sequence items using block dashes (`- item`).',
+    check: (src) => /^\s*-\s+\S+/m.test(src),
+  },
+};
+
+function resolveStyleMessage(spec, translate) {
+  if (typeof translate === 'function') {
+    const translated = translate(spec.key);
+    if (translated && translated !== spec.key) return translated;
+  }
+  return spec.fallback;
+}
+
+/** Valida reglas deterministas de estilo/AST ligero por lenguaje con mensajes localizables. */
+export function evaluateStyleRules(tech, code, rules = [], translate = null) {
   const src = String(code || '');
   const violations = [];
+  const violationKeys = [];
 
   for (const rule of rules) {
-    if (rule === 'pep8_indent_4' && /\t/.test(src)) violations.push('Use 4 spaces instead of tabs (PEP 8)');
-    if (rule === 'docstring_pep257' && !src.includes('"""')) violations.push('Missing PEP 257 docstring (""")');
-    if (rule === 'type_hints' && !/->\s*\w+/.test(src)) violations.push('Missing return type hint (->)');
-    if (rule === 'jsdoc' && !src.includes('/**')) violations.push('Missing JSDoc block (/** ... */)');
-    if (rule === 'tsdoc' && !src.includes('/**')) violations.push('Missing TSDoc block (/** ... */)');
-    if (rule === 'no_explicit_any' && /:\s*any\b/.test(src)) violations.push('Avoid explicit `any` type');
-    if (rule === 'var_return' && (!/\bVAR\b/i.test(src) || !/\bRETURN\b/i.test(src))) violations.push('Use VAR and RETURN in DAX');
-    if (rule === 'javadoc' && !src.includes('/**')) violations.push('Missing Javadoc comment');
-    if (rule === 'xml_docs' && !src.includes('/// <summary>')) violations.push('Missing C# XML Docs (/// <summary>)');
-    if (rule === 'strict_types' && !src.includes('declare(strict_types=1);')) violations.push('Missing declare(strict_types=1);');
-    if (rule === 'no_tabs' && /\t/.test(src)) violations.push('Tabs are forbidden in YAML');
-    if (rule === 'rfc8259_valid') {
-      try { JSON.parse(src); } catch { violations.push('Invalid RFC 8259 JSON'); }
+    const spec = STYLE_RULE_SPECS[rule];
+    if (!spec) continue;
+    if (!spec.check(src, tech)) {
+      violationKeys.push({ rule, key: spec.key });
+      violations.push(resolveStyleMessage(spec, translate));
     }
   }
 
-  return { ok: violations.length === 0, violations };
+  return { ok: violations.length === 0, violations, violationKeys };
+}
+
+function withTimeout(promise, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`Timeout (${timeoutMs}ms)`)), timeoutMs);
+    Promise.resolve(promise).then(
+      (val) => { clearTimeout(timer); resolve(val); },
+      (err) => { clearTimeout(timer); reject(err); },
+    );
+  });
+}
+
+/** Ejecuta pruebas `sql_eval` en cliente con sql.js (WASM) bajo demanda y timeout estricto. */
+export async function runSqlEvalTests(code, tests = [], timeoutMs = SANDBOX_TIMEOUT_MS, loader = ensureSqlJs) {
+  const results = [];
+  let runtimeError = null;
+  try {
+    const SQL = await withTimeout(loader(), timeoutMs);
+    if (!SQL || typeof SQL.Database !== 'function') {
+      return { ok: false, error: 'sql.js unavailable', results };
+    }
+    for (const t of tests) {
+      const db = new SQL.Database();
+      try {
+        if (t.setup_sql) db.run(String(t.setup_sql));
+        const res = db.exec(String(code || ''));
+        const rows = res?.[0]?.values || [];
+        const ok = Array.isArray(t.expected)
+          ? JSON.stringify(rows) === JSON.stringify(t.expected)
+          : rows.length >= Number(t.expected || 1);
+        results.push({ id: t.id, name: t.name, visible: t.visible, ok });
+      } catch (err) {
+        runtimeError = err?.message || 'SQL execution error';
+        results.push({ id: t.id, name: t.name, visible: t.visible, ok: false, error: runtimeError });
+      } finally {
+        db.close();
+      }
+    }
+  } catch (err) {
+    runtimeError = err?.message || 'sql.js load error';
+  }
+  return { ok: !runtimeError && results.every((r) => r.ok), error: runtimeError, results };
+}
+
+/** Ejecuta pruebas `py_eval` en cliente con Pyodide (WASM) bajo demanda y timeout estricto. */
+export async function runPythonEvalTests(code, tests = [], timeoutMs = SANDBOX_TIMEOUT_MS, loader = ensurePyodide) {
+  const results = [];
+  let runtimeError = null;
+  try {
+    const pyodide = await withTimeout(loader(), timeoutMs);
+    if (!pyodide || typeof pyodide.runPythonAsync !== 'function') {
+      return { ok: false, error: 'Pyodide unavailable', results };
+    }
+    const globals = typeof pyodide.toPy === 'function' ? pyodide.toPy({}) : undefined;
+    try {
+      await withTimeout(pyodide.runPythonAsync(String(code || ''), globals ? { globals } : undefined), timeoutMs);
+      for (const t of tests) {
+        try {
+          const raw = await withTimeout(pyodide.runPythonAsync(String(t.input || ''), globals ? { globals } : undefined), timeoutMs);
+          const actual = raw && typeof raw.toJs === 'function' ? raw.toJs() : raw;
+          const ok = JSON.stringify(actual) === JSON.stringify(t.expected);
+          results.push({ id: t.id, name: t.name, visible: t.visible, ok });
+        } catch (err) {
+          runtimeError = err?.message || 'Python test error';
+          results.push({ id: t.id, name: t.name, visible: t.visible, ok: false, error: runtimeError });
+        }
+      }
+    } finally {
+      if (globals && typeof globals.destroy === 'function') globals.destroy();
+    }
+  } catch (err) {
+    runtimeError = err?.message || 'Pyodide load error';
+  }
+  return { ok: !runtimeError && results.every((r) => r.ok), error: runtimeError, results };
 }
 
 /**
- * Evalúa un reto completo en el navegador (sandbox iframe + validadores deterministas).
- * @returns {Promise<{passed: boolean, errorType: string|null, results: Array, styleViolations: Array}>}
+ * Evalúa un reto completo en el navegador (sandbox iframe + WASM bajo demanda + validadores deterministas).
+ * @returns {Promise<{passed: boolean, errorType: string|null, results: Array, styleViolations: Array, styleViolationKeys: Array}>}
  */
-export async function evaluateChallenge(tech, code, level) {
+export async function evaluateChallenge(tech, code, level, { translate = null, sqlLoader = ensureSqlJs, pyLoader = ensurePyodide } = {}) {
   const tests = level?.tests || [];
   const styleRules = level?.style_rules || [];
   const results = [];
@@ -220,8 +513,22 @@ export async function evaluateChallenge(tech, code, level) {
     for (const r of sbRes.results) results.push(r);
   }
 
+  const sqlEvalTests = tests.filter((t) => t.type === 'sql_eval');
+  if (sqlEvalTests.length > 0 && tech === 'sql') {
+    const sqlRes = await runSqlEvalTests(code, sqlEvalTests, SANDBOX_TIMEOUT_MS, sqlLoader);
+    if (!sqlRes.ok && sqlRes.error) runtimeError = sqlRes.error;
+    for (const r of sqlRes.results) results.push(r);
+  }
+
+  const pyEvalTests = tests.filter((t) => t.type === 'py_eval');
+  if (pyEvalTests.length > 0 && tech === 'python') {
+    const pyRes = await runPythonEvalTests(code, pyEvalTests, SANDBOX_TIMEOUT_MS, pyLoader);
+    if (!pyRes.ok && pyRes.error) runtimeError = pyRes.error;
+    for (const r of pyRes.results) results.push(r);
+  }
+
   for (const t of tests) {
-    if (t.type === 'eval') continue;
+    if (t.type === 'eval' || t.type === 'sql_eval' || t.type === 'py_eval') continue;
     if (t.type === 'pattern') {
       results.push({ id: t.id, name: t.name, visible: t.visible, ok: code.includes(t.expected) });
     } else if (t.type === 'pattern_absent') {
@@ -233,7 +540,7 @@ export async function evaluateChallenge(tech, code, level) {
     }
   }
 
-  const styleRes = evaluateStyleRules(tech, code, styleRules);
+  const styleRes = evaluateStyleRules(tech, code, styleRules, translate);
   const allTestsOk = !runtimeError && results.length > 0 && results.every((r) => r.ok);
   const passed = allTestsOk && styleRes.ok;
 
@@ -254,5 +561,6 @@ export async function evaluateChallenge(tech, code, level) {
     runtimeError,
     results,
     styleViolations: styleRes.violations,
+    styleViolationKeys: styleRes.violationKeys,
   };
 }

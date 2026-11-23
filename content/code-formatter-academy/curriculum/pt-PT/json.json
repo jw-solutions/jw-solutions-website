@@ -10,33 +10,33 @@
       "tier": "free",
       "title": "JSON 1 · Fundamentos e formatação limpa",
       "estimatedMinutes": 5,
-      "concept_capsule": "Aplique indentação consistente, nomes claros e documentação padrão para que qualquer equipa leia e audite o código rapidamente.",
+      "concept_capsule": "JSON estrito (RFC 8259) exige aspas duplas em chaves e textos, proíbe vírgula final e utiliza indentação de 2 espaços para diffs limpos e validação segura.",
       "starter_code": "{'service':'formatter',\"port\":8080,}",
       "reference_solution": "{\n  \"service\": \"formatter\",\n  \"port\": 8080\n}\n",
       "tests": [
         {
           "id": "json1-t1",
-          "name": "Valid RFC 8259 JSON",
+          "name": "JSON RFC 8259 válido",
           "visible": true,
           "type": "json_valid",
           "expected": true,
-          "description": "Parses cleanly with JSON.parse"
+          "description": "É validado sem erros por JSON.parse"
         },
         {
           "id": "json1-t2",
-          "name": "Double quotes only",
+          "name": "Apenas aspas duplas",
           "visible": true,
           "type": "pattern_absent",
           "expected": "'",
-          "description": "Replaces single quotes with double quotes"
+          "description": "Substitui aspas simples por aspas duplas"
         },
         {
           "id": "json1-t3",
-          "name": "2-space indent",
+          "name": "Indentação de 2 espaços",
           "visible": false,
           "type": "pattern",
           "expected": "  \"service\":",
-          "description": "Uses 2-space indentation"
+          "description": "Usa indentação de 2 espaços"
         }
       ],
       "style_rules": [
@@ -53,7 +53,7 @@
           "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
           "starter_code": "{\"ok\": true,}",
           "expected_pattern": "true\n}",
-          "solution_hint": "Remove the trailing comma after `true`."
+          "solution_hint": "Remova a vírgula final após `true`."
         },
         {
           "id": "json1-d-edge",
@@ -62,7 +62,7 @@
           "prompt": "Adicione a validação defensiva para evitar falhas.",
           "starter_code": "{\"ratio\": NaN}",
           "expected_pattern": "null",
-          "solution_hint": "JSON does not support `NaN`; use `null`."
+          "solution_hint": "JSON não suporta `NaN`; utilize `null`."
         },
         {
           "id": "json1-d-style",
@@ -71,9 +71,37 @@
           "prompt": "Aplique a norma oficial de formatação e documentação.",
           "starter_code": "{\"a\":1,\"b\":2}",
           "expected_pattern": "  \"a\":",
-          "solution_hint": "Pretty-print JSON with 2-space indentation."
+          "solution_hint": "Formate o JSON com indentação de 2 espaços."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "\"chave\": valor",
+          "role": "Todas as chaves e strings exigem aspas duplas `\"`. Em produção, aspas simples quebram `JSON.parse` e APIs REST.",
+          "example_inline": "\"worker\": \"billing-sync\""
+        },
+        {
+          "term": "Sem vírgula final",
+          "role": "A última propriedade antes de `}` não pode ter vírgula. Em produção, uma vírgula extra falha no parser estrito.",
+          "example_inline": "\"retries\": 3\n}"
+        },
+        {
+          "term": "Tipos RFC 8259",
+          "role": "Apenas strings, números finitos, booleanos, `null`, objetos e arrays são válidos. Em produção, evita `NaN` ou `undefined`.",
+          "example_inline": "\"timeoutMs\": 5000"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Indente 2 espaços por nível dentro de `{ ... }`.",
+        "line_breaks": "Coloque `{` na primeira linha, uma propriedade por linha e `}` isolado no fim.",
+        "punctuation": "Um espaço após `:`, aspas duplas obrigatórias e sem vírgula final.",
+        "documentation_standard": "RFC 8259 não suporta comentários; documente contratos via JSON Schema."
+      },
+      "analogous_example": {
+        "title": "Configuração válida de worker de faturação",
+        "code": "{\n  \"worker\": \"billing-sync\",\n  \"retries\": 3\n}\n",
+        "why_it_works": "Cumpre RFC 8259 com aspas duplas, indentação de 2 espaços e ausência de vírgula final num domínio diferente."
+      }
     },
     {
       "id": "json-2",
@@ -81,33 +109,33 @@
       "tier": "free",
       "title": "JSON 2 · Casos limite e documentação",
       "estimatedMinutes": 8,
-      "concept_capsule": "Proteja entradas nulas ou vazias antes de processar e documente contratos com a norma oficial da linguagem.",
+      "concept_capsule": "Em payloads JSON aninhados (objetos dentro de arrays), cada nível acrescenta 2 espaços e nenhum objeto interno pode conter vírgula final.",
       "starter_code": "{\"apiVersion\":\"v1\",\"endpoints\":[{\"path\":\"/health\",\"auth\":false,},{\"path\":\"/sync\",\"auth\":true}]}",
       "reference_solution": "{\n  \"apiVersion\": \"v1\",\n  \"endpoints\": [\n    {\n      \"path\": \"/health\",\n      \"auth\": false\n    },\n    {\n      \"path\": \"/sync\",\n      \"auth\": true\n    }\n  ]\n}\n",
       "tests": [
         {
           "id": "json2-t1",
-          "name": "Valid nested JSON",
+          "name": "JSON aninhado válido",
           "visible": true,
           "type": "json_valid",
           "expected": true,
-          "description": "Nested array/object parses cleanly"
+          "description": "Array/objeto aninhado é validado sem erros"
         },
         {
           "id": "json2-t2",
-          "name": "No trailing comma",
+          "name": "Sem vírgula final",
           "visible": true,
           "type": "pattern_absent",
           "expected": ",}",
-          "description": "Removes trailing comma in object"
+          "description": "Remove a vírgula final no objeto"
         },
         {
           "id": "json2-t3",
-          "name": "Formatted array items",
+          "name": "Elementos formatados",
           "visible": false,
           "type": "pattern",
           "expected": "      \"path\":",
-          "description": "Indents nested object properties consistently"
+          "description": "Indenta propriedades aninhadas de forma consistente"
         }
       ],
       "style_rules": [
@@ -124,7 +152,7 @@
           "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
           "starter_code": "[1, 2, 3,]",
           "expected_pattern": "[1, 2, 3]",
-          "solution_hint": "Remove the trailing comma inside the array."
+          "solution_hint": "Remova a vírgula final dentro do array."
         },
         {
           "id": "json2-d-edge",
@@ -133,7 +161,7 @@
           "prompt": "Adicione a validação defensiva para evitar falhas.",
           "starter_code": "{\"note\": \"line1\nline2\"}",
           "expected_pattern": "\\n",
-          "solution_hint": "Escape literal newlines inside JSON strings as `\\n`."
+          "solution_hint": "Escape quebras de linha literais em cadeias JSON como `\\n`."
         },
         {
           "id": "json2-d-style",
@@ -142,9 +170,37 @@
           "prompt": "Aplique a norma oficial de formatação e documentação.",
           "starter_code": "{\"k\":1}",
           "expected_pattern": "  \"k\": 1",
-          "solution_hint": "Format with 2 spaces per nesting level."
+          "solution_hint": "Formate com 2 espaços por nível de aninhamento."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "[ { ... }, { ... } ]",
+          "role": "Array de objetos para coleções estruturadas. Em produção, representa lotes de eventos, rotas ou canais.",
+          "example_inline": "\"channels\": [\n  { \"name\": \"email\", \"enabled\": true }\n]"
+        },
+        {
+          "term": "Vírgula entre elementos",
+          "role": "Separe objetos irmãos com `},`, nunca após a última propriedade interna nem antes de `]`. Em produção, previne erros HTTP 400.",
+          "example_inline": "    },\n    {"
+        },
+        {
+          "term": "Indentação progressiva (+2)",
+          "role": "Nível 1 = 2 espaços, objeto do array = 4 espaços, propriedades internas = 6 espaços. Em produção, destaca de imediato chavetas mal fechadas.",
+          "example_inline": "      \"name\": \"email\""
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Adicione 2 espaços por cada `{` ou `[` aberto (2 → 4 → 6 espaços).",
+        "line_breaks": "Coloque cada objeto do array em novas linhas e alinhe `}` e `]` com a respetiva abertura.",
+        "punctuation": "Garanta ausência total de `,}` e `,]` em qualquer profundidade.",
+        "documentation_standard": "Use convenção consistente de chaves e valide com JSON Schema."
+      },
+      "analogous_example": {
+        "title": "Manifesto aninhado de canais de notificação",
+        "code": "{\n  \"schemaVersion\": \"2.0\",\n  \"channels\": [\n    {\n      \"name\": \"email\",\n      \"enabled\": true\n    },\n    {\n      \"name\": \"slack\",\n      \"enabled\": false\n    }\n  ]\n}\n",
+        "why_it_works": "Demonstra indentação 2/4/6 espaços, separação `},` limpa e zero vírgulas finais num domínio diferente."
+      }
     },
     {
       "id": "json-3",

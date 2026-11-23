@@ -10,33 +10,33 @@
       "tier": "free",
       "title": "JSON 1 · Fundamentos y formato limpio",
       "estimatedMinutes": 5,
-      "concept_capsule": "Aplica sangría consistente, nombres claros y documentación estándar para que cualquier equipo pueda leer y auditar el código en segundos.",
+      "concept_capsule": "JSON estricto (RFC 8259) exige comillas dobles en claves y cadenas, prohíbe comas finales y se formatea a 2 espacios para que cualquier parser y diff de Git sea limpio.",
       "starter_code": "{'service':'formatter',\"port\":8080,}",
       "reference_solution": "{\n  \"service\": \"formatter\",\n  \"port\": 8080\n}\n",
       "tests": [
         {
           "id": "json1-t1",
-          "name": "Valid RFC 8259 JSON",
+          "name": "JSON RFC 8259 válido",
           "visible": true,
           "type": "json_valid",
           "expected": true,
-          "description": "Parses cleanly with JSON.parse"
+          "description": "Se analiza sin errores con JSON.parse"
         },
         {
           "id": "json1-t2",
-          "name": "Double quotes only",
+          "name": "Solo comillas dobles",
           "visible": true,
           "type": "pattern_absent",
           "expected": "'",
-          "description": "Replaces single quotes with double quotes"
+          "description": "Reemplaza comillas simples por comillas dobles"
         },
         {
           "id": "json1-t3",
-          "name": "2-space indent",
+          "name": "Sangría de 2 espacios",
           "visible": false,
           "type": "pattern",
           "expected": "  \"service\":",
-          "description": "Uses 2-space indentation"
+          "description": "Usa sangría de 2 espacios"
         }
       ],
       "style_rules": [
@@ -53,7 +53,7 @@
           "prompt": "Corrige el error de sintaxis para que el código sea válido.",
           "starter_code": "{\"ok\": true,}",
           "expected_pattern": "true\n}",
-          "solution_hint": "Remove the trailing comma after `true`."
+          "solution_hint": "Elimina la coma final después de `true`."
         },
         {
           "id": "json1-d-edge",
@@ -62,7 +62,7 @@
           "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
           "starter_code": "{\"ratio\": NaN}",
           "expected_pattern": "null",
-          "solution_hint": "JSON does not support `NaN`; use `null`."
+          "solution_hint": "JSON no admite `NaN`; utiliza `null`."
         },
         {
           "id": "json1-d-style",
@@ -71,9 +71,37 @@
           "prompt": "Aplica el estándar oficial de formato y documentación.",
           "starter_code": "{\"a\":1,\"b\":2}",
           "expected_pattern": "  \"a\":",
-          "solution_hint": "Pretty-print JSON with 2-space indentation."
+          "solution_hint": "Formatea el JSON con sangría de 2 espacios."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "\"clave\": valor",
+          "role": "Todo nombre de propiedad y texto debe ir entre comillas dobles `\"`. En producción, las comillas simples rompen `JSON.parse`, APIs REST y loaders de configuración.",
+          "example_inline": "\"worker\": \"billing-sync\""
+        },
+        {
+          "term": "Sin coma final (trailing comma)",
+          "role": "La última propiedad antes de `}` no lleva coma. En producción, una coma sobrante tumba despliegues y webhooks al fallar el parseo estricto.",
+          "example_inline": "\"retries\": 3\n}"
+        },
+        {
+          "term": "Tipos primitivos RFC 8259",
+          "role": "Solo se admiten cadenas, números finitos, booleanos (`true`/`false`), `null`, objetos y arreglos. En producción evita valores inválidos como `NaN` o `undefined`.",
+          "example_inline": "\"timeoutMs\": 5000"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Indenta 2 espacios por cada nivel dentro de `{ ... }`.",
+        "line_breaks": "Coloca `{` en la primera línea, una propiedad por línea y `}` solo en la última línea.",
+        "punctuation": "Un espacio después de `:`, sin espacio antes de `:`, comillas dobles obligatorias y cero comas finales.",
+        "documentation_standard": "RFC 8259 no admite comentarios `//` ni `/* */`; la documentación del contrato vive en JSON Schema o en la vista de documentación estructurada."
+      },
+      "analogous_example": {
+        "title": "Configuración válida de un worker de facturación",
+        "code": "{\n  \"worker\": \"billing-sync\",\n  \"retries\": 3\n}\n",
+        "why_it_works": "Cumple RFC 8259 al pie de la letra: comillas dobles, 2 espacios de sangría y sin coma final en un payload de otro dominio."
+      }
     },
     {
       "id": "json-2",
@@ -81,33 +109,33 @@
       "tier": "free",
       "title": "JSON 2 · Casos borde y documentación",
       "estimatedMinutes": 8,
-      "concept_capsule": "Protege entradas nulas o vacías antes de procesarlas y documenta contratos de entrada/salida con el estándar oficial del lenguaje.",
+      "concept_capsule": "En payloads JSON anidados (objetos dentro de arreglos), cada nivel suma exactamente 2 espacios y se eliminan comas finales ocultas dentro de elementos internos.",
       "starter_code": "{\"apiVersion\":\"v1\",\"endpoints\":[{\"path\":\"/health\",\"auth\":false,},{\"path\":\"/sync\",\"auth\":true}]}",
       "reference_solution": "{\n  \"apiVersion\": \"v1\",\n  \"endpoints\": [\n    {\n      \"path\": \"/health\",\n      \"auth\": false\n    },\n    {\n      \"path\": \"/sync\",\n      \"auth\": true\n    }\n  ]\n}\n",
       "tests": [
         {
           "id": "json2-t1",
-          "name": "Valid nested JSON",
+          "name": "JSON anidado válido",
           "visible": true,
           "type": "json_valid",
           "expected": true,
-          "description": "Nested array/object parses cleanly"
+          "description": "El arreglo/objeto anidado se analiza sin errores"
         },
         {
           "id": "json2-t2",
-          "name": "No trailing comma",
+          "name": "Sin coma final",
           "visible": true,
           "type": "pattern_absent",
           "expected": ",}",
-          "description": "Removes trailing comma in object"
+          "description": "Elimina la coma final dentro del objeto"
         },
         {
           "id": "json2-t3",
-          "name": "Formatted array items",
+          "name": "Elementos formateados",
           "visible": false,
           "type": "pattern",
           "expected": "      \"path\":",
-          "description": "Indents nested object properties consistently"
+          "description": "Indenta las propiedades anidadas de forma consistente"
         }
       ],
       "style_rules": [
@@ -124,7 +152,7 @@
           "prompt": "Corrige el error de sintaxis para que el código sea válido.",
           "starter_code": "[1, 2, 3,]",
           "expected_pattern": "[1, 2, 3]",
-          "solution_hint": "Remove the trailing comma inside the array."
+          "solution_hint": "Elimina la coma final dentro del arreglo."
         },
         {
           "id": "json2-d-edge",
@@ -133,7 +161,7 @@
           "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
           "starter_code": "{\"note\": \"line1\nline2\"}",
           "expected_pattern": "\\n",
-          "solution_hint": "Escape literal newlines inside JSON strings as `\\n`."
+          "solution_hint": "Escapa los saltos de línea literales dentro de cadenas JSON como `\\n`."
         },
         {
           "id": "json2-d-style",
@@ -142,9 +170,37 @@
           "prompt": "Aplica el estándar oficial de formato y documentación.",
           "starter_code": "{\"k\":1}",
           "expected_pattern": "  \"k\": 1",
-          "solution_hint": "Format with 2 spaces per nesting level."
+          "solution_hint": "Formatea con 2 espacios por cada nivel de anidamiento."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "[ { ... }, { ... } ]",
+          "role": "Arreglo de objetos que representa colecciones estructuradas. En producción define contratos de webhooks, rutas o lotes de eventos.",
+          "example_inline": "\"channels\": [\n  { \"name\": \"email\", \"enabled\": true }\n]"
+        },
+        {
+          "term": "Coma entre elementos",
+          "role": "Separa objetos hermanos con `},`, pero nunca pongas coma tras la última propiedad interna ni tras el último objeto antes de `]`. En producción evita errores 400 difíciles de detectar.",
+          "example_inline": "    },\n    {"
+        },
+        {
+          "term": "Indentación progresiva (+2)",
+          "role": "Nivel 1 = 2 espacios, objeto dentro de arreglo = 4 espacios, propiedades internas = 6 espacios. En producción permite detectar en segundos llaves mal cerradas.",
+          "example_inline": "      \"name\": \"email\""
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Suma 2 espacios por cada `{` o `[` abierto (2 → 4 → 6 espacios en objetos anidados).",
+        "line_breaks": "Abre cada objeto del arreglo en una nueva línea y cierra `}` y `]` alineados con su apertura.",
+        "punctuation": "Verifica que no exista `,}` ni `,]` en ningún nivel de anidamiento.",
+        "documentation_standard": "Usa nombres de claves consistentes (`camelCase` o `snake_case`) y valida el payload contra JSON Schema."
+      },
+      "analogous_example": {
+        "title": "Manifiesto anidado de canales de notificación",
+        "code": "{\n  \"schemaVersion\": \"2.0\",\n  \"channels\": [\n    {\n      \"name\": \"email\",\n      \"enabled\": true\n    },\n    {\n      \"name\": \"slack\",\n      \"enabled\": false\n    }\n  ]\n}\n",
+        "why_it_works": "Muestra indentación 2/4/6 espacios, separación limpia entre elementos con `},` y cero comas finales en un dominio distinto."
+      }
     },
     {
       "id": "json-3",

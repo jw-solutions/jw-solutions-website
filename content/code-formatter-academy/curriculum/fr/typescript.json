@@ -16,27 +16,27 @@
       "tests": [
         {
           "id": "ts1-t1",
-          "name": "No any type",
+          "name": "Sans type any",
           "visible": true,
           "type": "pattern_absent",
           "expected": ": any",
-          "description": "Eliminates explicit any"
+          "description": "Élimine le type any explicite"
         },
         {
           "id": "ts1-t2",
-          "name": "Explicit return type",
+          "name": "Type de retour explicite",
           "visible": true,
           "type": "pattern",
           "expected": ": string",
-          "description": "Declares explicit : string return type"
+          "description": "Déclare le type de retour explicite : string"
         },
         {
           "id": "ts1-t3",
-          "name": "Finite number guard",
+          "name": "Garde nombre fini",
           "visible": false,
           "type": "pattern",
           "expected": "Number.isFinite",
-          "description": "Guards against NaN/Infinity"
+          "description": "Protège contre NaN et Infinity"
         }
       ],
       "style_rules": [
@@ -53,7 +53,7 @@
           "prompt": "Corrigez l’erreur de syntaxe pour valider l’extrait.",
           "starter_code": "interface User { id: number name: string }",
           "expected_pattern": ";",
-          "solution_hint": "Separate interface members with `;` or newlines."
+          "solution_hint": "Séparez les membres de l'interface par `;` ou un retour à la ligne."
         },
         {
           "id": "ts1-d-edge",
@@ -62,7 +62,7 @@
           "prompt": "Ajoutez la garde défensive pour éviter les erreurs.",
           "starter_code": "function parse(x: unknown) { return x.toString(); }",
           "expected_pattern": "typeof x",
-          "solution_hint": "Narrow `unknown` with `typeof` before calling methods."
+          "solution_hint": "Affinez `unknown` avec `typeof` avant d'appeler des méthodes."
         },
         {
           "id": "ts1-d-style",
@@ -71,7 +71,7 @@
           "prompt": "Appliquez le standard officiel de formatage et documentation.",
           "starter_code": "export function id(n: number) { return n; }",
           "expected_pattern": ": number",
-          "solution_hint": "Add explicit return type annotation."
+          "solution_hint": "Ajoutez une annotation explicite de type de retour."
         }
       ]
     },
@@ -87,27 +87,27 @@
       "tests": [
         {
           "id": "ts2-t1",
-          "name": "Type predicate",
+          "name": "Prédicat de type",
           "visible": true,
           "type": "pattern",
           "expected": "value is User",
-          "description": "Uses TypeScript type predicate"
+          "description": "Utilise un prédicat de type TypeScript"
         },
         {
           "id": "ts2-t2",
-          "name": "Unknown parameter",
+          "name": "Paramètre unknown",
           "visible": true,
           "type": "pattern",
           "expected": "unknown",
-          "description": "Accepts unknown instead of any"
+          "description": "Accepte unknown au lieu de any"
         },
         {
           "id": "ts2-t3",
-          "name": "Null check",
+          "name": "Vérification de null",
           "visible": false,
           "type": "pattern",
           "expected": "!== null",
-          "description": "Safely excludes null values"
+          "description": "Exclut les valeurs null en sécurité"
         }
       ],
       "style_rules": [
@@ -124,7 +124,7 @@
           "prompt": "Corrigez l’erreur de syntaxe pour valider l’extrait.",
           "starter_code": "function isStr(v: unknown): v is string (return typeof v === \"string\";)",
           "expected_pattern": "{",
-          "solution_hint": "Use curly braces `{ ... }` for the function body."
+          "solution_hint": "Utilisez des accolades `{ ... }` pour le corps de la fonction."
         },
         {
           "id": "ts2-d-edge",
@@ -133,7 +133,7 @@
           "prompt": "Ajoutez la garde défensive pour éviter les erreurs.",
           "starter_code": "const ok = typeof v === \"object\";",
           "expected_pattern": "v !== null",
-          "solution_hint": "Remember `typeof null === \"object\"` in JS/TS."
+          "solution_hint": "Rappelez-vous qu'en JS/TS `typeof null === \"object\"`."
         },
         {
           "id": "ts2-d-style",
@@ -142,7 +142,7 @@
           "prompt": "Appliquez le standard officiel de formatage et documentation.",
           "starter_code": "export type ID = string;",
           "expected_pattern": "/**",
-          "solution_hint": "Add a TSDoc comment above exported types."
+          "solution_hint": "Ajoutez un commentaire TSDoc au-dessus des types exportés."
         }
       ]
     },

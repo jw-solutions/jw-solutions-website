@@ -1,8 +1,9 @@
 // Funciones exclusivas Pro de la Academia (tier: "pay", excluidas de dist-public/).
 import { postJson, getJson } from './services/api.js';
 
-export async function fetchProLevel(tech, level) {
-  const res = await getJson(`/api/academy/levels/${encodeURIComponent(tech)}/${Number(level)}`);
+export async function fetchProLevel(tech, level, locale = 'es') {
+  const qs = `?locale=${encodeURIComponent(locale || 'es')}`;
+  const res = await getJson(`/api/academy/levels/${encodeURIComponent(tech)}/${Number(level)}${qs}`);
   if (!res.ok) {
     const err = new Error(`HTTP ${res.status}`);
     err.status = res.status;

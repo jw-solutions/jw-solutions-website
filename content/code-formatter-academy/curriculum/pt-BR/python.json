@@ -10,33 +10,33 @@
       "tier": "free",
       "title": "PYTHON 1 · Fundamentos e formatação limpa",
       "estimatedMinutes": 5,
-      "concept_capsule": "Aplique indentação consistente, nomes claros e documentação padrão para que qualquer equipe leia e audite o código rapidamente.",
+      "concept_capsule": "PEP 8 e PEP 257 combinam recuo de 4 espaços, anotações de tipo explícitas e docstrings objetivas para manter scripts analíticos auditáveis e seguros.",
       "starter_code": "def calc_tax(price,rate):\n if price<0:\n  return 0\n return price*rate",
       "reference_solution": "def calc_tax(price: float, rate: float) -> float:\n    \"\"\"Calculate tax amount for a non-negative price.\"\"\"\n    if price <= 0:\n        return 0.0\n    return round(price * rate, 2)\n",
       "tests": [
         {
           "id": "py1-t1",
-          "name": "PEP 8 4-space indent",
+          "name": "Recuo PEP 8 de 4 espaços",
           "visible": true,
           "type": "pattern",
           "expected": "    if price <= 0:",
-          "description": "Uses 4-space indentation"
+          "description": "Usa recuo de 4 espaços"
         },
         {
           "id": "py1-t2",
-          "name": "Type hints & docstring",
+          "name": "Type hints e retorno",
           "visible": true,
           "type": "pattern",
           "expected": "-> float:",
-          "description": "Includes return type annotation"
+          "description": "Inclui anotação de tipo de retorno"
         },
         {
           "id": "py1-t3",
-          "name": "Docstring present",
+          "name": "Docstring presente",
           "visible": false,
           "type": "pattern",
           "expected": "\"\"\"",
-          "description": "Documents function with PEP 257 docstring"
+          "description": "Documenta a função com docstring PEP 257"
         }
       ],
       "style_rules": [
@@ -53,7 +53,7 @@
           "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
           "starter_code": "def greet(name)\n    return f\"Hi {name}\"",
           "expected_pattern": "def greet(name):",
-          "solution_hint": "Add the missing colon `:` after the parameter list."
+          "solution_hint": "Adicione os dois-pontos `:` que faltam após os parâmetros."
         },
         {
           "id": "py1-d-edge",
@@ -62,7 +62,7 @@
           "prompt": "Adicione a validação defensiva para evitar falhas.",
           "starter_code": "def safe_div(a, b):\n    return a / b",
           "expected_pattern": "if b == 0",
-          "solution_hint": "Guard against division by zero before dividing."
+          "solution_hint": "Verifique divisão por zero antes de dividir."
         },
         {
           "id": "py1-d-style",
@@ -71,9 +71,37 @@
           "prompt": "Aplique o padrão oficial de formatação e documentação.",
           "starter_code": "def add(a, b):\n    return a + b",
           "expected_pattern": "\"\"\"",
-          "solution_hint": "Add a concise PEP 257 docstring inside the function."
+          "solution_hint": "Adicione uma docstring concisa PEP 257 dentro da função."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "def ... -> float:",
+          "role": "Declara a função com tipos explícitos de entrada e saída. Em produção, detecta divergências de tipo antes do deploy.",
+          "example_inline": "def calc_discount(subtotal: float, pct: float) -> float:"
+        },
+        {
+          "term": "\"\"\"...\"\"\" (PEP 257)",
+          "role": "Documenta o contrato da função logo abaixo de `def`. Em produção, alimenta IDEs e documentação automática.",
+          "example_inline": "\"\"\"Compute net discount for a positive subtotal.\"\"\""
+        },
+        {
+          "term": "if ... <= 0: return 0.0",
+          "role": "Guarda inicial que bloqueia entradas inválidas antes do cálculo. Em produção, evita valores negativos silenciosos em faturamento.",
+          "example_inline": "if subtotal <= 0:\n    return 0.0"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Use rigorosamente 4 espaços por nível de bloco; nunca use tabulações.",
+        "line_breaks": "Coloque a docstring na primeira linha do corpo e mantenha a guarda e o retorno principal em linhas distintas.",
+        "punctuation": "Deixe um espaço após vírgulas e ao redor de operadores (`<=`, `*`, `->`), sem espaço antes de `:`.",
+        "documentation_standard": "Inclua docstring PEP 257 com aspas triplas (`\"\"\"`) e tipagem completa na assinatura."
+      },
+      "analogous_example": {
+        "title": "Cálculo seguro de desconto comercial",
+        "code": "def calc_discount(subtotal: float, pct: float) -> float:\n    \"\"\"Return rounded discount amount for a positive subtotal.\"\"\"\n    if subtotal <= 0:\n        return 0.0\n    return round(subtotal * pct, 2)\n",
+        "why_it_works": "Combina recuo de 4 espaços, anotação `-> float`, docstring PEP 257 e guarda inicial em um domínio distinto."
+      }
     },
     {
       "id": "python-2",
@@ -81,33 +109,33 @@
       "tier": "free",
       "title": "PYTHON 2 · Casos de borda e documentação",
       "estimatedMinutes": 8,
-      "concept_capsule": "Proteja entradas nulas ou vazias antes de processar e documente contratos com o padrão oficial da linguagem.",
+      "concept_capsule": "Processar listas de dicionários com segurança exige validar entradas vazias (`if not ...:`), usar `.get()` para chaves opcionais e quebrar compreensões em múltiplas linhas.",
       "starter_code": "def parse_users(rows):\n res=[]\n for r in rows:\n  if r.get(\"active\"):\n   res.append(r[\"email\"].strip().lower())\n return res",
       "reference_solution": "def parse_users(rows: list[dict[str, object]]) -> list[str]:\n    \"\"\"Extract normalized active user emails.\"\"\"\n    if not rows:\n        return []\n    return [\n        str(row[\"email\"]).strip().lower()\n        for row in rows\n        if row.get(\"active\") and row.get(\"email\")\n    ]\n",
       "tests": [
         {
           "id": "py2-t1",
-          "name": "Empty input guard",
+          "name": "Guarda de entrada vazia",
           "visible": true,
           "type": "pattern",
           "expected": "if not rows:",
-          "description": "Returns [] when rows is empty"
+          "description": "Retorna [] quando rows está vazia"
         },
         {
           "id": "py2-t2",
-          "name": "Email normalization",
+          "name": "Normalização de e-mail",
           "visible": true,
           "type": "pattern",
           "expected": ".strip().lower()",
-          "description": "Normalizes email casing and whitespace"
+          "description": "Normaliza caixa e espaços do e-mail"
         },
         {
           "id": "py2-t3",
-          "name": "Missing email guard",
+          "name": "Guarda de chave ausente",
           "visible": false,
           "type": "pattern",
           "expected": "row.get(\"email\")",
-          "description": "Skips rows without email key"
+          "description": "Ignora linhas sem a chave email"
         }
       ],
       "style_rules": [
@@ -125,7 +153,7 @@
           "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
           "starter_code": "items = [x for x in data if x > 0",
           "expected_pattern": "]",
-          "solution_hint": "Close the list comprehension bracket `]`."
+          "solution_hint": "Feche o colchete `]` da list comprehension."
         },
         {
           "id": "py2-d-edge",
@@ -134,7 +162,7 @@
           "prompt": "Adicione a validação defensiva para evitar falhas.",
           "starter_code": "def first_item(items):\n    return items[0]",
           "expected_pattern": "if not items",
-          "solution_hint": "Check `if not items:` before indexing `items[0]`."
+          "solution_hint": "Verifique `if not items:` antes de acessar `items[0]`."
         },
         {
           "id": "py2-d-style",
@@ -143,9 +171,37 @@
           "prompt": "Aplique o padrão oficial de formatação e documentação.",
           "starter_code": "def clean(s):\n    return s.strip()",
           "expected_pattern": "-> str:",
-          "solution_hint": "Annotate parameter and return type `-> str:`."
+          "solution_hint": "Anote o tipo do parâmetro e o retorno `-> str:`."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "if not collection:",
+          "role": "Retorna lista vazia imediatamente quando a entrada está vazia. Em produção, evita falhas em lotes ETL sem registros.",
+          "example_inline": "if not records:\n    return []"
+        },
+        {
+          "term": "dict.get(\"key\")",
+          "role": "Acessa chaves opcionais sem lançar `KeyError`. Em produção, protege pipelines contra payloads incompletos de APIs.",
+          "example_inline": "if rec.get(\"enabled\") and rec.get(\"tag\")"
+        },
+        {
+          "term": ".strip().lower()",
+          "role": "Remove espaços extras e padroniza minúsculas. Em produção, evita duplicidades falsas em cruzamentos de texto.",
+          "example_inline": "str(rec[\"tag\"]).strip().lower()"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Use 4 espaços por nível e 4 espaços dentro da list comprehension multilinha.",
+        "line_breaks": "Separe expressão, `for` e `if` em linhas próprias para manter alta legibilidade.",
+        "punctuation": "Prefira genéricos nativos (`list[dict[str, object]] -> list[str]`) e aspas duplas consistentes.",
+        "documentation_standard": "Descreva em uma docstring PEP 257 o filtro e a normalização aplicados."
+      },
+      "analogous_example": {
+        "title": "Extração limpa de tags ativas",
+        "code": "def extract_active_tags(records: list[dict[str, object]]) -> list[str]:\n    \"\"\"Return normalized tags from enabled catalog records.\"\"\"\n    if not records:\n        return []\n    return [\n        str(rec[\"tag\"]).strip().lower()\n        for rec in records\n        if rec.get(\"enabled\") and rec.get(\"tag\")\n    ]\n",
+        "why_it_works": "Valida entrada vazia, protege chaves ausentes com `.get()` e organiza a compreensão em 4 espaços."
+      }
     },
     {
       "id": "python-3",

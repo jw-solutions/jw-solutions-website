@@ -16,29 +16,29 @@
       "tests": [
         {
           "id": "js1-t1",
-          "name": "Computes sum",
+          "name": "Berechnet Summe",
           "visible": true,
           "type": "eval",
           "input": "sum(4, 6)",
           "expected": 10,
-          "description": "sum(4, 6) returns 10"
+          "description": "sum(4, 6) gibt 10 zurück"
         },
         {
           "id": "js1-t2",
-          "name": "JSDoc tags",
+          "name": "JSDoc-Tags",
           "visible": true,
           "type": "pattern",
           "expected": "@returns",
-          "description": "Includes @returns JSDoc tag"
+          "description": "Enthält das JSDoc-Tag @returns"
         },
         {
           "id": "js1-t3",
-          "name": "Numeric coercion",
+          "name": "Numerische Umwandlung",
           "visible": false,
           "type": "eval",
           "input": "sum(\"2\", 3)",
           "expected": 5,
-          "description": "Coerces numeric strings safely"
+          "description": "Wandelt numerische Strings sicher um"
         }
       ],
       "style_rules": [
@@ -55,7 +55,7 @@
           "prompt": "Behebe den Syntaxfehler, damit der Code gültig ist.",
           "starter_code": "const double = (n) => { return n * 2;",
           "expected_pattern": "}",
-          "solution_hint": "Close the function block with `}`."
+          "solution_hint": "Schließe den Funktionsblock mit `}`."
         },
         {
           "id": "js1-d-edge",
@@ -64,7 +64,7 @@
           "prompt": "Ergänze die Schutzprüfung gegen Laufzeitfehler.",
           "starter_code": "function len(arr) { return arr.length; }",
           "expected_pattern": "Array.isArray",
-          "solution_hint": "Validate `Array.isArray(arr)` before reading `.length`."
+          "solution_hint": "Prüfe `Array.isArray(arr)`, bevor du `.length` liest."
         },
         {
           "id": "js1-d-style",
@@ -73,7 +73,7 @@
           "prompt": "Wende den offiziellen Formatierungs- und Dokumentationsstandard an.",
           "starter_code": "export function ping() { return true; }",
           "expected_pattern": "/**",
-          "solution_hint": "Add a JSDoc block `/** ... */` above the function."
+          "solution_hint": "Füge einen JSDoc-Block `/** ... */` über der Funktion hinzu."
         }
       ]
     },
@@ -89,29 +89,29 @@
       "tests": [
         {
           "id": "js2-t1",
-          "name": "Existing city",
+          "name": "Vorhandene Stadt",
           "visible": true,
           "type": "eval",
           "input": "getCity({ address: { city: \"Lima\" } })",
           "expected": "Lima",
-          "description": "Returns nested city"
+          "description": "Gibt die verschachtelte Stadt zurück"
         },
         {
           "id": "js2-t2",
-          "name": "Optional chaining",
+          "name": "Optional Chaining",
           "visible": true,
           "type": "pattern",
           "expected": "?.",
-          "description": "Uses ES2020 optional chaining"
+          "description": "Verwendet ES2020 Optional Chaining"
         },
         {
           "id": "js2-t3",
-          "name": "Null user fallback",
+          "name": "Null-Nutzer-Fallback",
           "visible": false,
           "type": "eval",
           "input": "getCity(null)",
           "expected": "N/A",
-          "description": "Handles null user without throwing"
+          "description": "Behandelt null-Benutzer ohne Ausnahme"
         }
       ],
       "style_rules": [
@@ -128,7 +128,7 @@
           "prompt": "Behebe den Syntaxfehler, damit der Code gültig ist.",
           "starter_code": "const name = user?.profile.name ?? \"Anon\";",
           "expected_pattern": "profile?.name",
-          "solution_hint": "Use `?.` on every nullable property in the chain."
+          "solution_hint": "Nutze `?.` bei jeder potenziell leeren Eigenschaft der Kette."
         },
         {
           "id": "js2-d-edge",
@@ -137,7 +137,7 @@
           "prompt": "Ergänze die Schutzprüfung gegen Laufzeitfehler.",
           "starter_code": "const port = cfg.port || 3000;",
           "expected_pattern": "??",
-          "solution_hint": "Use `??` instead of `||` so `0` is preserved."
+          "solution_hint": "Verwende `??` statt `||`, damit `0` erhalten bleibt."
         },
         {
           "id": "js2-d-style",
@@ -146,7 +146,7 @@
           "prompt": "Wende den offiziellen Formatierungs- und Dokumentationsstandard an.",
           "starter_code": "export const ok = (v) => Boolean(v);",
           "expected_pattern": "@param",
-          "solution_hint": "Document the parameter with `@param`."
+          "solution_hint": "Dokumentiere den Parameter mit `@param`."
         }
       ]
     },

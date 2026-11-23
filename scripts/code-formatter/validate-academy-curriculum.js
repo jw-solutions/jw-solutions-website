@@ -16,6 +16,7 @@ const ROOT = resolve(process.cwd());
 const ACADEMY_DIR = join(ROOT, 'content', 'code-formatter-academy');
 const LOCALES = ['es', 'en', 'pt-BR', 'pt-PT', 'fr', 'de', 'it'];
 const TECHS = ['python', 'javascript', 'typescript', 'sql', 'dax', 'java', 'csharp', 'php', 'json', 'yaml'];
+const DATA_BI_TECHS = new Set(['sql', 'python', 'dax', 'json']);
 const FORBIDDEN_PAY_FIELDS = [
   'solution',
   'reference_solution',
@@ -25,9 +26,72 @@ const FORBIDDEN_PAY_FIELDS = [
   'concept_capsule',
   'style_rules',
   'hint',
+  'keywords_glossary',
+  'formatting_mechanics',
+  'analogous_example',
 ];
 
 const errors = [];
+
+function normalizeCodeForCompare(code) {
+  return String(code || '')
+    .replace(/\r\n/g, '\n')
+    .replace(/[ \t]+/g, ' ')
+    .trim();
+}
+
+function validatePedagogicalFields(lvl, lctx, required) {
+  const hasAny =
+    Object.prototype.hasOwnProperty.call(lvl, 'keywords_glossary') ||
+    Object.prototype.hasOwnProperty.call(lvl, 'formatting_mechanics') ||
+    Object.prototype.hasOwnProperty.call(lvl, 'analogous_example');
+
+  if (!required && !hasAny) return;
+
+  // 1. keywords_glossary: arreglo no vacío de { term, role, example_inline }
+  if (!Array.isArray(lvl.keywords_glossary) || lvl.keywords_glossary.length === 0) {
+    errors.push(`${lctx}.keywords_glossary: requerido como arreglo no vacío`);
+  } else {
+    lvl.keywords_glossary.forEach((item, idx) => {
+      const kctx = `${lctx}.keywords_glossary[${idx}]`;
+      if (!item || typeof item !== 'object') {
+        errors.push(`${kctx}: debe ser un objeto`);
+        return;
+      }
+      assertNonEmpty(item.term, `${kctx}.term`);
+      assertNonEmpty(item.role, `${kctx}.role`);
+      assertNonEmpty(item.example_inline, `${kctx}.example_inline`);
+    });
+  }
+
+  // 2. formatting_mechanics: { indentation, line_breaks, punctuation, documentation_standard }
+  const fm = lvl.formatting_mechanics;
+  if (!fm || typeof fm !== 'object' || Array.isArray(fm)) {
+    errors.push(`${lctx}.formatting_mechanics: requerido como objeto`);
+  } else {
+    assertNonEmpty(fm.indentation, `${lctx}.formatting_mechanics.indentation`);
+    assertNonEmpty(fm.line_breaks, `${lctx}.formatting_mechanics.line_breaks`);
+    assertNonEmpty(fm.punctuation, `${lctx}.formatting_mechanics.punctuation`);
+    assertNonEmpty(fm.documentation_standard, `${lctx}.formatting_mechanics.documentation_standard`);
+  }
+
+  // 3. analogous_example: { title, code, why_it_works } distinto de reference_solution
+  const ex = lvl.analogous_example;
+  if (!ex || typeof ex !== 'object' || Array.isArray(ex)) {
+    errors.push(`${lctx}.analogous_example: requerido como objeto`);
+  } else {
+    assertNonEmpty(ex.title, `${lctx}.analogous_example.title`);
+    assertNonEmpty(ex.code, `${lctx}.analogous_example.code`);
+    assertNonEmpty(ex.why_it_works, `${lctx}.analogous_example.why_it_works`);
+    if (
+      ex.code &&
+      lvl.reference_solution &&
+      normalizeCodeForCompare(ex.code) === normalizeCodeForCompare(lvl.reference_solution)
+    ) {
+      errors.push(`${lctx}.analogous_example.code: no puede ser idéntico a reference_solution`);
+    }
+  }
+}
 
 function assertNonEmpty(val, ctx) {
   if (val === null || val === undefined) {
@@ -194,6 +258,7 @@ for (const tech of TECHS) {
         assertNonEmpty(lvl.style_rules, `${lctx}.style_rules`);
         assertNonEmpty(lvl.tests, `${lctx}.tests`);
         assertNonEmpty(lvl.remedial_drills, `${lctx}.remedial_drills`);
+        validatePedagogicalFields(lvl, lctx, DATA_BI_TECHS.has(tech));
 
         for (const t of lvl.tests || []) {
           runTestCase(lvl.reference_solution, t, lctx);

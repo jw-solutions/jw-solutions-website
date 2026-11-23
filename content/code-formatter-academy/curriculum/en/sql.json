@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "SQL 1 · Clean Syntax & Formatting Basics",
       "estimatedMinutes": 5,
-      "concept_capsule": "Apply consistent indentation, clear naming, and official documentation so any team can read and audit the code in seconds.",
+      "concept_capsule": "Readable SQL puts every major clause on its own line, uppercases reserved keywords, and opens with a one-line intent comment so BI reviews and audits take seconds.",
       "starter_code": "select id,email from users where active=1 order by id desc",
       "reference_solution": "-- Fetch active user accounts ordered by latest ID\nSELECT\n  id,\n  email\nFROM users\nWHERE active = 1\nORDER BY id DESC;\n",
       "tests": [
@@ -73,7 +73,40 @@
           "expected_pattern": "SELECT",
           "solution_hint": "Uppercase SQL keywords like SELECT and FROM."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "SELECT",
+          "role": "Declares the exact columns to project. In production, avoiding `SELECT *` prevents broken downstream reports and unnecessary network I/O.",
+          "example_inline": "SELECT sku, unit_price"
+        },
+        {
+          "term": "FROM",
+          "role": "Specifies the source table or view. In production, explicit table references make ETL lineage easy to trace.",
+          "example_inline": "FROM products"
+        },
+        {
+          "term": "WHERE",
+          "role": "Filters rows before sorting or returning results. In production, it trims disk scans and keeps inactive records out of dashboards.",
+          "example_inline": "WHERE in_stock = 1"
+        },
+        {
+          "term": "ORDER BY ... DESC",
+          "role": "Sorts output deterministically from highest to lowest. In production, explicit ordering keeps paginated views and daily snapshots consistent.",
+          "example_inline": "ORDER BY unit_price DESC;"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Indent projected columns by 2 spaces under SELECT so the projection block stands out visually.",
+        "line_breaks": "Start SELECT, FROM, WHERE, and ORDER BY on separate lines and place one column per line.",
+        "punctuation": "Separate columns with trailing commas (no comma on the last column), add spaces around `=`, and terminate with `;`.",
+        "documentation_standard": "Lead with a single `-- ` comment describing the business question the query answers."
+      },
+      "analogous_example": {
+        "title": "Available products sorted by price",
+        "code": "-- Fetch in-stock products ordered from highest to lowest price\nSELECT\n  sku,\n  unit_price\nFROM products\nWHERE in_stock = 1\nORDER BY unit_price DESC;\n",
+        "why_it_works": "Keywords are uppercase on left-aligned clause lines, columns use 2-space indentation, and the header comment documents intent on a separate domain."
+      }
     },
     {
       "id": "sql-2",
@@ -81,7 +114,7 @@
       "tier": "free",
       "title": "SQL 2 · Edge Cases & Documentation",
       "estimatedMinutes": 8,
-      "concept_capsule": "Guard null or empty inputs before processing and document input/output contracts using the language standard.",
+      "concept_capsule": "When joining tables with aggregates, `LEFT JOIN` preserves unmatched rows, explicit `AS` aliases stabilize output contracts, and `GROUP BY` defines exact reporting granularity.",
       "starter_code": "select u.id,count(o.id) from users u left join orders o on u.id=o.user_id group by u.id",
       "reference_solution": "-- Count orders per user including users with zero orders\nSELECT\n  u.id,\n  COUNT(o.id) AS order_count\nFROM users AS u\nLEFT JOIN orders AS o\n  ON u.id = o.user_id\nGROUP BY u.id;\n",
       "tests": [
@@ -144,7 +177,35 @@
           "expected_pattern": " AS ",
           "solution_hint": "Always alias aggregate expressions with `AS`."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "LEFT JOIN ... ON",
+          "role": "Keeps every row from the left table even when no match exists on the right. In production, it prevents dropping zero-activity entities from coverage KPIs.",
+          "example_inline": "LEFT JOIN employees AS e ON d.id = e.dept_id"
+        },
+        {
+          "term": "COUNT(col) AS alias",
+          "role": "Counts non-null values and assigns a clear column name via `AS`. In production, it avoids anonymous headers that break BI models and API consumers.",
+          "example_inline": "COUNT(e.id) AS headcount"
+        },
+        {
+          "term": "GROUP BY",
+          "role": "Groups rows by every non-aggregated column in `SELECT`. In production, this ensures strict ANSI SQL compliance across engines.",
+          "example_inline": "GROUP BY d.id;"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Indent projected columns and the `ON` join predicate by 2 spaces under their parent clauses.",
+        "line_breaks": "Put `LEFT JOIN` on its own line and move `ON` to the next indented line.",
+        "punctuation": "Use explicit `AS` for both table and column aliases, space around `=`, and close with `;`.",
+        "documentation_standard": "State in the leading `-- ` comment what is counted and that zero-match entities are preserved."
+      },
+      "analogous_example": {
+        "title": "Employee headcount per department including empty ones",
+        "code": "-- Count employees per department including departments with zero staff\nSELECT\n  d.id,\n  COUNT(e.id) AS headcount\nFROM departments AS d\nLEFT JOIN employees AS e\n  ON d.id = e.dept_id\nGROUP BY d.id;\n",
+        "why_it_works": "It separates `LEFT JOIN` and `ON`, aliases tables and aggregates explicitly with `AS`, and uses `COUNT(e.id)` so unmatched departments return 0."
+      }
     },
     {
       "id": "sql-3",

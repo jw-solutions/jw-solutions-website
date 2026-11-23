@@ -10,33 +10,33 @@
       "tier": "free",
       "title": "SQL 1 · Bases et formatage propre",
       "estimatedMinutes": 5,
-      "concept_capsule": "Appliquez une indentation cohérente, des noms clairs et une documentation standard pour un code immédiatement auditable.",
+      "concept_capsule": "Une requête SQL lisible place chaque clause sur sa propre ligne, écrit les mots-clés réservés en majuscules et débute par un commentaire d'intention pour accélérer les revues et audits BI.",
       "starter_code": "select id,email from users where active=1 order by id desc",
       "reference_solution": "-- Fetch active user accounts ordered by latest ID\nSELECT\n  id,\n  email\nFROM users\nWHERE active = 1\nORDER BY id DESC;\n",
       "tests": [
         {
           "id": "sql1-t1",
-          "name": "Uppercase keywords",
+          "name": "Mots-clés en majuscules",
           "visible": true,
           "type": "pattern",
           "expected": "SELECT",
-          "description": "Uses uppercase SQL keywords"
+          "description": "Utilise les mots-clés SQL en majuscules"
         },
         {
           "id": "sql1-t2",
-          "name": "Purpose comment",
+          "name": "Commentaire d'intention",
           "visible": true,
           "type": "pattern",
           "expected": "-- ",
-          "description": "Starts with descriptive SQL comment"
+          "description": "Débute par un commentaire SQL descriptif"
         },
         {
           "id": "sql1-t3",
-          "name": "Semicolon terminator",
+          "name": "Point-virgule final",
           "visible": false,
           "type": "pattern",
           "expected": ";",
-          "description": "Terminates query with semicolon"
+          "description": "Termine la requête par un point-virgule"
         }
       ],
       "style_rules": [
@@ -53,7 +53,7 @@
           "prompt": "Corrigez l’erreur de syntaxe pour valider l’extrait.",
           "starter_code": "SELECT id email FROM users;",
           "expected_pattern": "id, email",
-          "solution_hint": "Separate projected columns with a comma."
+          "solution_hint": "Séparez les colonnes projetées par une virgule."
         },
         {
           "id": "sql1-d-edge",
@@ -62,7 +62,7 @@
           "prompt": "Ajoutez la garde défensive pour éviter les erreurs.",
           "starter_code": "SELECT * FROM users WHERE deleted_at = NULL;",
           "expected_pattern": "IS NULL",
-          "solution_hint": "Use `IS NULL` instead of `= NULL` in SQL."
+          "solution_hint": "Utilisez `IS NULL` au lieu de `= NULL` en SQL."
         },
         {
           "id": "sql1-d-style",
@@ -71,9 +71,42 @@
           "prompt": "Appliquez le standard officiel de formatage et documentation.",
           "starter_code": "select id from users;",
           "expected_pattern": "SELECT",
-          "solution_hint": "Uppercase SQL keywords like SELECT and FROM."
+          "solution_hint": "Écrivez les mots-clés SQL comme SELECT et FROM en majuscules."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "SELECT",
+          "role": "Spécifie les colonnes exactes à projeter. En production, éviter `SELECT *` empêche les ruptures de rapports et limite le volume réseau.",
+          "example_inline": "SELECT sku, unit_price"
+        },
+        {
+          "term": "FROM",
+          "role": "Désigne la table ou vue source. En production, cela rend le lignage ETL immédiatement vérifiable.",
+          "example_inline": "FROM products"
+        },
+        {
+          "term": "WHERE",
+          "role": "Filtre les lignes avant le tri. En production, cela réduit les lectures disque et exclut les enregistrements inactifs des tableaux de bord.",
+          "example_inline": "WHERE in_stock = 1"
+        },
+        {
+          "term": "ORDER BY ... DESC",
+          "role": "Trie la sortie de manière déterministe par ordre décroissant. En production, cela garantit une pagination et des exports stables.",
+          "example_inline": "ORDER BY unit_price DESC;"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Indentez de 2 espaces les colonnes sous SELECT afin d'isoler visuellement la projection.",
+        "line_breaks": "Placez SELECT, FROM, WHERE et ORDER BY sur des lignes distinctes, avec une colonne par ligne.",
+        "punctuation": "Séparez les colonnes par une virgule (aucune après la dernière), encadrez `=` d'espaces et terminez par `;`.",
+        "documentation_standard": "Commencez par un commentaire `-- ` résumant le besoin métier couvert par la requête."
+      },
+      "analogous_example": {
+        "title": "Produits en stock triés par prix",
+        "code": "-- Récupérer les produits en stock du plus cher au moins cher\nSELECT\n  sku,\n  unit_price\nFROM products\nWHERE in_stock = 1\nORDER BY unit_price DESC;\n",
+        "why_it_works": "Les clauses principales sont alignées à gauche en majuscules, les colonnes sont indentées de 2 espaces et le commentaire d'en-tête clarifie l'objectif sur un autre domaine."
+      }
     },
     {
       "id": "sql-2",
@@ -81,33 +114,33 @@
       "tier": "free",
       "title": "SQL 2 · Cas limites et documentation",
       "estimatedMinutes": 8,
-      "concept_capsule": "Protégez les entrées nulles ou vides avant traitement et documentez les contrats selon le standard officiel.",
+      "concept_capsule": "Lors d'une jointure agrégée, `LEFT JOIN` conserve les lignes sans correspondance, `AS` stabilise les noms de colonnes et `GROUP BY` fixe la granularité exacte du rapport.",
       "starter_code": "select u.id,count(o.id) from users u left join orders o on u.id=o.user_id group by u.id",
       "reference_solution": "-- Count orders per user including users with zero orders\nSELECT\n  u.id,\n  COUNT(o.id) AS order_count\nFROM users AS u\nLEFT JOIN orders AS o\n  ON u.id = o.user_id\nGROUP BY u.id;\n",
       "tests": [
         {
           "id": "sql2-t1",
-          "name": "Explicit AS alias",
+          "name": "Alias AS explicite",
           "visible": true,
           "type": "pattern",
           "expected": "AS order_count",
-          "description": "Names aggregated column with AS"
+          "description": "Nomme la colonne agrégée avec AS"
         },
         {
           "id": "sql2-t2",
-          "name": "LEFT JOIN preserved",
+          "name": "LEFT JOIN conservé",
           "visible": true,
           "type": "pattern",
           "expected": "LEFT JOIN",
-          "description": "Keeps LEFT JOIN for zero-order users"
+          "description": "Conserve LEFT JOIN pour les utilisateurs sans commande"
         },
         {
           "id": "sql2-t3",
-          "name": "GROUP BY clause",
+          "name": "Clause GROUP BY",
           "visible": false,
           "type": "pattern",
           "expected": "GROUP BY u.id",
-          "description": "Groups by non-aggregated column"
+          "description": "Regroupe par la colonne non agrégée"
         }
       ],
       "style_rules": [
@@ -124,7 +157,7 @@
           "prompt": "Corrigez l’erreur de syntaxe pour valider l’extrait.",
           "starter_code": "SELECT u.id, COUNT(o.id) FROM users u JOIN orders o u.id = o.user_id;",
           "expected_pattern": "ON ",
-          "solution_hint": "Add the `ON` keyword before the join condition."
+          "solution_hint": "Ajoutez le mot-clé `ON` avant la condition de jointure."
         },
         {
           "id": "sql2-d-edge",
@@ -133,7 +166,7 @@
           "prompt": "Ajoutez la garde défensive pour éviter les erreurs.",
           "starter_code": "SELECT COALESCE(total) FROM orders;",
           "expected_pattern": ", 0",
-          "solution_hint": "Provide a fallback value as the second argument to `COALESCE`."
+          "solution_hint": "Passez une valeur de secours en second argument de `COALESCE`."
         },
         {
           "id": "sql2-d-style",
@@ -142,9 +175,37 @@
           "prompt": "Appliquez le standard officiel de formatage et documentation.",
           "starter_code": "SELECT COUNT(id) FROM orders;",
           "expected_pattern": " AS ",
-          "solution_hint": "Always alias aggregate expressions with `AS`."
+          "solution_hint": "Donnez toujours un alias avec `AS` aux expressions agrégées."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "LEFT JOIN ... ON",
+          "role": "Conserve chaque ligne de la table de gauche même sans correspondance à droite. En production, cela évite d'oublier les entités à activité nulle dans les KPI.",
+          "example_inline": "LEFT JOIN employees AS e ON d.id = e.dept_id"
+        },
+        {
+          "term": "COUNT(col) AS alias",
+          "role": "Compte les valeurs non nulles et nomme la colonne via `AS`. En production, cela évite les colonnes anonymes qui cassent les modèles BI.",
+          "example_inline": "COUNT(e.id) AS headcount"
+        },
+        {
+          "term": "GROUP BY",
+          "role": "Regroupe les lignes selon chaque colonne non agrégée du `SELECT`. En production, cela garantit la conformité SQL ANSI stricte.",
+          "example_inline": "GROUP BY d.id;"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Indentez de 2 espaces les colonnes sous SELECT ainsi que la condition `ON` sous `LEFT JOIN`.",
+        "line_breaks": "Placez `LEFT JOIN` sur sa propre ligne puis `ON` sur la ligne suivante indentée.",
+        "punctuation": "Utilisez `AS` explicitement pour les tables et agrégats, encadrez `=` d'espaces et terminez par `;`.",
+        "documentation_standard": "Précisez dans le commentaire `-- ` initial ce qui est compté et la conservation des cas à zéro."
+      },
+      "analogous_example": {
+        "title": "Effectif par département (y compris vides)",
+        "code": "-- Compter les employés par département y compris les départements vides\nSELECT\n  d.id,\n  COUNT(e.id) AS headcount\nFROM departments AS d\nLEFT JOIN employees AS e\n  ON d.id = e.dept_id\nGROUP BY d.id;\n",
+        "why_it_works": "La jointure `LEFT JOIN` et sa condition `ON` sont séparées, chaque alias est explicite avec `AS` et `COUNT(e.id)` renvoie 0 sans correspondance."
+      }
     },
     {
       "id": "sql-3",

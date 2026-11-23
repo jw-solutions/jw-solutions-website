@@ -16,27 +16,27 @@
       "tests": [
         {
           "id": "php1-t1",
-          "name": "Strict types",
+          "name": "Tipi rigorosi",
           "visible": true,
           "type": "pattern",
           "expected": "declare(strict_types=1);",
-          "description": "Enables PHP strict_types"
+          "description": "Abilita strict_types in PHP"
         },
         {
           "id": "php1-t2",
-          "name": "Typed signature",
+          "name": "Firma tipizzata",
           "visible": true,
           "type": "pattern",
           "expected": "string $name): string",
-          "description": "Declares parameter and return types"
+          "description": "Dichiara tipi di parametro e ritorno"
         },
         {
           "id": "php1-t3",
-          "name": "Empty string guard",
+          "name": "Guardia stringa vuota",
           "visible": false,
           "type": "pattern",
           "expected": "trim($name)",
-          "description": "Trims whitespace and handles empty input"
+          "description": "Rimuove spazi e gestisce input vuoto"
         }
       ],
       "style_rules": [
@@ -53,7 +53,7 @@
           "prompt": "Correggi l’errore di sintassi affinché il codice sia valido.",
           "starter_code": "<?php\n$x = 10\necho $x;",
           "expected_pattern": ";",
-          "solution_hint": "Add a semicolon `;` after `$x = 10`."
+          "solution_hint": "Aggiungi un punto e virgola `;` dopo `$x = 10`."
         },
         {
           "id": "php1-d-edge",
@@ -62,7 +62,7 @@
           "prompt": "Aggiungi il controllo difensivo per evitare errori.",
           "starter_code": "function first(array $a) { return $a[0]; }",
           "expected_pattern": "empty(",
-          "solution_hint": "Check `empty($a)` before accessing `$a[0]`."
+          "solution_hint": "Controlla `empty($a)` prima di accedere a `$a[0]`."
         },
         {
           "id": "php1-d-style",
@@ -71,7 +71,7 @@
           "prompt": "Applica lo standard ufficiale di formattazione e documentazione.",
           "starter_code": "<?php\nfunction ok(): bool { return true; }",
           "expected_pattern": "strict_types",
-          "solution_hint": "Add `declare(strict_types=1);` at the top."
+          "solution_hint": "Aggiungi `declare(strict_types=1);` all'inizio del file."
         }
       ]
     },
@@ -91,23 +91,23 @@
           "visible": true,
           "type": "pattern",
           "expected": "enum OrderStatus: string",
-          "description": "Replaces magic string with backed Enum"
+          "description": "Sostituisce stringhe magiche con un Backed Enum"
         },
         {
           "id": "php2-t2",
-          "name": "Readonly promotion",
+          "name": "Promozione readonly",
           "visible": true,
           "type": "pattern",
           "expected": "public readonly",
-          "description": "Uses constructor property promotion with readonly"
+          "description": "Usa la promozione delle proprietà con readonly"
         },
         {
           "id": "php2-t3",
-          "name": "PHPDoc comment",
+          "name": "Commento PHPDoc",
           "visible": false,
           "type": "pattern",
           "expected": "/**",
-          "description": "Includes PHPDoc block"
+          "description": "Include un blocco PHPDoc"
         }
       ],
       "style_rules": [
@@ -124,7 +124,7 @@
           "prompt": "Correggi l’errore di sintassi affinché il codice sia valido.",
           "starter_code": "enum Role: string { case Admin = \"admin\" }",
           "expected_pattern": ";",
-          "solution_hint": "End enum cases with `;`."
+          "solution_hint": "Termina i casi dell'enum con `;`."
         },
         {
           "id": "php2-d-edge",
@@ -133,7 +133,7 @@
           "prompt": "Aggiungi il controllo difensivo per evitare errori.",
           "starter_code": "OrderStatus::from($raw)",
           "expected_pattern": "tryFrom",
-          "solution_hint": "Use `tryFrom()` to safely handle unknown string values."
+          "solution_hint": "Usa `tryFrom()` per gestire in sicurezza stringhe sconosciute."
         },
         {
           "id": "php2-d-style",
@@ -142,7 +142,7 @@
           "prompt": "Applica lo standard ufficiale di formattazione e documentazione.",
           "starter_code": "class Item { public $id; }",
           "expected_pattern": "int $id",
-          "solution_hint": "Add explicit property type declarations."
+          "solution_hint": "Aggiungi dichiarazioni di tipo esplicite alle proprietà."
         }
       ]
     },

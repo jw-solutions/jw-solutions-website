@@ -10,7 +10,7 @@
       "tier": "free",
       "title": "PYTHON 1 · Clean Syntax & Formatting Basics",
       "estimatedMinutes": 5,
-      "concept_capsule": "Apply consistent indentation, clear naming, and official documentation so any team can read and audit the code in seconds.",
+      "concept_capsule": "PEP 8 and PEP 257 pair 4-space indentation with explicit type hints and concise docstrings so analytics scripts stay auditable and type-safe.",
       "starter_code": "def calc_tax(price,rate):\n if price<0:\n  return 0\n return price*rate",
       "reference_solution": "def calc_tax(price: float, rate: float) -> float:\n    \"\"\"Calculate tax amount for a non-negative price.\"\"\"\n    if price <= 0:\n        return 0.0\n    return round(price * rate, 2)\n",
       "tests": [
@@ -73,7 +73,35 @@
           "expected_pattern": "\"\"\"",
           "solution_hint": "Add a concise PEP 257 docstring inside the function."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "def ... -> float:",
+          "role": "Declares the function signature with explicit parameter and return types. In production, static checkers catch type mismatches before deployment.",
+          "example_inline": "def calc_discount(subtotal: float, pct: float) -> float:"
+        },
+        {
+          "term": "\"\"\"...\"\"\" (PEP 257)",
+          "role": "Documents the function contract on the first line inside `def`. In production, IDEs and doc generators surface behavior without reading internals.",
+          "example_inline": "\"\"\"Compute net discount for a positive subtotal.\"\"\""
+        },
+        {
+          "term": "if ... <= 0: return 0.0",
+          "role": "Early guard that exits on non-positive inputs before computing. In production, it prevents silent negative amounts in billing or KPIs.",
+          "example_inline": "if subtotal <= 0:\n    return 0.0"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Use strictly 4 spaces per block level; never use tab characters.",
+        "line_breaks": "Place the docstring on the first line of the function body and keep guard and main return on separate lines.",
+        "punctuation": "Put a space after commas and around binary operators (`<=`, `*`, `->`), with no space before `:`.",
+        "documentation_standard": "Add a PEP 257 triple-double-quoted docstring (`\"\"\"`) and explicit parameter/return type annotations."
+      },
+      "analogous_example": {
+        "title": "Safe commercial discount helper",
+        "code": "def calc_discount(subtotal: float, pct: float) -> float:\n    \"\"\"Return rounded discount amount for a positive subtotal.\"\"\"\n    if subtotal <= 0:\n        return 0.0\n    return round(subtotal * pct, 2)\n",
+        "why_it_works": "Applies 4-space indentation, `-> float` typing, a PEP 257 docstring, and a clean early guard in a separate domain."
+      }
     },
     {
       "id": "python-2",
@@ -81,7 +109,7 @@
       "tier": "free",
       "title": "PYTHON 2 · Edge Cases & Documentation",
       "estimatedMinutes": 8,
-      "concept_capsule": "Guard null or empty inputs before processing and document input/output contracts using the language standard.",
+      "concept_capsule": "Defensive collection processing validates empty inputs early (`if not ...:`), reads optional keys with `.get()`, and formats multi-line comprehensions cleanly.",
       "starter_code": "def parse_users(rows):\n res=[]\n for r in rows:\n  if r.get(\"active\"):\n   res.append(r[\"email\"].strip().lower())\n return res",
       "reference_solution": "def parse_users(rows: list[dict[str, object]]) -> list[str]:\n    \"\"\"Extract normalized active user emails.\"\"\"\n    if not rows:\n        return []\n    return [\n        str(row[\"email\"]).strip().lower()\n        for row in rows\n        if row.get(\"active\") and row.get(\"email\")\n    ]\n",
       "tests": [
@@ -145,7 +173,35 @@
           "expected_pattern": "-> str:",
           "solution_hint": "Annotate parameter and return type `-> str:`."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "if not collection:",
+          "role": "Returns an empty list immediately when input is empty or `None`. In production, it keeps ETL batches resilient on empty payloads.",
+          "example_inline": "if not records:\n    return []"
+        },
+        {
+          "term": "dict.get(\"key\")",
+          "role": "Reads an optional key without raising `KeyError`. In production, it shields pipelines from partial records returned by external APIs.",
+          "example_inline": "if rec.get(\"enabled\") and rec.get(\"tag\")"
+        },
+        {
+          "term": ".strip().lower()",
+          "role": "Trims stray whitespace and normalizes casing. In production, it prevents phantom duplicates when joining text keys.",
+          "example_inline": "str(rec[\"tag\"]).strip().lower()"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Indent 4 spaces per block and 4 spaces inside multi-line list comprehensions.",
+        "line_breaks": "Split long comprehensions across expression, `for`, and `if` lines to stay readable under 88 chars.",
+        "punctuation": "Use modern Python 3.12 generics (`list[dict[str, object]] -> list[str]`) and consistent double quotes.",
+        "documentation_standard": "Summarize the extraction and normalization contract in a PEP 257 docstring."
+      },
+      "analogous_example": {
+        "title": "Clean extraction of enabled tags",
+        "code": "def extract_active_tags(records: list[dict[str, object]]) -> list[str]:\n    \"\"\"Return normalized tags from enabled catalog records.\"\"\"\n    if not records:\n        return []\n    return [\n        str(rec[\"tag\"]).strip().lower()\n        for rec in records\n        if rec.get(\"enabled\") and rec.get(\"tag\")\n    ]\n",
+        "why_it_works": "Guards empty inputs and missing keys with `.get()`, normalizes strings, and breaks the comprehension cleanly at 4 spaces."
+      }
     },
     {
       "id": "python-3",

@@ -14,6 +14,9 @@
 - [x] ✅ Bloque 3: Loaders por Nicho (A/B/C), Defensas Anti-Scraping/Honeypots, Monetización Indirecta y Telemetría — 2026-11-22
 - [x] ✅ Exportación PAYPAL_* al VPS (`paypal_checkout` live activo) + Correos de Bienvenida y Cumpleaños Opcional (migración 0007 + plantillas Dark Glass Gold) — 2026-11-23
 - [x] ✅ Bloqueo secuencial real en Academia (incl. niveles Pro), guía tutorial colapsable + toggle asistencia + aviso inactividad en Editor, rediseño cards Planes PRO y pestaña PayPal siempre visible (local validado, pendiente de commit/push/deploy) — 2026-11-23
+- [x] ✅ Bloque A: Cimientos Pedagógicos (esquema curricular v2 + validador), enriquecimiento Data & BI (7 locales), limpieza i18n y ampliación `evaluateStyleRules()` localizado — 2026-11-23
+- [x] ✅ Bloque B: Experiencia Autodidacta en el Editor (panel tutorial en 4 pestañas sin spoilers, atajos de intención rápida y modo "Practicar con mi código" Antes vs. Después en 7 locales) — 2026-11-23
+- [x] ✅ Bloque C: Ejecución WASM en Cliente (`sql.js`/`Pyodide` bajo demanda + SRI real + `_headers`/`index.html` CSP), conexión `fetchProLevel()` en `selectLevel()`, `seed_academy_pro.py` en 7 locales (210 niveles) y `MemoryHigh=512M`/`MemoryMax=768M` en `deploy/jw-api.service` — 2026-11-23
 
 ## Pendientes Técnicos
 

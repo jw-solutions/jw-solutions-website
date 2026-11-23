@@ -10,33 +10,33 @@
       "tier": "free",
       "title": "DAX 1 · Fundamentos e formatação limpa",
       "estimatedMinutes": 5,
-      "concept_capsule": "Aplique indentação consistente, nomes claros e documentação padrão para que qualquer equipe leia e audite o código rapidamente.",
+      "concept_capsule": "No Power BI, estruturar medidas com `VAR`/`RETURN` e proteger a saída com `COALESCE` elimina cartões em `(Em branco)` e facilita auditorias.",
       "starter_code": "Total Sales:=SUM(Sales[Amount])",
       "reference_solution": "-- Total net sales measure\nTotal Sales :=\nVAR _TotalAmount = SUM ( Sales[Amount] )\nRETURN\n    COALESCE ( _TotalAmount, 0 )\n",
       "tests": [
         {
           "id": "dax1-t1",
-          "name": "Uses VAR/RETURN",
+          "name": "Usa VAR/RETURN",
           "visible": true,
           "type": "pattern",
           "expected": "VAR ",
-          "description": "Structures measure with VAR and RETURN"
+          "description": "Estrutura a medida com VAR e RETURN"
         },
         {
           "id": "dax1-t2",
-          "name": "Handles BLANK",
+          "name": "Trata BLANK",
           "visible": true,
           "type": "pattern",
           "expected": "COALESCE",
-          "description": "Uses COALESCE to avoid BLANK output"
+          "description": "Usa COALESCE para evitar retorno BLANK"
         },
         {
           "id": "dax1-t3",
-          "name": "Comment header",
+          "name": "Comentário inicial",
           "visible": false,
           "type": "pattern",
           "expected": "-- ",
-          "description": "Includes DAX comment header"
+          "description": "Inclui comentário de cabeçalho DAX"
         }
       ],
       "style_rules": [
@@ -53,7 +53,7 @@
           "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
           "starter_code": "Margin = VAR _x = SUM(Sales[Amt] RETURN _x",
           "expected_pattern": ")",
-          "solution_hint": "Close the parenthesis in `SUM ( Sales[Amt] )`."
+          "solution_hint": "Feche o parêntese em `SUM ( Sales[Amt] )`."
         },
         {
           "id": "dax1-d-edge",
@@ -62,7 +62,7 @@
           "prompt": "Adicione a validação defensiva para evitar falhas.",
           "starter_code": "Ratio = [A] / [B]",
           "expected_pattern": "DIVIDE",
-          "solution_hint": "Use `DIVIDE ( [A], [B], 0 )` to prevent division by zero."
+          "solution_hint": "Use `DIVIDE ( [A], [B], 0 )` para evitar divisão por zero."
         },
         {
           "id": "dax1-d-style",
@@ -71,9 +71,37 @@
           "prompt": "Aplique o padrão oficial de formatação e documentação.",
           "starter_code": "SalesTotal := SUM(Sales[Amount])",
           "expected_pattern": "RETURN",
-          "solution_hint": "Extract intermediate expressions into `VAR` and `RETURN`."
+          "solution_hint": "Extraia expressões intermediárias em `VAR` e `RETURN`."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "VAR _Nome =",
+          "role": "Armazena um cálculo intermediário avaliado uma única vez. Em produção, acelera a depuração no DAX Studio.",
+          "example_inline": "VAR _Units = SUM ( Inventory[Qty] )"
+        },
+        {
+          "term": "RETURN",
+          "role": "Define a expressão final devolvida pela medida. Em produção, separa claramente preparação e resultado.",
+          "example_inline": "RETURN\n    COALESCE ( _Units, 0 )"
+        },
+        {
+          "term": "COALESCE ( expr, 0 )",
+          "role": "Retorna o primeiro argumento não `BLANK`. Em produção, impede cartões executivos vazios quando não há dados no filtro.",
+          "example_inline": "COALESCE ( _Units, 0 )"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Recue em 4 espaços a expressão abaixo de `RETURN` conforme o DAX Formatter.",
+        "line_breaks": "Coloque o cabeçalho `:=`, cada `VAR` e `RETURN` em linhas próprias, com a saída recuada abaixo.",
+        "punctuation": "Use espaços ao redor de `:=` e `=` e dentro dos parênteses das funções (`SUM ( Tabela[Col] )`).",
+        "documentation_standard": "Inicie com um comentário `-- ` resumindo a regra de negócio da medida."
+      },
+      "analogous_example": {
+        "title": "Medida de unidades em estoque sem BLANK",
+        "code": "-- Total de unidades disponíveis em estoque\nTotal Units :=\nVAR _TotalQty = SUM ( Inventory[Qty] )\nRETURN\n    COALESCE ( _TotalQty, 0 )\n",
+        "why_it_works": "Aplica comentário `-- `, `VAR`/`RETURN`, espaçamento DAX Formatter e `COALESCE` em outra tabela."
+      }
     },
     {
       "id": "dax-2",
@@ -81,33 +109,33 @@
       "tier": "free",
       "title": "DAX 2 · Casos de borda e documentação",
       "estimatedMinutes": 8,
-      "concept_capsule": "Proteja entradas nulas ou vazias antes de processar e documente contratos com o padrão oficial da linguagem.",
+      "concept_capsule": "Substituir `/` por `DIVIDE(..., 0)` e guardar medidas repetidas em `VAR` evita erros `Infinity` e impede avaliações duplicadas no motor VertiPaq.",
       "starter_code": "Margin Pct:=([Sales]-[Cost])/[Sales]",
       "reference_solution": "-- Safe profit margin percentage using DIVIDE\nMargin Pct :=\nVAR _Sales = [Sales]\nVAR _Cost = [Cost]\nRETURN\n    DIVIDE ( _Sales - _Cost, _Sales, 0 )\n",
       "tests": [
         {
           "id": "dax2-t1",
-          "name": "Safe DIVIDE",
+          "name": "DIVIDE seguro",
           "visible": true,
           "type": "pattern",
           "expected": "DIVIDE",
-          "description": "Replaces `/` operator with DIVIDE"
+          "description": "Substitui o operador `/` por DIVIDE"
         },
         {
           "id": "dax2-t2",
-          "name": "VAR caching",
+          "name": "Cache em VAR",
           "visible": true,
           "type": "pattern",
           "expected": "VAR _Sales",
-          "description": "Caches [Sales] in a VAR to avoid double evaluation"
+          "description": "Armazena [Sales] em uma VAR para evitar dupla avaliação"
         },
         {
           "id": "dax2-t3",
-          "name": "Zero fallback",
+          "name": "Fallback zero",
           "visible": false,
           "type": "pattern",
           "expected": ", 0 )",
-          "description": "Provides 0 fallback on zero denominator"
+          "description": "Fornece 0 como alternativa para denominador zero"
         }
       ],
       "style_rules": [
@@ -124,7 +152,7 @@
           "prompt": "Corrija o erro de sintaxe para que o código seja válido.",
           "starter_code": "Pct := DIVIDE ( [A], [B] ",
           "expected_pattern": ")",
-          "solution_hint": "Close the `DIVIDE` function call."
+          "solution_hint": "Feche o parêntese da chamada `DIVIDE`."
         },
         {
           "id": "dax2-d-edge",
@@ -133,7 +161,7 @@
           "prompt": "Adicione a validação defensiva para evitar falhas.",
           "starter_code": "Pct := DIVIDE ( [A], [B] )",
           "expected_pattern": ", 0",
-          "solution_hint": "Pass `0` as the alternate result when `[B]` is zero."
+          "solution_hint": "Passe `0` como resultado alternativo quando `[B]` for zero."
         },
         {
           "id": "dax2-d-style",
@@ -142,9 +170,37 @@
           "prompt": "Aplique o padrão oficial de formatação e documentação.",
           "starter_code": "Pct := DIVIDE([A]-[B],[A],0)",
           "expected_pattern": "VAR ",
-          "solution_hint": "Use `VAR` variables for readability and performance."
+          "solution_hint": "Use variáveis `VAR` para legibilidade e desempenho."
         }
-      ]
+      ],
+      "keywords_glossary": [
+        {
+          "term": "DIVIDE ( num, den, 0 )",
+          "role": "Executa divisão segura retornando `0` se o denominador for zero ou `BLANK`. Em produção, evita `Infinity` em gráficos do Power BI.",
+          "example_inline": "DIVIDE ( _Shipped, _Ordered, 0 )"
+        },
+        {
+          "term": "VAR caching",
+          "role": "Avalia uma medida reutilizada apenas uma vez em `VAR`. Em produção, acelera relatórios sobre tabelas fato grandes.",
+          "example_inline": "VAR _Ordered = [Orders Placed]"
+        },
+        {
+          "term": "RETURN",
+          "role": "Calcula a taxa final reutilizando as variáveis em cache. Em produção, torna a revisão da fórmula imediata.",
+          "example_inline": "RETURN\n    DIVIDE ( _Shipped, _Ordered, 0 )"
+        }
+      ],
+      "formatting_mechanics": {
+        "indentation": "Mantenha `VAR` e `RETURN` à esquerda e recue `DIVIDE` em 4 espaços.",
+        "line_breaks": "Uma variável `VAR` por linha, depois `RETURN` e a expressão final abaixo.",
+        "punctuation": "Espaços dentro dos parênteses de `DIVIDE ( a, b, 0 )` e após cada vírgula.",
+        "documentation_standard": "Abra com `-- ` indicando a taxa calculada e a proteção contra divisão por zero."
+      },
+      "analogous_example": {
+        "title": "Taxa segura de atendimento logístico",
+        "code": "-- Taxa segura de pedidos despachados usando DIVIDE\nFulfillment Rate :=\nVAR _Ordered = [Orders Placed]\nVAR _Shipped = [Orders Shipped]\nRETURN\n    DIVIDE ( _Shipped, _Ordered, 0 )\n",
+        "why_it_works": "Armazena as medidas base em `VAR` e aplica `DIVIDE ( ..., 0 )` em um domínio logístico separado."
+      }
     },
     {
       "id": "dax-3",

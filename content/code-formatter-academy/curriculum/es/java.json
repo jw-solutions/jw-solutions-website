@@ -16,27 +16,27 @@
       "tests": [
         {
           "id": "java1-t1",
-          "name": "Javadoc present",
+          "name": "Javadoc presente",
           "visible": true,
           "type": "pattern",
           "expected": "@return",
-          "description": "Includes @return Javadoc tag"
+          "description": "Incluye la etiqueta @return de Javadoc"
         },
         {
           "id": "java1-t2",
-          "name": "Private constructor",
+          "name": "Constructor privado",
           "visible": true,
           "type": "pattern",
           "expected": "private Calc()",
-          "description": "Hides utility class constructor"
+          "description": "Oculta el constructor de la clase utilitaria"
         },
         {
           "id": "java1-t3",
-          "name": "Overflow protection",
+          "name": "Protección de desbordamiento",
           "visible": false,
           "type": "pattern",
           "expected": "Math.addExact",
-          "description": "Prevents silent integer overflow"
+          "description": "Previene desbordamiento silencioso de enteros"
         }
       ],
       "style_rules": [
@@ -53,7 +53,7 @@
           "prompt": "Corrige el error de sintaxis para que el código sea válido.",
           "starter_code": "public int id(int x) { return x }",
           "expected_pattern": ";",
-          "solution_hint": "End the return statement with a semicolon `;`."
+          "solution_hint": "Termina la sentencia `return` con punto y coma `;`."
         },
         {
           "id": "java1-d-edge",
@@ -62,7 +62,7 @@
           "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
           "starter_code": "int len = s.length();",
           "expected_pattern": "null",
-          "solution_hint": "Check `s == null` before calling `.length()`."
+          "solution_hint": "Comprueba `s == null` antes de llamar `.length()`."
         },
         {
           "id": "java1-d-style",
@@ -71,7 +71,7 @@
           "prompt": "Aplica el estándar oficial de formato y documentación.",
           "starter_code": "public int sum(int a, int b) { return a + b; }",
           "expected_pattern": "@param",
-          "solution_hint": "Document parameters with `@param` in Javadoc."
+          "solution_hint": "Documenta los parámetros con `@param` en Javadoc."
         }
       ]
     },
@@ -87,19 +87,19 @@
       "tests": [
         {
           "id": "java2-t1",
-          "name": "Uses Java record",
+          "name": "Usa Java record",
           "visible": true,
           "type": "pattern",
           "expected": "public record User",
-          "description": "Refactors boilerplate class into record"
+          "description": "Refactoriza la clase repetitiva en un record"
         },
         {
           "id": "java2-t2",
-          "name": "Null validation",
+          "name": "Validación de nulo",
           "visible": true,
           "type": "pattern",
           "expected": "Objects.requireNonNull",
-          "description": "Validates non-null email in compact constructor"
+          "description": "Valida email no nulo en el constructor compacto"
         },
         {
           "id": "java2-t3",
@@ -107,7 +107,7 @@
           "visible": false,
           "type": "pattern",
           "expected": "@param email",
-          "description": "Documents record component with @param"
+          "description": "Documenta el componente del record con @param"
         }
       ],
       "style_rules": [
@@ -124,7 +124,7 @@
           "prompt": "Corrige el error de sintaxis para que el código sea válido.",
           "starter_code": "public record Point(int x int y) {}",
           "expected_pattern": "int x, int y",
-          "solution_hint": "Separate record components with a comma."
+          "solution_hint": "Separa los componentes del record con una coma."
         },
         {
           "id": "java2-d-edge",
@@ -133,7 +133,7 @@
           "prompt": "Agrega la validación defensiva para evitar fallos en tiempo de ejecución.",
           "starter_code": "public record Tag(String name) {}",
           "expected_pattern": "requireNonNull",
-          "solution_hint": "Validate null inputs in the compact constructor."
+          "solution_hint": "Valida entradas nulas en el constructor compacto."
         },
         {
           "id": "java2-d-style",
@@ -142,7 +142,7 @@
           "prompt": "Aplica el estándar oficial de formato y documentación.",
           "starter_code": "public record Tag(String name) {}",
           "expected_pattern": "/**",
-          "solution_hint": "Add Javadoc above the public record."
+          "solution_hint": "Agrega Javadoc encima del record público."
         }
       ]
     },
