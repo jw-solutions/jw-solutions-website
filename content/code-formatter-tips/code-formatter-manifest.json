@@ -1300,6 +1300,151 @@
         }
       },
       "notified_at": "2026-11-19T22:02:42.998Z"
+    },
+    {
+      "slug": "typescript-discriminant-unions-exhaustive-type-checks-tsdoc",
+      "title": "TypeScript Exhaustivo: Refactorización de Enums y Switch con Uniones Discriminadas",
+      "language": "typescript",
+      "programming_language": "typescript",
+      "category": "Buenas prácticas",
+      "meta_description": "Aprende a eliminar enums frágiles en TypeScript usando uniones discriminadas y comprobación exhaustiva never con estándares TSDoc y Prettier.",
+      "summary": "Moderniza el manejo de estados en TypeScript migrando de enums numéricos a uniones discriminadas estrictas con comprobación exhaustiva en tiempo de compilación.",
+      "related_fix_slug": "ts-unterminated-string-literal",
+      "interactive_snippet": "type ApiResponse =\n  | { status: 'success'; data: { id: string; amount: number } }\n  | { status: 'error'; code: number; message: string };\n\nfunction handleResponse(res: ApiResponse): string {\n  switch (res.status) {\n    case 'success':\n      return `Pago procesado: ${res.data.id} por $${res.data.amount}`;\n    case 'error':\n      return `Fallo [${res.code}]: ${res.message}`;\n    default: {\n      const _exhaustive: never = res;\n      return _exhaustive;\n    }\n  }\n}",
+      "faq": [
+        {
+          "q": "¿Por qué usar un literal string en el discriminante en lugar de enums numéricos?",
+          "a": "Los literales string son serializables directamente en JSON sin transformaciones auxiliares, son más legibles en registros de auditoría y no generan código de objeto inverso en JavaScript transpilado."
+        },
+        {
+          "q": "¿Qué ventaja aporta asignar el default case a una variable de tipo never?",
+          "a": "Si en el futuro se añade una nueva variante a la unión (por ejemplo, 'reembolsada'), el compilador generará un error sintáctico inmediato si no se ha implementado el case correspondiente."
+        }
+      ],
+      "date": "2026-11-24",
+      "published_at": "2026-11-24",
+      "status": "COMPILED",
+      "locales": [
+        "es",
+        "de",
+        "en",
+        "fr",
+        "it",
+        "pt-BR",
+        "pt-PT"
+      ],
+      "file": "published/typescript-discriminant-unions-exhaustive-type-checks-tsdoc.md",
+      "sha256": "3e217545d9bea763b31e9b91ab6e9b77def0d77f87fcdbb3ef3c0187b7622280",
+      "translations": {
+        "de": {
+          "title": "Exhaustives TypeScript: Refactoring von Enums zu Diskriminierten Unions",
+          "category": "Buenas prácticas",
+          "meta_description": "Refaktorisieren Sie TypeScript-Code mit diskriminierten Unions und exhaustiver never-Prüfung nach modernen TSDoc- und Prettier-Standards.",
+          "summary": "Ersetzen Sie fehleranfällige Enums und optionale Felder in TypeScript durch diskriminierte Unions mit lückenloser Typprüfung zur Build-Zeit.",
+          "faq": [
+            {
+              "q": "Welche Schwachstelle haben klassische numerische TypeScript-Enums?",
+              "a": "Numerische Enums bieten keine echte Typsisolation gegenüber beliebigen Zahlen und generieren unnötigen JavaScript-Code im Build-Ergebnis."
+            },
+            {
+              "q": "Wie verhindert der Typ never Fehler beim Hinzufügen neuer Statuswerte?",
+              "a": "Wird die Union um einen neuen Zustand erweitert, schlägt die Zuweisung an never im default-Zweig fehl, bis das neue case-Statement ergänzt ist."
+            }
+          ],
+          "file": "published/typescript-discriminant-unions-exhaustive-type-checks-tsdoc.de.md",
+          "sha256": "d43613424b67296c094e686c4ec28994e3aff59d71878f6e4bb704e759d614ca"
+        },
+        "en": {
+          "title": "Exhaustive TypeScript: Refactoring Legacy Enums with Discriminated Unions",
+          "category": "Buenas prácticas",
+          "meta_description": "Upgrade legacy TypeScript codebases by replacing fragile enums with discriminated unions, exhaustive never checks, and clean TSDoc standards.",
+          "summary": "Modernize state modeling in enterprise TypeScript by ditching loose enums in favor of strict discriminated unions with compile-time exhaustive checks.",
+          "faq": [
+            {
+              "q": "Why favor string literal unions over traditional TypeScript enums?",
+              "a": "String literal unions serialize directly to JSON without companion code, leave zero runtime footprint in compiled output, and prevent enum reverse-mapping bugs."
+            },
+            {
+              "q": "How does the default never assignment enforce exhaustiveness?",
+              "a": "If a developer adds a new state variant to the union but forgets to write a switch case for it, TypeScript flags a compilation error because that variant cannot be assigned to never."
+            }
+          ],
+          "file": "published/typescript-discriminant-unions-exhaustive-type-checks-tsdoc.en.md",
+          "sha256": "c3f05dff110dfec17b8f2da4335f34f5cc7b6da5353eb76663c6516e3bcc8f19"
+        },
+        "fr": {
+          "title": "TypeScript Exhaustif : Refactoring des Enums vers les Unions Discriminées",
+          "category": "Buenas prácticas",
+          "meta_description": "Modernisez vos bases TypeScript en remplaçant les enums fragiles par des unions discriminées, le contrôle exhaustif never et les normes TSDoc.",
+          "summary": "Passez des enums numériques et interfaces ambiguës aux unions discriminées strictes en TypeScript avec vérification d'exhaustivité au build.",
+          "faq": [
+            {
+              "q": "Pourquoi préférer les chaînes littérales aux enums numériques traditionnels ?",
+              "a": "Les chaînes littérales s'intègrent nativement au JSON sans logique de conversion et ne génèrent aucun code JavaScript superflu lors de la compilation."
+            },
+            {
+              "q": "Comment le type never assure-t-il la sécurité lors des évolutions du code ?",
+              "a": "Si un développeur ajoute un nouvel état dans l'union sans implémenter son cas dans le switch, TypeScript refuse la compilation grâce au garde never."
+            }
+          ],
+          "file": "published/typescript-discriminant-unions-exhaustive-type-checks-tsdoc.fr.md",
+          "sha256": "360c5e90c3861a21a469acdf61836c8348cf16a97e157d90017ee159cb7f5921"
+        },
+        "it": {
+          "title": "TypeScript Esaustivo: Refactoring da Enum a Unioni Discriminate",
+          "category": "Buenas prácticas",
+          "meta_description": "Riscrivi il codice TypeScript legacy rimpiazzando enum instabili con unioni discriminate, controllo esaustivo never e standard TSDoc.",
+          "summary": "Elimina interfacce opzionali e vecchi enum numerici adottando le unioni discriminate in TypeScript con controllo esaustivo in fase di build.",
+          "faq": [
+            {
+              "q": "Quale vantaggio offrono i letterali stringa rispetto agli enum TypeScript standard?",
+              "a": "Non generano funzioni IIFE accessorie nel file compilato e si integrano perfettamente nelle API REST serializzate in formato JSON."
+            },
+            {
+              "q": "In che modo il controllo default con never previene i bug nelle release future?",
+              "a": "Se viene aggiunto un nuovo valore all'unione senza aggiornare tutti i blocchi switch correlati, il compilatore genera un errore di compilazione immediato."
+            }
+          ],
+          "file": "published/typescript-discriminant-unions-exhaustive-type-checks-tsdoc.it.md",
+          "sha256": "ee31e4a1b0582bd4088928951b73809e208c4eed4fb9029f33a3419d64812547"
+        },
+        "pt-BR": {
+          "title": "TypeScript Exaustivo: Refatorando Enums Legados com Uniões Discriminadas",
+          "category": "Buenas prácticas",
+          "meta_description": "Modernize código legado em TypeScript substituindo enums frágeis por uniões discriminadas e verificação exaustiva com never e TSDoc.",
+          "summary": "Substitua interfaces ambíguas e enums legados por uniões discriminadas no TypeScript estrito, garantindo verificação total em tempo de compilação.",
+          "faq": [
+            {
+              "q": "Qual o perigo prático de utilizar enums numéricos tradicionais?",
+              "a": "Enums numéricos permitem atribuições acidentais de números arbitrários e geram funções autoexecutáveis desnecessárias no JavaScript gerado."
+            },
+            {
+              "q": "O que ocorre no build quando uma nova variante é criada sem atualizar o switch?",
+              "a": "O compilador TypeScript acusa erro imediato na linha do const _invalido: never, pois a nova variante não atinge a tipagem never."
+            }
+          ],
+          "file": "published/typescript-discriminant-unions-exhaustive-type-checks-tsdoc.pt-BR.md",
+          "sha256": "c1ae2b1c204a20392e63075b93881c95aa6750ffeba72cb178b17e2a14c756f9"
+        },
+        "pt-PT": {
+          "title": "TypeScript Exaustivo: Refatoração de Enums com Uniões Discriminadas",
+          "category": "Buenas prácticas",
+          "meta_description": "Elimine enums numéricos frágeis no TypeScript moderno com uniões discriminadas, verificação exaustiva com never e anotações TSDoc.",
+          "summary": "Substitua interfaces difusas e enums legados por uniões discriminadas robustas no TypeScript, com validação estrita em tempo de compilação.",
+          "faq": [
+            {
+              "q": "Por que razão os tipos literais são preferíveis aos enums no TypeScript atual?",
+              "a": "Os literais de string não requerem emissão de código JavaScript suplementar e são serializados diretamente em JSON sem mapeamentos invertidos."
+            },
+            {
+              "q": "De que forma o default com tipo never previne erros em produção?",
+              "a": "Se um colega de equipa adicionar um novo estado ao modelo e esquecer-se do respetivo branch no switch, o TypeScript recusa compilar o projeto."
+            }
+          ],
+          "file": "published/typescript-discriminant-unions-exhaustive-type-checks-tsdoc.pt-PT.md",
+          "sha256": "0203ba18b61c46dd2e302d11e9060bacbe7eaff1afe6f3079b7b10316d2cadae"
+        }
+      }
     }
   ]
 }

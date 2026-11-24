@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>de</language>
-    <lastBuildDate>Mon, 23 Nov 2026 19:29:25 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 23:25:26 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -19,6 +19,39 @@
     <atom:link rel="alternate" type="application/rss+xml" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/feed.fr.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/feed.de.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/feed.it.xml"/>
+    <item>
+      <title>Exhaustives TypeScript: Refactoring von Enums zu Diskriminierten Unions</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/de/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/de/</guid>
+      <pubDate>Tue, 24 Nov 2026 14:00:00 +0000</pubDate>
+      <category>TYPESCRIPT</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-de.png" medium="image" />
+      <description>Ersetzen Sie fehleranfällige Enums und optionale Felder in TypeScript durch diskriminierte Unions mit lückenloser Typprüfung zur Build-Zeit.</description>
+      <content:encoded><![CDATA[<p>Ersetzen Sie fehleranfällige Enums und optionale Felder in TypeScript durch diskriminierte Unions mit lückenloser Typprüfung zur Build-Zeit.</p><pre><code>// Anti-Pattern: Monolithisches Interface mit unsicheren optionalen Feldern
+enum TransaktionsStatus {
+  OFFEN = 0,
+  ERFOLGREICH = 1,
+  FEHLGESCHLAGEN = 2,
+}
+
+interface LegacyTransaktion {
+  id: string;
+  status: TransaktionsStatus;
+  belegId?: string; // Nur vorhanden bei ERFOLGREICH
+  fehlermeldung?: string; // Nur vorhanden bei FEHLGESCHLAGEN
+  fehlerCode?: number; // Nur vorhanden bei FEHLGESCHLAGEN
+}
+
+function verarbeiteTransaktion(tx: LegacyTransaktion): string {
+  if (tx.status === TransaktionsStatus.ERFOLGREICH) {
+    return `Beleg: ${tx.belegId!}`;
+  }
+  if (tx.status === TransaktionsStatus.FEHLGESCHLAGEN) {
+    return `Fehler: ${tx.fehlermeldung ?? &#x27;Unbekannt&#x27;}`;
+  }
+  return &#x27;Warten&#x27;;
+}</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/de/">Exhaustives TypeScript: Refactoring von Enums zu Diskriminierten Unions</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Modernes DAX: VAR/RETURN-Formatierung und KI-Auto-Dokumentation</title>
       <link>https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/de/</link>

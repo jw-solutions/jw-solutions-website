@@ -143,7 +143,7 @@ export function processUserDataStrict(data: unknown): boolean {
         <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="https://jw-solutions.com/tools/code-formatter/?lang=pt-PT&amp;snippet=export%20interface%20UserProfile%20%7B%0A%20%20id%3A%20string%3B%0A%20%20role%3A%20%27admin%27%20%7C%20%27user%27%3B%0A%7D%0A%0Aexport%20function%20isUserProfile%28payload%3A%20unknown%29%3A%20payload%20is%20UserProfile%20%7B%0A%20%20return%20%28%0A%20%20%20%20typeof%20payload%20%3D%3D%3D%20%27object%27%20%26%26%0A%20%20%20%20payload%20%21%3D%3D%20null%20%26%26%0A%20%20%20%20%27id%27%20in%20payload%20%26%26%0A%20%20%20%20typeof%20%28payload%20as%20Record%3Cstring%2C%20unknown%3E%29.id%20%3D%3D%3D%20%27string%27%20%26%26%0A%20%20%20%20%27role%27%20in%20payload%20%26%26%0A%20%20%20%20%5B%27admin%27%2C%20%27user%27%5D.includes%28%28payload%20as%20Record%3Cstring%2C%20unknown%3E%29.role%20as%20string%29%0A%20%20%29%3B%0A%7D">Experimentar excerto no formatador</a></p>
         <p><a class="cf-nav__link" href="https://jw-solutions.com/tools/code-formatter/fix/ts-unterminated-string-literal/?lang=pt-PT">Ver guia de correção de erros: Como corrigir TS1002: Unterminated string literal em TypeScript 5.5</a></p>
         <h2 class="cf-tip__h">Dicas relacionadas</h2>
-        <ul class="cf-fix__list"><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/pt-PT/">PEP 8 em Python 3.12: como escrever blocos match/case legíveis</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/pt-PT/">TypeScript moderno: ?., ?? e satisfies sem erros de formatação</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/pt-PT/">SQL e DAX: três hábitos para consultas rápidas e legíveis</a></li></ul>
+        <ul class="cf-fix__list"><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/pt-PT/">TypeScript Exaustivo: Refatoração de Enums com Uniões Discriminadas</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/pt-PT/">PEP 8 em Python 3.12: como escrever blocos match/case legíveis</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/pt-PT/">TypeScript moderno: ?., ?? e satisfies sem erros de formatação</a></li></ul>
       </div>
     </section>
   </main>
@@ -220,6 +220,10 @@ export function processUserDataStrict(data: unknown): boolean {
       <div id="cf-tips-viewport" class="cf-tips-viewport" role="region" data-i18n-aria="tipsCarouselAria" aria-label="Carrusel de guías técnicas">
         <div id="cf-tips-track" class="cf-tips-track">
           <!-- CF_TIPS_FALLBACK_START -->
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">TYPESCRIPT</span><time class="cf-tip-carousel-card__date" datetime="2026-11-24">2026-11-24</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/pt-PT/">TypeScript Exaustivo: Refatoração de Enums com Uniões Discriminadas</a></h3>
+          </article>
           <article class="cf-card cf-tip-carousel-card">
             <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">DAX</span><time class="cf-tip-carousel-card__date" datetime="2026-11-19">2026-11-19</time></div>
             <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/pt-PT/">DAX Avançado: Estruturação com VAR/RETURN e Auto-Documentação com IA</a></h3>

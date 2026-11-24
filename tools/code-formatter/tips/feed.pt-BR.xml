@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>pt-BR</language>
-    <lastBuildDate>Mon, 23 Nov 2026 19:29:25 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 23:25:26 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -19,6 +19,40 @@
     <atom:link rel="alternate" type="application/rss+xml" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/feed.fr.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/feed.de.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/feed.it.xml"/>
+    <item>
+      <title>TypeScript Exaustivo: Refatorando Enums Legados com Uniões Discriminadas</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/pt-BR/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/pt-BR/</guid>
+      <pubDate>Tue, 24 Nov 2026 14:00:00 +0000</pubDate>
+      <category>TYPESCRIPT</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-pt-BR.png" medium="image" />
+      <description>Substitua interfaces ambíguas e enums legados por uniões discriminadas no TypeScript estrito, garantindo verificação total em tempo de compilação.</description>
+      <content:encoded><![CDATA[<p>Substitua interfaces ambíguas e enums legados por uniões discriminadas no TypeScript estrito, garantindo verificação total em tempo de compilação.</p><pre><code>// Antipadronização: interface genérica com campos opcionais e enum
+enum StatusTransacao {
+  PENDENTE = 0,
+  CONCLUIDA = 1,
+  FALHA = 2,
+}
+
+interface TransacaoLegada {
+  id: string;
+  status: StatusTransacao;
+  comprovanteId?: string; // Presente apenas se CONCLUIDA
+  motivoErro?: string; // Presente apenas se FALHA
+  codigoErro?: number; // Presente apenas se FALHA
+}
+
+function processarTransacao(tx: TransacaoLegada): string {
+  if (tx.status === StatusTransacao.CONCLUIDA) {
+    // Requer asserção arriscada &#x27;!&#x27;
+    return `Sucesso: recibo ${tx.comprovanteId!}`;
+  }
+  if (tx.status === StatusTransacao.FALHA) {
+    return `Erro: ${tx.motivoErro ?? &#x27;Desconhecido&#x27;}`;
+  }
+  return &#x27;Pendente&#x27;;
+}</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/pt-BR/">TypeScript Exaustivo: Refatorando Enums Legados com Uniões Discriminadas</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>DAX Moderno: Formatação com VAR/RETURN e Auto-Documentação com IA</title>
       <link>https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/pt-BR/</link>

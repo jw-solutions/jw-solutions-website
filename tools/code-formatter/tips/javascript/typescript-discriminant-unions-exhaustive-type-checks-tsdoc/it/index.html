@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TypeScript Esaustivo: Refactoring da Enum a Unioni Discriminate | Code Formatter &amp; Auto-Doc AI</title>
+  <meta name="description" content="Riscrivi il codice TypeScript legacy rimpiazzando enum instabili con unioni discriminate, controllo esaustivo never e standard TSDoc.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="canonical" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/it/">
+  <link rel="alternate" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/es/">
+  <link rel="alternate" hreflang="en" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/en/">
+  <link rel="alternate" hreflang="pt-BR" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/pt-BR/">
+  <link rel="alternate" hreflang="pt-PT" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/pt-PT/">
+  <link rel="alternate" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/fr/">
+  <link rel="alternate" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/de/">
+  <link rel="alternate" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/it/">
+  <link rel="alternate" hreflang="x-default" href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/es/">
+  <link rel="alternate" type="application/rss+xml" title="Code Formatter &amp; Auto-Doc AI Tips" href="https://jw-solutions.com/tools/code-formatter/tips/feed.it.xml">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="JW Solutions">
+  <meta property="og:title" content="TypeScript Esaustivo: Refactoring da Enum a Unioni Discriminate | Code Formatter &amp; Auto-Doc AI">
+  <meta property="og:description" content="Riscrivi il codice TypeScript legacy rimpiazzando enum instabili con unioni discriminate, controllo esaustivo never e standard TSDoc.">
+  <meta property="og:url" content="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/it/">
+  <meta property="og:locale" content="it_IT">
+  <meta property="og:image" content="https://jw-solutions.com/assets/images/og/tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-it.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TypeScript Esaustivo: Refactoring da Enum a Unioni Discriminate | Code Formatter &amp; Auto-Doc AI">
+  <meta name="twitter:description" content="Riscrivi il codice TypeScript legacy rimpiazzando enum instabili con unioni discriminate, controllo esaustivo never e standard TSDoc.">
+  <meta name="twitter:image" content="https://jw-solutions.com/assets/images/og/tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-it.png">
+  <meta name="theme-color" content="#0b0f17">
+  <meta name="cf-newsletter-endpoint" content="https://api.jw-solutions.com/api/newsletter/subscribe">
+  <link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
+  <link rel="icon" type="image/x-icon" sizes="any" href="../../../../favicon.ico">
+  <link rel="apple-touch-icon" href="../../../../apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../../../../../assets/css/tools/code-formatter.css">
+  <script type="application/ld+json" id="cf-jsonld">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "TypeScript Esaustivo: Refactoring da Enum a Unioni Discriminate", "description": "Riscrivi il codice TypeScript legacy rimpiazzando enum instabili con unioni discriminate, controllo esaustivo never e standard TSDoc.", "inLanguage": "it", "articleSection": "Buenas prácticas", "keywords": "typescript, code formatter, auto-doc ai, syntax, best practices", "datePublished": "2026-11-24", "dateModified": "2026-11-24", "url": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/it/", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/it/"}, "isPartOf": {"@type": "WebApplication", "name": "Code Formatter & Auto-Doc AI", "url": "https://jw-solutions.com/tools/code-formatter/"}, "image": "https://jw-solutions.com/assets/images/og/tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-it.png", "author": {"@type": "Organization", "name": "JW Solutions"}, "publisher": {"@type": "Organization", "name": "JW Solutions", "url": "https://jw-solutions.com"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Code Formatter", "item": "https://jw-solutions.com/tools/code-formatter/"}, {"@type": "ListItem", "position": 2, "name": "Buenas prácticas", "item": "https://jw-solutions.com/tools/code-formatter/tips/javascript/"}, {"@type": "ListItem", "position": 3, "name": "TypeScript Esaustivo: Refactoring da Enum a Unioni Discriminate", "item": "https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/it/"}]}, {"@type": "FAQPage", "inLanguage": "it", "mainEntity": [{"@type": "Question", "name": "Quale vantaggio offrono i letterali stringa rispetto agli enum TypeScript standard?", "acceptedAnswer": {"@type": "Answer", "text": "Non generano funzioni IIFE accessorie nel file compilato e si integrano perfettamente nelle API REST serializzate in formato JSON."}}, {"@type": "Question", "name": "In che modo il controllo default con never previene i bug nelle release future?", "acceptedAnswer": {"@type": "Answer", "text": "Se viene aggiunto un nuovo valore all'unione senza aggiornare tutti i blocchi switch correlati, il compilatore genera un errore di compilazione immediato."}}]}]}</script>
+</head>
+<body class="cf-body">
+  <a class="cf-skip" href="#cf-main" data-i18n="skip">Saltar al contenido</a>
+
+  <header class="cf-header">
+    <div class="cf-container cf-header__inner">
+      <div class="cf-logo" role="img" aria-label="JW Solutions">
+        <span class="cf-logo__mark">JW</span>
+        <span class="cf-logo__text">SOLUTIONS</span>
+      </div>
+      <nav class="cf-nav" aria-label="Code Formatter">
+        <select id="cf-ui-lang" class="cf-select cf-select--compact" data-i18n-aria="uiLang" aria-label="Idioma de la interfaz"></select>
+        <a class="cf-nav__link" data-site-link data-i18n="tipsBackTool" href="../../../../">Volver al formateador</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="cf-main" class="cf-main" data-fix-data="">
+    <section class="cf-container cf-hero">
+      <span class="cf-tag" data-i18n="fixTag">Buenas prácticas</span>
+      <h1 id="cf-fix-title" class="cf-title">TypeScript Esaustivo: Refactoring da Enum a Unioni Discriminate</h1>
+      <p id="cf-fix-lead" class="cf-lead cf-fix__lead">Riscrivi il codice TypeScript legacy rimpiazzando enum instabili con unioni discriminate, controllo esaustivo never e standard TSDoc.</p>
+    </section>
+    <section class="cf-container cf-tips">
+      <div id="cf-fix-body" class="cf-card cf-tip">
+        <p class="cf-muted cf-tip__meta">2026-11-24 · Buenas prácticas · TYPESCRIPT</p>
+        <h2 class="cf-tip__h">Eliminare l&#x27;Ambiguità di Stato nel Codice Legacy</h2>
+        <p>Nei progetti TypeScript non aggiornati, la gestione dei flussi applicativi ricorre spesso a <code>enum</code> numerici combinati con interfacce sature di attributi opzionali. Tale convenzione introduce proprietà di tipo <code>undefined | T</code>, costringendo gli sviluppatori a utilizzare asserzioni di non-nullità pericolose (<code>!</code>) o conversioni forzate (<code>as</code>).</p>
+        <p>Adottando le unioni discriminate (*discriminated unions*), ogni stato esprime unicamente i campi validi per quello specifico scenario. Il compilatore di TypeScript applica il restringimento dei tipi (*type narrowing*) in maniera automatica e sicura.</p>
+        <h3 class="cf-tip__h">Codice Legacy (Prima)</h3>
+        <p>Il modello precedente impone al programmatore di presumere quali campi siano effettivamente popolati in base al valore dell&#x27;enum.</p>
+        <pre class="cf-tip__code"><code>// Anti-pattern: interfaccia monolitica con troppi campi opzionali
+enum StatoPagamento {
+  IN_ATTESA = 0,
+  COMPLETATO = 1,
+  FALLITO = 2,
+}
+
+interface TransazioneLegacy {
+  id: string;
+  stato: StatoPagamento;
+  ricevutaId?: string; // Presente solo se COMPLETATO
+  motivoErrore?: string; // Presente solo se FALLITO
+  codiceErrore?: number; // Presente solo se FALLITO
+}
+
+function gestisciTransazione(tx: TransazioneLegacy): string {
+  if (tx.stato === StatoPagamento.COMPLETATO) {
+    return `Approvato: ricevuta ${tx.ricevutaId!}`;
+  }
+  if (tx.stato === StatoPagamento.FALLITO) {
+    return `Errore: ${tx.motivoErrore ?? &#x27;Sconosciuto&#x27;}`;
+  }
+  return &#x27;In attesa&#x27;;
+}</code></pre>
+        <h3 class="cf-tip__h">Implementazione Moderna in TypeScript Rigoroso (Dopo)</h3>
+        <p>Sostituiamo l&#x27;enum con un&#x27;unione discriminata immutabile associata a un controllo esaustivo affidato al tipo <code>never</code>.</p>
+        <pre class="cf-tip__code"><code>/**
+ * Rappresenta i diversi stati atomici di una transazione finanziaria.
+ */
+export type Transazione =
+  | { readonly stato: &#x27;in_attesa&#x27;; readonly id: string }
+  | { readonly stato: &#x27;completato&#x27;; readonly id: string; readonly ricevutaId: string; readonly importoCentesimi: number }
+  | { readonly stato: &#x27;fallito&#x27;; readonly id: string; readonly codiceErrore: number; readonly motivoErrore: string };
+
+/**
+ * Gestisce la transazione assicurando copertura esaustiva al 100% in compilazione.
+ *
+ * @param tx - Istanza della transazione tipizzata con unione discriminata.
+ * @returns Stringa descrittiva per log o visualizzazione.
+ * @throws {TypeError} Qualora uno stato non gestito pervenga a runtime.
+ */
+export function gestisciTransazione(tx: Transazione): string {
+  switch (tx.stato) {
+    case &#x27;in_attesa&#x27;:
+      return `Transazione ${tx.id} in attesa di risposta bancaria.`;
+    case &#x27;completato&#x27;:
+      return `Transazione ${tx.id} completata. Ricevuta: ${tx.ricevutaId}. Totale: € ${(tx.importoCentesimi / 100).toFixed(2)}`;
+    case &#x27;fallito&#x27;:
+      return `Transazione ${tx.id} rifiutata (Codice ${tx.codiceErrore}): ${tx.motivoErrore}`;
+    default: {
+      // Controllo di esaustività: fallisce la compilazione se viene omesso un ramo
+      const _irraggiungibile: never = tx;
+      throw new TypeError(`Stato non gestito: ${JSON.stringify(_irraggiungibile)}`);
+    }
+  }
+}</code></pre>
+        <h2 class="cf-tip__h">Auto-Documentazione e Standard di Qualità</h2>
+        <p>1. <strong>TSDoc Dettagliato</strong>: Specifica con precisione <code>@param</code>, <code>@returns</code> e <code>@throws</code> per descrivere i limiti operativi delle funzioni. 2. <strong>Immutabilità con `readonly`</strong>: Difende l&#x27;integrità del payload da modifiche non volute durante il flusso di lavoro. 3. <strong>Formattazione Prettier</strong>: Imposta il carattere pipe (<code>|</code>) a inizio riga per unire pulizia visiva e facilità di lettura nei diff dei commit.</p>
+        <section class="cf-tip-faq" aria-labelledby="cf-faq-title">
+          <h2 id="cf-faq-title" class="cf-tip__h">Domande frequenti</h2>
+          <details class="cf-faq__item"><summary>Quale vantaggio offrono i letterali stringa rispetto agli enum TypeScript standard?</summary><p>Non generano funzioni IIFE accessorie nel file compilato e si integrano perfettamente nelle API REST serializzate in formato JSON.</p></details>
+          <details class="cf-faq__item"><summary>In che modo il controllo default con never previene i bug nelle release future?</summary><p>Se viene aggiunto un nuovo valore all&#x27;unione senza aggiornare tutti i blocchi switch correlati, il compilatore genera un errore di compilazione immediato.</p></details>
+        </section>
+        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="https://jw-solutions.com/tools/code-formatter/?lang=it&amp;snippet=type%20ApiResponse%20%3D%0A%20%20%7C%20%7B%20status%3A%20%27success%27%3B%20data%3A%20%7B%20id%3A%20string%3B%20amount%3A%20number%20%7D%20%7D%0A%20%20%7C%20%7B%20status%3A%20%27error%27%3B%20code%3A%20number%3B%20message%3A%20string%20%7D%3B%0A%0Afunction%20handleResponse%28res%3A%20ApiResponse%29%3A%20string%20%7B%0A%20%20switch%20%28res.status%29%20%7B%0A%20%20%20%20case%20%27success%27%3A%0A%20%20%20%20%20%20return%20%60Pago%20procesado%3A%20%24%7Bres.data.id%7D%20por%20%24%24%7Bres.data.amount%7D%60%3B%0A%20%20%20%20case%20%27error%27%3A%0A%20%20%20%20%20%20return%20%60Fallo%20%5B%24%7Bres.code%7D%5D%3A%20%24%7Bres.message%7D%60%3B%0A%20%20%20%20default%3A%20%7B%0A%20%20%20%20%20%20const%20_exhaustive%3A%20never%20%3D%20res%3B%0A%20%20%20%20%20%20return%20_exhaustive%3B%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D">Prova lo snippet nel formattatore</a></p>
+        <p><a class="cf-nav__link" href="https://jw-solutions.com/tools/code-formatter/fix/ts-unterminated-string-literal/?lang=it">Vedi guida alla correzione: Come risolvere TS1002: Unterminated string literal in TypeScript 5.5</a></p>
+        <h2 class="cf-tip__h">Suggerimenti correlati</h2>
+        <ul class="cf-fix__list"><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/it/">Refactoring del Tipo any in TypeScript con Type Guard e TSDoc</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/it/">PEP 8 in Python 3.12: scrivere blocchi match/case leggibili</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/it/">TypeScript moderno: ?., ?? e satisfies senza errori di formattazione</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+      <section class="cf-card cf-share" data-cf-share="1" data-share-url="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/it/" data-share-title="TypeScript Esaustivo: Refactoring da Enum a Unioni Discriminate" aria-label="Condividi articolo">
+        <h2 class="cf-share__title">Condividi articolo</h2>
+        <div class="cf-share__actions">
+          <button type="button" class="cf-share__btn cf-share__btn--primary" data-cf-share-native hidden>Condividi</button>
+          <a class="cf-share__btn" data-cf-share-net="linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fjw-solutions.com%2Ftools%2Fcode-formatter%2Ftips%2Fjavascript%2Ftypescript-discriminant-unions-exhaustive-type-checks-tsdoc%2Fit%2F" target="_blank" rel="noopener noreferrer" aria-label="Condividi su LinkedIn">LinkedIn</a>
+          <a class="cf-share__btn" data-cf-share-net="x" href="https://twitter.com/intent/tweet?text=TypeScript%20Esaustivo%3A%20Refactoring%20da%20Enum%20a%20Unioni%20Discriminate&amp;url=https%3A%2F%2Fjw-solutions.com%2Ftools%2Fcode-formatter%2Ftips%2Fjavascript%2Ftypescript-discriminant-unions-exhaustive-type-checks-tsdoc%2Fit%2F" target="_blank" rel="noopener noreferrer" aria-label="Condividi su X">X</a>
+          <a class="cf-share__btn" data-cf-share-net="whatsapp" href="https://api.whatsapp.com/send?text=TypeScript%20Esaustivo%3A%20Refactoring%20da%20Enum%20a%20Unioni%20Discriminate%20https%3A%2F%2Fjw-solutions.com%2Ftools%2Fcode-formatter%2Ftips%2Fjavascript%2Ftypescript-discriminant-unions-exhaustive-type-checks-tsdoc%2Fit%2F" target="_blank" rel="noopener noreferrer" aria-label="Condividi su WhatsApp">WhatsApp</a>
+          <button type="button" class="cf-share__btn" data-cf-share-copy="1" data-copied-msg="Link copiato!" data-copy-fail-msg="Impossibile copiare il link.">Copia link</button>
+        </div>
+        <p class="cf-share__status" role="status" aria-live="polite"></p>
+      </section>
+
+      <aside class="cf-card cf-academy-funnel-cta" aria-label="Academy">
+        <span class="cf-tag">Accademia Guidata</span>
+        <h2 class="cf-tip__h">Padroneggia questo concetto passo dopo passo in Modalità Accademia</h2>
+        <p class="cf-muted">Esercitati per livelli con validazione dal vivo. Inizia gratis e scopri i percorsi Pro della piattaforma.</p>
+        <div class="cf-tip-modal__actions">
+          <a class="cf-btn cf-btn--primary" href="../../../../?mode=learn&amp;lang=it&amp;topic=typescript&amp;level=1&amp;utm_source=tips_article&amp;utm_medium=bottom_cta&amp;utm_campaign=typescript-discriminant-unions-exhaustive-type-checks-tsdoc">Pratica in Modalità Accademia</a>
+          <a class="cf-btn cf-btn--secondary" href="../../../../?mode=learn&amp;lang=it&amp;topic=typescript&amp;open_plans=1">Vedi modalità</a>
+        </div>
+      </aside>
+
+  <section class="cf-tips-showcase" id="cf-weekly-tips" aria-labelledby="cf-tips-showcase-title">
+    <div class="cf-container">
+      <div class="cf-tips-showcase__head">
+        <div class="cf-tips-showcase__intro">
+          <span class="cf-tag" data-i18n="tipsShowcaseTag">Actualizaciones &amp; Guías Técnicas</span>
+          <h2 id="cf-tips-showcase-title" class="cf-tips-showcase__title" data-i18n="tipsShowcaseTitle">Weekly Tips de Código y Buenas Prácticas</h2>
+          <p class="cf-muted cf-tips-showcase__sub" data-i18n="tipsShowcaseSubtitle">Guías prácticas por lenguaje, estándares modernos y ejemplos listos para probar en el editor.</p>
+        </div>
+        <span id="cf-tips-count" class="cf-badge cf-tips-showcase__count" aria-live="polite"></span>
+      </div>
+
+      <div class="cf-channels-bar" role="region" data-i18n-aria="tipsChannelsLabel" aria-label="Disponible también en nuestros canales automáticos:">
+        <span class="cf-channels-bar__label" data-i18n="tipsChannelsLabel">Disponible también en nuestros canales automáticos:</span>
+        <div class="cf-channels-bar__list">
+          <a class="cf-channel-link" href="https://dev.to/jwsolutions" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelDevto" aria-label="Dev.to" title="Dev.to">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6v4.36h.58c.37 0 .65-.08.84-.23.21-.16.31-.46.31-.92v-2.06c0-.46-.1-.76-.31-.92zM20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM9.06 13.09c0 .77-.21 1.38-.62 1.81-.42.44-1.02.66-1.81.66H4.7V8.44h1.95c.78 0 1.37.21 1.79.64.42.42.62 1.01.62 1.77v2.24zm4.82-3.27h-2.1v1.45h1.5v1.36h-1.5v1.55h2.1v1.38h-3.54V8.44h3.54v1.38zm5.16 5.74h-1.4l-1.56-5.26-.04-.17-.04.17-.95 5.26h-1.4l-1.36-7.12h1.45l.68 4.41.05.33.06-.33.92-4.41h1.21l.93 4.41.06.33.05-.33.68-4.41h1.42l-1.36 7.12z"/></svg>
+          </a>
+          <a class="cf-channel-link" href="https://bsky.app/profile/jwsolutions.bsky.social" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelBluesky" aria-label="Bluesky" title="Bluesky">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.74 8.74 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.204-.659-.299-1.664-.621-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8z"/></svg>
+          </a>
+          <a class="cf-channel-link" href="https://t.me/+rZphEi3JWxFlMDJh" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelTelegram" aria-label="Telegram (Canal Oficial)" title="Telegram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+          </a>
+          <a id="cf-channel-discord" class="cf-channel-link" href="https://discord.gg/f2nXYUXXwA" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelDiscord" aria-label="Discord Community" title="Discord">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+          </a>
+          <a class="cf-channel-link" href="https://github.com/jw-solutions/jw-solutions-website/discussions" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelGithub" aria-label="GitHub Discussions" title="GitHub Discussions">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.69-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11.04 11.04 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.62 1.58.23 2.75.11 3.04.73.8 1.18 1.83 1.18 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+          </a>
+          <a class="cf-channel-link" href="https://dly.to/nmdN9vQObOU" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelDailydev" aria-label="daily.dev Squad" title="daily.dev Squad">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5zm0 2.3L18.6 8 12 11.7 5.4 8 12 4.3zm-7 5.4l6 3.3v6.7l-6-3.3V9.7zm8 10v-6.7l6-3.3v6.7l-6 3.3z"/></svg>
+          </a>
+          <a id="cf-channel-rss" class="cf-channel-link" href="../../../../tips/feed.it.xml" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelRss" aria-label="RSS Feed Multilingüe" title="RSS Feed">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19.01 7.38 20 6.18 20 4.98 20 4 19.01 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="cf-tips-controls">
+        <div id="cf-tips-filters" class="cf-tips-filters" role="tablist" data-i18n-aria="tipsFilterAria" aria-label="Filtrar guías por lenguaje"></div>
+        <div class="cf-tips-nav">
+          <button type="button" id="cf-tips-prev" class="cf-btn cf-btn--small cf-tips-nav__btn" data-i18n-aria="tipsPrevSlide" aria-label="Desplazar a la izquierda">&larr;</button>
+          <button type="button" id="cf-tips-toggle" class="cf-btn cf-btn--small cf-tips-nav__btn" data-i18n-aria="tipsPauseCarousel" aria-label="Pausar desplazamiento" aria-pressed="false">&#x23F8;</button>
+          <button type="button" id="cf-tips-next" class="cf-btn cf-btn--small cf-tips-nav__btn" data-i18n-aria="tipsNextSlide" aria-label="Desplazar a la derecha">&rarr;</button>
+        </div>
+      </div>
+
+      <div id="cf-tips-viewport" class="cf-tips-viewport" role="region" data-i18n-aria="tipsCarouselAria" aria-label="Carrusel de guías técnicas">
+        <div id="cf-tips-track" class="cf-tips-track">
+          <!-- CF_TIPS_FALLBACK_START -->
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">TYPESCRIPT</span><time class="cf-tip-carousel-card__date" datetime="2026-11-24">2026-11-24</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/it/">TypeScript Esaustivo: Refactoring da Enum a Unioni Discriminate</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">DAX</span><time class="cf-tip-carousel-card__date" datetime="2026-11-19">2026-11-19</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/it/">DAX Moderno: Formattazione VAR/RETURN e Auto-Documentazione con IA</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">JAVASCRIPT</span><time class="cf-tip-carousel-card__date" datetime="2026-11-15">2026-11-15</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/it/">Refactoring in JavaScript ES2024+: Campi Privati, Blocchi Statici e JSDoc Strutturato</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">PHP</span><time class="cf-tip-carousel-card__date" datetime="2026-11-15">2026-11-15</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/php/php-83-typed-properties-enums-psr12-refactoring/it/">PHP 8.3 e PSR-12: Refactoring di Codice Legacy con Typed Properties ed Enums</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">PYTHON</span><time class="cf-tip-carousel-card__date" datetime="2026-11-15">2026-11-15</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/python/python-312-match-case-formatting-pep8/it/">Python 3.12 Match Case Formatting e PEP 8: Guida Avanzata</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">CSHARP</span><time class="cf-tip-carousel-card__date" datetime="2026-11-14">2026-11-14</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/csharp/csharp-12-primary-constructors-xml-doc-refactoring/it/">C# 12 Moderno: Refactoring con Primary Constructors e XML Docs</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">JAVA</span><time class="cf-tip-carousel-card__date" datetime="2026-11-14">2026-11-14</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/java/java-21-pattern-matching-records-refactoring/it/">Refactoring in Java 21+: Records e Pattern Matching per Codice Leggibile</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">TYPESCRIPT</span><time class="cf-tip-carousel-card__date" datetime="2026-11-14">2026-11-14</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/it/">Refactoring del Tipo any in TypeScript con Type Guard e TSDoc</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">SQL</span><time class="cf-tip-carousel-card__date" datetime="2026-11-02">2026-11-02</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/sql-dax/sql-dax-optimization-basics/it/">SQL e DAX: tre abitudini per query veloci e leggibili</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">JAVASCRIPT</span><time class="cf-tip-carousel-card__date" datetime="2026-11-02">2026-11-02</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/javascript/typescript-modern-operators/it/">TypeScript moderno: ?., ?? e satisfies senza errori di formattazione</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">PYTHON</span><time class="cf-tip-carousel-card__date" datetime="2026-11-02">2026-11-02</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/python/python-312-pep8-tips/it/">PEP 8 in Python 3.12: scrivere blocchi match/case leggibili</a></h3>
+          </article>
+          <!-- CF_TIPS_FALLBACK_END -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="cf-footer">
+    <div class="cf-container cf-footer__grid cf-footer__grid--two">
+      <section class="cf-footer__col" aria-labelledby="cf-foot-id">
+        <div class="cf-logo" role="img" aria-label="JW Solutions">
+          <span class="cf-logo__mark">JW</span>
+          <span class="cf-logo__text">SOLUTIONS</span>
+        </div>
+        <h2 id="cf-foot-id" class="cf-footer__title">Code Formatter <span class="cf-gold">&amp; Auto-Doc AI</span></h2>
+        <p class="cf-footer__text" data-i18n="footDesc">Formatea y documenta tu código en Python, JavaScript, SQL, DAX y más. Herramienta independiente de JW Solutions.</p>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../" data-site-link data-i18n="footEditor">Ir al editor</a></li>
+          <li><a href="../../../../fix/" data-site-link data-i18n="fixHubTitle">Soluciones rápidas a errores de sintaxis</a></li>
+          <li><a href="https://dly.to/nmdN9vQObOU" target="_blank" rel="noopener noreferrer" data-i18n="footDailyDevSquad">Unisciti al nostro Squad su daily.dev</a></li>
+        </ul>
+      </section>
+
+      <section class="cf-footer__col" aria-labelledby="cf-foot-nl">
+        <h2 id="cf-foot-nl" class="cf-footer__title" data-i18n="nlTitle">Tips Semanales de Código</h2>
+        <p class="cf-footer__text" data-i18n="nlPromise">Un email por semana con tips prácticos de sintaxis, casos de estudio y novedades de lenguajes (Python, JS, SQL, DAX). Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
+        <form id="cf-newsletter-form" class="cf-newsletter" novalidate>
+          <label class="cf-sr-only" for="cf-newsletter-email" data-i18n="nlEmailLabel">Correo electrónico</label>
+          <input id="cf-newsletter-email" class="cf-input" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="tu@email.com" data-i18n-placeholder="nlPlaceholder">
+          <input type="text" name="_gotcha" class="cf-sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button type="submit" class="cf-btn cf-btn--primary" data-i18n="nlSubmit">Suscribirme</button>
+          <p id="cf-newsletter-status" class="cf-form__status cf-newsletter__status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+    <div class="cf-container cf-footer__legal">
+      <p>&copy; JW Solutions · <span data-i18n="footRights">Todos los derechos reservados</span> · <a href="/privacidad/" data-site-link data-i18n="legalPrivacy">Política de Privacidad</a> · <a href="/terminos/" data-site-link data-i18n="legalTerms">Términos de Servicio</a></p>
+    </div>
+  </footer>
+
+  <dialog id="cf-tip-detail-modal" class="cf-dialog cf-tip-modal" aria-labelledby="cf-tip-modal-title">
+    <div class="cf-dialog__head">
+      <div class="cf-tip-modal__meta">
+        <span id="cf-tip-modal-lang" class="cf-lang-badge"></span>
+        <time id="cf-tip-modal-date" class="cf-muted"></time>
+      </div>
+      <button type="button" class="cf-btn cf-btn--small" data-cf-close data-i18n="tipsModalClose">Cerrar</button>
+    </div>
+    <h2 id="cf-tip-modal-title" class="cf-dialog__title cf-tip-modal__title"></h2>
+    <div id="cf-tip-modal-tags" class="cf-tip-carousel-card__tags"></div>
+    <p id="cf-tip-modal-summary" class="cf-tip-modal__summary"></p>
+    <div id="cf-tip-modal-code-wrap" class="cf-tip-modal__code-wrap" hidden>
+      <p class="cf-field__label" data-i18n="tipsCodePreview">Ejemplo de código</p>
+      <pre class="cf-tip__code"><code id="cf-tip-modal-code"></code></pre>
+    </div>
+    <div class="cf-tip-modal__actions">
+      <a id="cf-tip-modal-full" class="cf-btn cf-btn--primary" href="#" data-i18n="tipsOpenFullPage">Leer guía completa y FAQ</a>
+      <button type="button" id="cf-tip-modal-load" class="cf-btn" data-i18n="tipsLoadInEditor">Cargar ejemplo en el editor</button>
+    </div>
+    <div id="cf-tip-modal-share"></div>
+  </dialog>
+
+  <div id="cf-toast" class="cf-toast" role="status" aria-live="polite"></div>
+  <script type="module" src="../../../../../../assets/js/tools/code-formatter/tips-carousel.js"></script>
+</body>
+</html>

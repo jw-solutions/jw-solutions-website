@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>en</language>
-    <lastBuildDate>Mon, 23 Nov 2026 19:29:25 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 23:25:26 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -19,6 +19,40 @@
     <atom:link rel="alternate" type="application/rss+xml" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/feed.fr.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/feed.de.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/feed.it.xml"/>
+    <item>
+      <title>Exhaustive TypeScript: Refactoring Legacy Enums with Discriminated Unions</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/en/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/en/</guid>
+      <pubDate>Tue, 24 Nov 2026 14:00:00 +0000</pubDate>
+      <category>TYPESCRIPT</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-en.png" medium="image" />
+      <description>Modernize state modeling in enterprise TypeScript by ditching loose enums in favor of strict discriminated unions with compile-time exhaustive checks.</description>
+      <content:encoded><![CDATA[<p>Modernize state modeling in enterprise TypeScript by ditching loose enums in favor of strict discriminated unions with compile-time exhaustive checks.</p><pre><code>// Anti-pattern: Monolithic interface with optional conditional attributes
+enum TransactionState {
+  PENDING = 0,
+  COMPLETED = 1,
+  FAILED = 2,
+}
+
+interface LegacyTransaction {
+  id: string;
+  status: TransactionState;
+  receiptId?: string; // Only present if COMPLETED
+  errorMessage?: string; // Only present if FAILED
+  errorCode?: number; // Only present if FAILED
+}
+
+function handleTransaction(tx: LegacyTransaction): string {
+  if (tx.status === TransactionState.COMPLETED) {
+    // Dangerous assumption requiring non-null assertion
+    return `Approved receipt: ${tx.receiptId!}`;
+  }
+  if (tx.status === TransactionState.FAILED) {
+    return `Error: ${tx.errorMessage ?? &#x27;Unknown&#x27;}`;
+  }
+  return &#x27;In progress&#x27;;
+}</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/en/">Exhaustive TypeScript: Refactoring Legacy Enums with Discriminated Unions</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Modern DAX: Clean VAR/RETURN Structuring and AI Auto-Documentation</title>
       <link>https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/en/</link>

@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>pt-PT</language>
-    <lastBuildDate>Mon, 23 Nov 2026 19:29:25 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 23:25:26 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -19,6 +19,39 @@
     <atom:link rel="alternate" type="application/rss+xml" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/feed.fr.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/feed.de.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/feed.it.xml"/>
+    <item>
+      <title>TypeScript Exaustivo: Refatoração de Enums com Uniões Discriminadas</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/pt-PT/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/pt-PT/</guid>
+      <pubDate>Tue, 24 Nov 2026 14:00:00 +0000</pubDate>
+      <category>TYPESCRIPT</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-pt-PT.png" medium="image" />
+      <description>Substitua interfaces difusas e enums legados por uniões discriminadas robustas no TypeScript, com validação estrita em tempo de compilação.</description>
+      <content:encoded><![CDATA[<p>Substitua interfaces difusas e enums legados por uniões discriminadas robustas no TypeScript, com validação estrita em tempo de compilação.</p><pre><code>// Antipadronização: enum numérico associado a atributos facultativos
+enum EstadoOperacao {
+  PENDENTE = 0,
+  SUCESSO = 1,
+  ERRO = 2,
+}
+
+interface OperacaoLegada {
+  id: string;
+  estado: EstadoOperacao;
+  guiaId?: string; // Apenas disponível quando SUCESSO
+  descricaoErro?: string; // Apenas disponível quando ERRO
+  codigoErro?: number; // Apenas disponível quando ERRO
+}
+
+function avaliarOperacao(op: OperacaoLegada): string {
+  if (op.estado === EstadoOperacao.SUCESSO) {
+    return `Concluído: guia ${op.guiaId!}`;
+  }
+  if (op.estado === EstadoOperacao.ERRO) {
+    return `Falha: ${op.descricaoErro ?? &#x27;Sem detalhe&#x27;}`;
+  }
+  return &#x27;Pendente&#x27;;
+}</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/pt-PT/">TypeScript Exaustivo: Refatoração de Enums com Uniões Discriminadas</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>DAX Avançado: Estruturação com VAR/RETURN e Auto-Documentação com IA</title>
       <link>https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/pt-PT/</link>

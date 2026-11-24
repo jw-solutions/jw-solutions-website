@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>fr</language>
-    <lastBuildDate>Mon, 23 Nov 2026 19:29:25 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 23:25:26 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -19,6 +19,39 @@
     <atom:link rel="alternate" type="application/rss+xml" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/feed.fr.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/feed.de.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/feed.it.xml"/>
+    <item>
+      <title>TypeScript Exhaustif : Refactoring des Enums vers les Unions Discriminées</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/fr/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/fr/</guid>
+      <pubDate>Tue, 24 Nov 2026 14:00:00 +0000</pubDate>
+      <category>TYPESCRIPT</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-fr.png" medium="image" />
+      <description>Passez des enums numériques et interfaces ambiguës aux unions discriminées strictes en TypeScript avec vérification d&#x27;exhaustivité au build.</description>
+      <content:encoded><![CDATA[<p>Passez des enums numériques et interfaces ambiguës aux unions discriminées strictes en TypeScript avec vérification d&#x27;exhaustivité au build.</p><pre><code>// Anti-pattern : interface monolithique avec champs conditionnels optionnels
+enum StatutPaiement {
+  EN_ATTENTE = 0,
+  VALIDE = 1,
+  ECHEC = 2,
+}
+
+interface PaiementLegacy {
+  id: string;
+  statut: StatutPaiement;
+  recuId?: string; // Présent uniquement si VALIDE
+  messageErreur?: string; // Présent uniquement si ECHEC
+  codeErreur?: number; // Présent uniquement si ECHEC
+}
+
+function traiterPaiement(p: PaiementLegacy): string {
+  if (p.statut === StatutPaiement.VALIDE) {
+    return `Validé avec le reçu ${p.recuId!}`;
+  }
+  if (p.statut === StatutPaiement.ECHEC) {
+    return `Échec : ${p.messageErreur ?? &#x27;Inconnu&#x27;}`;
+  }
+  return &#x27;Traitement en cours&#x27;;
+}</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/fr/">TypeScript Exhaustif : Refactoring des Enums vers les Unions Discriminées</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>DAX Moderne : Formatage VAR/RETURN et Auto-Documentation par IA</title>
       <link>https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/fr/</link>

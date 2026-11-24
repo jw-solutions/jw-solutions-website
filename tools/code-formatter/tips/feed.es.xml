@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>es</language>
-    <lastBuildDate>Mon, 23 Nov 2026 19:29:25 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 23:25:26 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -19,6 +19,40 @@
     <atom:link rel="alternate" type="application/rss+xml" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/feed.fr.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/feed.de.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/feed.it.xml"/>
+    <item>
+      <title>TypeScript Exhaustivo: Refactorización de Enums y Switch con Uniones Discriminadas</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/es/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/es/</guid>
+      <pubDate>Tue, 24 Nov 2026 14:00:00 +0000</pubDate>
+      <category>TYPESCRIPT</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-es.png" medium="image" />
+      <description>Moderniza el manejo de estados en TypeScript migrando de enums numéricos a uniones discriminadas estrictas con comprobación exhaustiva en tiempo de compilación.</description>
+      <content:encoded><![CDATA[<p>Moderniza el manejo de estados en TypeScript migrando de enums numéricos a uniones discriminadas estrictas con comprobación exhaustiva en tiempo de compilación.</p><pre><code>// Antipatrón: interfaz monolítica con campos condicionales opcionales
+enum EstadoTransaccion {
+  PENDIENTE = 0,
+  COMPLETADA = 1,
+  FALLIDA = 2,
+}
+
+interface TransaccionLegacy {
+  id: string;
+  tipo: EstadoTransaccion;
+  reciboId?: string; // Solo presente si COMPLETADA
+  motivoError?: string; // Solo presente si FALLIDA
+  codigoError?: number; // Solo presente si FALLIDA
+}
+
+function procesarTransaccion(tx: TransaccionLegacy): string {
+  if (tx.tipo === EstadoTransaccion.COMPLETADA) {
+    // Requiere aserción peligrosa o chequeo extra
+    return `Aprobado con folio ${tx.reciboId!}`;
+  }
+  if (tx.tipo === EstadoTransaccion.FALLIDA) {
+    return `Error: ${tx.motivoError ?? &#x27;Desconocido&#x27;}`;
+  }
+  return &#x27;En proceso&#x27;;
+}</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/es/">TypeScript Exhaustivo: Refactorización de Enums y Switch con Uniones Discriminadas</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>DAX Moderno: Formato con VAR/RETURN y Auto-Documentación Asistida por IA</title>
       <link>https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/es/</link>

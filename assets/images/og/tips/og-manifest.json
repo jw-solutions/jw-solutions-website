@@ -73,5 +73,12 @@
   "tips/dax-var-return-calculate-auto-doc-formatting-fr": "e5dd964351697a37",
   "tips/dax-var-return-calculate-auto-doc-formatting-it": "a3b72412ca61fb8f",
   "tips/dax-var-return-calculate-auto-doc-formatting-pt-BR": "5cfb91684714e943",
-  "tips/dax-var-return-calculate-auto-doc-formatting-pt-PT": "cdf1517f3e6a2890"
+  "tips/dax-var-return-calculate-auto-doc-formatting-pt-PT": "cdf1517f3e6a2890",
+  "tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-es": "5dbd97bf83706719",
+  "tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-de": "a64c369cdf7212de",
+  "tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-en": "62aa95e24880b8cc",
+  "tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-fr": "410d427f244e2b8e",
+  "tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-it": "dd84d8d43d98a982",
+  "tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-pt-BR": "63e8c13daf64cbd0",
+  "tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-pt-PT": "e0aebc1175559ab4"
 }

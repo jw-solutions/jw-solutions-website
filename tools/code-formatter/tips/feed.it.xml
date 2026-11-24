@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>it</language>
-    <lastBuildDate>Mon, 23 Nov 2026 19:29:25 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 23:25:26 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -19,6 +19,39 @@
     <atom:link rel="alternate" type="application/rss+xml" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/feed.fr.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/feed.de.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/feed.it.xml"/>
+    <item>
+      <title>TypeScript Esaustivo: Refactoring da Enum a Unioni Discriminate</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/it/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/it/</guid>
+      <pubDate>Tue, 24 Nov 2026 14:00:00 +0000</pubDate>
+      <category>TYPESCRIPT</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-it.png" medium="image" />
+      <description>Elimina interfacce opzionali e vecchi enum numerici adottando le unioni discriminate in TypeScript con controllo esaustivo in fase di build.</description>
+      <content:encoded><![CDATA[<p>Elimina interfacce opzionali e vecchi enum numerici adottando le unioni discriminate in TypeScript con controllo esaustivo in fase di build.</p><pre><code>// Anti-pattern: interfaccia monolitica con troppi campi opzionali
+enum StatoPagamento {
+  IN_ATTESA = 0,
+  COMPLETATO = 1,
+  FALLITO = 2,
+}
+
+interface TransazioneLegacy {
+  id: string;
+  stato: StatoPagamento;
+  ricevutaId?: string; // Presente solo se COMPLETATO
+  motivoErrore?: string; // Presente solo se FALLITO
+  codiceErrore?: number; // Presente solo se FALLITO
+}
+
+function gestisciTransazione(tx: TransazioneLegacy): string {
+  if (tx.stato === StatoPagamento.COMPLETATO) {
+    return `Approvato: ricevuta ${tx.ricevutaId!}`;
+  }
+  if (tx.stato === StatoPagamento.FALLITO) {
+    return `Errore: ${tx.motivoErrore ?? &#x27;Sconosciuto&#x27;}`;
+  }
+  return &#x27;In attesa&#x27;;
+}</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/it/">TypeScript Esaustivo: Refactoring da Enum a Unioni Discriminate</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>DAX Moderno: Formattazione VAR/RETURN e Auto-Documentazione con IA</title>
       <link>https://jw-solutions.com/tools/code-formatter/tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/it/</link>
