@@ -1323,7 +1323,7 @@
       ],
       "date": "2026-11-24",
       "published_at": "2026-11-24",
-      "status": "COMPILED",
+      "status": "DEPLOYED",
       "locales": [
         "es",
         "de",
@@ -1443,6 +1443,41 @@
           ],
           "file": "published/typescript-discriminant-unions-exhaustive-type-checks-tsdoc.pt-PT.md",
           "sha256": "0203ba18b61c46dd2e302d11e9060bacbe7eaff1afe6f3079b7b10316d2cadae"
+        }
+      },
+      "deployed_at": "2026-11-24T23:26:01.728Z",
+      "indexnow_pinged_at": "2026-11-24T23:26:02.395Z",
+      "syndication": {
+        "devto": {
+          "status": "published",
+          "id": 5111848,
+          "url": "https://dev.to/jwsolutions/exhaustive-typescript-refactoring-legacy-enums-with-discriminated-unions-22n0",
+          "publishedAt": "2026-11-24T23:26:02.835Z"
+        },
+        "social": {
+          "bluesky": {
+            "status": "published",
+            "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n33s6gewou2u",
+            "cid": "bafyreif4x2roybvsslpyblxustlr5jq5ohjnbxk7roj6qsfnfukgesx47m",
+            "publishedAt": "2026-11-24T23:26:05.418Z"
+          },
+          "telegram": {
+            "status": "published",
+            "messageId": 13,
+            "publishedAt": "2026-11-24T23:26:08.584Z"
+          },
+          "discord": {
+            "status": "published",
+            "messageId": "1574929158356738272",
+            "publishedAt": "2026-11-24T23:26:13.437Z"
+          },
+          "github_discussions": {
+            "status": "published",
+            "id": "D_kwDOSheTeM4Ardhy",
+            "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/27",
+            "number": 27,
+            "publishedAt": "2026-11-24T23:26:16.471Z"
+          }
         }
       }
     }
