@@ -1,0 +1,90 @@
+{
+  "slug": "json-schema-auto-doc-ai-configuration-formatting",
+  "language": "json",
+  "generated_at": "2026-11-26T22:58:05.726Z",
+  "daily_dev_squad": {
+    "squad_url": "https://dly.to/nmdN9vQObOU",
+    "en": {
+      "title": "RFC 8259 and JSON Schema: Structuring Strict Configurations for Auto-Doc AI",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=json-schema-auto-doc-ai-configuration-formatting",
+      "post_markdown": "Optimize your JSON files for Auto-Doc AI pipelines with strict JSON Schema validation, RFC 8259 compliance, and zero trailing commas.\n\n```json\n// ❌ INCORRECT: Inline comments not allowed, trailing comma, and missing schema\n{\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\", // Trailing comma forbidden\n  },\n}\n```\n```json\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\",\n    \"targetDirectory\": \"./docs/api\"\n  },\n  \"metadata\": {\n    \"environment\": \"production\",\n    \"owner\": \"devops-team\"\n  }\n}\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/en/?utm_source=dailydev&utm_medium=squad&utm_campaign=json-schema-auto-doc-ai-configuration-formatting\n#json #CleanCode #DevTools"
+    },
+    "es": {
+      "title": ">-",
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=json-schema-auto-doc-ai-configuration-formatting",
+      "post_markdown": "Optimiza tus archivos JSON para pipelines de Auto-Doc AI con validación JSON Schema estricta, RFC 8259 y ordenación sin comas finales.\n\n```json\n// ❌ INCORRECTO: Comentarios no permitidos, coma final (trailing comma) y sin esquema\n{\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\", // Coma final prohibida\n  },\n}\n```\n```json\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\",\n    \"targetDirectory\": \"./docs/api\"\n  },\n  \"metadata\": {\n    \"environment\": \"production\",\n    \"owner\": \"devops-team\"\n  }\n}\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/es/?utm_source=dailydev&utm_medium=squad&utm_campaign=json-schema-auto-doc-ai-configuration-formatting\n#json #Programación #CódigoLimpio"
+    }
+  },
+  "locales": {
+    "en": {
+      "title": "RFC 8259 and JSON Schema: Structuring Strict Configurations for Auto-Doc AI",
+      "communities": [
+        "Reddit: r/devops",
+        "Reddit: r/webdev",
+        "Medium (Importar URL canónica)"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/en/?utm_source=reddit&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting",
+      "hashtags": "#json #CleanCode #DevTools",
+      "post_markdown": "Optimize your JSON files for Auto-Doc AI pipelines with strict JSON Schema validation, RFC 8259 compliance, and zero trailing commas.\n\n```json\n// ❌ INCORRECT: Inline comments not allowed, trailing comma, and missing schema\n{\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\", // Trailing comma forbidden\n  },\n}\n```\n```json\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\",\n    \"targetDirectory\": \"./docs/api\"\n  },\n  \"metadata\": {\n    \"environment\": \"production\",\n    \"owner\": \"devops-team\"\n  }\n}\n```\n\nFull guide & interactive sandbox: https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/en/?utm_source=reddit&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting\n#json #CleanCode #DevTools"
+    },
+    "es": {
+      "title": ">-",
+      "communities": [
+        "Reddit: r/programacion",
+        "Reddit: r/chileIT"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/es/?utm_source=reddit&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting",
+      "hashtags": "#json #Programación #CódigoLimpio",
+      "post_markdown": "Optimiza tus archivos JSON para pipelines de Auto-Doc AI con validación JSON Schema estricta, RFC 8259 y ordenación sin comas finales.\n\n```json\n// ❌ INCORRECTO: Comentarios no permitidos, coma final (trailing comma) y sin esquema\n{\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\", // Coma final prohibida\n  },\n}\n```\n```json\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\",\n    \"targetDirectory\": \"./docs/api\"\n  },\n  \"metadata\": {\n    \"environment\": \"production\",\n    \"owner\": \"devops-team\"\n  }\n}\n```\n\nGuía completa y sandbox interactivo: https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/es/?utm_source=reddit&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting\n#json #Programación #CódigoLimpio"
+    },
+    "pt-BR": {
+      "title": "RFC 8259 e JSON Schema: Configurações Estritas para Auto-Doc AI",
+      "communities": [
+        "TabNews (tabnews.com.br)",
+        "Reddit: r/brdev"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting",
+      "hashtags": "#json #Programação #CódigoLimpo",
+      "post_markdown": "Otimize seus arquivos JSON para pipelines de Auto-Doc AI com validação estrita via JSON Schema, conformidade RFC 8259 e sem vírgulas sobressalentes.\n\n```json\n// ❌ INCORRETO: Comentários não permitidos, vírgula final e sem esquema\n{\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\", // Vírgula final proibida\n  },\n}\n```\n```json\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\",\n    \"targetDirectory\": \"./docs/api\"\n  },\n  \"metadata\": {\n    \"environment\": \"production\",\n    \"owner\": \"devops-team\"\n  }\n}\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/pt-BR/?utm_source=tabnews&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting\n#json #Programação #CódigoLimpo"
+    },
+    "pt-PT": {
+      "title": "RFC 8259 e JSON Schema: Configurações Estritas para Auto-Doc AI",
+      "communities": [
+        "Reddit: r/devpt"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting",
+      "hashtags": "#json #Programação #CódigoLimpo",
+      "post_markdown": "Otimize os seus ficheiros JSON para pipelines de Auto-Doc AI com validação estrita via JSON Schema, conformidade RFC 8259 e sem vírgulas finais.\n\n```json\n// ❌ INCORRETO: Comentários não permitidos, vírgula final e sem esquema\n{\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\", // Vírgula final proibida\n  },\n}\n```\n```json\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\",\n    \"targetDirectory\": \"./docs/api\"\n  },\n  \"metadata\": {\n    \"environment\": \"production\",\n    \"owner\": \"devops-team\"\n  }\n}\n```\n\nGuia completo e sandbox interativo: https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/pt-PT/?utm_source=reddit&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting\n#json #Programação #CódigoLimpo"
+    },
+    "fr": {
+      "title": "RFC 8259 et JSON Schema : Configurations Strictes pour Auto-Doc AI",
+      "communities": [
+        "Zeste de Savoir",
+        "Reddit: r/developpeurs"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/fr/?utm_source=reddit&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting",
+      "hashtags": "#json #Développement #CleanCode",
+      "post_markdown": "Optimisez vos fichiers JSON pour les pipelines d'Auto-Doc AI avec une validation JSON Schema stricte, le respect de la norme RFC 8259 et zéro virgule traînante.\n\n```json\n// ❌ INCORRECT : Commentaires interdits, virgule finale et schéma absent\n{\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\", // Virgule finale interdite\n  },\n}\n```\n```json\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\",\n    \"targetDirectory\": \"./docs/api\"\n  },\n  \"metadata\": {\n    \"environment\": \"production\",\n    \"owner\": \"devops-team\"\n  }\n}\n```\n\nGuide complet et bac à sable interactif: https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/fr/?utm_source=reddit&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting\n#json #Développement #CleanCode"
+    },
+    "de": {
+      "title": "RFC 8259 und JSON Schema: Strikte Konfigurationen für Auto-Doc AI",
+      "communities": [
+        "Heise Developer / iX",
+        "Reddit: r/de_EDV"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/de/?utm_source=reddit&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting",
+      "hashtags": "#json #CleanCode #Entwicklung",
+      "post_markdown": "Optimieren Sie JSON-Dateien für Auto-Doc AI Pipelines mit strikter JSON Schema Validierung, RFC 8259 Konformität und ohne nachstehende Kommas.\n\n```json\n// ❌ FALSCH: Kommentare nicht erlaubt, nachstehendes Komma und fehlendes Schema\n{\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\", // Nachstehendes Komma verboten\n  },\n}\n```\n```json\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\",\n    \"targetDirectory\": \"./docs/api\"\n  },\n  \"metadata\": {\n    \"environment\": \"production\",\n    \"owner\": \"devops-team\"\n  }\n}\n```\n\nVollständiger Leitfaden & interaktive Sandbox: https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/de/?utm_source=reddit&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting\n#json #CleanCode #Entwicklung"
+    },
+    "it": {
+      "title": "RFC 8259 e JSON Schema: Strutturare Configurazioni Rigide per Auto-Doc AI",
+      "communities": [
+        "HTML.it",
+        "Reddit: r/ItalyInformatica"
+      ],
+      "utm_url": "https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/it/?utm_source=reddit&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting",
+      "hashtags": "#json #Sviluppo #CleanCode",
+      "post_markdown": "Ottimizza i tuoi file JSON per le pipeline di Auto-Doc AI con validazione rigida JSON Schema, conformità RFC 8259 e zero virgole finali.\n\n```json\n// ❌ ERRORE: Commenti non consentiti, virgola finale e schema assente\n{\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\", // Virgola finale vietata\n  },\n}\n```\n```json\n{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"serviceName\": \"billing-api\",\n  \"autoDocSettings\": {\n    \"extractComments\": true,\n    \"outputFormat\": \"markdown\",\n    \"targetDirectory\": \"./docs/api\"\n  },\n  \"metadata\": {\n    \"environment\": \"production\",\n    \"owner\": \"devops-team\"\n  }\n}\n```\n\nGuida completa e sandbox interattivo: https://jw-solutions.com/tools/code-formatter/tips/config/json-schema-auto-doc-ai-configuration-formatting/it/?utm_source=reddit&utm_medium=community&utm_campaign=json-schema-auto-doc-ai-configuration-formatting\n#json #Sviluppo #CleanCode"
+    }
+  }
+}

@@ -1504,7 +1504,7 @@
       ],
       "date": "2026-11-26",
       "published_at": "2026-11-26",
-      "status": "COMPILED",
+      "status": "DEPLOYED",
       "locales": [
         "es",
         "de",
@@ -1624,6 +1624,41 @@
           ],
           "file": "published/json-schema-auto-doc-ai-configuration-formatting.pt-PT.md",
           "sha256": "d9dab9d9c457231da5ab997f73c17cb9f17fac195249007ae32e8756770e2ebb"
+        }
+      },
+      "deployed_at": "2026-11-26T22:57:53.220Z",
+      "indexnow_pinged_at": "2026-11-26T22:57:53.942Z",
+      "syndication": {
+        "devto": {
+          "status": "published",
+          "id": 5127856,
+          "url": "https://dev.to/jwsolutions/rfc-8259-and-json-schema-structuring-strict-configurations-for-auto-doc-ai-3mfj",
+          "publishedAt": "2026-11-26T22:57:54.363Z"
+        },
+        "social": {
+          "bluesky": {
+            "status": "published",
+            "uri": "at://did:plc:5jwsbtfbjrgzgnvphjcxaqgi/app.bsky.feed.post/3n3arjwvd5k2q",
+            "cid": "bafyreihh63u6s2gwvb5ekspcwxunzyj3tuu2qbej5ulffbczd77ykqtx3q",
+            "publishedAt": "2026-11-26T22:57:56.712Z"
+          },
+          "telegram": {
+            "status": "published",
+            "messageId": 14,
+            "publishedAt": "2026-11-26T22:57:59.928Z"
+          },
+          "discord": {
+            "status": "published",
+            "messageId": "1575646845093421148",
+            "publishedAt": "2026-11-26T22:58:02.393Z"
+          },
+          "github_discussions": {
+            "status": "published",
+            "id": "D_kwDOSheTeM4ArhUd",
+            "url": "https://github.com/jw-solutions/jw-solutions-website/discussions/28",
+            "number": 28,
+            "publishedAt": "2026-11-26T22:58:05.680Z"
+          }
         }
       }
     }
