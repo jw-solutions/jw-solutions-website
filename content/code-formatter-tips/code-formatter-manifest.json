@@ -1504,7 +1504,7 @@
       ],
       "date": "2026-11-26",
       "published_at": "2026-11-26",
-      "status": "DEPLOYED",
+      "status": "NOTIFIED",
       "locales": [
         "es",
         "de",
@@ -1660,7 +1660,8 @@
             "publishedAt": "2026-11-26T22:58:05.680Z"
           }
         }
-      }
+      },
+      "notified_at": "2026-11-26T22:58:28.157Z"
     }
   ]
 }
