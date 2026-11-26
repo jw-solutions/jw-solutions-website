@@ -80,5 +80,12 @@
   "tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-fr": "410d427f244e2b8e",
   "tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-it": "dd84d8d43d98a982",
   "tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-pt-BR": "63e8c13daf64cbd0",
-  "tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-pt-PT": "e0aebc1175559ab4"
+  "tips/typescript-discriminant-unions-exhaustive-type-checks-tsdoc-pt-PT": "e0aebc1175559ab4",
+  "tips/json-schema-auto-doc-ai-configuration-formatting-es": "c27e109449e16ea6",
+  "tips/json-schema-auto-doc-ai-configuration-formatting-de": "306faa30fc37726e",
+  "tips/json-schema-auto-doc-ai-configuration-formatting-en": "91a71dee831473d4",
+  "tips/json-schema-auto-doc-ai-configuration-formatting-fr": "7be1f201aac1b236",
+  "tips/json-schema-auto-doc-ai-configuration-formatting-it": "f01503136d414fc1",
+  "tips/json-schema-auto-doc-ai-configuration-formatting-pt-BR": "341d74d6cf91d12c",
+  "tips/json-schema-auto-doc-ai-configuration-formatting-pt-PT": "bc558f4882874bee"
 }

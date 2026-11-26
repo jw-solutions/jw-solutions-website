@@ -1481,6 +1481,151 @@
         }
       },
       "notified_at": "2026-11-24T23:26:33.535Z"
+    },
+    {
+      "slug": "json-schema-auto-doc-ai-configuration-formatting",
+      "title": "RFC 8259 y JSON Schema: Estructuración de Configuraciones Estrictas para Auto-Doc AI",
+      "language": "json",
+      "programming_language": "json",
+      "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+      "meta_description": "Optimiza tus archivos JSON para pipelines de Auto-Doc AI con validación JSON Schema estricta, RFC 8259 y ordenación sin comas finales.",
+      "summary": "Aprende a estructurar archivos JSON de configuración interoperables y validados por esquemas para evitar errores sintácticos en motores de Auto-Documentación con IA.",
+      "related_fix_slug": "json-trailing-comma-unexpected-token",
+      "interactive_snippet": "{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"title\": \"AutoDocAIConfig\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"version\": {\n      \"type\": \"string\",\n      \"pattern\": \"^\\\\d+\\\\.\\\\d+\\\\.\\\\d+$\"\n    },\n    \"documentationEngine\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"enabled\": { \"type\": \"boolean\" },\n        \"strictValidation\": { \"type\": \"boolean\" }\n      },\n      \"required\": [\"enabled\", \"strictValidation\"]\n    }\n  },\n  \"required\": [\"version\", \"documentationEngine\"]\n}",
+      "faq": [
+        {
+          "q": "¿Por qué JSON estandarizado no permite comas al final de un objeto?",
+          "a": "El estándar RFC 8259 prohíbe las comas finales para mantener la simplicidad del parser sintáctico y evitar ambigüedades al determinar si existe un elemento nulo u omitido a continuación."
+        },
+        {
+          "q": "¿Cómo beneficia la propiedad $schema a los motores de IA?",
+          "a": "Le otorga al modelo de IA la especificación exacta del tipo de datos, límites y descripciones de cada campo, reduciendo alucinaciones y permitiendo la autogeneración de documentación precisa."
+        }
+      ],
+      "date": "2026-11-26",
+      "published_at": "2026-11-26",
+      "status": "COMPILED",
+      "locales": [
+        "es",
+        "de",
+        "en",
+        "fr",
+        "it",
+        "pt-BR",
+        "pt-PT"
+      ],
+      "file": "published/json-schema-auto-doc-ai-configuration-formatting.md",
+      "sha256": "0c43358d5664bb85a33cad7496e0c347ab9d216b15dc78d950d2a349d2902c83",
+      "translations": {
+        "de": {
+          "title": "RFC 8259 und JSON Schema: Strikte Konfigurationen für Auto-Doc AI",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Optimieren Sie JSON-Dateien für Auto-Doc AI Pipelines mit strikter JSON Schema Validierung, RFC 8259 Konformität und ohne nachstehende Kommas.",
+          "summary": "Lernen Sie, wie Sie interoperable und schema-validierte JSON-Konfigurationsdateien strukturieren, um Syntaxfehler in KI-Dokumentationssystemen zu vermeiden.",
+          "faq": [
+            {
+              "q": "Warum verbietet der JSON-Standard nachstehende Kommas?",
+              "a": "RFC 8259 verbietet nachstehende Kommas, um den Parser einfach zu halten und Zweideutigkeiten bezüglich ausgelassener Elemente zu vermeiden."
+            },
+            {
+              "q": "Wie hilft das $schema-Attribut KI-Dokumentations-Generatoren?",
+              "a": "Es stellt der KI exakte Datentypen, Validierungsregeln und Beschreibungen für jedes Feld bereit, was Halluzinationen verhindert und präzise automatische Dokumentation ermöglicht."
+            }
+          ],
+          "file": "published/json-schema-auto-doc-ai-configuration-formatting.de.md",
+          "sha256": "89ef129f2e5b6dd05cb769cadcd2cfbe65db386c56a2ca11f92c4be9a22e7cc8"
+        },
+        "en": {
+          "title": "RFC 8259 and JSON Schema: Structuring Strict Configurations for Auto-Doc AI",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Optimize your JSON files for Auto-Doc AI pipelines with strict JSON Schema validation, RFC 8259 compliance, and zero trailing commas.",
+          "summary": "Learn how to structure interoperable, schema-validated JSON configuration files to prevent syntax errors in AI Auto-Documentation engines.",
+          "faq": [
+            {
+              "q": "Why does standard JSON forbid trailing commas?",
+              "a": "RFC 8259 prohibits trailing commas to keep parsers simple and eliminate ambiguity regarding whether an omitted element exists after the comma."
+            },
+            {
+              "q": "How does the $schema property assist AI documentation generators?",
+              "a": "It provides AI engines with explicit data types, constraints, and descriptions for each field, preventing hallucinations and enabling precise automated documentation."
+            }
+          ],
+          "file": "published/json-schema-auto-doc-ai-configuration-formatting.en.md",
+          "sha256": "04b6209682e14b3771f07fa54ac9632c18150a98b5a81d035ca4e1a5bfd27140"
+        },
+        "fr": {
+          "title": "RFC 8259 et JSON Schema : Configurations Strictes pour Auto-Doc AI",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Optimisez vos fichiers JSON pour les pipelines d'Auto-Doc AI avec une validation JSON Schema stricte, le respect de la norme RFC 8259 et zéro virgule traînante.",
+          "summary": "Apprenez à structurer des fichiers de configuration JSON valides et typés pour éviter les erreurs de syntaxe dans les moteurs d'auto-documentation par IA.",
+          "faq": [
+            {
+              "q": "Pourquoi la norme JSON interdit-elle les virgules finales ?",
+              "a": "La spécification RFC 8259 interdit les virgules finales afin d'éviter toute ambiguïté sur la présence potentielle d'un élément nul omis et de conserver un parser ultra-simple."
+            },
+            {
+              "q": "Quel est l'avantage de la clé $schema pour la documentation IA ?",
+              "a": "Elle fournit au modèle d'IA les types exacts, les contraintes et la description de chaque champ, ce qui élimine les hallucinations et permet de générer une documentation très précise."
+            }
+          ],
+          "file": "published/json-schema-auto-doc-ai-configuration-formatting.fr.md",
+          "sha256": "659da3da7a1bb3e8ae0f1e65e2cf4ea09d73a1c4db268f9e6783827db1cb315a"
+        },
+        "it": {
+          "title": "RFC 8259 e JSON Schema: Strutturare Configurazioni Rigide per Auto-Doc AI",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Ottimizza i tuoi file JSON per le pipeline di Auto-Doc AI con validazione rigida JSON Schema, conformità RFC 8259 e zero virgole finali.",
+          "summary": "Impara a strutturare file di configurazione JSON interoperabili e con schema validato per evitare errori sintattici nei motori di documentazione automatizzata tramite IA.",
+          "faq": [
+            {
+              "q": "Perché lo standard JSON vieta le virgole finali?",
+              "a": "La specifica RFC 8259 vieta le virgole finali per mantenere semplice il parser ed eliminare qualsiasi ambiguità sull'eventuale presenza di elementi nulli omessi."
+            },
+            {
+              "q": "In che modo la proprietà $schema aiuta i motori di documentazione IA?",
+              "a": "Fornisce al modello di IA tipi di dati espliciti, vincoli e descrizioni dei campi, evitando allucinazioni e consentendo la generazione di documentazione accurata."
+            }
+          ],
+          "file": "published/json-schema-auto-doc-ai-configuration-formatting.it.md",
+          "sha256": "6e20df7d402e209c00ffa015b5a3451891df402c08b068665ea40656a6930ef7"
+        },
+        "pt-BR": {
+          "title": "RFC 8259 e JSON Schema: Configurações Estritas para Auto-Doc AI",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Otimize seus arquivos JSON para pipelines de Auto-Doc AI com validação estrita via JSON Schema, conformidade RFC 8259 e sem vírgulas sobressalentes.",
+          "summary": "Aprenda a estruturar arquivos JSON de configuração interoperáveis e validados por esquema para evitar erros sintáticos em motores de documentação automática por IA.",
+          "faq": [
+            {
+              "q": "Por que o padrão JSON proíbe vírgulas no final dos objetos?",
+              "a": "A especificação RFC 8259 proíbe vírgulas no final para manter o analisador sintático simples e eliminar dúvidas sobre a existência de elementos nulos a seguir."
+            },
+            {
+              "q": "Como a propriedade $schema beneficia os motores de documentação por IA?",
+              "a": "Ela fornece à IA tipos de dados explícitos, regras de validação e descrições dos campos, evitando alucinações e garantindo documentação autogerada precisa."
+            }
+          ],
+          "file": "published/json-schema-auto-doc-ai-configuration-formatting.pt-BR.md",
+          "sha256": "89365f04f49c4772bbd21dcf7803af2e76a488f67f842131a095209073793fcf"
+        },
+        "pt-PT": {
+          "title": "RFC 8259 e JSON Schema: Configurações Estritas para Auto-Doc AI",
+          "category": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI",
+          "meta_description": "Otimize os seus ficheiros JSON para pipelines de Auto-Doc AI com validação estrita via JSON Schema, conformidade RFC 8259 e sem vírgulas finais.",
+          "summary": "Aprenda a estruturar ficheiros JSON de configuração interoperáveis e validados por esquema para evitar erros sintáticos em motores de documentação automática por IA.",
+          "faq": [
+            {
+              "q": "Por que razão o padrão JSON proíbe vírgulas no final dos objetos?",
+              "a": "A especificação RFC 8259 proíbe vírgulas finais para manter o analisador sintático simples e eliminar dúvidas sobre a existência de elementos nulos a seguir."
+            },
+            {
+              "q": "Como é que a propriedade $schema beneficia os motores de documentação por IA?",
+              "a": "Fornece à IA tipos de dados explícitos, regras de validação e descrições dos campos, evitando interpretações erradas e garantindo documentação autogerada precisa."
+            }
+          ],
+          "file": "published/json-schema-auto-doc-ai-configuration-formatting.pt-PT.md",
+          "sha256": "d9dab9d9c457231da5ab997f73c17cb9f17fac195249007ae32e8756770e2ebb"
+        }
+      }
     }
   ]
 }

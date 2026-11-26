@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>en</language>
-    <lastBuildDate>Tue, 24 Nov 2026 23:25:26 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2026 22:57:16 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -19,6 +19,23 @@
     <atom:link rel="alternate" type="application/rss+xml" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/feed.fr.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/feed.de.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/feed.it.xml"/>
+    <item>
+      <title>RFC 8259 and JSON Schema: Structuring Strict Configurations for Auto-Doc AI</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/en/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/en/</guid>
+      <pubDate>Thu, 26 Nov 2026 14:00:00 +0000</pubDate>
+      <category>JSON</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/json-schema-auto-doc-ai-configuration-formatting-en.png" medium="image" />
+      <description>Learn how to structure interoperable, schema-validated JSON configuration files to prevent syntax errors in AI Auto-Documentation engines.</description>
+      <content:encoded><![CDATA[<p>Learn how to structure interoperable, schema-validated JSON configuration files to prevent syntax errors in AI Auto-Documentation engines.</p><pre><code>// ❌ INCORRECT: Inline comments not allowed, trailing comma, and missing schema
+{
+  &quot;serviceName&quot;: &quot;billing-api&quot;,
+  &quot;autoDocSettings&quot;: {
+    &quot;extractComments&quot;: true,
+    &quot;outputFormat&quot;: &quot;markdown&quot;, // Trailing comma forbidden
+  },
+}</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/en/">RFC 8259 and JSON Schema: Structuring Strict Configurations for Auto-Doc AI</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Exhaustive TypeScript: Refactoring Legacy Enums with Discriminated Unions</title>
       <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/en/</link>

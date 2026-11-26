@@ -5,7 +5,7 @@
     <link>https://jw-solutions.com/tools/code-formatter/</link>
     <description>Practical syntax guides, refactoring patterns and Auto-Doc AI workflows.</description>
     <language>pt-PT</language>
-    <lastBuildDate>Tue, 24 Nov 2026 23:25:26 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2026 22:57:16 +0000</lastBuildDate>
     <image>
       <url>https://jw-solutions.com/assets/images/og/code-formatter-default.png</url>
       <title>Code Formatter &amp; Auto-Doc AI — Technical Tips</title>
@@ -19,6 +19,23 @@
     <atom:link rel="alternate" type="application/rss+xml" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/feed.fr.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/feed.de.xml"/>
     <atom:link rel="alternate" type="application/rss+xml" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/feed.it.xml"/>
+    <item>
+      <title>RFC 8259 e JSON Schema: Configurações Estritas para Auto-Doc AI</title>
+      <link>https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/pt-PT/</link>
+      <guid isPermaLink="true">https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/pt-PT/</guid>
+      <pubDate>Thu, 26 Nov 2026 14:00:00 +0000</pubDate>
+      <category>JSON</category>
+      <media:content url="https://jw-solutions.com/assets/images/og/tips/json-schema-auto-doc-ai-configuration-formatting-pt-PT.png" medium="image" />
+      <description>Aprenda a estruturar ficheiros JSON de configuração interoperáveis e validados por esquema para evitar erros sintáticos em motores de documentação automática por IA.</description>
+      <content:encoded><![CDATA[<p>Aprenda a estruturar ficheiros JSON de configuração interoperáveis e validados por esquema para evitar erros sintáticos em motores de documentação automática por IA.</p><pre><code>// ❌ INCORRETO: Comentários não permitidos, vírgula final e sem esquema
+{
+  &quot;serviceName&quot;: &quot;billing-api&quot;,
+  &quot;autoDocSettings&quot;: {
+    &quot;extractComments&quot;: true,
+    &quot;outputFormat&quot;: &quot;markdown&quot;, // Vírgula final proibida
+  },
+}</code></pre><p><a href="https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/pt-PT/">RFC 8259 e JSON Schema: Configurações Estritas para Auto-Doc AI</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>TypeScript Exaustivo: Refatoração de Enums com Uniões Discriminadas</title>
       <link>https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/pt-PT/</link>

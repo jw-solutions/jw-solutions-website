@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RFC 8259 y JSON Schema: Estructuración de Configuraciones Estrictas para Auto-Doc AI | Code Formatter &amp; Auto-Doc AI</title>
+  <meta name="description" content="Optimiza tus archivos JSON para pipelines de Auto-Doc AI con validación JSON Schema estricta, RFC 8259 y ordenación sin comas finales.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.jw-solutions.com https://formspree.io; object-src 'none'; base-uri 'self'; form-action 'self' https://formspree.io">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="canonical" href="https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/es/">
+  <link rel="alternate" hreflang="es" href="https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/es/">
+  <link rel="alternate" hreflang="en" href="https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/en/">
+  <link rel="alternate" hreflang="pt-BR" href="https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/pt-BR/">
+  <link rel="alternate" hreflang="pt-PT" href="https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/pt-PT/">
+  <link rel="alternate" hreflang="fr" href="https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/fr/">
+  <link rel="alternate" hreflang="de" href="https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/de/">
+  <link rel="alternate" hreflang="it" href="https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/it/">
+  <link rel="alternate" hreflang="x-default" href="https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/es/">
+  <link rel="alternate" type="application/rss+xml" title="Code Formatter &amp; Auto-Doc AI Tips" href="https://jw-solutions.com/tools/code-formatter/tips/feed.es.xml">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="JW Solutions">
+  <meta property="og:title" content="RFC 8259 y JSON Schema: Estructuración de Configuraciones Estrictas para Auto-Doc AI | Code Formatter &amp; Auto-Doc AI">
+  <meta property="og:description" content="Optimiza tus archivos JSON para pipelines de Auto-Doc AI con validación JSON Schema estricta, RFC 8259 y ordenación sin comas finales.">
+  <meta property="og:url" content="https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/es/">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:image" content="https://jw-solutions.com/assets/images/og/tips/json-schema-auto-doc-ai-configuration-formatting-es.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="RFC 8259 y JSON Schema: Estructuración de Configuraciones Estrictas para Auto-Doc AI | Code Formatter &amp; Auto-Doc AI">
+  <meta name="twitter:description" content="Optimiza tus archivos JSON para pipelines de Auto-Doc AI con validación JSON Schema estricta, RFC 8259 y ordenación sin comas finales.">
+  <meta name="twitter:image" content="https://jw-solutions.com/assets/images/og/tips/json-schema-auto-doc-ai-configuration-formatting-es.png">
+  <meta name="theme-color" content="#0b0f17">
+  <meta name="cf-newsletter-endpoint" content="https://api.jw-solutions.com/api/newsletter/subscribe">
+  <link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
+  <link rel="icon" type="image/x-icon" sizes="any" href="../../../../favicon.ico">
+  <link rel="apple-touch-icon" href="../../../../apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Roboto:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../../../../../../assets/css/tools/code-formatter.css">
+  <script type="application/ld+json" id="cf-jsonld">{"@context": "https://schema.org", "@graph": [{"@type": "TechArticle", "headline": "RFC 8259 y JSON Schema: Estructuración de Configuraciones Estrictas para Auto-Doc AI", "description": "Optimiza tus archivos JSON para pipelines de Auto-Doc AI con validación JSON Schema estricta, RFC 8259 y ordenación sin comas finales.", "inLanguage": "es", "articleSection": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI", "keywords": "json, code formatter, auto-doc ai, syntax, best practices", "datePublished": "2026-11-26", "dateModified": "2026-11-26", "url": "https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/es/", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/es/"}, "isPartOf": {"@type": "WebApplication", "name": "Code Formatter & Auto-Doc AI", "url": "https://jw-solutions.com/tools/code-formatter/"}, "image": "https://jw-solutions.com/assets/images/og/tips/json-schema-auto-doc-ai-configuration-formatting-es.png", "author": {"@type": "Organization", "name": "JW Solutions"}, "publisher": {"@type": "Organization", "name": "JW Solutions", "url": "https://jw-solutions.com"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Code Formatter", "item": "https://jw-solutions.com/tools/code-formatter/"}, {"@type": "ListItem", "position": 2, "name": "Tips de Sintaxis | Buenas prácticas | Auto-Doc AI", "item": "https://jw-solutions.com/tools/code-formatter/tips/json-yaml/"}, {"@type": "ListItem", "position": 3, "name": "RFC 8259 y JSON Schema: Estructuración de Configuraciones Estrictas para Auto-Doc AI", "item": "https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/es/"}]}, {"@type": "FAQPage", "inLanguage": "es", "mainEntity": [{"@type": "Question", "name": "¿Por qué JSON estandarizado no permite comas al final de un objeto?", "acceptedAnswer": {"@type": "Answer", "text": "El estándar RFC 8259 prohíbe las comas finales para mantener la simplicidad del parser sintáctico y evitar ambigüedades al determinar si existe un elemento nulo u omitido a continuación."}}, {"@type": "Question", "name": "¿Cómo beneficia la propiedad $schema a los motores de IA?", "acceptedAnswer": {"@type": "Answer", "text": "Le otorga al modelo de IA la especificación exacta del tipo de datos, límites y descripciones de cada campo, reduciendo alucinaciones y permitiendo la autogeneración de documentación precisa."}}]}]}</script>
+</head>
+<body class="cf-body">
+  <a class="cf-skip" href="#cf-main" data-i18n="skip">Saltar al contenido</a>
+
+  <header class="cf-header">
+    <div class="cf-container cf-header__inner">
+      <div class="cf-logo" role="img" aria-label="JW Solutions">
+        <span class="cf-logo__mark">JW</span>
+        <span class="cf-logo__text">SOLUTIONS</span>
+      </div>
+      <nav class="cf-nav" aria-label="Code Formatter">
+        <select id="cf-ui-lang" class="cf-select cf-select--compact" data-i18n-aria="uiLang" aria-label="Idioma de la interfaz"></select>
+        <a class="cf-nav__link" data-site-link data-i18n="tipsBackTool" href="../../../../">Volver al formateador</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="cf-main" class="cf-main" data-fix-data="">
+    <section class="cf-container cf-hero">
+      <span class="cf-tag" data-i18n="fixTag">Tips de Sintaxis | Buenas prácticas | Auto-Doc AI</span>
+      <h1 id="cf-fix-title" class="cf-title">RFC 8259 y JSON Schema: Estructuración de Configuraciones Estrictas para Auto-Doc AI</h1>
+      <p id="cf-fix-lead" class="cf-lead cf-fix__lead">Optimiza tus archivos JSON para pipelines de Auto-Doc AI con validación JSON Schema estricta, RFC 8259 y ordenación sin comas finales.</p>
+    </section>
+    <section class="cf-container cf-tips">
+      <div id="cf-fix-body" class="cf-card cf-tip">
+        <p class="cf-muted cf-tip__meta">2026-11-26 · Tips de Sintaxis | Buenas prácticas | Auto-Doc AI · JSON</p>
+        <h2 class="cf-tip__h">Sintaxis RFC 8259 y compatibilidad con agentes de IA</h2>
+        <p>El estándar RFC 8259 define la especificación formal del formato de intercambio de datos JSON. En entornos donde los pipelines de <strong>Auto-Doc AI</strong> leen, interpretan y generan documentación técnica automáticamente a partir de archivos de configuración, la validez sintáctica y la predictibilidad son fundamentales. Los analizadores de IA a menudo fallan o introducen alucinaciones cuando consumen JSONs no estándar que contienen comas finales (*trailing commas*), comentarios no soportados o una clave <code>$schema</code> ausente.</p>
+        <p>Para maximizar la interoperabilidad en proyectos de automatización, la configuración debe cumplir dos pilares: validez estricta según el estándar RFC 8259 y semántica enriquecida mediante <strong>JSON Schema</strong> (Draft 2020-12).</p>
+        <h2 class="cf-tip__h">El problema: JSON malformado y sin metadatos de esquema</h2>
+        <p>Un error muy común al redactar archivos JSON de configuración manual o mediante scripts no validados es incluir comas sobrantes al final de arrays u objetos, omitir comillas en las claves o mezclar sintaxis de JavaScript/JSON5. Esto invalida el objeto para los parsers nativos de la mayoría de lenguajes de programación.</p>
+        <pre class="cf-tip__code"><code>// ❌ INCORRECTO: Comentarios no permitidos, coma final (trailing comma) y sin esquema
+{
+  &quot;serviceName&quot;: &quot;billing-api&quot;,
+  &quot;autoDocSettings&quot;: {
+    &quot;extractComments&quot;: true,
+    &quot;outputFormat&quot;: &quot;markdown&quot;, // Coma final prohibida
+  },
+}</code></pre>
+        <p>El ejemplo anterior fallará inmediatamente en cualquier analizador RFC 8259 estándar lanzando un error del tipo <code>SyntaxError: Unexpected token</code> debido a la coma final y a los comentarios inline.</p>
+        <h2 class="cf-tip__h">La solución: Estructura RFC 8259 pura con referencia a JSON Schema</h2>
+        <p>Al limpiar la sintaxis y añadir la metaclave <code>$schema</code>, le proporcionamos al motor de <strong>Auto-Doc AI</strong> un contrato tipado explícito. La IA puede validar la estructura antes de generar la documentación de la arquitectura sin requerir pasos de adivinación.</p>
+        <pre class="cf-tip__code"><code>{
+  &quot;$schema&quot;: &quot;https://json-schema.org/draft/2020-12/schema&quot;,
+  &quot;serviceName&quot;: &quot;billing-api&quot;,
+  &quot;autoDocSettings&quot;: {
+    &quot;extractComments&quot;: true,
+    &quot;outputFormat&quot;: &quot;markdown&quot;,
+    &quot;targetDirectory&quot;: &quot;./docs/api&quot;
+  },
+  &quot;metadata&quot;: {
+    &quot;environment&quot;: &quot;production&quot;,
+    &quot;owner&quot;: &quot;devops-team&quot;
+  }
+}</code></pre>
+        <h2 class="cf-tip__h">Integración en flujos de Auto-Documentación con IA</h2>
+        <p>Para que la herramienta de automatización lea este archivo sin interrupciones, se recomienda establecer las siguientes reglas en el linter del CI/CD:</p>
+        <ul class="cf-tip__list">
+          <li><strong>Ordenación determinista de claves</strong>: Colocar <code>$schema</code> y atributos de primer nivel primero.</li>
+          <li><strong>Eliminación estricta de comas finales</strong>: Configurar el formateador automático de código para limpiar cualquier coma flotante en arrays u objetos.</li>
+          <li><strong>Codificación UTF-8 sin BOM</strong>: Garantizar compatibilidad completa entre sistemas Linux, macOS y Windows.</li>
+        </ul>
+        <h3 class="cf-tip__h">Lista de verificación para validación JSON Auto-Doc</h3>
+        <ul class="cf-tip__list">
+          <li>[ ] ¿El archivo es 100% parseable por <code>JSON.parse()</code> sin plugins adicionales?</li>
+          <li>[ ] ¿Se eliminaron los comentarios estilo C (<code>//</code> o <code>/* */</code>) y las comas finales?</li>
+          <li>[ ] ¿Está presente la propiedad <code>$schema</code> señalando la especificación correcta?</li>
+          <li>[ ] ¿Todas las propiedades de texto utilizan comillas dobles universales (<code>&quot;</code>)?</li>
+        </ul>
+        <section class="cf-tip-faq" aria-labelledby="cf-faq-title">
+          <h2 id="cf-faq-title" class="cf-tip__h">Preguntas frecuentes</h2>
+          <details class="cf-faq__item"><summary>¿Por qué JSON estandarizado no permite comas al final de un objeto?</summary><p>El estándar RFC 8259 prohíbe las comas finales para mantener la simplicidad del parser sintáctico y evitar ambigüedades al determinar si existe un elemento nulo u omitido a continuación.</p></details>
+          <details class="cf-faq__item"><summary>¿Cómo beneficia la propiedad $schema a los motores de IA?</summary><p>Le otorga al modelo de IA la especificación exacta del tipo de datos, límites y descripciones de cada campo, reduciendo alucinaciones y permitiendo la autogeneración de documentación precisa.</p></details>
+        </section>
+        <p><a class="cf-btn cf-btn--primary cf-fix__cta" href="https://jw-solutions.com/tools/code-formatter/?lang=es&amp;snippet=%7B%0A%20%20%22%24schema%22%3A%20%22https%3A//json-schema.org/draft/2020-12/schema%22%2C%0A%20%20%22title%22%3A%20%22AutoDocAIConfig%22%2C%0A%20%20%22type%22%3A%20%22object%22%2C%0A%20%20%22properties%22%3A%20%7B%0A%20%20%20%20%22version%22%3A%20%7B%0A%20%20%20%20%20%20%22type%22%3A%20%22string%22%2C%0A%20%20%20%20%20%20%22pattern%22%3A%20%22%5E%5C%5Cd%2B%5C%5C.%5C%5Cd%2B%5C%5C.%5C%5Cd%2B%24%22%0A%20%20%20%20%7D%2C%0A%20%20%20%20%22documentationEngine%22%3A%20%7B%0A%20%20%20%20%20%20%22type%22%3A%20%22object%22%2C%0A%20%20%20%20%20%20%22properties%22%3A%20%7B%0A%20%20%20%20%20%20%20%20%22enabled%22%3A%20%7B%20%22type%22%3A%20%22boolean%22%20%7D%2C%0A%20%20%20%20%20%20%20%20%22strictValidation%22%3A%20%7B%20%22type%22%3A%20%22boolean%22%20%7D%0A%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%22required%22%3A%20%5B%22enabled%22%2C%20%22strictValidation%22%5D%0A%20%20%20%20%7D%0A%20%20%7D%2C%0A%20%20%22required%22%3A%20%5B%22version%22%2C%20%22documentationEngine%22%5D%0A%7D">Probar fragmento en el formateador</a></p>
+        <p><a class="cf-nav__link" href="https://jw-solutions.com/tools/code-formatter/fix/json-trailing-comma-unexpected-token/?lang=es">Ver guía de solución de errores: Cómo solucionar Unexpected token } en JSON.parse</a></p>
+        <h2 class="cf-tip__h">Tips relacionados</h2>
+        <ul class="cf-fix__list"><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/python/python-312-pep8-tips/es/">PEP 8 en Python 3.12: cómo escribir bloques match/case legibles</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/javascript/typescript-modern-operators/es/">TypeScript moderno: ?., ?? y satisfies sin errores de formato</a></li><li class="cf-card"><a href="https://jw-solutions.com/tools/code-formatter/tips/sql-dax/sql-dax-optimization-basics/es/">SQL y DAX: tres hábitos para consultas rápidas y legibles</a></li></ul>
+      </div>
+    </section>
+  </main>
+
+      <section class="cf-card cf-share" data-cf-share="1" data-share-url="https://jw-solutions.com/tools/code-formatter/tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/es/" data-share-title="RFC 8259 y JSON Schema: Estructuración de Configuraciones Estrictas para Auto-Doc AI" aria-label="Compartir artículo">
+        <h2 class="cf-share__title">Compartir artículo</h2>
+        <div class="cf-share__actions">
+          <button type="button" class="cf-share__btn cf-share__btn--primary" data-cf-share-native hidden>Compartir</button>
+          <a class="cf-share__btn" data-cf-share-net="linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fjw-solutions.com%2Ftools%2Fcode-formatter%2Ftips%2Fjson-yaml%2Fjson-schema-auto-doc-ai-configuration-formatting%2Fes%2F" target="_blank" rel="noopener noreferrer" aria-label="Compartir en LinkedIn">LinkedIn</a>
+          <a class="cf-share__btn" data-cf-share-net="x" href="https://twitter.com/intent/tweet?text=RFC%208259%20y%20JSON%20Schema%3A%20Estructuraci%C3%B3n%20de%20Configuraciones%20Estrictas%20para%20Auto-Doc%20AI&amp;url=https%3A%2F%2Fjw-solutions.com%2Ftools%2Fcode-formatter%2Ftips%2Fjson-yaml%2Fjson-schema-auto-doc-ai-configuration-formatting%2Fes%2F" target="_blank" rel="noopener noreferrer" aria-label="Compartir en X">X</a>
+          <a class="cf-share__btn" data-cf-share-net="whatsapp" href="https://api.whatsapp.com/send?text=RFC%208259%20y%20JSON%20Schema%3A%20Estructuraci%C3%B3n%20de%20Configuraciones%20Estrictas%20para%20Auto-Doc%20AI%20https%3A%2F%2Fjw-solutions.com%2Ftools%2Fcode-formatter%2Ftips%2Fjson-yaml%2Fjson-schema-auto-doc-ai-configuration-formatting%2Fes%2F" target="_blank" rel="noopener noreferrer" aria-label="Compartir en WhatsApp">WhatsApp</a>
+          <button type="button" class="cf-share__btn" data-cf-share-copy="1" data-copied-msg="¡Enlace copiado!" data-copy-fail-msg="No se pudo copiar el enlace.">Copiar enlace</button>
+        </div>
+        <p class="cf-share__status" role="status" aria-live="polite"></p>
+      </section>
+
+      <aside class="cf-card cf-academy-funnel-cta" aria-label="Academy">
+        <span class="cf-tag">Academia Guiada</span>
+        <h2 class="cf-tip__h">Domina este concepto paso a paso en Modo Academia</h2>
+        <p class="cf-muted">Practica por niveles con validación en vivo y ejercicios guiados. Comienza gratis y explora las modalidades Pro de la plataforma.</p>
+        <div class="cf-tip-modal__actions">
+          <a class="cf-btn cf-btn--primary" href="../../../../?mode=learn&amp;lang=es&amp;topic=json&amp;level=1&amp;utm_source=tips_article&amp;utm_medium=bottom_cta&amp;utm_campaign=json-schema-auto-doc-ai-configuration-formatting">Practicar en Modo Academia</a>
+          <a class="cf-btn cf-btn--secondary" href="../../../../?mode=learn&amp;lang=es&amp;topic=json&amp;open_plans=1">Ver modalidades</a>
+        </div>
+      </aside>
+
+  <section class="cf-tips-showcase" id="cf-weekly-tips" aria-labelledby="cf-tips-showcase-title">
+    <div class="cf-container">
+      <div class="cf-tips-showcase__head">
+        <div class="cf-tips-showcase__intro">
+          <span class="cf-tag" data-i18n="tipsShowcaseTag">Actualizaciones &amp; Guías Técnicas</span>
+          <h2 id="cf-tips-showcase-title" class="cf-tips-showcase__title" data-i18n="tipsShowcaseTitle">Weekly Tips de Código y Buenas Prácticas</h2>
+          <p class="cf-muted cf-tips-showcase__sub" data-i18n="tipsShowcaseSubtitle">Guías prácticas por lenguaje, estándares modernos y ejemplos listos para probar en el editor.</p>
+        </div>
+        <span id="cf-tips-count" class="cf-badge cf-tips-showcase__count" aria-live="polite"></span>
+      </div>
+
+      <div class="cf-channels-bar" role="region" data-i18n-aria="tipsChannelsLabel" aria-label="Disponible también en nuestros canales automáticos:">
+        <span class="cf-channels-bar__label" data-i18n="tipsChannelsLabel">Disponible también en nuestros canales automáticos:</span>
+        <div class="cf-channels-bar__list">
+          <a class="cf-channel-link" href="https://dev.to/jwsolutions" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelDevto" aria-label="Dev.to" title="Dev.to">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.42 10.05c-.18-.16-.46-.23-.84-.23H6v4.36h.58c.37 0 .65-.08.84-.23.21-.16.31-.46.31-.92v-2.06c0-.46-.1-.76-.31-.92zM20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM9.06 13.09c0 .77-.21 1.38-.62 1.81-.42.44-1.02.66-1.81.66H4.7V8.44h1.95c.78 0 1.37.21 1.79.64.42.42.62 1.01.62 1.77v2.24zm4.82-3.27h-2.1v1.45h1.5v1.36h-1.5v1.55h2.1v1.38h-3.54V8.44h3.54v1.38zm5.16 5.74h-1.4l-1.56-5.26-.04-.17-.04.17-.95 5.26h-1.4l-1.36-7.12h1.45l.68 4.41.05.33.06-.33.92-4.41h1.21l.93 4.41.06.33.05-.33.68-4.41h1.42l-1.36 7.12z"/></svg>
+          </a>
+          <a class="cf-channel-link" href="https://bsky.app/profile/jwsolutions.bsky.social" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelBluesky" aria-label="Bluesky" title="Bluesky">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.74 8.74 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.204-.659-.299-1.664-.621-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8z"/></svg>
+          </a>
+          <a class="cf-channel-link" href="https://t.me/+rZphEi3JWxFlMDJh" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelTelegram" aria-label="Telegram (Canal Oficial)" title="Telegram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+          </a>
+          <a id="cf-channel-discord" class="cf-channel-link" href="https://discord.gg/f2nXYUXXwA" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelDiscord" aria-label="Discord Community" title="Discord">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+          </a>
+          <a class="cf-channel-link" href="https://github.com/jw-solutions/jw-solutions-website/discussions" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelGithub" aria-label="GitHub Discussions" title="GitHub Discussions">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.69-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11.04 11.04 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.62 1.58.23 2.75.11 3.04.73.8 1.18 1.83 1.18 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+          </a>
+          <a class="cf-channel-link" href="https://dly.to/nmdN9vQObOU" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelDailydev" aria-label="daily.dev Squad" title="daily.dev Squad">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2L3 7v10l9 5 9-5V7l-9-5zm0 2.3L18.6 8 12 11.7 5.4 8 12 4.3zm-7 5.4l6 3.3v6.7l-6-3.3V9.7zm8 10v-6.7l6-3.3v6.7l-6 3.3z"/></svg>
+          </a>
+          <a id="cf-channel-rss" class="cf-channel-link" href="../../../../tips/feed.es.xml" target="_blank" rel="noopener noreferrer" data-i18n-aria="tipsChannelRss" aria-label="RSS Feed Multilingüe" title="RSS Feed">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19.01 7.38 20 6.18 20 4.98 20 4 19.01 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="cf-tips-controls">
+        <div id="cf-tips-filters" class="cf-tips-filters" role="tablist" data-i18n-aria="tipsFilterAria" aria-label="Filtrar guías por lenguaje"></div>
+        <div class="cf-tips-nav">
+          <button type="button" id="cf-tips-prev" class="cf-btn cf-btn--small cf-tips-nav__btn" data-i18n-aria="tipsPrevSlide" aria-label="Desplazar a la izquierda">&larr;</button>
+          <button type="button" id="cf-tips-toggle" class="cf-btn cf-btn--small cf-tips-nav__btn" data-i18n-aria="tipsPauseCarousel" aria-label="Pausar desplazamiento" aria-pressed="false">&#x23F8;</button>
+          <button type="button" id="cf-tips-next" class="cf-btn cf-btn--small cf-tips-nav__btn" data-i18n-aria="tipsNextSlide" aria-label="Desplazar a la derecha">&rarr;</button>
+        </div>
+      </div>
+
+      <div id="cf-tips-viewport" class="cf-tips-viewport" role="region" data-i18n-aria="tipsCarouselAria" aria-label="Carrusel de guías técnicas">
+        <div id="cf-tips-track" class="cf-tips-track">
+          <!-- CF_TIPS_FALLBACK_START -->
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">JSON</span><time class="cf-tip-carousel-card__date" datetime="2026-11-26">2026-11-26</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/json-yaml/json-schema-auto-doc-ai-configuration-formatting/es/">RFC 8259 y JSON Schema: Estructuración de Configuraciones Estrictas para Auto-Doc AI</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">TYPESCRIPT</span><time class="cf-tip-carousel-card__date" datetime="2026-11-24">2026-11-24</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/javascript/typescript-discriminant-unions-exhaustive-type-checks-tsdoc/es/">TypeScript Exhaustivo: Refactorización de Enums y Switch con Uniones Discriminadas</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">DAX</span><time class="cf-tip-carousel-card__date" datetime="2026-11-19">2026-11-19</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/sql-dax/dax-var-return-calculate-auto-doc-formatting/es/">DAX Moderno: Formato con VAR/RETURN y Auto-Documentación Asistida por IA</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">JAVASCRIPT</span><time class="cf-tip-carousel-card__date" datetime="2026-11-15">2026-11-15</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/javascript/javascript-es2024-legacy-class-refactoring-jsdoc/es/">Refactorización en JavaScript ES2024+: Campos Privados, Bloques Estáticos y JSDoc Estructurado</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">PHP</span><time class="cf-tip-carousel-card__date" datetime="2026-11-15">2026-11-15</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/php/php-83-typed-properties-enums-psr12-refactoring/es/">PHP 8.3 y PSR-12: Refactorización de código legado con Typed Properties y Enums</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">PYTHON</span><time class="cf-tip-carousel-card__date" datetime="2026-11-15">2026-11-15</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/python/python-312-match-case-formatting-pep8/es/">Python 3.12 Match Case Formatting y PEP 8: Guía Avanzada</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">CSHARP</span><time class="cf-tip-carousel-card__date" datetime="2026-11-14">2026-11-14</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/csharp/csharp-12-primary-constructors-xml-doc-refactoring/es/">C# 12 Moderno: Refactorización con Primary Constructors y XML Docs</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">JAVA</span><time class="cf-tip-carousel-card__date" datetime="2026-11-14">2026-11-14</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/java/java-21-pattern-matching-records-refactoring/es/">Refactorización en Java 21+: Records y Pattern Matching para Código Legible</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">TYPESCRIPT</span><time class="cf-tip-carousel-card__date" datetime="2026-11-14">2026-11-14</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/javascript/typescript-refactoring-legacy-any-type-guards-tsdoc/es/">Refactorización de tipos any en TypeScript con Type Guards y TSDoc</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">SQL</span><time class="cf-tip-carousel-card__date" datetime="2026-11-02">2026-11-02</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/sql-dax/sql-dax-optimization-basics/es/">SQL y DAX: tres hábitos para consultas rápidas y legibles</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">JAVASCRIPT</span><time class="cf-tip-carousel-card__date" datetime="2026-11-02">2026-11-02</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/javascript/typescript-modern-operators/es/">TypeScript moderno: ?., ?? y satisfies sin errores de formato</a></h3>
+          </article>
+          <article class="cf-card cf-tip-carousel-card">
+            <div class="cf-tip-carousel-card__head"><span class="cf-lang-badge">PYTHON</span><time class="cf-tip-carousel-card__date" datetime="2026-11-02">2026-11-02</time></div>
+            <h3 class="cf-tip-carousel-card__title"><a href="../../../../tips/python/python-312-pep8-tips/es/">PEP 8 en Python 3.12: cómo escribir bloques match/case legibles</a></h3>
+          </article>
+          <!-- CF_TIPS_FALLBACK_END -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="cf-footer">
+    <div class="cf-container cf-footer__grid cf-footer__grid--two">
+      <section class="cf-footer__col" aria-labelledby="cf-foot-id">
+        <div class="cf-logo" role="img" aria-label="JW Solutions">
+          <span class="cf-logo__mark">JW</span>
+          <span class="cf-logo__text">SOLUTIONS</span>
+        </div>
+        <h2 id="cf-foot-id" class="cf-footer__title">Code Formatter <span class="cf-gold">&amp; Auto-Doc AI</span></h2>
+        <p class="cf-footer__text" data-i18n="footDesc">Formatea y documenta tu código en Python, JavaScript, SQL, DAX y más. Herramienta independiente de JW Solutions.</p>
+        <ul class="cf-footer__list">
+          <li><a href="../../../../" data-site-link data-i18n="footEditor">Ir al editor</a></li>
+          <li><a href="../../../../fix/" data-site-link data-i18n="fixHubTitle">Soluciones rápidas a errores de sintaxis</a></li>
+          <li><a href="https://dly.to/nmdN9vQObOU" target="_blank" rel="noopener noreferrer" data-i18n="footDailyDevSquad">Únete a nuestro Squad en daily.dev</a></li>
+        </ul>
+      </section>
+
+      <section class="cf-footer__col" aria-labelledby="cf-foot-nl">
+        <h2 id="cf-foot-nl" class="cf-footer__title" data-i18n="nlTitle">Tips Semanales de Código</h2>
+        <p class="cf-footer__text" data-i18n="nlPromise">Un email por semana con tips prácticos de sintaxis, casos de estudio y novedades de lenguajes (Python, JS, SQL, DAX). Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
+        <form id="cf-newsletter-form" class="cf-newsletter" novalidate>
+          <label class="cf-sr-only" for="cf-newsletter-email" data-i18n="nlEmailLabel">Correo electrónico</label>
+          <input id="cf-newsletter-email" class="cf-input" type="email" name="email" required maxlength="254" autocomplete="email" placeholder="tu@email.com" data-i18n-placeholder="nlPlaceholder">
+          <input type="text" name="_gotcha" class="cf-sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button type="submit" class="cf-btn cf-btn--primary" data-i18n="nlSubmit">Suscribirme</button>
+          <p id="cf-newsletter-status" class="cf-form__status cf-newsletter__status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </div>
+    <div class="cf-container cf-footer__legal">
+      <p>&copy; JW Solutions · <span data-i18n="footRights">Todos los derechos reservados</span> · <a href="/privacidad/" data-site-link data-i18n="legalPrivacy">Política de Privacidad</a> · <a href="/terminos/" data-site-link data-i18n="legalTerms">Términos de Servicio</a></p>
+    </div>
+  </footer>
+
+  <dialog id="cf-tip-detail-modal" class="cf-dialog cf-tip-modal" aria-labelledby="cf-tip-modal-title">
+    <div class="cf-dialog__head">
+      <div class="cf-tip-modal__meta">
+        <span id="cf-tip-modal-lang" class="cf-lang-badge"></span>
+        <time id="cf-tip-modal-date" class="cf-muted"></time>
+      </div>
+      <button type="button" class="cf-btn cf-btn--small" data-cf-close data-i18n="tipsModalClose">Cerrar</button>
+    </div>
+    <h2 id="cf-tip-modal-title" class="cf-dialog__title cf-tip-modal__title"></h2>
+    <div id="cf-tip-modal-tags" class="cf-tip-carousel-card__tags"></div>
+    <p id="cf-tip-modal-summary" class="cf-tip-modal__summary"></p>
+    <div id="cf-tip-modal-code-wrap" class="cf-tip-modal__code-wrap" hidden>
+      <p class="cf-field__label" data-i18n="tipsCodePreview">Ejemplo de código</p>
+      <pre class="cf-tip__code"><code id="cf-tip-modal-code"></code></pre>
+    </div>
+    <div class="cf-tip-modal__actions">
+      <a id="cf-tip-modal-full" class="cf-btn cf-btn--primary" href="#" data-i18n="tipsOpenFullPage">Leer guía completa y FAQ</a>
+      <button type="button" id="cf-tip-modal-load" class="cf-btn" data-i18n="tipsLoadInEditor">Cargar ejemplo en el editor</button>
+    </div>
+    <div id="cf-tip-modal-share"></div>
+  </dialog>
+
+  <div id="cf-toast" class="cf-toast" role="status" aria-live="polite"></div>
+  <script type="module" src="../../../../../../assets/js/tools/code-formatter/tips-carousel.js"></script>
+</body>
+</html>
