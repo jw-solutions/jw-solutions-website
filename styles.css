@@ -3255,7 +3255,7 @@ body.standalone-calc-active #dialog-tool-fx { position: fixed; inset: 0; width: 
   color: var(--jw-muted);
 }
 
-/* Bento Asimétrico Superior (60% protagonista / 40% stack) */
+/* Bento Asimétrico Superior (60% protagonista / 40% stack vertical equilibrado) */
 .aa-bento-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -3265,7 +3265,7 @@ body.standalone-calc-active #dialog-tool-fx { position: fixed; inset: 0; width: 
 
 @media (min-width: 992px) {
   .aa-bento-grid {
-    grid-template-columns: 1.45fr 1fr;
+    grid-template-columns: 1.55fr 1fr;
     align-items: stretch;
   }
 }
@@ -3290,8 +3290,10 @@ body.standalone-calc-active #dialog-tool-fx { position: fixed; inset: 0; width: 
 
 .aa-media-link {
   display: block;
+  width: 100%;
   overflow: hidden;
   background: #10141B;
+  border-bottom: var(--hairline-dark);
 }
 
 .aa-bento-lead .aa-media-img {
@@ -3313,7 +3315,7 @@ body.standalone-calc-active #dialog-tool-fx { position: fixed; inset: 0; width: 
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2) var(--space-3);
   font-size: var(--text-xs);
   color: var(--jw-muted);
 }
@@ -3369,7 +3371,8 @@ body.standalone-calc-active #dialog-tool-fx { position: fixed; inset: 0; width: 
   font-size: var(--text-sm);
   font-weight: var(--fw-semibold);
   color: var(--jw-gold);
-  margin-top: var(--space-1);
+  margin-top: auto;
+  padding-top: var(--space-1);
 }
 
 .aa-read-link:hover {
@@ -3379,18 +3382,25 @@ body.standalone-calc-active #dialog-tool-fx { position: fixed; inset: 0; width: 
 .aa-bento-stack {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-5);
+  grid-auto-rows: 1fr;
+  gap: var(--space-4);
+}
+
+.aa-bento-subcard .aa-media-link {
+  border-top-left-radius: calc(var(--jw-radius) - 1px);
+  border-top-right-radius: calc(var(--jw-radius) - 1px);
 }
 
 .aa-bento-subcard .aa-media-img {
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 
 .aa-sub-body {
-  padding: var(--space-5);
+  padding: var(--space-4);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -3399,26 +3409,14 @@ body.standalone-calc-active #dialog-tool-fx { position: fixed; inset: 0; width: 
 
 .aa-sub-title {
   font-family: var(--font-heading);
-  font-size: var(--text-lg);
+  font-size: clamp(0.98rem, 1.35vw, 1.1rem);
   font-weight: var(--fw-bold);
-  line-height: 1.35;
+  line-height: 1.32;
   color: var(--jw-text);
-}
-
-@media (min-width: 576px) {
-  .aa-bento-subcard {
-    flex-direction: row;
-    align-items: stretch;
-  }
-
-  .aa-bento-subcard .aa-media-link {
-    flex: 0 0 42%;
-    max-width: 210px;
-  }
-
-  .aa-bento-subcard .aa-media-img {
-    height: 100%;
-  }
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Bloque Inferior 2 Columnas (65% Top Insights 1-5 / 35% Sticky Newsletter) */

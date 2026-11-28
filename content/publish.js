@@ -237,13 +237,26 @@ async function main() {
     writeText('sitemap.xml', buildSitemap(manifest, opts.date));
 
     // Renderizar HTML y OG Images después de actualizar articles.json (para que RELATED_ES/EN incluyan el estado final)
+    const newSlugs = new Set();
     newArticles.forEach(({ slug, article }) => {
       const html = renderHtml(slug, article, template);
       fs.mkdirSync(abs('blog', slug), { recursive: true });
       writeText(`blog/${slug}/index.html`, html);
       written.push(`blog/${slug}/index.html`);
       generateOgForArticle(slug, article);
+      newSlugs.add(slug);
       console.log(`OK  ${slug}`);
+    });
+
+    // Re-renderizar artículos previos para sincronizar su bloque RELATED_ES/EN con el nuevo articles.json
+    manifest.articles.forEach((entry) => {
+      if (newSlugs.has(entry.slug)) return;
+      const srcPath = `content/articles/${entry.slug}.json`;
+      if (!fs.existsSync(abs(srcPath))) return;
+      const src = readJson(srcPath);
+      const html = renderHtml(entry.slug, src, template);
+      fs.mkdirSync(abs('blog', entry.slug), { recursive: true });
+      writeText(`blog/${entry.slug}/index.html`, html);
     });
   } catch (e) {
     console.error(`Fallo durante la publicación: ${e.message}`);

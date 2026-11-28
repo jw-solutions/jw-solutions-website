@@ -26,6 +26,7 @@
 - [x] ✅ Commit selectivo, Push a `origin/main` y Verificación Controlada en VPS (`107.172.159.114`) y HTTPS en vivo — 2026-11-23
 - [x] ✅ Rediseño Híbrido `jw-solutions.com` en local (Base Orion Innovation + Vitrina Editorial Android Authority en `styles.css`, `index.html` y `script.js`; respaldos `.bak`, fix WCAG `#5C4000`, CSP hash intacto, 0 `innerHTML`, 6 compuertas CI + smoke test HTTP 18/18 OK) — 2026-11-28
 - [x] ✅ Commit selectivo, push a `origin/main` y verificación HTTPS en producción (`https://jw-solutions.com/`) autorizados por [J] — 2026-11-28
+- [x] ✅ Optimización vertical `.aa-bento-subcard` (`width: 100%` `16:9` sin recorte lateral) + corrección de causa raíz en `content/publish.js` (re-render de `RELATED_ES/EN` en artículos previos para desbloquear cron semanal `weekly-blog-publisher.yml`) — 2026-11-28
 
 ## Pendientes Técnicos
 
