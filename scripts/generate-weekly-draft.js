@@ -22,7 +22,7 @@ const pubManifest = require('./publication-manifest');
 const ROOT = path.resolve(__dirname, '..');
 const DRAFTS_DIR = path.join(ROOT, 'content', 'drafts');
 const ARTICLES_FILE = path.join(ROOT, 'content', 'articles.json');
-const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-2.5-flash-lite'];
+const GEMINI_MODELS = ['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite'];
 const RETRYABLE_STATUSES = new Set([429, 500, 502, 503, 504]);
 const REQUEST_TIMEOUT_MS = 90000;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
