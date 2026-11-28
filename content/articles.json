@@ -1,6 +1,21 @@
 {
   "articles": [
     {
+      "slug": "auditoria-datos-pymes-limpieza-sin-big-data",
+      "date": "2026-11-28",
+      "tag": "Calidad de Datos",
+      "status": "published",
+      "featured": true,
+      "es": {
+        "title": "Auditoría de datos en PYMEs: Cómo limpiar tu información sin big data",
+        "excerpt": "Descubre el método paso a paso para limpiar los datos críticos de tu PYME y asegurar que tus decisiones se basen en información real y confiable."
+      },
+      "en": {
+        "title": "Data Audit for SMBs: How to Clean Your Information Without Big Data",
+        "excerpt": "Discover the step-by-step method to clean your SMB's critical data and ensure your decisions are based on real, reliable information."
+      }
+    },
+    {
       "slug": "integracion-crm-erp-reportes-tiempo-real",
       "date": "2026-11-14",
       "tag": "Integración de Datos",

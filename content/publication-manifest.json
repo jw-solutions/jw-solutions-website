@@ -48,6 +48,17 @@
         "attempts": 3,
         "last_attempt": "2026-11-14T17:57:41.467Z"
       }
+    },
+    {
+      "slug": "auditoria-datos-pymes-limpieza-sin-big-data",
+      "status": "COMPILED",
+      "published_at": "2026-11-28T14:00:00Z",
+      "url": "https://jw-solutions.com/blog/auditoria-datos-pymes-limpieza-sin-big-data/",
+      "notification": {
+        "event_id": "jw-blog-20261128-auditoria-datos-pymes-limpieza-sin-big-data",
+        "status": "PENDING",
+        "attempts": 0
+      }
     }
   ]
 }
