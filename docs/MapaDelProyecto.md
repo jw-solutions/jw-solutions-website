@@ -50,7 +50,7 @@
 | `_headers` | Seguridad | CSP/cabeceras HTTP | HTML/JS externos | Todas las páginas |
 | `robots.txt`, `sitemap.xml`, `sitemap-code-formatter.xml` | SEO | Indexación; el segundo lo genera `build_public.py --sitemap` | `content/*`, `tools/` | Buscadores |
 | `d4af37e9…a12.txt` | SEO | Clave de verificación IndexNow | `scripts/ping-indexnow.js` | IndexNow |
-| `index.html`, `styles.css`, `script.js` | Front sitio | Landing corporativa | `assets/` | UX/SEO |
+| `index.html`, `styles.css`, `script.js` | Front sitio | Landing corporativa híbrida (Base Orion Innovation + Vitrina Editorial Android Authority, CSP hash estricto, 0 `innerHTML`, WCAG 2.2 AA) | `assets/`, `content/articles.json`, `content/config.json` | UX/SEO, `/privacidad/`, `/terminos/`, `/blog/` |
 | `404.html`, `favicon.ico`, `site.webmanifest`, `sw.js` | Front sitio | Error, iconos, PWA, service worker | `index.html` | Caché/offline |
 
 ### 2.2 Contenido (blog y Code Formatter)

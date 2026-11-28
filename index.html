@@ -191,14 +191,8 @@
         </div>
     </div>
 
-    <!-- Language Toggle -->
-    <button id="lang-toggle" class="lang-toggle" aria-label="ES · Cambiar idioma a inglés">
-        <span class="lang-flag" id="current-flag" aria-hidden="true">🇪🇸</span>
-        <span class="lang-label" id="current-lang">ES</span>
-    </button>
-
     <!-- Header / Navigation -->
-    <header class="header" id="header">
+    <header class="header header--executive" id="header">
         <div class="container header-container">
             <a href="#inicio" class="logo" aria-label="JW Solutions Home">
                 <div class="logo-mark">JW</div>
@@ -207,17 +201,27 @@
 
             <nav class="nav" id="nav" aria-label="Navegación principal">
                 <ul class="nav-list">
-                    <li><a href="#servicios" class="nav-link" data-lang="es">Servicios</a><a href="#servicios" class="nav-link" data-lang="en">Services</a></li>
                     <li><a href="#diferencial" class="nav-link" data-lang="es">Nosotros</a><a href="#diferencial" class="nav-link" data-lang="en">About</a></li>
+                    <li><a href="#servicios" class="nav-link" data-lang="es">Servicios</a><a href="#servicios" class="nav-link" data-lang="en">Services</a></li>
+                    <li><a href="#herramientas" class="nav-link" data-lang="es">Herramientas</a><a href="#herramientas" class="nav-link" data-lang="en">Tools</a></li>
                     <li><a href="#portfolio" class="nav-link" data-lang="es">Portfolio</a><a href="#portfolio" class="nav-link" data-lang="en">Portfolio</a></li>
+                    <li><a href="#featured-articles" class="nav-link" data-lang="es">Insights</a><a href="#featured-articles" class="nav-link" data-lang="en">Insights</a></li>
                     <li><a href="#faq" class="nav-link" data-lang="es">FAQ</a><a href="#faq" class="nav-link" data-lang="en">FAQ</a></li>
                     <li><a href="#contacto" class="nav-link nav-link--cta" data-lang="es">Contacto</a><a href="#contacto" class="nav-link nav-link--cta" data-lang="en">Contact</a></li>
                 </ul>
             </nav>
 
-            <button class="mobile-toggle" id="mobile-toggle" aria-label="Menú móvil" aria-expanded="false" aria-controls="nav">
-                <span class="hamburger"></span>
-            </button>
+            <div class="header-actions">
+                <!-- Language Toggle -->
+                <button id="lang-toggle" class="lang-toggle" aria-label="ES · Cambiar idioma a inglés">
+                    <span class="lang-flag" id="current-flag" aria-hidden="true">🇪🇸</span>
+                    <span class="lang-label" id="current-lang">ES</span>
+                </button>
+
+                <button class="mobile-toggle" id="mobile-toggle" aria-label="Menú móvil" aria-expanded="false" aria-controls="nav">
+                    <span class="hamburger"></span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -318,7 +322,7 @@
             </div>
 
             <div class="hero-scroll">
-                <a href="#servicios" aria-label="Scroll down">
+                <a href="#impacto" aria-label="Scroll down">
                     <div class="scroll-indicator">
                         <span></span>
                     </div>
@@ -327,9 +331,113 @@
         </section>
 
         <!-- ============================================ -->
-        <!-- SERVICIOS SECTION                            -->
+        <!-- BANDA DE MADURACIÓN E IMPACTO (ORION)        -->
         <!-- ============================================ -->
-        <section class="section section--light" id="servicios" aria-labelledby="servicios-title">
+        <section class="section section--dark orion-kpi-band" id="impacto" aria-labelledby="impacto-title">
+            <div class="container">
+                <h2 id="impacto-title" class="sr-only" data-lang="es">Indicadores clave de JW Solutions</h2>
+                <h2 class="sr-only" data-lang="en">JW Solutions key metrics</h2>
+                <div class="orion-kpi-grid">
+                    <div class="orion-kpi-item reveal-on-scroll stagger-1">
+                        <span class="orion-kpi-value">3+</span>
+                        <span class="orion-kpi-label" data-lang="es">Apps Analíticas en Vivo</span>
+                        <span class="orion-kpi-label" data-lang="en">Live Analytics Apps</span>
+                        <span class="orion-kpi-sub" data-lang="es">Interactivas en Python y Streamlit</span>
+                        <span class="orion-kpi-sub" data-lang="en">Interactive Python &amp; Streamlit demos</span>
+                    </div>
+                    <div class="orion-kpi-item reveal-on-scroll stagger-2">
+                        <span class="orion-kpi-value">10+</span>
+                        <span class="orion-kpi-label" data-lang="es">Lenguajes con IA</span>
+                        <span class="orion-kpi-label" data-lang="en">AI-Supported Languages</span>
+                        <span class="orion-kpi-sub" data-lang="es">Formateo, diagnóstico y auto-doc</span>
+                        <span class="orion-kpi-sub" data-lang="en">Formatting, diagnostics &amp; auto-docs</span>
+                    </div>
+                    <div class="orion-kpi-item reveal-on-scroll stagger-3">
+                        <span class="orion-kpi-value">7</span>
+                        <span class="orion-kpi-label" data-lang="es">Idiomas en Ecosistema Dev</span>
+                        <span class="orion-kpi-label" data-lang="en">Dev Ecosystem Languages</span>
+                        <span class="orion-kpi-sub" data-lang="es">ES · EN · PT-BR · PT-PT · FR · DE · IT</span>
+                        <span class="orion-kpi-sub" data-lang="en">ES · EN · PT-BR · PT-PT · FR · DE · IT</span>
+                    </div>
+                    <div class="orion-kpi-item reveal-on-scroll stagger-4">
+                        <span class="orion-kpi-value">4</span>
+                        <span class="orion-kpi-label" data-lang="es">Fases de Metodología</span>
+                        <span class="orion-kpi-label" data-lang="en">Methodology Phases</span>
+                        <span class="orion-kpi-sub" data-lang="es">Del diagnóstico al despliegue seguro</span>
+                        <span class="orion-kpi-sub" data-lang="en">From diagnosis to secure deployment</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- DIFERENCIAL JW SECTION (ORION 01 / 02 / 03)  -->
+        <!-- ============================================ -->
+        <section class="section section--light" id="diferencial" aria-labelledby="diferencial-title">
+            <div class="container">
+                <div class="section-header reveal-on-scroll">
+                    <span class="section-tag section-tag--accent" data-lang="es">El Diferencial JW</span>
+                    <span class="section-tag section-tag--accent" data-lang="en">The JW Difference</span>
+                    <h2 id="diferencial-title" class="section-title" data-lang="es">El Sabio + El Estratega</h2>
+                    <h2 class="section-title" data-lang="en">The Sage + The Strategist</h2>
+                    <p class="section-desc" data-lang="es">No vendemos herramientas. Diseñamos ventajas competitivas sostenibles.</p>
+                    <p class="section-desc" data-lang="en">We don't sell tools. We design sustainable competitive advantages.</p>
+                </div>
+
+                <div class="pillars-grid orion-pillar-grid">
+                    <div class="pillar-card orion-pillar-card spotlight-card reveal-on-scroll stagger-1">
+                        <div class="orion-pillar-head">
+                            <span class="orion-pillar-num" aria-hidden="true">01</span>
+                            <div class="pillar-icon" aria-hidden="true">
+                                <i class="fas fa-database"></i>
+                            </div>
+                        </div>
+                        <h3 class="pillar-title" data-lang="es">Data-Driven</h3>
+                        <h3 class="pillar-title" data-lang="en">Data-Driven</h3>
+                        <p class="pillar-desc" data-lang="es">Decisiones basadas en datos reales, no en intuición. Cada recomendación está respaldada por métricas claras y verificables.</p>
+                        <p class="pillar-desc" data-lang="en">Decisions based on real data, not intuition. Every recommendation is backed by clear, verifiable metrics.</p>
+                    </div>
+
+                    <div class="pillar-card orion-pillar-card spotlight-card reveal-on-scroll stagger-2">
+                        <div class="orion-pillar-head">
+                            <span class="orion-pillar-num" aria-hidden="true">02</span>
+                            <div class="pillar-icon" aria-hidden="true">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                        </div>
+                        <h3 class="pillar-title" data-lang="es">Resultados Medibles</h3>
+                        <h3 class="pillar-title" data-lang="en">Measurable Results</h3>
+                        <p class="pillar-desc" data-lang="es">KPIs claros desde el día 1. Sabrás exactamente qué estás obteniendo por cada dólar invertido en nuestra consultoría.</p>
+                        <p class="pillar-desc" data-lang="en">Clear KPIs from day 1. You'll know exactly what you're getting for every dollar invested in our consulting.</p>
+                    </div>
+
+                    <div class="pillar-card orion-pillar-card spotlight-card reveal-on-scroll stagger-3">
+                        <div class="orion-pillar-head">
+                            <span class="orion-pillar-num" aria-hidden="true">03</span>
+                            <div class="pillar-icon" aria-hidden="true">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                        </div>
+                        <h3 class="pillar-title" data-lang="es">Adaptabilidad Global</h3>
+                        <h3 class="pillar-title" data-lang="en">Global Adaptability</h3>
+                        <p class="pillar-desc" data-lang="es">Soluciones diseñadas bajo estándares globales de accesibilidad, seguridad y arquitectura bilingüe para integrarse con equipos internacionales. El mismo estándar, cualquier zona horaria.</p>
+                        <p class="pillar-desc" data-lang="en">Solutions designed under global standards of accessibility, security, and bilingual architecture to integrate with international teams. Same standard, any timezone.</p>
+                    </div>
+                </div>
+
+                <div class="diferencial-quote">
+                    <blockquote>
+                        <p data-lang="es">"La tecnología sin estrategia es solo ruido. La estrategia sin datos es solo opinión. Nosotros unimos ambas."</p>
+                        <p data-lang="en">"Technology without strategy is just noise. Strategy without data is just opinion. We unite both."</p>
+                    </blockquote>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
+        <!-- SERVICIOS SECTION (3x2 MODULAR)              -->
+        <!-- ============================================ -->
+        <section class="section section--dark" id="servicios" aria-labelledby="servicios-title">
             <div class="container">
                 <div class="section-header reveal-on-scroll">
                     <span class="section-tag" data-lang="es">Nuestros Servicios</span>
@@ -359,8 +467,8 @@
                         <div class="service-icon">
                             <i class="fas fa-chart-line"></i>
                         </div>
-                        <h3 class="service-title" data-lang="es">Análisis de Datos & Dashboards</h3>
-                        <h3 class="service-title" data-lang="en">Data Analytics & Dashboards</h3>
+                        <h3 class="service-title" data-lang="es">Análisis de Datos &amp; Dashboards</h3>
+                        <h3 class="service-title" data-lang="en">Data Analytics &amp; Dashboards</h3>
                         <p class="service-desc" data-lang="es">Visualiza lo que importa. Dashboards interactivos en Power BI y Python que conectan tus fuentes de datos en tiempo real.</p>
                         <p class="service-desc" data-lang="en">Visualize what matters. Interactive Power BI and Python dashboards connecting your data sources in real time.</p>
                         <a href="#contacto" class="service-link" data-lang="es">Saber más <i class="fas fa-arrow-right"></i></a>
@@ -385,8 +493,8 @@
                         <div class="service-icon">
                             <i class="fas fa-map-location-dot"></i>
                         </div>
-                        <h3 class="service-title" data-lang="es">Presencia Digital & SEO Local</h3>
-                        <h3 class="service-title" data-lang="en">Digital Presence & Local SEO</h3>
+                        <h3 class="service-title" data-lang="es">Presencia Digital &amp; SEO Local</h3>
+                        <h3 class="service-title" data-lang="en">Digital Presence &amp; Local SEO</h3>
                         <p class="service-desc" data-lang="es">Domina Google Maps y la búsqueda local. Optimización de fichas, reseñas y contenido geolocalizado que atrae clientes cercanos.</p>
                         <p class="service-desc" data-lang="en">Dominate Google Maps and local search. Optimize listings, reviews, and geo-targeted content that attracts nearby customers.</p>
                         <a href="#contacto" class="service-link" data-lang="es">Saber más <i class="fas fa-arrow-right"></i></a>
@@ -398,8 +506,8 @@
                         <div class="service-icon">
                             <i class="fas fa-calendar-check"></i>
                         </div>
-                        <h3 class="service-title" data-lang="es">Content Strategy & Automatización</h3>
-                        <h3 class="service-title" data-lang="en">Content Strategy & Automation</h3>
+                        <h3 class="service-title" data-lang="es">Content Strategy &amp; Automatización</h3>
+                        <h3 class="service-title" data-lang="en">Content Strategy &amp; Automation</h3>
                         <p class="service-desc" data-lang="es">Calendarios editoriales, generación asistida por IA y distribución automatizada en redes sociales. Habla donde está tu audiencia.</p>
                         <p class="service-desc" data-lang="en">Editorial calendars, AI-assisted generation, and automated social media distribution. Speak where your audience is.</p>
                         <a href="#contacto" class="service-link" data-lang="es">Saber más <i class="fas fa-arrow-right"></i></a>
@@ -411,68 +519,13 @@
                         <div class="service-icon">
                             <i class="fas fa-clipboard-check"></i>
                         </div>
-                        <h3 class="service-title" data-lang="es">Auditoría & Consultoría Estratégica</h3>
-                        <h3 class="service-title" data-lang="en">Audit & Strategic Consulting</h3>
+                        <h3 class="service-title" data-lang="es">Auditoría &amp; Consultoría Estratégica</h3>
+                        <h3 class="service-title" data-lang="en">Audit &amp; Strategic Consulting</h3>
                         <p class="service-desc" data-lang="es">Diagnóstico completo de tus operaciones, tecnología y marketing. Roadmap prioritario con quick wins y objetivos a 12 meses.</p>
                         <p class="service-desc" data-lang="en">Complete diagnosis of your operations, technology, and marketing. Priority roadmap with quick wins and 12-month objectives.</p>
                         <a href="#contacto" class="service-link" data-lang="es">Saber más <i class="fas fa-arrow-right"></i></a>
                         <a href="#contacto" class="service-link" data-lang="en">Learn more <i class="fas fa-arrow-right"></i></a>
                     </article>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============================================ -->
-        <!-- DIFERENCIAL JW SECTION                       -->
-        <!-- ============================================ -->
-        <section class="section section--dark" id="diferencial" aria-labelledby="diferencial-title">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-tag section-tag--accent" data-lang="es">El Diferencial JW</span>
-                    <span class="section-tag section-tag--accent" data-lang="en">The JW Difference</span>
-                    <h2 id="diferencial-title" class="section-title" data-lang="es">El Sabio + El Estratega</h2>
-                    <h2 class="section-title" data-lang="en">The Sage + The Strategist</h2>
-                    <p class="section-desc" data-lang="es">No vendemos herramientas. Diseñamos ventajas competitivas sostenibles.</p>
-                    <p class="section-desc" data-lang="en">We don't sell tools. We design sustainable competitive advantages.</p>
-                </div>
-
-                <div class="pillars-grid">
-                    <div class="pillar-card">
-                        <div class="pillar-icon">
-                            <i class="fas fa-database"></i>
-                        </div>
-                        <h3 class="pillar-title" data-lang="es">Data-Driven</h3>
-                        <h3 class="pillar-title" data-lang="en">Data-Driven</h3>
-                        <p class="pillar-desc" data-lang="es">Decisiones basadas en datos reales, no en intuición. Cada recomendación está respaldada por métricas claras y verificables.</p>
-                        <p class="pillar-desc" data-lang="en">Decisions based on real data, not intuition. Every recommendation is backed by clear, verifiable metrics.</p>
-                    </div>
-
-                    <div class="pillar-card">
-                        <div class="pillar-icon">
-                            <i class="fas fa-bullseye"></i>
-                        </div>
-                        <h3 class="pillar-title" data-lang="es">Resultados Medibles</h3>
-                        <h3 class="pillar-title" data-lang="en">Measurable Results</h3>
-                        <p class="pillar-desc" data-lang="es">KPIs claros desde el día 1. Sabrás exactamente qué estás obteniendo por cada dólar invertido en nuestra consultoría.</p>
-                        <p class="pillar-desc" data-lang="en">Clear KPIs from day 1. You'll know exactly what you're getting for every dollar invested in our consulting.</p>
-                    </div>
-
-                    <div class="pillar-card">
-                        <div class="pillar-icon">
-                            <i class="fas fa-globe"></i>
-                        </div>
-                        <h3 class="pillar-title" data-lang="es">Adaptabilidad Global</h3>
-                        <h3 class="pillar-title" data-lang="en">Global Adaptability</h3>
-                        <p class="pillar-desc" data-lang="es">Soluciones diseñadas bajo estándares globales de accesibilidad, seguridad y arquitectura bilingüe para integrarse con equipos internacionales. El mismo estándar, cualquier zona horaria.</p>
-                        <p class="pillar-desc" data-lang="en">Solutions designed under global standards of accessibility, security, and bilingual architecture to integrate with international teams. Same standard, any timezone.</p>
-                    </div>
-                </div>
-
-                <div class="diferencial-quote">
-                    <blockquote>
-                        <p data-lang="es">"La tecnología sin estrategia es solo ruido. La estrategia sin datos es solo opinión. Nosotros unimos ambas."</p>
-                        <p data-lang="en">"Technology without strategy is just noise. Strategy without data is just opinion. We unite both."</p>
-                    </blockquote>
                 </div>
             </div>
         </section>
@@ -732,9 +785,171 @@
         </section>
 
         <!-- ============================================ -->
+        <!-- VITRINA EDITORIAL & NEWSLETTER (ANDROID AUTHORITY) -->
+        <!-- ============================================ -->
+        <section class="section section--dark aa-editorial-section" id="newsletter" aria-labelledby="newsletter-title">
+            <div class="container">
+                <div class="aa-editorial-header reveal-on-scroll">
+                    <div class="aa-editorial-heading">
+                        <span class="section-tag section-tag--accent" data-lang="es">Vitrina Editorial · Semanal</span>
+                        <span class="section-tag section-tag--accent" data-lang="en">Editorial Showcase · Weekly</span>
+                        <h2 id="newsletter-title" class="section-title" data-lang="es">Insights &amp; Artículos Semanales</h2>
+                        <h2 class="section-title" data-lang="en">Weekly Insights &amp; Articles</h2>
+                        <p class="section-desc" data-lang="es">Análisis técnicos, arquitectura de datos, automatización y SEO local escritos para equipos que toman decisiones con evidencia.</p>
+                        <p class="section-desc" data-lang="en">Technical analysis, data architecture, automation, and local SEO written for teams making evidence-based decisions.</p>
+                    </div>
+                    <div class="aa-filter-pills" id="editorial-filters" role="group" aria-label="Filtrar artículos por categoría">
+                        <button type="button" class="aa-pill" data-category="all" aria-pressed="true">
+                            <span data-lang="es">Todos</span>
+                            <span data-lang="en">All</span>
+                        </button>
+                    </div>
+                </div>
+
+                <p class="aa-editorial-status" id="editorial-status" role="status" aria-live="polite"></p>
+
+                <!-- Bento Asimétrico (60% protagonista + 40% stack): respaldo HTML estático SEO/sin JS; script.js (Featured) lo regenera desde content/articles.json -->
+                <div class="aa-bento-grid" id="featured-articles" data-manifest="content/articles.json" data-config="content/config.json">
+                    <article class="aa-bento-lead blog-card">
+                        <a class="aa-media-link" href="blog/integracion-crm-erp-reportes-tiempo-real/">
+                            <img class="aa-media-img" src="assets/images/og/blog/integracion-crm-erp-reportes-tiempo-real-es.png" alt="Integración CRM y ERP: Arquitectura de datos en tiempo real para PYMEs" width="1200" height="630" loading="lazy" decoding="async">
+                        </a>
+                        <div class="aa-bento-body">
+                            <div class="aa-meta">
+                                <span class="aa-cat-badge">Integración de Datos</span>
+                                <time datetime="2026-11-14" data-lang="es">14 Nov 2026</time>
+                                <time datetime="2026-11-14" data-lang="en">14 Nov 2026</time>
+                                <span data-lang="es">5 min lectura</span>
+                                <span data-lang="en">5 min read</span>
+                            </div>
+                            <h3 class="aa-lead-title" data-lang="es"><a href="blog/integracion-crm-erp-reportes-tiempo-real/">Integración CRM y ERP: Arquitectura de datos en tiempo real para PYMEs</a></h3>
+                            <h3 class="aa-lead-title" data-lang="en"><a href="blog/integracion-crm-erp-reportes-tiempo-real/">CRM and ERP Integration: Real-Time Data Architecture for Growing SMEs</a></h3>
+                            <p class="aa-excerpt" data-lang="es">Guía práctica para unificar las ventas de tu CRM con la facturación de tu ERP, eliminando fricciones operativas y creando reportes directivos automatizados.</p>
+                            <p class="aa-excerpt" data-lang="en">A practical guide to unifying CRM sales pipelines with ERP accounting data, eliminating silos and delivering real-time executive dashboards for SMEs.</p>
+                            <a class="aa-read-link" href="blog/integracion-crm-erp-reportes-tiempo-real/" data-lang="es">Leer artículo <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                            <a class="aa-read-link" href="blog/integracion-crm-erp-reportes-tiempo-real/" data-lang="en">Read article <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                        </div>
+                    </article>
+
+                    <div class="aa-bento-stack">
+                        <article class="aa-bento-subcard blog-card">
+                            <a class="aa-media-link" href="blog/5-errores-dashboard-power-bi/">
+                                <img class="aa-media-img" src="assets/images/og/blog/5-errores-dashboard-power-bi-es.png" alt="5 errores que destruyen la credibilidad de tu dashboard" width="1200" height="630" loading="lazy" decoding="async">
+                            </a>
+                            <div class="aa-sub-body">
+                                <div class="aa-meta">
+                                    <span class="aa-cat-badge">Power BI</span>
+                                    <time datetime="2026-10-12" data-lang="es">12 Oct 2026</time>
+                                    <time datetime="2026-10-12" data-lang="en">12 Oct 2026</time>
+                                </div>
+                                <h3 class="aa-sub-title" data-lang="es"><a href="blog/5-errores-dashboard-power-bi/">5 errores que destruyen la credibilidad de tu dashboard</a></h3>
+                                <h3 class="aa-sub-title" data-lang="en"><a href="blog/5-errores-dashboard-power-bi/">5 mistakes that destroy your dashboard credibility</a></h3>
+                                <a class="aa-read-link" href="blog/5-errores-dashboard-power-bi/" data-lang="es">Leer artículo <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                                <a class="aa-read-link" href="blog/5-errores-dashboard-power-bi/" data-lang="en">Read article <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                            </div>
+                        </article>
+
+                        <article class="aa-bento-subcard blog-card">
+                            <a class="aa-media-link" href="blog/n8n-vs-zapier-2026/">
+                                <img class="aa-media-img" src="assets/images/og/blog/n8n-vs-zapier-2026-es.png" alt="n8n vs Zapier: ¿Cuál elegir en 2026?" width="1200" height="630" loading="lazy" decoding="async">
+                            </a>
+                            <div class="aa-sub-body">
+                                <div class="aa-meta">
+                                    <span class="aa-cat-badge">Automatización</span>
+                                    <time datetime="2026-10-05" data-lang="es">05 Oct 2026</time>
+                                    <time datetime="2026-10-05" data-lang="en">05 Oct 2026</time>
+                                </div>
+                                <h3 class="aa-sub-title" data-lang="es"><a href="blog/n8n-vs-zapier-2026/">n8n vs Zapier: ¿Cuál elegir en 2026?</a></h3>
+                                <h3 class="aa-sub-title" data-lang="en"><a href="blog/n8n-vs-zapier-2026/">n8n vs Zapier: Which to choose in 2026?</a></h3>
+                                <a class="aa-read-link" href="blog/n8n-vs-zapier-2026/" data-lang="es">Leer artículo <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                                <a class="aa-read-link" href="blog/n8n-vs-zapier-2026/" data-lang="en">Read article <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <!-- Bloque Inferior 2 Columnas: Top Insights (1-5) + Sticky Newsletter -->
+                <div class="aa-lower-grid">
+                    <div class="aa-insights-block">
+                        <h3 class="aa-insights-heading" data-lang="es">Top Insights</h3>
+                        <h3 class="aa-insights-heading" data-lang="en">Top Insights</h3>
+                        <ol class="aa-insights-list" id="editorial-insights-list">
+                            <li class="aa-insight-item">
+                                <span class="aa-insight-rank" aria-hidden="true">1</span>
+                                <a class="aa-insight-thumb-link" href="blog/integracion-crm-erp-reportes-tiempo-real/" tabindex="-1" aria-hidden="true">
+                                    <img class="aa-insight-thumb" src="assets/images/og/blog/integracion-crm-erp-reportes-tiempo-real-es.png" alt="" width="1200" height="630" loading="lazy" decoding="async">
+                                </a>
+                                <div class="aa-insight-content">
+                                    <span class="aa-cat-badge">Integración de Datos</span>
+                                    <h4 class="aa-insight-title" data-lang="es"><a href="blog/integracion-crm-erp-reportes-tiempo-real/">Integración CRM y ERP: Arquitectura de datos en tiempo real para PYMEs</a></h4>
+                                    <h4 class="aa-insight-title" data-lang="en"><a href="blog/integracion-crm-erp-reportes-tiempo-real/">CRM and ERP Integration: Real-Time Data Architecture for Growing SMEs</a></h4>
+                                </div>
+                            </li>
+                            <li class="aa-insight-item">
+                                <span class="aa-insight-rank" aria-hidden="true">2</span>
+                                <a class="aa-insight-thumb-link" href="blog/5-errores-dashboard-power-bi/" tabindex="-1" aria-hidden="true">
+                                    <img class="aa-insight-thumb" src="assets/images/og/blog/5-errores-dashboard-power-bi-es.png" alt="" width="1200" height="630" loading="lazy" decoding="async">
+                                </a>
+                                <div class="aa-insight-content">
+                                    <span class="aa-cat-badge">Power BI</span>
+                                    <h4 class="aa-insight-title" data-lang="es"><a href="blog/5-errores-dashboard-power-bi/">5 errores que destruyen la credibilidad de tu dashboard</a></h4>
+                                    <h4 class="aa-insight-title" data-lang="en"><a href="blog/5-errores-dashboard-power-bi/">5 mistakes that destroy your dashboard credibility</a></h4>
+                                </div>
+                            </li>
+                            <li class="aa-insight-item">
+                                <span class="aa-insight-rank" aria-hidden="true">3</span>
+                                <a class="aa-insight-thumb-link" href="blog/n8n-vs-zapier-2026/" tabindex="-1" aria-hidden="true">
+                                    <img class="aa-insight-thumb" src="assets/images/og/blog/n8n-vs-zapier-2026-es.png" alt="" width="1200" height="630" loading="lazy" decoding="async">
+                                </a>
+                                <div class="aa-insight-content">
+                                    <span class="aa-cat-badge">Automatización</span>
+                                    <h4 class="aa-insight-title" data-lang="es"><a href="blog/n8n-vs-zapier-2026/">n8n vs Zapier: ¿Cuál elegir en 2026?</a></h4>
+                                    <h4 class="aa-insight-title" data-lang="en"><a href="blog/n8n-vs-zapier-2026/">n8n vs Zapier: Which to choose in 2026?</a></h4>
+                                </div>
+                            </li>
+                            <li class="aa-insight-item">
+                                <span class="aa-insight-rank" aria-hidden="true">4</span>
+                                <a class="aa-insight-thumb-link" href="blog/llamadas-google-maps-30-dias/" tabindex="-1" aria-hidden="true">
+                                    <img class="aa-insight-thumb" src="assets/images/og/blog/llamadas-google-maps-30-dias-es.png" alt="" width="1200" height="630" loading="lazy" decoding="async">
+                                </a>
+                                <div class="aa-insight-content">
+                                    <span class="aa-cat-badge">SEO Local</span>
+                                    <h4 class="aa-insight-title" data-lang="es"><a href="blog/llamadas-google-maps-30-dias/">Cómo duplicar las llamadas desde Google Maps en 30 días</a></h4>
+                                    <h4 class="aa-insight-title" data-lang="en"><a href="blog/llamadas-google-maps-30-dias/">How to double calls from Google Maps in 30 days</a></h4>
+                                </div>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <aside class="aa-sticky-newsletter" id="editorial-newsletter-slot" aria-labelledby="sticky-newsletter-heading">
+                        <span class="section-tag section-tag--accent" data-lang="es">Newsletter Semanal</span>
+                        <span class="section-tag section-tag--accent" data-lang="en">Weekly Newsletter</span>
+                        <h3 id="sticky-newsletter-heading" class="aa-sticky-title" data-lang="es">Recibe estrategias data-driven semanales</h3>
+                        <h3 class="aa-sticky-title" data-lang="en">Receive weekly data-driven strategies</h3>
+                        <p class="aa-sticky-desc" data-lang="es">Un email por semana con tips prácticos, casos de estudio y herramientas nuevas. Sin spam, sin ruido. Baja en un clic.</p>
+                        <p class="aa-sticky-desc" data-lang="en">One email per week with practical tips, case studies, and new tools. No spam, no noise. One-click unsubscribe.</p>
+
+                        <form class="newsletter-form" id="newsletter-form" action="https://api.jw-solutions.com/api/newsletter/subscribe" method="POST" aria-label="Formulario de suscripción">
+                            <input type="hidden" name="form_type" value="newsletter">
+                            <input type="text" name="_gotcha" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+                            <div class="form-group form-group--inline">
+                                <input type="email" name="email" id="newsletter-email" class="form-input" placeholder="tu@email.com" required aria-required="true" aria-label="Correo electrónico" autocomplete="email" maxlength="254">
+                                <button type="submit" class="btn btn--primary" data-lang="es">Suscribirme</button>
+                                <button type="submit" class="btn btn--primary" data-lang="en">Subscribe</button>
+                            </div>
+                            <p class="form-note" data-lang="es">🔒 Respetamos tu privacidad. No compartimos tu email con terceros.</p>
+                            <p class="form-note" data-lang="en">🔒 We respect your privacy. We don't share your email with third parties.</p>
+                            <div class="form-message" id="newsletter-message" role="status" aria-live="polite"></div>
+                        </form>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================ -->
         <!-- FAQ SECTION                                  -->
         <!-- ============================================ -->
-        <section class="section section--dark" id="faq" aria-labelledby="faq-title">
+        <section class="section section--light" id="faq" aria-labelledby="faq-title">
             <div class="container">
                 <div class="section-header">
                     <span class="section-tag" data-lang="es">Preguntas Frecuentes</span>
@@ -808,85 +1023,6 @@
                             <p data-lang="en">Schedule a free 30-minute diagnosis. We analyze your current situation, identify improvement opportunities, and deliver a personalized action plan with no commitment. You can schedule directly from the contact form or write us at <a href="mailto:contact@jw-solutions.com">contact@jw-solutions.com</a>.</p>
                         </div>
                     </details>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============================================ -->
-        <!-- NEWSLETTER / BLOG SECTION                    -->
-        <!-- ============================================ -->
-        <section class="section section--light" id="newsletter" aria-labelledby="newsletter-title">
-            <div class="container">
-                <div class="newsletter-wrapper">
-                    <div class="newsletter-content">
-                        <span class="section-tag section-tag--accent" data-lang="es">Newsletter</span>
-                        <span class="section-tag section-tag--accent" data-lang="en">Newsletter</span>
-                        <h2 id="newsletter-title" class="section-title" data-lang="es">Recibe estrategias data-driven semanales</h2>
-                        <h2 class="section-title" data-lang="en">Receive weekly data-driven strategies</h2>
-                        <p class="section-desc" data-lang="es">Un email por semana con tips prácticos, casos de estudio y herramientas nuevas. Sin spam, sin ruido. Puedes darte de baja en cualquier momento.</p>
-                        <p class="section-desc" data-lang="en">One email per week with practical tips, case studies, and new tools. No spam, no noise. Unsubscribe anytime.</p>
-
-                        <form class="newsletter-form" id="newsletter-form" action="https://api.jw-solutions.com/api/newsletter/subscribe" method="POST" aria-label="Formulario de suscripción">
-                            <input type="hidden" name="form_type" value="newsletter">
-                            <input type="text" name="_gotcha" class="hp-field" tabindex="-1" autocomplete="off" aria-hidden="true">
-                            <div class="form-group form-group--inline">
-                                <input type="email" name="email" id="newsletter-email" class="form-input" placeholder="tu@email.com" required aria-required="true" aria-label="Correo electrónico" autocomplete="email" maxlength="254">
-                                <button type="submit" class="btn btn--primary" data-lang="es">Suscribirme</button>
-                                <button type="submit" class="btn btn--primary" data-lang="en">Subscribe</button>
-                            </div>
-                            <p class="form-note" data-lang="es">🔒 Respetamos tu privacidad. No compartimos tu email con terceros.</p>
-                            <p class="form-note" data-lang="en">🔒 We respect your privacy. We don't share your email with third parties.</p>
-                            <div class="form-message" id="newsletter-message" role="status" aria-live="polite"></div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Artículos destacados: el contenido estático es el respaldo SEO/sin JS; script.js (módulo Featured) lo regenera desde content/articles.json respetando featured.max de content/config.json -->
-                <div class="blog-grid" id="featured-articles" data-manifest="content/articles.json" data-config="content/config.json">
-                    <span class="blog-section-tag" data-lang="es">Artículos destacados</span>
-                    <span class="blog-section-tag" data-lang="en">Featured articles</span>
-
-                    <!-- Article 1 -->
-                    <article class="blog-card">
-                        <div class="blog-meta">
-                            <time class="blog-date" datetime="2026-10-12">12 Oct 2026</time>
-                            <span class="blog-tag">Power BI</span>
-                        </div>
-                        <h3 class="blog-title" data-lang="es">5 errores que destruyen la credibilidad de tu dashboard</h3>
-                        <h3 class="blog-title" data-lang="en">5 mistakes that destroy your dashboard credibility</h3>
-                        <p class="blog-excerpt" data-lang="es">Desde colores inconsistentes hasta métricas de vanidad. Aprende a construir dashboards que realmente influyen en decisiones ejecutivas.</p>
-                        <p class="blog-excerpt" data-lang="en">From inconsistent colors to vanity metrics. Learn to build dashboards that truly influence executive decisions.</p>
-                        <a class="blog-link" href="blog/5-errores-dashboard-power-bi/" data-lang="es" aria-label="Leer artículo: 5 errores que destruyen la credibilidad de tu dashboard">Leer artículo →</a>
-                        <a class="blog-link" href="blog/5-errores-dashboard-power-bi/" data-lang="en" aria-label="Read article: 5 mistakes that destroy your dashboard credibility">Read article →</a>
-                    </article>
-
-                    <!-- Article 2 -->
-                    <article class="blog-card">
-                        <div class="blog-meta">
-                            <time class="blog-date" datetime="2026-10-05">05 Oct 2026</time>
-                            <span class="blog-tag">Automatización</span>
-                        </div>
-                        <h3 class="blog-title" data-lang="es">n8n vs Zapier: ¿Cuál elegir en 2026?</h3>
-                        <h3 class="blog-title" data-lang="en">n8n vs Zapier: Which to choose in 2026?</h3>
-                        <p class="blog-excerpt" data-lang="es">Comparativa técnica y económica de los dos gigantes de la automatización. Incluye casos de uso y costos ocultos.</p>
-                        <p class="blog-excerpt" data-lang="en">Technical and economic comparison of the two automation giants. Includes use cases and hidden costs.</p>
-                        <a class="blog-link" href="blog/n8n-vs-zapier-2026/" data-lang="es" aria-label="Leer artículo: n8n vs Zapier: ¿Cuál elegir en 2026?">Leer artículo →</a>
-                        <a class="blog-link" href="blog/n8n-vs-zapier-2026/" data-lang="en" aria-label="Read article: n8n vs Zapier: Which to choose in 2026?">Read article →</a>
-                    </article>
-
-                    <!-- Article 3 -->
-                    <article class="blog-card">
-                        <div class="blog-meta">
-                            <time class="blog-date" datetime="2026-09-28">28 Sep 2026</time>
-                            <span class="blog-tag">SEO Local</span>
-                        </div>
-                        <h3 class="blog-title" data-lang="es">Cómo duplicar las llamadas desde Google Maps en 30 días</h3>
-                        <h3 class="blog-title" data-lang="en">How to double calls from Google Maps in 30 days</h3>
-                        <p class="blog-excerpt" data-lang="es">Plan paso a paso con 15 acciones. Desde la descripción hasta las reseñas y las fotos reales del negocio.</p>
-                        <p class="blog-excerpt" data-lang="en">Step-by-step plan with 15 actions. From the description to reviews and real photos of the business.</p>
-                        <a class="blog-link" href="blog/llamadas-google-maps-30-dias/" data-lang="es" aria-label="Leer artículo: Cómo duplicar las llamadas desde Google Maps en 30 días">Leer artículo →</a>
-                        <a class="blog-link" href="blog/llamadas-google-maps-30-dias/" data-lang="en" aria-label="Read article: How to double calls from Google Maps in 30 days">Read article →</a>
-                    </article>
                 </div>
             </div>
         </section>
@@ -1065,8 +1201,10 @@
                     <h3 data-lang="es">Legal</h3>
                     <h3 data-lang="en">Legal</h3>
                     <ul>
-                        <li><button type="button" data-legal="privacy" data-lang="es">Política de privacidad</button><button type="button" data-legal="privacy" data-lang="en">Privacy Policy</button></li>
-                        <li><button type="button" data-legal="terms" data-lang="es">Términos de servicio</button><button type="button" data-legal="terms" data-lang="en">Terms of Service</button></li>
+                        <li><a href="privacidad/" data-lang="es">Política de privacidad (página)</a><a href="privacidad/?lang=en" data-lang="en">Privacy Policy (page)</a></li>
+                        <li><a href="terminos/" data-lang="es">Términos de servicio (página)</a><a href="terminos/?lang=en" data-lang="en">Terms of Service (page)</a></li>
+                        <li><button type="button" data-legal="privacy" data-lang="es">Resumen de privacidad</button><button type="button" data-legal="privacy" data-lang="en">Privacy summary</button></li>
+                        <li><button type="button" data-legal="terms" data-lang="es">Resumen de términos</button><button type="button" data-legal="terms" data-lang="en">Terms summary</button></li>
                         <li><button type="button" data-legal="cookies" data-lang="es">Cookies</button><button type="button" data-legal="cookies" data-lang="en">Cookies</button></li>
                     </ul>
                 </div>

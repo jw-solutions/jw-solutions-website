@@ -117,7 +117,8 @@
         'back-to-top': ['Volver arriba', 'Back to top'],
         'newsletter-email': ['Correo electrónico', 'Email address'],
         'cookie-banner': ['Consentimiento de cookies', 'Cookie consent'],
-        'mobile-cta-bar': ['Acciones rápidas', 'Quick actions']
+        'mobile-cta-bar': ['Acciones rápidas', 'Quick actions'],
+        'editorial-filters': ['Filtrar artículos por categoría', 'Filter articles by category']
       };
       Object.keys(labels).forEach(id => {
         const el = document.getElementById(id);
@@ -205,9 +206,9 @@
         if (e.key === 'Escape' && isOpen) close();
       });
 
-      // Close on resize to desktop
+      // Close on resize to desktop (sincronizado con breakpoint 992px del header ejecutivo)
       on(window, 'resize', throttle(() => {
-        if (window.innerWidth >= 768 && isOpen) close();
+        if (window.innerWidth >= 992 && isOpen) close();
       }, 250));
     }
 
@@ -390,43 +391,7 @@
   })();
 
   /* ─────────────────────────────────────────────────────────────────────────────
-     7. SCROLL REVEAL (IntersectionObserver)
-     ───────────────────────────────────────────────────────────────────────────── */
-  const ScrollReveal = (() => {
-    function init() {
-      const revealElements = $$('.reveal');
-      if (revealElements.length === 0) return;
-
-      // Add reveal class to elements that should animate
-      const sections = $$('section');
-      sections.forEach((section, i) => {
-        const children = section.querySelectorAll('.service-card, .pillar-card, .portfolio-card, .tool-card, .blog-card, .faq-item, .contact-card');
-        children.forEach((child, j) => {
-          child.classList.add('reveal');
-          child.classList.add(`reveal-delay-${(j % 4) + 1}`);
-        });
-      });
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, {
-        threshold: CONFIG.scrollReveal.threshold,
-        rootMargin: CONFIG.scrollReveal.rootMargin
-      });
-
-      $$('.reveal').forEach(el => observer.observe(el));
-    }
-
-    return { init };
-  })();
-
-  /* ─────────────────────────────────────────────────────────────────────────────
-     7b. SCROLL MOTION (reveal-on-scroll + stagger)
+     7. SCROLL MOTION (reveal-on-scroll + stagger)
      ───────────────────────────────────────────────────────────────────────────── */
   const ScrollMotion = (() => {
     function init() {
@@ -697,7 +662,9 @@
         jsonPayload: (form) => ({
           email: (form.querySelector('input[name="email"]') || {}).value || '',
           lang: LangSwitcher.getCurrent(),
-          source: 'main-website'
+          channel: 'main-website',
+          source: 'main-website',
+          _gotcha: (form.querySelector('input[name="_gotcha"]') || {}).value || ''
         }),
         alreadyMsg: () => t('Ya estás suscrito a nuestro boletín semanal.', 'You are already subscribed to our weekly newsletter.'),
         successMsg: () => t('¡Gracias por suscribirte! Recibirás nuestros próximos artículos.', 'Thanks for subscribing! You will receive our upcoming articles.')
@@ -1528,19 +1495,36 @@
   }
 
   /* ─────────────────────────────────────────────────────────────────────────────
-     ARTÍCULOS DESTACADOS (portada)
-     Regenera #featured-articles desde content/articles.json respetando featured.max
-     de content/config.json. Si el fetch falla se conserva el HTML estático.
+     ARTÍCULOS DESTACADOS (Vitrina Editorial estilo Android Authority)
+     Regenera #featured-articles (Bento 1+2), #editorial-filters y #editorial-insights-list
+     (Top Insights 1-5) desde content/articles.json usando solo createElement + textContent.
+     Si el fetch falla se conserva el respaldo HTML estático.
      ───────────────────────────────────────────────────────────────────────────── */
   const Featured = (() => {
     const DEFAULT_MAX = 12;
+    const FALLBACK_OG = 'assets/og-image.jpg';
+    const CATEGORY_EN = {
+      'Integración de Datos': 'Data Integration',
+      'Automatización': 'Automation',
+      'SEO Local': 'Local SEO',
+      'Power BI': 'Power BI'
+    };
+
+    let allItems = [];
+    let activeCategory = 'all';
+    let isRendering = false;
 
     function el(tag, className, text, attrs) {
       const node = document.createElement(tag);
       if (className) node.className = className;
-      if (text) node.textContent = text;
+      if (text !== undefined && text !== null && text !== '') node.textContent = text;
       if (attrs) Object.keys(attrs).forEach(k => node.setAttribute(k, attrs[k]));
       return node;
+    }
+
+    function categoryLabel(tag, lang) {
+      if (lang === 'en') return CATEGORY_EN[tag] || tag;
+      return tag;
     }
 
     function formatDate(iso, lang) {
@@ -1552,28 +1536,218 @@
       return `${String(d).padStart(2, '0')} ${months[lang][m - 1]} ${y}`;
     }
 
-    function buildCard(article) {
-      const card = el('article', 'blog-card');
-      const meta = el('div', 'blog-meta');
-      const time = el('time', 'blog-date', formatDate(article.date, 'es'), { datetime: article.date });
-      meta.append(time, el('span', 'blog-tag', article.tag));
-      card.append(meta);
+    function resolveOgImage(article, lang) {
+      if (article.ogImage) return article.ogImage;
+      return `assets/images/og/blog/${encodeURIComponent(article.slug)}-${lang}.png`;
+    }
 
-      const href = `blog/${encodeURIComponent(article.slug)}/`;
-      ['es', 'en'].forEach(lang => {
-        card.append(el('h3', 'blog-title', article[lang].title, { 'data-lang': lang }));
+    function createArticleImg(article, lang, className, altText) {
+      const img = el('img', className, null, {
+        src: resolveOgImage(article, lang),
+        alt: altText,
+        width: '1200',
+        height: '630',
+        loading: 'lazy',
+        decoding: 'async'
       });
-      ['es', 'en'].forEach(lang => {
-        card.append(el('p', 'blog-excerpt', article[lang].excerpt, { 'data-lang': lang }));
+      img.addEventListener('error', () => {
+        if (img.dataset.fallbackApplied === '1') return;
+        img.dataset.fallbackApplied = '1';
+        img.src = FALLBACK_OG;
       });
-      [['es', 'Leer artículo →', 'Leer artículo: '], ['en', 'Read article →', 'Read article: ']].forEach(([lang, linkText, labelPrefix]) => {
-        card.append(el('a', 'blog-link', linkText, {
+      return img;
+    }
+
+    function createMeta(article, lang, includeReadTime) {
+      const meta = el('div', 'aa-meta');
+      meta.append(el('span', 'aa-cat-badge', categoryLabel(article.tag, lang)));
+      meta.append(el('time', null, formatDate(article.date, 'es'), { datetime: article.date, 'data-lang': 'es' }));
+      meta.append(el('time', null, formatDate(article.date, 'en'), { datetime: article.date, 'data-lang': 'en' }));
+      if (includeReadTime) {
+        const mins = Number(article.readTime) || 5;
+        meta.append(el('span', null, `${mins} min lectura`, { 'data-lang': 'es' }));
+        meta.append(el('span', null, `${mins} min read`, { 'data-lang': 'en' }));
+      }
+      return meta;
+    }
+
+    function createReadMoreLinks(href, article) {
+      const frag = document.createDocumentFragment();
+      [['es', 'Leer artículo', 'Leer artículo: '], ['en', 'Read article', 'Read article: ']].forEach(([lang, label, prefix]) => {
+        const link = el('a', 'aa-read-link', null, {
           href,
           'data-lang': lang,
-          'aria-label': labelPrefix + article[lang].title
-        }));
+          'aria-label': prefix + article[lang].title
+        });
+        link.append(document.createTextNode(`${label} `));
+        link.append(el('i', 'fas fa-arrow-right', null, { 'aria-hidden': 'true' }));
+        frag.append(link);
       });
+      return frag;
+    }
+
+    function buildLeadCard(article, lang) {
+      const href = `blog/${encodeURIComponent(article.slug)}/`;
+      const card = el('article', 'aa-bento-lead blog-card');
+
+      const mediaLink = el('a', 'aa-media-link', null, { href });
+      mediaLink.append(createArticleImg(article, lang, 'aa-media-img', article[lang].title));
+      card.append(mediaLink);
+
+      const body = el('div', 'aa-bento-body');
+      body.append(createMeta(article, lang, true));
+
+      ['es', 'en'].forEach(l => {
+        const h3 = el('h3', 'aa-lead-title', null, { 'data-lang': l });
+        h3.append(el('a', null, article[l].title, { href }));
+        body.append(h3);
+      });
+
+      ['es', 'en'].forEach(l => {
+        body.append(el('p', 'aa-excerpt', article[l].excerpt, { 'data-lang': l }));
+      });
+
+      body.append(createReadMoreLinks(href, article));
+      card.append(body);
       return card;
+    }
+
+    function buildSubCard(article, lang) {
+      const href = `blog/${encodeURIComponent(article.slug)}/`;
+      const card = el('article', 'aa-bento-subcard blog-card');
+
+      const mediaLink = el('a', 'aa-media-link', null, { href });
+      mediaLink.append(createArticleImg(article, lang, 'aa-media-img', article[lang].title));
+      card.append(mediaLink);
+
+      const body = el('div', 'aa-sub-body');
+      body.append(createMeta(article, lang, false));
+
+      ['es', 'en'].forEach(l => {
+        const h3 = el('h3', 'aa-sub-title', null, { 'data-lang': l });
+        h3.append(el('a', null, article[l].title, { href }));
+        body.append(h3);
+      });
+
+      body.append(createReadMoreLinks(href, article));
+      card.append(body);
+      return card;
+    }
+
+    function renderFilters(items) {
+      const container = $('#editorial-filters');
+      if (!container) return;
+      container.textContent = '';
+
+      const categories = [];
+      items.forEach(a => {
+        if (a.tag && !categories.includes(a.tag)) categories.push(a.tag);
+      });
+
+      const createPill = (key, labelEs, labelEn) => {
+        const btn = el('button', 'aa-pill', null, {
+          type: 'button',
+          'data-category': key,
+          'aria-pressed': String(activeCategory === key)
+        });
+        btn.append(el('span', null, labelEs, { 'data-lang': 'es' }));
+        btn.append(el('span', null, labelEn, { 'data-lang': 'en' }));
+        on(btn, 'click', () => {
+          if (activeCategory === key) return;
+          activeCategory = key;
+          $$('.aa-pill', container).forEach(p => {
+            p.setAttribute('aria-pressed', String(p.getAttribute('data-category') === activeCategory));
+          });
+          renderShowcase(true);
+        });
+        return btn;
+      };
+
+      container.append(createPill('all', 'Todos', 'All'));
+      categories.forEach(tag => {
+        container.append(createPill(tag, tag, categoryLabel(tag, 'en')));
+      });
+    }
+
+    function renderInsights(items, lang) {
+      const list = $('#editorial-insights-list');
+      if (!list) return;
+      list.textContent = '';
+
+      const topList = items.slice(0, Math.min(items.length, 5));
+      topList.forEach((article, idx) => {
+        const href = `blog/${encodeURIComponent(article.slug)}/`;
+        const li = el('li', 'aa-insight-item');
+        li.append(el('span', 'aa-insight-rank', String(idx + 1), { 'aria-hidden': 'true' }));
+
+        const thumbLink = el('a', 'aa-insight-thumb-link', null, {
+          href,
+          tabindex: '-1',
+          'aria-hidden': 'true'
+        });
+        thumbLink.append(createArticleImg(article, lang, 'aa-insight-thumb', ''));
+        li.append(thumbLink);
+
+        const content = el('div', 'aa-insight-content');
+        content.append(el('span', 'aa-cat-badge', categoryLabel(article.tag, lang)));
+        ['es', 'en'].forEach(l => {
+          const h4 = el('h4', 'aa-insight-title', null, { 'data-lang': l });
+          h4.append(el('a', null, article[l].title, { href }));
+          content.append(h4);
+        });
+        li.append(content);
+        list.append(li);
+      });
+    }
+
+    function updateStatus(filtered, lang, announce) {
+      const status = $('#editorial-status');
+      if (!status) return;
+      if (!announce) {
+        status.textContent = '';
+        return;
+      }
+      const count = filtered.length;
+      if (activeCategory === 'all') {
+        status.textContent = lang === 'en'
+          ? `Showing ${count} featured articles.`
+          : `Mostrando ${count} artículos destacados.`;
+      } else {
+        const cat = categoryLabel(activeCategory, lang);
+        status.textContent = lang === 'en'
+          ? `Showing ${count} article(s) in ${cat}.`
+          : `Mostrando ${count} artículo(s) en ${cat}.`;
+      }
+    }
+
+    function renderShowcase(announce) {
+      const grid = $('#featured-articles');
+      if (!grid || allItems.length === 0) return;
+
+      const lang = LangSwitcher.getCurrent();
+      const filtered = activeCategory === 'all'
+        ? allItems
+        : allItems.filter(a => a.tag === activeCategory);
+
+      grid.textContent = '';
+      const bentoItems = filtered.slice(0, Math.min(filtered.length, 3));
+      if (bentoItems.length > 0) {
+        grid.append(buildLeadCard(bentoItems[0], lang));
+        if (bentoItems.length > 1) {
+          const stack = el('div', 'aa-bento-stack');
+          bentoItems.slice(1).forEach(a => stack.append(buildSubCard(a, lang)));
+          grid.append(stack);
+        }
+      }
+
+      renderInsights(allItems, lang);
+      updateStatus(filtered, lang, announce);
+
+      if (!isRendering) {
+        isRendering = true;
+        LangSwitcher.apply(lang);
+        isRendering = false;
+      }
     }
 
     function init() {
@@ -1592,10 +1766,18 @@
           .slice(0, max);
         if (items.length === 0) return;
 
-        $$('.blog-card', grid).forEach(card => card.remove());
-        items.forEach(a => grid.append(buildCard(a)));
-        injectSchema(items);
-        LangSwitcher.apply(LangSwitcher.getCurrent());
+        allItems = items;
+        renderFilters(allItems);
+        renderShowcase(false);
+        injectSchema(allItems);
+
+        on(window, 'jw:langchange', () => {
+          if (isRendering) return;
+          isRendering = true;
+          renderShowcase(activeCategory !== 'all');
+          LangSwitcher.apply(LangSwitcher.getCurrent());
+          isRendering = false;
+        });
       }).catch(() => { /* se conserva el contenido estático */ });
     }
 
@@ -1631,7 +1813,7 @@
     hideDecorativeIcons();
     const modules = [
       LangSwitcher, MobileMenu, HeaderScroll, Particles,
-      FAQAccordion, ScrollReveal, ScrollMotion, Spotlight, BackToTop, Forms, SmoothScroll, LazyImages,
+      FAQAccordion, ScrollMotion, Spotlight, BackToTop, Forms, SmoothScroll, LazyImages,
       CurrentYear, Analytics, Consent, LegalModals, FxCalculator, FxQuickAccess, MobileCTABar, PWA, Featured
     ];
 
