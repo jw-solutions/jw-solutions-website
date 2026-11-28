@@ -56,8 +56,9 @@
       "url": "https://jw-solutions.com/blog/auditoria-datos-pymes-limpieza-sin-big-data/",
       "notification": {
         "event_id": "jw-blog-20261128-auditoria-datos-pymes-limpieza-sin-big-data",
-        "status": "PENDING",
-        "attempts": 0
+        "status": "NOTIFIED",
+        "attempts": 1,
+        "last_attempt": "2026-11-28T15:08:17.531Z"
       }
     }
   ]
